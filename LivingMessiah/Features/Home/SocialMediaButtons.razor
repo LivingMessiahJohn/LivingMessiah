@@ -1,0 +1,36 @@
+﻿
+<div class="d-flex justify-content-center">
+
+	<div class="card @width border border-info border-3 rounded-top text-center mb-3 mt-3">
+
+		<div class="d-flex justify-content-center my-2">
+			<a href="https://twitter.com/LivingMessiah"
+				 class="btn btn-info mx-2" title="Follow us on Twitter"
+				 data-show-count="false" data-size="large" data-show-screen-name="false">
+				<i class="fab fa-twitter fa-fw fa-2x" aria-hidden="true"></i>
+			</a>
+			<a href="https://www.facebook.com/LivingMessiahMinistries"
+				 class="btn btn-primary me-2" title="See our Facebook page">
+				<i class="fab fa-facebook-f fa-fw fa-2x" aria-hidden="true"></i>
+			</a>
+			<a href="@SocialMedia.YouTube.YouTubeNormal()"
+				 class="btn btn-danger me-2" title="Watch our videos on YouTube">
+				<i class="fab fa-youtube fa-fw fa-2x" aria-hidden="true"></i>
+			</a>
+			<a href="https://github.com/LivingMessiah"
+				 class="btn btn-warning me-2" title="Living Messiah website is NOW OPEN SOURCE!!!"
+				 data-show-count="false" data-size="large" data-show-screen-name="false">
+				<i class="fab fa-github fa-fw fa-2x" aria-hidden="true"></i>
+			</a>
+
+		</div>
+
+	</div>
+
+</div>
+
+@code {
+	[Parameter, EditorRequired] public bool IsXs { get; set; }
+	protected string width => IsXs ? "" : "w-50 ";
+
+}

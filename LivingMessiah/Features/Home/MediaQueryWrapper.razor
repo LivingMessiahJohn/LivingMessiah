@@ -1,0 +1,19 @@
+﻿
+<Header Title="2025 May 31 | Genesis 32:4-33:17"
+				Teaching="Pdf Download"
+				PDF="https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-05-31-Gen-32-04-to-33-17.pdf"
+				IsXs=IsXs />
+
+<HebrewClassCard IsXs=IsXs PDF="https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-02-08-Hebrew-Class.pdf" />
+
+<ShabbatMeter IsXs=IsXs />
+
+<SocialMediaButtons IsXs=IsXs />
+
+
+@code {
+	[Parameter, EditorRequired] public bool IsXs { get; set; }
+
+	protected string HeaderCSS => IsXs ? "table table-sm" : "table ";
+
+}
