@@ -1,0 +1,31 @@
+﻿@using Microsoft.Extensions.Options
+@using LivingMessiah.Settings
+
+@inject IOptions<DonationSettings>? DonationSettings
+
+<div class="card">
+
+	<div class="card-body text-center">
+		<span class="fs-3">Donations on-line using</span> <br /> <i class="fab fa-cc-stripe fa-fw fa-3x"></i>
+	</div>
+
+	<div class="card-footer bg-transparent border-success">
+		<stripe-buy-button buy-button-id="@StripeBuyButtonId"
+											 publishable-key="@StripePublishableKey">
+		</stripe-buy-button>
+
+	</div>
+</div>
+
+@code {
+	private string? StripeBuyButtonId;
+	private string? StripePublishableKey;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		StripeBuyButtonId = DonationSettings!.Value.StripeBuyButtonId;
+		StripePublishableKey = DonationSettings!.Value.StripePublishableKey;
+	}
+
+}

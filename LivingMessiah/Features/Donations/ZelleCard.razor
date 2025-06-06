@@ -1,0 +1,17 @@
+﻿@inject IConfiguration Configuration
+
+<div class="card" style="width: 30rem;">
+	<img src='/images/zelle-logo.jpg'
+		class="card-img-top" alt="...">
+	<div class="card-body">
+		<p class="card-title text-center">
+			send donations via <b>Zelle Pay</b> to the email below.
+		</p>
+		<p class="card-title text-center">
+			<b>Donations@LivingMessiah.com</b>
+		</p>
+
+	</div>
+		@* <img src='@Configuration["DonationSettings:ZELLE_EMAIL"]' class="card-img-bottom mb-5" alt="..."> *@
+</div>
+

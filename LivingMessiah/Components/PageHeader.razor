@@ -1,0 +1,15 @@
+﻿<PageTitle>
+	@if (String.IsNullOrEmpty(PageTitle))
+	{
+		@PageEnum.Title
+	}
+	else
+	{
+		@PageTitle
+	}
+</PageTitle>
+
+@code {
+	[Parameter, EditorRequired] public Nav PageEnum { get; set; } = Nav.Home;
+	[Parameter] public string? PageTitle { get; set; }
+}
