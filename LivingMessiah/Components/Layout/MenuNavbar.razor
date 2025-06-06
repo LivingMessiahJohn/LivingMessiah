@@ -1,0 +1,37 @@
+﻿@using LivingMessiah.Enums
+
+<nav id="navBootstrapMenu" class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3 navbar-dark bg-dark">
+	<div class="container">
+		<NavbarHomeButton></NavbarHomeButton>
+		<button class="navbar-toggler" @onclick="ToggleNavBootstrapMenu" type="button" 
+						data-bs-toggle="collapse" data-target=".navbar-collapse" 
+						aria-controls="navbarSupportedContent"
+						aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		
+		<div class="navbar-collapse d-sm-inline-flex flex-sm-row-reverse" 
+				 @onclick="ToggleNavBootstrapMenu">
+			<ul class="navbar-nav flex-grow-1">
+
+				<li class="nav-item">
+					<a class="nav-link text-white" href="@Enums.Nav.Donate.Index">
+						@Enums.Nav.Donate.Title
+					</a>
+				</li>
+
+			</ul>
+		</div>
+	</div>
+</nav>
+
+@code {
+	//bool UseDarkMode = false;
+	//string TextColor = " text-white "; // UseDarkMode? " text-white " : " text-dark ";
+	//string NavBarColor = " navbar-dark bg-dark "; // UseDarkMode? " navbar-dark bg-dark " : " navbar-light bg-white ";
+
+	void ToggleNavBootstrapMenu()
+	{
+		//collapseNavMenu = !collapseNavMenu;
+	}
+}

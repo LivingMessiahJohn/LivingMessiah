@@ -1,8 +1,28 @@
 using LivingMessiah.Components;
 
+using Microsoft.Extensions.DependencyInjection;
+using LivingMessiah.Settings;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+string appSettingJson = string.Empty;
+if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development)
+{
+	appSettingJson = "appsettings.Development.json";
+}
+else
+{
+	appSettingJson = "appsettings.Production.json";
+}
+
+var configuration = new ConfigurationBuilder()
+	.AddJsonFile(appSettingJson)
+	.Build();
+
+builder.Services.Configure<DonationSettings>(
+	options => configuration.GetSection("DonationSettings").Bind(options));
 
 builder.Services.AddRazorComponents()
 		.AddInteractiveServerComponents();
@@ -21,7 +41,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAntiforgery();
 
-app.MapStaticAssets();
+app.MapStaticAssets(); // new for .Net 9; 
 app.MapRazorComponents<App>()
 		.AddInteractiveServerRenderMode();
 
