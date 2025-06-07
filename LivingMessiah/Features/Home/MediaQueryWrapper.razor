@@ -1,7 +1,7 @@
 ﻿
-<Header Title="2025 May 31 | Genesis 32:4-33:17"
+<Header Title=@GetCurrentTitle()
 				Teaching="Pdf Download"
-				PDF="https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-05-31-Gen-32-04-to-33-17.pdf"
+				PDF=@GetCurrentTeaching()
 				IsXs=IsXs />
 
 <HebrewClassCard IsXs=IsXs PDF="https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-02-08-Hebrew-Class.pdf" />
@@ -15,5 +15,21 @@
 	[Parameter, EditorRequired] public bool IsXs { get; set; }
 
 	protected string HeaderCSS => IsXs ? "table table-sm" : "table ";
+
+	private string ShabbatDate = "2025 June 7"; 
+	private string ParashaTitle = "Genesis 33:18-35:8";
+	private string ParashaDate = "2025-06-07";
+	private string ParashaFile = "Gen-33-18-to-35-08";
+
+	private string GetCurrentTitle()
+	{
+		return $"{ShabbatDate} | {ParashaTitle}";
+	}
+
+	//https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-06-07-Gen-33-18-to-35-08.pdf
+	private string GetCurrentTeaching()
+	{
+		return $"{Constants.TeachingBlobFolder}{ParashaDate}-{ParashaFile}.pdf";
+	}
 
 }
