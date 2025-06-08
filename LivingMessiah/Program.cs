@@ -1,6 +1,8 @@
-using LivingMessiah.Components;
-
 using Microsoft.Extensions.DependencyInjection;
+
+using Serilog;
+
+using LivingMessiah.Components;
 using LivingMessiah.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,28 +23,60 @@ var configuration = new ConfigurationBuilder()
 	.AddJsonFile(appSettingJson)
 	.Build();
 
-builder.Services.Configure<DonationSettings>(
+Log.Logger = new LoggerConfiguration()
+	.ReadFrom.Configuration(configuration)
+	.CreateLogger();
+
+Log.Warning("{Class}, {Environment}, {AppSettings}; save to Serilog console and file sinks."
+			, nameof(Program), Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), appSettingJson);
+
+try
+{
+
+	builder.Host.UseSerilog((ctx, lc) =>
+	lc.ReadFrom.Configuration(configuration));
+
+	builder.Services.Configure<DonationSettings>(
 	options => configuration.GetSection("DonationSettings").Bind(options));
 
-builder.Services.AddRazorComponents()
-		.AddInteractiveServerComponents();
+	builder.Services.AddRazorComponents()
+			.AddInteractiveServerComponents();
 
-var app = builder.Build();
-app.MapDefaultEndpoints();
+	builder.Configuration.AddUserSecrets<Program>();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-	app.UseExceptionHandler("/Error", createScopeForErrors: true);
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-	app.UseHsts();
+	var app = builder.Build();
+	app.MapDefaultEndpoints();
+
+	if (!app.Environment.IsDevelopment())
+	{
+		app.UseExceptionHandler("/Error", createScopeForErrors: true);
+		app.UseHsts();
+	}
+	else
+	{
+		app.UseDeveloperExceptionPage();
+	}
+
+	app.UseSerilogRequestLogging();
+
+	app.UseHttpsRedirection();
+	app.UseAntiforgery();
+
+	app.MapStaticAssets(); // new for .Net 9; 
+	app.MapRazorComponents<App>()
+			.AddInteractiveServerRenderMode();
+
+	app.Run();
+
+	Log.Information("{Class}, Stopped cleanly", nameof(Program));
+	return 0;
 }
-
-app.UseHttpsRedirection();
-app.UseAntiforgery();
-
-app.MapStaticAssets(); // new for .Net 9; 
-app.MapRazorComponents<App>()
-		.AddInteractiveServerRenderMode();
-
-app.Run();
+catch (Exception ex)
+{
+	Log.Fatal(ex, "{Class}, An unhandled exception occurred during bootstrapping", nameof(Program));
+	return 1;
+}
+finally
+{
+	Log.CloseAndFlush();
+}

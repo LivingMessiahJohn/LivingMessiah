@@ -1,7 +1,8 @@
 ﻿@using Microsoft.Extensions.Options
 @using LivingMessiah.Settings
 
-@inject IOptions<DonationSettings>? DonationSettings
+@inject ILogger<StripeCard>? Logger
+@inject IConfiguration Configuration
 
 <div class="card">
 
@@ -23,9 +24,13 @@
 
 	protected override void OnInitialized()
 	{
-		base.OnInitialized();
-		StripeBuyButtonId = DonationSettings!.Value.StripeBuyButtonId;
-		StripePublishableKey = DonationSettings!.Value.StripePublishableKey;
+		StripeBuyButtonId = Configuration["DonationSettings:StripeBuyButtonId"];
+		StripePublishableKey = Configuration["DonationSettings:StripePublishableKey"];
+
+
+		Logger!.LogWarning("{Method}, StripePublishableKey Length: {StripePublishableKey}"
+		 , nameof(OnInitialized), StripePublishableKey == null ? "null" : StripePublishableKey.Length.ToString());
+		//StripePublishableKey!.Substring(0,13)
 	}
 
 }
