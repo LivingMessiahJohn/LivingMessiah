@@ -1,6 +1,6 @@
 ﻿namespace LivingMessiah;
 
-// Portion copied from C:\Users\JohnM\source\repos\LivingMessiahBlazor\LivingMessiah.Web\Infrastructure\DateUtil.cs
+// Portion copied from C:\Users\JohnM\source\repos\LivingMessiahBlazor\LivingMessiah\Infrastructure\DateUtil.cs
 
 public static class DateHelper
 {

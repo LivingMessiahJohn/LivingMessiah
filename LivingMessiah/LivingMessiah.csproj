@@ -8,6 +8,38 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\**" />
+    <Compile Remove="Features\Calendar\ManageKeyDates\**" />
+    <Compile Remove="Features\Calendar\ManageParashaCalendar\**" />
+    <Content Remove="Data\**" />
+    <Content Remove="Features\Calendar\ManageKeyDates\**" />
+    <Content Remove="Features\Calendar\ManageParashaCalendar\**" />
+    <EmbeddedResource Remove="Data\**" />
+    <EmbeddedResource Remove="Features\Calendar\ManageKeyDates\**" />
+    <EmbeddedResource Remove="Features\Calendar\ManageParashaCalendar\**" />
+    <None Remove="Data\**" />
+    <None Remove="Features\Calendar\ManageKeyDates\**" />
+    <None Remove="Features\Calendar\ManageParashaCalendar\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Features\Calendar\CalendarSfSchedule.razor.cs" />
+    <Compile Remove="Features\Calendar\Carousel.razor.cs" />
+    <Compile Remove="Features\Calendar\ScheduleData.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Features\Calendar\CalendarSfSchedule.razor" />
+    <Content Remove="Features\Calendar\Carousel.razor" />
+    <Content Remove="Features\Calendar\FeastSfSchedule.razor" />
+    <Content Remove="Features\Calendar\LmmCalendarAdvertisement.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Features\Calendar\Carousel.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Ardalis.SmartEnum" Version="8.2.0" />
     <PackageReference Include="Aspire.Seq" Version="9.3.0" />
     <PackageReference Include="Seq.Extensions.Logging" Version="8.0.0" />
