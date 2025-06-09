@@ -35,9 +35,7 @@ try
 
 	builder.Host.UseSerilog((ctx, lc) =>
 	lc.ReadFrom.Configuration(configuration));
-
-	builder.Services.Configure<DonationSettings>(
-	options => configuration.GetSection("DonationSettings").Bind(options));
+	builder.Services.Configure<AppSettings>(options => configuration.GetSection("AppSettings").Bind(options));
 
 	builder.Services.AddRazorComponents()
 			.AddInteractiveServerComponents();

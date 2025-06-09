@@ -1,0 +1,87 @@
+﻿@page "/Calendar"
+@page "/KeyDates"
+
+@using LivingMessiah.Features.FeastDayPlanner
+@using LivingMessiah.Settings
+@using Microsoft.Extensions.Options
+
+@inject IOptions<AppSettings>? AppSettings
+@inject ILogger<Index>? Logger
+
+@* 
+@using Page = LivingMessiah.Links.Calendar
+@using LivingMessiah.Features.FeastDayPlanner
+
+<PageTitle>@Page.Title</PageTitle>
+
+	<div class="pb-1 mt-2 mb-3 border-bottom border-info">
+		<h2><i class="@Page.Icon"></i> @Page.Title</h2>
+</div>
+ *@
+@* 
+
+@if (printedCalendarEnum == PrintedCalendarEnum.ReadyForSale | printedCalendarEnum == PrintedCalendarEnum.OnlyShowCover)
+{
+	<div class="@MediaQuery.XsOrSm.DivClass">
+		<LmmCalendarAdvertisement IsXsOrSm="true" PrintedCalendarEnum="@printedCalendarEnum" Year="@YearId" />
+	</div>
+	<div class="d-none d-md-block">
+		<LmmCalendarAdvertisement IsXsOrSm="false" PrintedCalendarEnum="@printedCalendarEnum" Year="@YearId" />
+	</div>
+}
+ *@
+
+@* 
+ToDo: Add when you setup SfS
+<div class="@MediaQuery.XsOrSm.DivClass">
+	<div class="card bg-secondary text-white mb-0">
+		<CalendarSfSchedule IsXsOrSm="true" YearId="@YearId" />
+	</div>
+</div>
+
+<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+	<CalendarSfSchedule IsXsOrSm="false" YearId="@YearId" />
+</div>
+
+ *@
+
+@* 
+ToDo: Add when you setup FeastDayPlanner is fully ported
+ <LivingMessiah.Features.FeastDayPlanner.Index />
+ *@
+
+@* 
+@if (CarouselSettings.Display)
+{
+	<div class="@MediaQuery.Xs.DivClass">
+		<Carousel mq="MediaQuery.Xs" />
+	</div>
+	<div class="@MediaQuery.Sm.DivClass">
+		<Carousel mq="MediaQuery.Sm" />
+	</div>
+	<div class="@MediaQuery.Md.DivClass">
+		<Carousel mq="MediaQuery.Md" />
+	</div>
+	<div class="@MediaQuery.Lg.DivClass">
+		<Carousel mq="MediaQuery.Lg" />
+	</div>
+	<div class="@MediaQuery.Xl.DivClass">
+		<Carousel mq="MediaQuery.Xl" />
+	</div>
+}
+
+ *@
+<CalendarExplanation />
+
+ @code {
+	public int YearId { get; set; }
+	private PrintedCalendarEnum printedCalendarEnum { get; set; }
+
+	protected override void OnInitialized()
+	{
+		YearId = AppSettings!.Value.YearId;
+		Logger!.LogDebug("{Method}, YearId: {YearId}", nameof(OnInitialized), YearId);
+
+		printedCalendarEnum = PrintedCalendarEnum.OnlyShowCover;
+	}
+}

@@ -26,14 +26,20 @@ public abstract class Nav : SmartEnum<Nav>
 	private static class Id
 	{
 		internal const int Home = 1;
-		internal const int Donate = 2;
-		internal const int DonateReplyConfirm = 3;
+		internal const int Calendar = 2;
+		internal const int FeastTable = 3;
+		internal const int CalendarHealthCheck = 4;
+		internal const int Donate = 5;
+		internal const int DonateReplyConfirm = 6;
 	}
 	#endregion
 
 
 	#region  Declared Public Instances
 	public static readonly Nav Home = new HomeSE();
+	public static readonly Nav Calendar = new CalendarSE();
+	public static readonly Nav FeastTable = new FeastTableSE();
+	public static readonly Nav CalendarHealthCheck = new CalendarHealthCheckSE();
 	public static readonly Nav Donate = new DonateSE();
 	public static readonly Nav DonateReplyConfirm = new DonateReplyConfirmSE();
 	#endregion
@@ -87,6 +93,49 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
+
+	private sealed class CalendarSE : Nav
+	{
+		public CalendarSE() : base($"{nameof(Id.Calendar)}", Id.Calendar) { }
+		public override string Index => "/Calendar";
+		public override string Title => "Calendar";
+		public override string Icon => "far fa-calendar-alt";
+		public override int Sort => Id.Calendar;
+		public override string HomeTitleSuffix => " ";
+		public override string HomeFloatRightHebrew => "";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Footer | PageListType.Layout | PageListType.LayoutMd;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	private sealed class FeastTableSE : Nav
+	{
+		public FeastTableSE() : base($"{nameof(Id.FeastTable)}", Id.FeastTable) { }
+		public override string Index => "/FeastTable";
+		public override string Title => "Feast Table";
+		public override string Icon => "fas fa-glass-cheers";
+		public override int Sort => Id.FeastTable;
+		public override string HomeTitleSuffix => " ";
+		public override string HomeFloatRightHebrew => "";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Footer | PageListType.Layout | PageListType.LayoutMd;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	private sealed class CalendarHealthCheckSE : Nav
+	{
+		public CalendarHealthCheckSE() : base($"{nameof(Id.CalendarHealthCheck)}", Id.CalendarHealthCheck) { }
+		public override string Index => "/Calendar/HealthCheck";
+		public override string Title => "Calendar Health Check";
+		public override string Icon => "fas fa-heartbeat";
+		public override int Sort => Id.CalendarHealthCheck;
+		public override string HomeTitleSuffix => " ";
+		public override string HomeFloatRightHebrew => "";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
 
 	private sealed class DonateSE : Nav
 	{
