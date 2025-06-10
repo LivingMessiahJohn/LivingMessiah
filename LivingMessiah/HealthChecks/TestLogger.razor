@@ -9,7 +9,6 @@
 @inject ILogger<TestLogger>? Logger
 @inject IToastService? Toast
 
-@inject IOptions<AppSettings> AppSettings
 @inject IConfiguration Configuration
 
 @* 
@@ -47,21 +46,10 @@
 	<div class="card-body">
 		<div class="card-title"><h5>Configuration</h5></div>
 		<p class="p-1">
-			@* <b>DonationSettings</b>: @(Configuration["SyncfusionLicense"] == null ? "NULL!" : @Configuration["SyncfusionLicense"]) <br /> *@
-			<b>SyncfusionLicense</b>: @(Configuration["SyncfusionLicense"] == null ? "NULL!" : @Configuration["SyncfusionLicense"]) <br />
-			<b>TestSecretJsonEntry</b>:  @(Configuration["TestSecretJsonEntry"] == null ? "NULL!" : @Configuration["TestSecretJsonEntry"]) <br />
+			<b>_SyncfusionLicense</b>: @_SyncfusionLicense
 		</p>
 	</div>
 
-
-	<div class="card-body">
-		<div class="card-title"><h5>AppSettings</h5></div>
-		<p class="p-1">
-			<b>YearId</b>: @AppSettings.Value.YearId <br /> @* cant be null, it's an int *@
-			@* <b>SyncfusionLicense</b>:  @(AppSettings.Value.SyncfusionLicense == null ? "NULL!" : @AppSettings.Value.SyncfusionLicense) <br /> *@
-			@* <b>TestSecretJsonEntry</b>:  @(AppSettings.Value.TestSecretJsonEntry == null ? "NULL!" : @AppSettings.Value.TestSecretJsonEntry) <br /> *@
-		</p>
-	</div>
 
 	@* 
 		<div class="card-footer"></div> 
@@ -70,6 +58,22 @@
 </div>
 
 @code {
+
+	string _SyncfusionLicense = string.Empty;
+	protected override void OnInitialized()
+	{
+		try
+		{
+			_SyncfusionLicense = Configuration!["SyncfusionLicense"]!;
+			_SyncfusionLicense = _SyncfusionLicense.Substring(0, 10);
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(OnInitialized));
+			Toast!.ShowError($"{Global.ToastShowError} {nameof(TestLogger)}!{nameof(ButtonClickThrowException)}");
+		}
+	}
+
 	void ButtonClickThrowException()
 	{
 		Logger!.LogDebug("{Method}, Location: {Location}", nameof(ButtonClickThrowException), "Start");
