@@ -1,0 +1,31 @@
+﻿@using FeastDayType = LivingMessiah.Features.Calendar.Enums.FeastDay
+@using LivingMessiah.Features.FeastDayPlanner.Data
+
+@inject IService? Service
+
+<div class="row mt-3">
+
+	<div class="col-12 text-center">
+		<div class="card bg-primary text-white">
+			<div class="card-body">
+				<h4><i class="@FeastDayType!.Icon"></i> <b>@FeastDayType!.PlannerTitle</b> <span class="hebrew"> @FeastDayType!.Hebrew</span> </h4>
+				<span class="badge @vm!.BadgeColor text-dark fw-bold fs-6">@vm!.DaysDifferentFormat</span> @vm!.SuffixDescription
+			</div>
+		</div>
+		
+	</div>
+
+</div>
+
+
+@code {
+
+	[Parameter, EditorRequired] public FeastDayType? FeastDayType { get; set; }
+
+	HeaderServiceModel? vm = new();
+	protected override void OnParametersSet()
+	{
+		vm = Service!.GetHeaderServiceModel(FeastDayType!);
+	}
+
+}

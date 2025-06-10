@@ -31,6 +31,8 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int CalendarHealthCheck = 4;
 		internal const int Donate = 5;
 		internal const int DonateReplyConfirm = 6;
+		internal const int Sitemap = 7;
+		internal const int HealthCheckTestLogger = 8;
 	}
 	#endregion
 
@@ -42,6 +44,8 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav CalendarHealthCheck = new CalendarHealthCheckSE();
 	public static readonly Nav Donate = new DonateSE();
 	public static readonly Nav DonateReplyConfirm = new DonateReplyConfirmSE();
+	public static readonly Nav Sitemap = new SitemapSE();
+	public static readonly Nav HealthCheckTestLogger = new HealthCheckTestLoggerSE();
 	#endregion
 
 	private Nav(string name, int value) : base(name, value)  // Constructor
@@ -166,6 +170,34 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false; // N/A
 	}
 
+	private sealed class SitemapSE : Nav
+	{
+		public SitemapSE() : base($"{nameof(Id.Sitemap)}", Id.Sitemap) { }
+		public override string Index => "/Sitemap";
+		public override string Title => "Sitemap";
+		public override string Icon => "fas fa-sitemap";
+		public override int Sort => Id.Sitemap;
+		public override string HomeTitleSuffix => " nahal H5095";
+		public override string HomeFloatRightHebrew => "נָהַל";
+		public override PageListType PageListType => PageListType.Footer | PageListType.Layout;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	//ToDo This should only be for Admin users
+	private sealed class HealthCheckTestLoggerSE : Nav
+	{
+		public HealthCheckTestLoggerSE() : base($"{nameof(Id.HealthCheckTestLogger)}", Id.HealthCheckTestLogger) { }
+		public override string Index => "HealthChecks/TestLogger";
+		public override string Title => "Test Logger (HC)";
+		public override string Icon => "fas fa-bomb";  //fas fa-wrench
+		public override int Sort => Id.HealthCheckTestLogger;
+		public override string HomeTitleSuffix => " ";
+		public override string HomeFloatRightHebrew => "";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
 
 	// 
 

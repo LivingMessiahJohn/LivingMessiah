@@ -1,0 +1,97 @@
+﻿@page "/HealthChecks/TestLogger"
+@using Page = LivingMessiah.Enums.Nav
+@using Microsoft.Extensions.Options;
+@using LivingMessiah.Settings
+
+
+<PageHeader PageEnum="Page.HealthCheckTestLogger" />
+
+@inject ILogger<TestLogger>? Logger
+@inject IToastService? Toast
+
+@inject IOptions<AppSettings> AppSettings
+@inject IConfiguration Configuration
+
+@* 
+@using static LivingMessiah.Services.Auth0
+
+<AuthorizeView Roles="@Roles.Admin">
+	<Authorized>
+	</Authorized>
+	<NotAuthorized>
+		<div class="card border-warning my-5">
+			<div class="card-header">Not Authorized</div>
+			<div class="card-body">
+				<h5 class="">To view <b>@Page.Dashboard.Text</b> you need to be logged in.</h5>
+				<LoginRedirectButton ReturnUrl="@Page.Dashboard.Index" />
+			</div>
+		</div>
+	</NotAuthorized>
+</AuthorizeView>
+ *@
+
+<div class="card">
+	<div class="card-header">Administrative Links</div>
+
+	<ul class="list-group list-group-flush">
+
+		<li class="list-group-item">
+			<button @onclick="@(e => ButtonClickThrowException())"
+							class="list-group-item list-group-item-warning">
+				<b>Throw Exception</b>
+				<i class="fas fa-chevron-right"></i>
+			</button>
+		</li>
+	</ul>
+
+	<div class="card-body">
+		<div class="card-title"><h5>Configuration</h5></div>
+		<p class="p-1">
+			@* <b>DonationSettings</b>: @(Configuration["SyncfusionLicense"] == null ? "NULL!" : @Configuration["SyncfusionLicense"]) <br /> *@
+			<b>SyncfusionLicense</b>: @(Configuration["SyncfusionLicense"] == null ? "NULL!" : @Configuration["SyncfusionLicense"]) <br />
+			<b>TestSecretJsonEntry</b>:  @(Configuration["TestSecretJsonEntry"] == null ? "NULL!" : @Configuration["TestSecretJsonEntry"]) <br />
+		</p>
+	</div>
+
+
+	<div class="card-body">
+		<div class="card-title"><h5>AppSettings</h5></div>
+		<p class="p-1">
+			<b>YearId</b>: @AppSettings.Value.YearId <br /> @* cant be null, it's an int *@
+			@* <b>SyncfusionLicense</b>:  @(AppSettings.Value.SyncfusionLicense == null ? "NULL!" : @AppSettings.Value.SyncfusionLicense) <br /> *@
+			<b>TestSecretJsonEntry</b>:  @(AppSettings.Value.TestSecretJsonEntry == null ? "NULL!" : @AppSettings.Value.TestSecretJsonEntry) <br />
+		</p>
+	</div>
+
+	@* 
+		<div class="card-footer"></div> 
+	*@
+
+</div>
+
+@code {
+	void ButtonClickThrowException()
+	{
+		Logger!.LogDebug("{Method}, Location: {Location}", nameof(ButtonClickThrowException), "Start");
+		try
+		{
+			for (int i = 0; i < 10; i++)
+			{
+				if (i == 5)
+				{
+					throw new Exception("This is a demo exception");
+				}
+				else
+				{
+					Logger!.LogWarning("{Method}, i: {i}", nameof(ButtonClickThrowException), i);
+				}
+			}
+
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(ButtonClickThrowException));
+			Toast!.ShowError($"{Global.ToastShowError} {nameof(TestLogger)}!{nameof(ButtonClickThrowException)}");
+		}
+	}
+}

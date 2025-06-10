@@ -8,16 +8,7 @@
 @inject IOptions<AppSettings>? AppSettings
 @inject ILogger<Index>? Logger
 
-@* 
-@using Page = LivingMessiah.Links.Calendar
-@using LivingMessiah.Features.FeastDayPlanner
-
-<PageTitle>@Page.Title</PageTitle>
-
-	<div class="pb-1 mt-2 mb-3 border-bottom border-info">
-		<h2><i class="@Page.Icon"></i> @Page.Title</h2>
-</div>
- *@
+<PageHeader PageEnum="LivingMessiah.Enums.Nav.Calendar" />
 @* 
 
 @if (printedCalendarEnum == PrintedCalendarEnum.ReadyForSale | printedCalendarEnum == PrintedCalendarEnum.OnlyShowCover)
@@ -31,8 +22,6 @@
 }
  *@
 
-@* 
-ToDo: Add when you setup SfS
 <div class="@MediaQuery.XsOrSm.DivClass">
 	<div class="card bg-secondary text-white mb-0">
 		<CalendarSfSchedule IsXsOrSm="true" YearId="@YearId" />
@@ -43,12 +32,8 @@ ToDo: Add when you setup SfS
 	<CalendarSfSchedule IsXsOrSm="false" YearId="@YearId" />
 </div>
 
- *@
 
-@* 
-ToDo: Add when you setup FeastDayPlanner is fully ported
  <LivingMessiah.Features.FeastDayPlanner.Index />
- *@
 
 @* 
 @if (CarouselSettings.Display)
