@@ -40,8 +40,7 @@ try
 				? "IsNullOrEmpty"
 				: builder.Configuration["SyncfusionLicense"]);
 
-	//Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(configuration["SyncfusionLicense"]);
-	Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NNaF5cXmBCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXlfcHVRR2lfVkFxXUJWYUA=");
+	Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(builder.Configuration["SyncfusionLicense"] ?? "");
 
 	builder.Services.AddBlazoredToast();
 
