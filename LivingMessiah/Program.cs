@@ -1,23 +1,22 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using Serilog;
+using Syncfusion.Blazor;
+using Blazored.Toast;
 
 using LivingMessiah.Components;
 using LivingMessiah.Settings;
+using LivingMessiah.Features.Calendar;
+using LivingMessiah.Features.FeastDayPlanner.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-string appSettingJson = string.Empty;
-if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development)
-{
-	appSettingJson = "appsettings.Development.json";
-}
-else
-{
-	appSettingJson = "appsettings.Production.json";
-}
+string appSettingJson =
+	Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development
+	? appSettingJson = "appsettings.Development.json"
+	: "appsettings.Production.json";
 
 var configuration = new ConfigurationBuilder()
 	.AddJsonFile(appSettingJson)
@@ -27,20 +26,34 @@ Log.Logger = new LoggerConfiguration()
 	.ReadFrom.Configuration(configuration)
 	.CreateLogger();
 
-Log.Warning("{Class}, {Environment}, {AppSettings}; save to Serilog console and file sinks."
+Log.Warning("{Class}, {Environment}, AppSettingJsonFile: {AppSettingJsonFile}; "
 			, nameof(Program), Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), appSettingJson);
 
 try
 {
-
 	builder.Host.UseSerilog((ctx, lc) =>
 	lc.ReadFrom.Configuration(configuration));
+
+	Log.Warning("{Class}, SyncfusionLicense: {SyncfusionLicense}",
+		nameof(Program),
+		string.IsNullOrEmpty(builder.Configuration["SyncfusionLicense"])
+				? "IsNullOrEmpty"
+				: builder.Configuration["SyncfusionLicense"]);
+
+	Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(configuration["SyncfusionLicense"]);
+
+	builder.Services.AddBlazoredToast();
+
+	//Services
+	builder.Services.AddCalendar();
+	builder.Services.AddFeastDayPlanner();
+
 	builder.Services.Configure<AppSettings>(options => configuration.GetSection("AppSettings").Bind(options));
 
 	builder.Services.AddRazorComponents()
 			.AddInteractiveServerComponents();
 
-	builder.Configuration.AddUserSecrets<Program>();
+	builder.Services.AddSyncfusionBlazor();
 
 	var app = builder.Build();
 	app.MapDefaultEndpoints();

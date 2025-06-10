@@ -18,7 +18,7 @@ public static class BarColor
 
 public static class DynamicComponentPaths
 {
-	public static string VerseReferenceCards =  "LivingMessiah.Web.Features.FeastDayPlanner.VerseReferenceCards.";
+	public static string VerseReferenceCards =  "LivingMessiah.Features.FeastDayPlanner.VerseReferenceCards.";
 }
 
 public static class HebrewYear
