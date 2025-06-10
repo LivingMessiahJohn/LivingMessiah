@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.ApplicationInsights.AspNetCore;
+using Serilog.Sinks.ApplicationInsights;
 
 using Serilog;
 using Syncfusion.Blazor;
@@ -31,8 +33,7 @@ Log.Warning("{Class}, {Environment}, AppSettingJsonFile: {AppSettingJsonFile}; "
 
 try
 {
-	builder.Host.UseSerilog((ctx, lc) =>
-	lc.ReadFrom.Configuration(configuration));
+	builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(configuration));
 
 	Log.Warning("{Class}, SyncfusionLicense: {SyncfusionLicense}",
 		nameof(Program),
@@ -43,6 +44,10 @@ try
 	Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(builder.Configuration["SyncfusionLicense"] ?? "");
 
 	builder.Services.AddBlazoredToast();
+
+
+	builder.Services.AddApplicationInsightsTelemetry();
+
 
 	//Services
 	builder.Services.AddCalendar();
