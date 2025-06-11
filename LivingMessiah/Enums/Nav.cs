@@ -188,7 +188,7 @@ public abstract class Nav : SmartEnum<Nav>
 	private sealed class HealthCheckTestLoggerSE : Nav
 	{
 		public HealthCheckTestLoggerSE() : base($"{nameof(Id.HealthCheckTestLogger)}", Id.HealthCheckTestLogger) { }
-		public override string Index => "HealthChecks/TestLogger";
+		public override string Index => "HealthCheck/TestLogger";
 		public override string Title => "Test Logger (HC)";
 		public override string Icon => "fas fa-bomb";  //fas fa-wrench
 		public override int Sort => Id.HealthCheckTestLogger;
@@ -198,8 +198,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
-
-	// 
 
 	#endregion
 }

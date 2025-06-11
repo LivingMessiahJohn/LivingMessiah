@@ -24,17 +24,11 @@
 
   <ItemGroup>
     <Compile Remove="Features\Calendar\CalendarSfSchedule.razor.cs" />
-    <Compile Remove="Features\Calendar\Carousel.razor.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="Features\Calendar\Carousel.razor" />
     <Content Remove="Features\Calendar\FeastSfSchedule.razor" />
     <Content Remove="Features\Calendar\LmmCalendarAdvertisement.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Features\Calendar\Carousel.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,10 +47,13 @@
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="5.0.0" />
     <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
-		<PackageReference Include="Syncfusion.Blazor.Calendars" Version="29.2.9" />
-		<PackageReference Include="Syncfusion.Blazor.RichTextEditor" Version="29.2.9" />
-		<PackageReference Include="Syncfusion.Blazor.Schedule" Version="29.2.9" />
-		<PackageReference Include="Syncfusion.Blazor.Themes" Version="29.2.7" />
+    <PackageReference Include="Syncfusion.Blazor.Buttons" Version="29.2.10" />
+		<PackageReference Include="Syncfusion.Blazor.Calendars" Version="29.2.10" />
+		<PackageReference Include="Syncfusion.Blazor.Navigations" Version="29.2.10" />
+		<PackageReference Include="Syncfusion.Blazor.RichTextEditor" Version="29.2.10" />
+		<PackageReference Include="Syncfusion.Blazor.Schedule" Version="29.2.10" />
+		<PackageReference Include="Syncfusion.Blazor.SplitButtons" Version="29.2.10" />
+		<PackageReference Include="Syncfusion.Blazor.Themes" Version="29.2.10" />
   </ItemGroup>
 
   <ItemGroup>
@@ -65,6 +62,7 @@
 
   <ItemGroup>
     <Folder Include="Features\Home\Enums\" />
+    <Folder Include="wwwroot\css\bootstrap\" />
   </ItemGroup>
 
 </Project>
