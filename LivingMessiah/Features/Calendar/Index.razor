@@ -32,31 +32,20 @@
 	<CalendarSfSchedule IsXsOrSm="false" YearId="@YearId" />
 </div>
 
+<LivingMessiah.Features.FeastDayPlanner.Index />
 
- <LivingMessiah.Features.FeastDayPlanner.Index />
-
-@* 
 @if (CarouselSettings.Display)
 {
 	<div class="@MediaQuery.Xs.DivClass">
-		<Carousel mq="MediaQuery.Xs" />
+		<Carousel IsXs=true/>
 	</div>
-	<div class="@MediaQuery.Sm.DivClass">
-		<Carousel mq="MediaQuery.Sm" />
-	</div>
-	<div class="@MediaQuery.Md.DivClass">
-		<Carousel mq="MediaQuery.Md" />
-	</div>
-	<div class="@MediaQuery.Lg.DivClass">
-		<Carousel mq="MediaQuery.Lg" />
-	</div>
-	<div class="@MediaQuery.Xl.DivClass">
-		<Carousel mq="MediaQuery.Xl" />
+	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+		<Carousel IsXs=false />
 	</div>
 }
 
- *@
-<CalendarExplanation />
+
+<CalendarExplanation /> 
 
  @code {
 	public int YearId { get; set; }

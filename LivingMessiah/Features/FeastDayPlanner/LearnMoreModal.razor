@@ -1,50 +1,38 @@
-﻿@using Microsoft.Extensions.Logging;
-@inject ILogger<LearnMoreModal>? Logger
+﻿@* Modal type:  Pure Bootstrap solution, informational only (no EventCallback) *@
 
-<button type="button" class="btn btn-primary btn-xs float-end" @onclick="() => ShowModal()">
-	Learn More	<i class="fas fa-ellipsis-h"></i>
-</button>
+<div class="pb-1 mt-5 mb-0 border-bottom border-info">
+	<div class="d-flex justify-content-between">
 
-<div class="@modalClass" style="display:@(modalOpen?"block":"none");">
-	<div class="modal-dialog modal-xl">
+		<h2><i class="fas fa-bread-slice"></i> Feast Planner</h2>
+		<button type="button" class="btn btn-primary"
+						data-bs-toggle="modal" data-bs-target="#customModal">
+			Learn More	<i class="fas fa-ellipsis-h"></i>
+		</button>
+	</div>
+</div>
+
+<div class="modal fade" id="customModal" tabindex="-1"
+		 aria-labelledby="customModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
 		<div class="modal-content">
-			<div class="modal-header bg-light">
-
-				<h5 class="modal-title">Planner Explanation</h5>
-
-				<button type="button" class="close" @onclick="CloseModal">
-					<span class="text-primary"><i class="fas fa-times fa-fw fa-2x"></i></span>
-				</button>
-
+			<div class="modal-header d-flex justify-content-between align-items-center">
+				<span class="me-auto modal-title">Planner Explanation</span>
+				<button type="button" class="btn-close ms-2" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
 
 				<div class="card bg-light mt-1 mb-1">
+
 					<div class="card-body">
 						<p class="card-text">
 							Mapping the Gregorian calendar with the Hebrew calendar is hard because the beginning and end of a date is different (midnight and evening respectively).
 							What that means is that to show a high Sabbath day, you need to spread it out over a pair of Gregorian days.
 						</p>
 
-						<p class="card-text mb-1">
-							<u>Planner Notes</u>
-						</p>
+						<p class="card-text mb-1"><u>Planner Notes</u></p>
 						<ul class="card-text">
 							<li><b>High Sabbaths</b> dates are shown in <span class="badge bg-danger">Red</span>. The Related Verses are also shown in red</li>
-							
-							
-@* 
-							ToDo: 
-							<li>
-								<ul class="card-text">
-									<li>
-										The <b>Passover Seder Meal</b> is not a high sabbath but is right before the beginning of the first day of unleavened bread, 
-										this is shown in <span style="background-color:purple;"><span class="text-white">purple</span></span>.
-									</li>
-								</ul>
-							</li>
- *@
-
+							<!-- FN:1 ToDo: add note about Passover Seder Meal -->
 							<li>Other dates are shown in <span class="badge bg-info-subtle text-dark">turquoise</span></li>
 							<li>Some dates are a single dates and some are spread out over multiple dates</li>
 							<li>
@@ -54,32 +42,28 @@
 
 					</div>
 
-				</div>
+				</div> <!-- card -->
 
-			</div>
-
-		</div>
-	</div>
-</div>
+			</div> <!-- modal-body -->
+		</div> <!-- modal-content -->
+	</div> <!-- modal-dialog -->
+</div> <!-- modal fade -->
 
 @code {
 
-	bool modalOpen = false;
-	string modalClass = "modal";
+/*
 
-	void ShowModal()
-	{
-		Logger!.LogDebug(string.Format("Inside {0}", nameof(LearnMoreModal) + "!" + nameof(ShowModal)));
-		modalOpen = true;
-		modalClass += " show";
-		StateHasChanged();
-	}
+FN:1 ToDo: add note about Passover Seder Meal
 
-	void CloseModal()
-	{
-		Logger!.LogDebug(string.Format("Inside {0}", nameof(LearnMoreModal) + "!" + nameof(CloseModal)));
-		modalOpen = false;
-		modalClass = "modal";
-	}
+<li>
+	<ul class="card-text">
+		<li>
+			The <b>Passover Seder Meal</b> is not a high sabbath but is right before the beginning of the first day of unleavened bread,
+			this is shown in <span style="background-color:purple;"><span class="text-white">purple</span></span>.
+		</li>
+	</ul>
+</li>
+
+*/
 
 }

@@ -1,0 +1,43 @@
+﻿@using LivingMessiah.Features.Calendar.Enums
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+@using MediaQueryEnum = LivingMessiah.Enums.MediaQuery
+
+<div class="pb-1 mt-5 mb-2 border-bottom border-info">
+
+	<p class="@GetFontSize()"><i class="far fa-sticky-note"></i> Living Messiah Calendar | @Year.ImageName</p>
+
+</div>
+
+<div class="carousel-container">
+	<SfCarousel Height="350px" Width="100%"
+							ShowIndicators="true" AutoPlay="false"
+							SelectedIndex="@selectedIndex">
+
+		@foreach (var item in CarouselMonths.List.OrderBy(o => o.Value).ToList())
+		{
+			<CarouselItem>
+				<div class="carousel-content slide-1">
+					<h2 class="text-white">
+						@item.Caption
+						<a href='@Blobs.UrlCalendar(item.ImageFullSize)' class="img-caption text-center" target="_blank">
+							<i class="fas fa-external-link-square-alt"></i>
+						</a>
+					</h2>
+
+					<a href='@Blobs.UrlCalendar(item.ImageFullSize)' class="img-caption text-center" target="_blank">
+						<img src='@Blobs.UrlCalendar(item.Image)' alt="@item.Caption" />
+					</a>
+
+				</div>
+			</CarouselItem>
+		}
+	</SfCarousel>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public bool IsXs { get; set; }
+	private int selectedIndex = DateTime.Now.Month - 1;
+	private string GetFontSize() {return IsXs ? "fs-5" : "fs-3"; 	}
+}
