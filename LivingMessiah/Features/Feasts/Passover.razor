@@ -1,0 +1,26 @@
+﻿@page "/Passover"
+@using LivingMessiah.Features.Feasts.VerseReferenceCards
+@using LivingMessiah.Components.Layout
+
+<DetailsHeader FeastNav="Enums.Feast.Passover" />
+
+<div class="card border-primary mt-5">
+	<Lev_23_04_08 />
+</div>
+
+<AlephBetWrapper />
+
+<img src="@Blobs.UrlRoot("Pesach2016GraphicLg.png")" alt="Pesach" class="img-fluid rounded mt-4" />
+
+@* 
+@using Articles = LivingMessiah.Links.Articles
+
+<div class="row">
+	<div class="col-12">
+		<a class="btn btn-outline-primary btn-sm mt-3"
+			 href="@Articles.Pesach.Index">
+			<i class="fas fa-link"></i> Pesach
+		</a>
+	</div>
+</div>
+*@

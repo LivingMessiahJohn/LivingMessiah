@@ -1,0 +1,23 @@
+﻿
+<PageTitle>@FeastNav.Title</PageTitle>
+
+@* <div class="border-bottom border-dark-subtle"></div> *@
+
+<div class="d-flex justify-content-between align-items-center mt-2 @BorderCSS">
+	<h1 class=""><i class="@FeastNav.Icon"></i> @FeastNav.Title</h1>
+
+	<a href="@Nav.Feasts.Index" title="@Nav.Feasts.Title">
+		<i class="far fa-arrow-alt-circle-left"></i>
+	</a>
+	
+	@* 
+	class="btn btn-info btn-sm"
+	Back to @Nav.Feasts.Title 
+	*@
+
+</div>
+
+@code {
+	[Parameter, EditorRequired] public Enums.Feast FeastNav { get; set; }
+	[Parameter] public string? BorderCSS { get; set; } = "border-bottom border-dark-subtle";
+}
