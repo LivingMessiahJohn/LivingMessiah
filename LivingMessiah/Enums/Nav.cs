@@ -33,11 +33,12 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int DonateReplyConfirm = 6;
 		internal const int Sitemap = 7;
 		internal const int HealthCheckTestLogger = 8;
+		internal const int Feasts = 9;
 	}
 	#endregion
 
 
-	#region  Declared Public Instances
+	#region Declared Public Instances
 	public static readonly Nav Home = new HomeSE();
 	public static readonly Nav Calendar = new CalendarSE();
 	public static readonly Nav FeastTable = new FeastTableSE();
@@ -46,6 +47,7 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav DonateReplyConfirm = new DonateReplyConfirmSE();
 	public static readonly Nav Sitemap = new SitemapSE();
 	public static readonly Nav HealthCheckTestLogger = new HealthCheckTestLoggerSE();
+	public static readonly Nav Feasts = new FeastsSE();
 	#endregion
 
 	private Nav(string name, int value) : base(name, value)  // Constructor
@@ -140,7 +142,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false;
 	}
 
-
 	private sealed class DonateSE : Nav
 	{
 		public DonateSE() : base($"{nameof(Id.Donate)}", Id.Donate) { }
@@ -184,7 +185,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false;
 	}
 
-	//ToDo This should only be for Admin users
 	private sealed class HealthCheckTestLoggerSE : Nav
 	{
 		public HealthCheckTestLoggerSE() : base($"{nameof(Id.HealthCheckTestLogger)}", Id.HealthCheckTestLogger) { }
@@ -195,6 +195,21 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeTitleSuffix => " ";
 		public override string HomeFloatRightHebrew => "";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	private sealed class FeastsSE : Nav
+	{
+		public FeastsSE() : base($"{nameof(Id.Feasts)}", Id.Feasts) { }
+		public override string Index => "/Feasts";
+		public override string Title => "Feasts";
+		//public override string Description: "Feasts of YHWH";	
+		public override string Icon => "fas fa-pizza-slice";
+		public override int Sort => Id.Feasts;
+		public override string HomeTitleSuffix => " moed H4150";
+		public override string HomeFloatRightHebrew => "מוֹעֵד";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Footer | PageListType.Layout | PageListType.LayoutMd;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}

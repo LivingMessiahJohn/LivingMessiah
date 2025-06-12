@@ -1,0 +1,16 @@
+﻿@page "/YomKippur"
+
+@using LivingMessiah.Features.Feasts.VerseReferenceCards
+@using LivingMessiah.Components.Layout
+
+<DetailsHeader FeastNav="Enums.Feast.YomKippur" />
+
+<div class="card border-primary mt-5">
+	<Lev_23_26_32 />
+</div>
+
+<AlephBetWrapper />
+
+<img src="@Blobs.UrlEvents("yom-kippur-783x380.jpg")" alt="Yom Kippur" class="img-fluid rounded mt-4" />
+
+@*<BibleReference Feast="@LinkSmartEnums.Feast.YomKippur"/>*@

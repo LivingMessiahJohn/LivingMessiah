@@ -1,18 +1,25 @@
 ﻿@using LivingMessiah.Enums
 
-<nav id="navBootstrapMenu" class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3 navbar-dark bg-dark">
-	<div class="container">
-		<NavbarHomeButton></NavbarHomeButton>
-		<button class="navbar-toggler" @onclick="ToggleNavBootstrapMenu" type="button" 
-						data-bs-toggle="collapse" data-target=".navbar-collapse" 
-						aria-controls="navbarSupportedContent"
-						aria-expanded="false" aria-label="Toggle navigation">
+@* NavBar.razor *@
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+	<div class="container-fluid">
+
+		<!-- Brand/Logo -->
+		<NavbarHomeButton />
+
+		<!-- Toggle button for mobile -->
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+						aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		
-		<div class="navbar-collapse d-sm-inline-flex flex-sm-row-reverse" 
-				 @onclick="ToggleNavBootstrapMenu">
-			<ul class="navbar-nav flex-grow-1">
+
+		<!-- Collapsible navbar content -->
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav me-auto mb-2 mb-sm-0">
+
+				<li class="nav-item">
+					<a class="nav-link @active" aria-current="page" href="/">Home</a>
+				</li>
 
 				<li class="nav-item">
 					<a class="nav-link text-white" href="@Enums.Nav.Calendar.Index">
@@ -26,24 +33,38 @@
 					</a>
 				</li>
 
-				<li class="nav-item">
-					<a class="nav-link text-white" href="@Enums.Nav.Sitemap.Index">
-						@Enums.Nav.Sitemap.Title
-					</a>
-				</li>
+        <li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">More</a>
 
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item" href="@Enums.Nav.Feasts.Index">@Enums.Nav.Feasts.Title</a></li>
+						<li><hr class="dropdown-divider"></li>
+						<li><a class="dropdown-item" href="@Enums.Nav.FeastTable.Index">@Enums.Nav.FeastTable.Title</a></li>
+
+					</ul>
+
+				</li>
 			</ul>
+
+			<!-- Right-aligned items -->
+			<ul class="navbar-nav">
+				<li class="nav-item">
+					<a class="nav-link text-white" href="@Enums.Nav.Sitemap.Index">@Enums.Nav.Sitemap.Title</a>
+				</li>
+				@* 
+        <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+*@
+			</ul>
+
 		</div>
 	</div>
 </nav>
 
 @code {
-	//bool UseDarkMode = false;
-	//string TextColor = " text-white "; // UseDarkMode? " text-white " : " text-dark ";
-	//string NavBarColor = " navbar-dark bg-dark "; // UseDarkMode? " navbar-dark bg-dark " : " navbar-light bg-white ";
 
-	void ToggleNavBootstrapMenu()
-	{
-		//collapseNavMenu = !collapseNavMenu;
-	}
+	string active = ""; // " active" // How does this get set?
+
+	// Component logic can go here if needed
 }
+
