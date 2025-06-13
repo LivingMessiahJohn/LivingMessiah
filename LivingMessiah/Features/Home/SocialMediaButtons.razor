@@ -27,6 +27,20 @@
 				<i class="fab fa-github fa-fw fa-2x" aria-hidden="true"></i>
 			</a>
 			@* https://github.com/LivingMessiah *@
+
+			<!-- PodBean SVG Icon Component -->
+			
+			<a href="https://www.podbean.com/media/player/multi?playlist=http%3A%2F%2Fplaylist.podbean.com%2F5183710%2Fplaylist_multi.xml&vjs=1&kdsowie31j4k1jlf913=fd4324e11ad14b09f2a6cee593b3c2a605a0c74a&size=430&skin=&episode_list_bg=%23ffffff&bg_left=%23000000&bg_mid=%230c5056&bg_right=%232a1844&auto=0&download=1&show_playlist_recent_number=10&pbad=1"
+				 target="_blank"
+				 class="btn btn-success me-2"
+				 title="Listen on PodBean">
+				<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="PodBean">
+					<circle cx="16" cy="16" r="16" fill="#4CAF50" />
+					<path d="M16 8C11.58 8 8 11.58 8 16H10C10 13.24 12.24 11 15 11C17.76 11 20 13.24 20 16H22C22 11.58 18.42 8 16 8ZM16 13C14.34 13 13 14.34 13 16H15C15 15.45 15.45 15 16 15C16.55 15 17 15.45 17 16H19C19 14.34 17.66 13 16 13ZM16 17C15.45 17 15 17.45 15 18C15 18.55 15.45 19 16 19C16.55 19 17 18.55 17 18C17 17.45 16.55 17 16 17Z" fill="white" />
+				</svg>
+			</a>
+
+
 		</div>
 
 	</div>
@@ -34,7 +48,7 @@
 </div>
 
 @code {
-	[Parameter, EditorRequired] public bool IsXs { get; set; }
-	protected string width => IsXs ? "" : "w-50 ";
+	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
+	protected string width => IsXsOrSm ? "" : "w-50 ";
 
 }

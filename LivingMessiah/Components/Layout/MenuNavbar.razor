@@ -18,33 +18,35 @@
 			<ul class="navbar-nav me-auto mb-2 mb-sm-0">
 
 				<li class="nav-item">
-					<a class="nav-link @active" aria-current="page" href="/">Home</a>
+					<a class="nav-link @active" aria-current="page" href="/">
+						<span class="text-warning"><i class="@Enums.Nav.Home.Icon" title="@Enums.Nav.Home.Title"></i></span>
+					</a>
 				</li>
 
 				<li class="nav-item">
-					<a class="nav-link text-white" href="@Enums.Nav.Calendar.Index">
+					<a class="nav-link text-white" href="@Enums.Nav.Calendar.Index" title="@Enums.Nav.Calendar.Title">
 						@Enums.Nav.Calendar.Title
 					</a>
 				</li>
 
 				<li class="nav-item">
-					<a class="nav-link text-white" href="@Enums.Nav.Donate.Index">
+					<a class="nav-link text-white" href="@Enums.Nav.Donate.Index" title="@Enums.Nav.Donate.Title">
 						@Enums.Nav.Donate.Title
 					</a>
 				</li>
 
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">More</a>
+					<a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">More</a>
 
 					<ul class="dropdown-menu">
-						<li><a class="dropdown-item" href="@Enums.Nav.Leadership.Index">@Enums.Nav.Leadership.Title</a></li>
-						<li><a class="dropdown-item" href="@Enums.Nav.Feasts.Index">@Enums.Nav.Feasts.Title</a></li>
+						<li><a class="dropdown-item" href="@Enums.Nav.Leadership.Index" title="@Enums.Nav.Leadership.Title">@Enums.Nav.Leadership.Title</a></li>
+						<li><a class="dropdown-item" href="@Enums.Nav.Feasts.Index" title="@Enums.Nav.Feasts.Title">@Enums.Nav.Feasts.Title</a></li>
 						<li><hr class="dropdown-divider"></li>
-						<li><a class="dropdown-item" href="@Enums.Nav.FeastTable.Index">@Enums.Nav.FeastTable.Title</a></li>
-						<li><a class="dropdown-item" href="@Enums.Nav.LunarMonth.Index">@Enums.Nav.LunarMonth.Title</a></li>
+						<li><a class="dropdown-item" href="@Enums.Nav.FeastTable.Index" title="@Enums.Nav.FeastTable.Title">@Enums.Nav.FeastTable.Title</a></li>
+						<li><a class="dropdown-item" href="@Enums.Nav.LunarMonth.Index" title="@Enums.Nav.LunarMonth.Title">@Enums.Nav.LunarMonth.Title</a></li>
 						<li><hr class="dropdown-divider"></li>
-						<li><a class="dropdown-item" href="@Enums.Nav.HeavensDeclare.Index">@Enums.Nav.HeavensDeclare.Title</a></li>
-						<li><a class="dropdown-item" href="@Enums.Nav.ThresholdCovenant.Index">@Enums.Nav.ThresholdCovenant.Title</a></li>
+						<li><a class="dropdown-item" href="@Enums.Nav.HeavensDeclare.Index" title="@Enums.Nav.HeavensDeclare.Title">@Enums.Nav.HeavensDeclare.Title</a></li>
+						<li><a class="dropdown-item" href="@Enums.Nav.ThresholdCovenant.Index" title="@Enums.Nav.ThresholdCovenant.Title">@Enums.Nav.ThresholdCovenant.Title</a></li>
 					</ul>
 
 				</li>
@@ -53,12 +55,12 @@
 			<!-- Right-aligned items -->
 			<ul class="navbar-nav">
 				<li class="nav-item">
-					<a class="nav-link" href="@Enums.Nav.NavigationSearch.Index" title="@Enums.Nav.NavigationSearch.Title">
+					<a class="nav-link text-white" href="@Enums.Nav.NavigationSearch.Index" title="@Enums.Nav.NavigationSearch.Title">
 						<i class="@Enums.Nav.NavigationSearch.Icon"></i>
 					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link text-white" href="@Enums.Nav.Sitemap.Index">
+					<a class="nav-link text-white" href="@Enums.Nav.Sitemap.Index" title="@Enums.Nav.Sitemap.Title">
 						@Enums.Nav.Sitemap.Title
 					</a>
 				</li>
@@ -74,7 +76,7 @@
 
 @code {
 
-	string active = ""; // " active" // How does this get set?
+	string active = " text-white"; // "";  " active" // How does this get set?
 
 	// Component logic can go here if needed
 }

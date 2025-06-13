@@ -1,41 +1,11 @@
 ﻿@using LivingMessiah.Enums;
 
-<div class="d-sm-none">
-	<a class="navbar-brand nav-link text-warning" title="<576px Xs" href="@Nav.Home.Index">
-		@* <i class="fas fa-synagogue"></i> <b>Living Messiah</b> *@
-		<img src='/favicon.ico' alt='Logo' width='30' height='24' class='d-inline-block align-text-top me-2'>
-		<b>Living Messiah</b>
-	</a>
-</div>
-
-<div class="d-none d-sm-block d-md-none d-lg-none d-xl-none">
-	<a class="navbar-brand nav-link text-warning" title="≥576px Sm" href="@Nav.Home.Index">
-		@* <i class="fas fa-synagogue"></i> <sup><b>LMM</b></sup> *@
-		<img src='/favicon.ico' alt='Logo' width='30' height='24' class='d-inline-block align-text-top me-2'><sup><b>LMM</b></sup>
-	</a>
-</div>
-
-<div class="d-none d-md-block d-lg-none d-xl-none">
-	<a class="navbar-brand nav-link text-warning" title="≥768px Md" href="@Nav.Home.Index">
-		@* <i class="fas fa-synagogue"></i> <b>Living Messiah</b> *@
-		<img src='/favicon.ico' alt='Logo' width='30' height='24' class='d-inline-block align-text-top me-2'><b>Living Messiah</b>
-	</a>
-</div>
-
-<div class="d-none d-lg-block d-xl-none">
-	<a class="navbar-brand nav-link text-warning" title="≥992px Lg" href="@Nav.Home.Index">
-		@* <i class="fas fa-synagogue"></i> <b>Living Messiah</b> *@
-		<img src='/favicon.ico' alt='Logo' width='30' height='24' class='d-inline-block align-text-top me-2'><b>Living Messiah</b>
-	</a>
-</div>
-
-<div class="d-none d-xl-block">
-	<a class="navbar-brand nav-link text-warning" title="≥1200px Xl" href="@Nav.Home.Index">
-		@* <i class="fas fa-synagogue"></i> <b>Living Messiah</b> *@
-		<img src='/favicon.ico' alt='Logo' width='30' height='24' class='d-inline-block align-text-top me-2'><b>Living Messiah</b>
-	</a>
-</div>
+<div class="@MediaQuery.Xs.DivClass"><HomeButtonDiv CssClass="d-sm-none" Title="<576px Xs" /></div>
+<div class="@MediaQuery.Sm.DivClass"><HomeButtonDiv CssClass="d-none d-sm-block d-md-none d-lg-none d-xl-none" Title="≥576px Sm" /></div>
+<div class="@MediaQuery.Md.DivClass"><HomeButtonDiv CssClass="d-none d-md-block d-lg-none d-xl-none" Title="≥768px" /></div>
+<div class="@MediaQuery.Lg.DivClass"><HomeButtonDiv CssClass="d-none d-lg-block d-xl-none" Title="≥992px Lg" /></div>
+<div class="@MediaQuery.Xl.DivClass"><HomeButtonDiv CssClass="d-none d-xl-block" Title="≥1200px Xl" /></div>
 
 @code {
-	//string imgLogo = "<img src='/favicon.ico' alt='Logo' width='30' height='24' class='d-inline-block align-text-top me-2'>";
+
 }

@@ -2,19 +2,17 @@
 <Header Title=@GetCurrentTitle()
 				Teaching="Pdf Download"
 				PDF=@GetCurrentTeaching()
-				IsXs=IsXs />
+				IsXs=IsXsOrSm />
 
-<HebrewClassCard IsXs=IsXs PDF="https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-02-08-Hebrew-Class.pdf" />
+<HebrewClassCard IsXsOrSm=IsXsOrSm PDF="https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-02-08-Hebrew-Class.pdf" />
 
-<ShabbatMeter IsXs=IsXs />
+<ShabbatMeter IsXsOrSm=IsXsOrSm />
 
-<SocialMediaButtons IsXs=IsXs />
+<SocialMediaButtons IsXsOrSm=IsXsOrSm />
 
 
 @code {
-	[Parameter, EditorRequired] public bool IsXs { get; set; }
-
-	protected string HeaderCSS => IsXs ? "table table-sm" : "table ";
+	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
 
 	private string ShabbatDate = "2025 June 7"; 
 	private string ParashaTitle = "Genesis 33:18-35:8";
