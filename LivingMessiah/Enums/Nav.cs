@@ -36,6 +36,9 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int Feasts = 9;
 		internal const int LunarMonth = 10;
 		internal const int Leadership = 11;
+		internal const int HeavensDeclare = 12;
+		internal const int ThresholdCovenant = 13;
+		internal const int NavigationSearch = 14;
 	}
 	#endregion
 
@@ -52,6 +55,9 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav Feasts = new FeastsSE();
 	public static readonly Nav LunarMonth = new LunarMonthSE();
 	public static readonly Nav Leadership = new LeadershipSE();
+	public static readonly Nav HeavensDeclare = new HeavensDeclareSE();
+	public static readonly Nav ThresholdCovenant = new ThresholdCovenantSE();
+	public static readonly Nav NavigationSearch = new NavigationSearchSE();
 	#endregion
 
 	private Nav(string name, int value) : base(name, value)  // Constructor
@@ -207,8 +213,7 @@ public abstract class Nav : SmartEnum<Nav>
 	{
 		public FeastsSE() : base($"{nameof(Id.Feasts)}", Id.Feasts) { }
 		public override string Index => "/Feasts";
-		public override string Title => "Feasts";
-		//public override string Description: "Feasts of YHWH";	
+		public override string Title => "Feasts"; 	//public override string Description: "Feasts of YHWH";	
 		public override string Icon => "fas fa-pizza-slice";
 		public override int Sort => Id.Feasts;
 		public override string HomeTitleSuffix => " moed H4150";
@@ -241,6 +246,48 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Leadership;
 		public override string HomeTitleSuffix => " zaken H2205";  //nasi H5387
 		public override string HomeFloatRightHebrew => "זָקֵן";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout | PageListType.LayoutMd;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	private sealed class HeavensDeclareSE : Nav
+	{
+		public HeavensDeclareSE() : base($"{nameof(Id.HeavensDeclare)}", Id.HeavensDeclare) { }
+		public override string Index => "/HeavensDeclare";
+		public override string Title => "Heavens Declare";
+		public override string Icon => "fas fa-cloud-moon"; //fas fa-star
+		public override int Sort => Id.HeavensDeclare;
+		public override string HomeTitleSuffix => " shamayim H8064";
+		public override string HomeFloatRightHebrew => "שָׁמַיִם";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout | PageListType.LayoutMd;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	private sealed class ThresholdCovenantSE : Nav
+	{
+		public ThresholdCovenantSE() : base($"{nameof(Id.ThresholdCovenant)}", Id.ThresholdCovenant) { }
+		public override string Index => "/ThresholdCovenant";
+		public override string Title => "Threshold Covenant";
+		public override string Icon => "fas fa-broom";
+		public override int Sort => Id.ThresholdCovenant;
+		public override string HomeTitleSuffix => " saph H5592";
+		public override string HomeFloatRightHebrew => "סַף";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout | PageListType.LayoutMd;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	private sealed class NavigationSearchSE : Nav
+	{
+		public NavigationSearchSE() : base($"{nameof(Id.NavigationSearch)}", Id.NavigationSearch) { }
+		public override string Index => "/NavigationSearch";
+		public override string Title => "Navigation Search";
+		public override string Icon => "fas fa-search"; //fa-compass
+		public override int Sort => Id.NavigationSearch;
+		public override string HomeTitleSuffix => " baqash H1245";
+		public override string HomeFloatRightHebrew => "בָּקַשׁ";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout | PageListType.LayoutMd;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;

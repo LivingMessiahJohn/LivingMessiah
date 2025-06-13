@@ -1,0 +1,29 @@
+﻿@page "/HeavensDeclare"
+
+<PageHeader PageEnum="LivingMessiah.Enums.Nav.HeavensDeclare" />
+
+<LoadingComponent IsLoading="VideoRecords==null">
+	@foreach (var item in VideoRecords!)
+	{
+		<div class="card border-primary mb-3">
+			<img src="https://img.youtube.com/vi/@item.UrlId/hqdefault.jpg" />
+			<div class="card-body">
+				<h5 class="card-title">@item.Title</h5>
+				<a href="https://www.youtube.com/watch?v=@item.UrlId"
+					 class="btn btn-danger btn-lg"
+					 target="_blank">
+					<i class="fab fa-youtube"></i>
+				</a>
+			</div>
+		</div>
+	}
+</LoadingComponent>
+
+@code {
+	protected List<VideoRecord>? VideoRecords;
+	protected override void OnInitialized()
+	{
+		VideoRecords = new List<VideoRecord>();
+		VideoRecords = Data.GetAllRecords();
+	}
+}

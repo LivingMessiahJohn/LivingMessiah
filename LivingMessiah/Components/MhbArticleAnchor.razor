@@ -1,0 +1,18 @@
+﻿@* @using LivingMessiah.Features.Parasha.Enums *@
+
+<i class="fas fa-external-link-alt"></i>
+@* 
+<a href="@ParashaLinks.MyHebrewBible.ArticleUrl(Id, SlugUrl)" target="_blank">
+	 Article# @Id <i>@SlugTitle</i>
+</a>
+ *@
+
+<a href="@LivingMessiah.Features.ThresholdCovenant.MyHebrewBible.ArticleUrl(Id, SlugUrl)" target="_blank">
+	Article# @Id <i>@SlugTitle</i>
+</a>
+
+@code {
+	[Parameter, EditorRequired] public int Id { get; set; }
+	[Parameter, EditorRequired] public string SlugUrl { get; set; }
+	[Parameter, EditorRequired] public string SlugTitle { get; set; }
+}

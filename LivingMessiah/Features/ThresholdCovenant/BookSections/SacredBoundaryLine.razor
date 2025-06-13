@@ -1,0 +1,13 @@
+﻿@page "/ThresholdCovenant/SacredBoundaryLine"
+
+@using LivingMessiah.Features.ThresholdCovenant.OriginalHtml
+
+<div class="pb-n1 mt-5 mb-3 border-bottom border-info-subtle">
+	<h5 class="text-center"> @NavItem.Value @NavItem.Title</h5>
+</div>
+
+<SacredBoundaryLineHtml />
+
+@code {
+	protected Enums.NavItem NavItem = Enums.NavItem.SacredBoundaryLine;
+}

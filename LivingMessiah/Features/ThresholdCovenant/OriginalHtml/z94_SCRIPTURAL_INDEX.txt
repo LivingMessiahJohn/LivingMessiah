@@ -1,0 +1,6 @@
+﻿namespace LivingMessiah.Features.ThresholdCovenant.OriginalHtml
+{
+	public class z95_SCRIPTURAL_INDEX
+	{
+	}
+}
