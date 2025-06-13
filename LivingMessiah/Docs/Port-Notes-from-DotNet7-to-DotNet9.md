@@ -15,10 +15,13 @@
 - [x] FeastDayPlanner
 - [x] Feasts
 - [x] Leadership
+- [x] HeavensDeclare
+- [x] NavigationSearch
+- [x] ThresholdCovenant
 - [x] LunarMonths
 - [ ] Shavuot: Only `OmerGematriaDictionary.cs` ported, need to move elsewhere.
 - [x] SiteMap
-- [x] 
+- [ ] Sukkot: lots to think about here, 
 
 ## Not yet ported
 - [ ] Articles
@@ -27,12 +30,28 @@
 - [ ] Parasha: Hold off until a Razor Class Library is created from MHB
 - [ ] Psalms
 - [ ] ShabbatService: This need a rewrite.
+- [ ] TorahTuesday: Don't know what to do with this yet.
 - [ ] UpcomingEvents
 - [ ] Pages\Account: Auth0 
 
+## Not yet ported <mark>Other Folder<mark>
+- [ ] About
+- [ ] AboutUs
+- [ ] Announcements
+- [ ] BloodMoons
+- [ ] Community
+- [ ] FurtherStudies
+- [ ] FurtherStudies.cs
+- [ ] Gallery
+- [ ] IntroductionAndWelcomePage
+- [ ] Location
+- [ ] Mishpocha
+- [ ] Podcast: can this be a Share Icon?
+- [ ] Psa075.html
+- [ ] Store
+
 ## Not planning to port
 - InDepthStudy: Were not doing it anymore, so not porting it.
-- NavigationSearch: What is this?  Need to think about other solutions
 
 
 ## Porting elsewhere
@@ -42,9 +61,9 @@
 - [ ] Contacts
 - [ ] PsalmsAndProverbs
 - [ ] SampleCode: What to do with this?  Maybe move to LivingMessiahSample project
-    - [ ] 
+- [ ] SpecialEvents
 - [ ] Shavuot: Most of this can be found in the new calendar design I want [see](C:\Source\LivingeMessiahBackup\Feature-Ideas\999-Calendar-based-on-Bootstrap-7-col-grid\999-Calendar-based-on-Bootstrap-7-col-grid.md)
-- [ ] Sukkot: This will be a big lift 
+- [ ] SukkotAdmin: This will be a big lift 
 - [ ] WindmillRanch:
 
 

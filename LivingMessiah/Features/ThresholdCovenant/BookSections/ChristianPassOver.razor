@@ -1,0 +1,13 @@
+﻿@page "/ThresholdCovenant/ChristianPassOver"
+
+@using LivingMessiah.Features.ThresholdCovenant.OriginalHtml
+
+<div class="pb-n1 mt-5 mb-3 border-bottom border-info-subtle">
+	<h5 class="text-center"> @NavItem.Value @NavItem.Title</h5>
+</div>
+
+<ChristianPassOverHtml />
+
+@code {
+	protected Enums.NavItem NavItem = Enums.NavItem.ChristianPassOver;
+}

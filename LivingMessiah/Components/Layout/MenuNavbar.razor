@@ -33,7 +33,7 @@
 					</a>
 				</li>
 
-        <li class="nav-item dropdown">
+				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">More</a>
 
 					<ul class="dropdown-menu">
@@ -42,6 +42,9 @@
 						<li><hr class="dropdown-divider"></li>
 						<li><a class="dropdown-item" href="@Enums.Nav.FeastTable.Index">@Enums.Nav.FeastTable.Title</a></li>
 						<li><a class="dropdown-item" href="@Enums.Nav.LunarMonth.Index">@Enums.Nav.LunarMonth.Title</a></li>
+						<li><hr class="dropdown-divider"></li>
+						<li><a class="dropdown-item" href="@Enums.Nav.HeavensDeclare.Index">@Enums.Nav.HeavensDeclare.Title</a></li>
+						<li><a class="dropdown-item" href="@Enums.Nav.ThresholdCovenant.Index">@Enums.Nav.ThresholdCovenant.Title</a></li>
 					</ul>
 
 				</li>
@@ -50,12 +53,19 @@
 			<!-- Right-aligned items -->
 			<ul class="navbar-nav">
 				<li class="nav-item">
-					<a class="nav-link text-white" href="@Enums.Nav.Sitemap.Index">@Enums.Nav.Sitemap.Title</a>
+					<a class="nav-link" href="@Enums.Nav.NavigationSearch.Index" title="@Enums.Nav.NavigationSearch.Title">
+						<i class="@Enums.Nav.NavigationSearch.Icon"></i>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link text-white" href="@Enums.Nav.Sitemap.Index">
+						@Enums.Nav.Sitemap.Title
+					</a>
 				</li>
 				@* 
         <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
         <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
-*@
+				*@
 			</ul>
 
 		</div>

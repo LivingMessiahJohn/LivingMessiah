@@ -1,0 +1,40 @@
+﻿@using SubSectionType = LivingMessiah.Features.ThresholdCovenant.BookSections.SubSections.Enums.SectionType
+
+<div class="d-print-none mb-2">
+
+	<div class=" row mt-4">
+		<div class="col-12">
+
+			@* nav-tabs *@
+			<ul class="nav nav-pills justify-content-center text-sm-center">
+				@foreach (var item in SubSectionType.List.OrderBy(o => o.Value))
+				{
+					<li class="nav-item">
+						<a @onclick="@(() => OnClickFilter(item))" title=""
+							 class="nav-link @ActiveFilter(item)">
+							<small>@item.TitleHtml</small>
+						</a>
+					</li>
+				}
+			</ul>
+
+		</div>
+	</div>
+
+</div>
+
+@code {
+	[Parameter, EditorRequired] public required SubSectionType? CurrentFilter { get; set; }
+	[Parameter] public EventCallback<SubSectionType> OnFilterSelected { get; set; }
+
+	protected void OnClickFilter(SubSectionType filter)
+	{
+		OnFilterSelected.InvokeAsync(filter);
+	}
+
+	public string ActiveFilter(SubSectionType filter)
+	{
+		return filter == CurrentFilter ? "active" : "";
+	}
+
+}
