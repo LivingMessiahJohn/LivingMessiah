@@ -221,7 +221,7 @@ public abstract class Nav : SmartEnum<Nav>
 	private sealed class LunarMonthSE : Nav
 	{
 		public LunarMonthSE() : base($"{nameof(Id.LunarMonth)}", Id.LunarMonth) { }
-		public override string Index => "/LunarMonthV2";
+		public override string Index => "/LunarMonth";  // /LunarMonthV2
 		public override string Title => "Lunar Month";
 		public override string Icon => "fas fa-cloud-moon";
 		public override int Sort => Id.LunarMonth;
