@@ -40,6 +40,7 @@
 
 					<ul class="dropdown-menu">
 						<li><a class="dropdown-item" href="@Enums.Nav.Leadership.Index" title="@Enums.Nav.Leadership.Title">@Enums.Nav.Leadership.Title</a></li>
+						<li><a class="dropdown-item" href="@Enums.Nav.Podcast.Index" title="@Enums.Nav.Podcast.Title">@Enums.Nav.Podcast.Title</a></li>
 						<li><a class="dropdown-item" href="@Enums.Nav.Feasts.Index" title="@Enums.Nav.Feasts.Title">@Enums.Nav.Feasts.Title</a></li>
 						<li><hr class="dropdown-divider"></li>
 						<li><a class="dropdown-item" href="@Enums.Nav.FeastTable.Index" title="@Enums.Nav.FeastTable.Title">@Enums.Nav.FeastTable.Title</a></li>
@@ -54,11 +55,15 @@
 
 			<!-- Right-aligned items -->
 			<ul class="navbar-nav">
+
 				<li class="nav-item">
-					<a class="nav-link text-white" href="@Enums.Nav.NavigationSearch.Index" title="@Enums.Nav.NavigationSearch.Title">
-						<i class="@Enums.Nav.NavigationSearch.Icon"></i>
-					</a>
+					<button type="button" class="nav-link btn btn-link text-white"
+									data-bs-toggle="modal" data-bs-target="#customModal"
+									title="@NavSearchModal.Title">
+						<i class="@NavSearchModal.Icon"></i>
+					</button>
 				</li>
+
 				<li class="nav-item">
 					<a class="nav-link text-white" href="@Enums.Nav.Sitemap.Index" title="@Enums.Nav.Sitemap.Title">
 						@Enums.Nav.Sitemap.Title
@@ -73,6 +78,8 @@
 		</div>
 	</div>
 </nav>
+
+<NavSearchModal />
 
 @code {
 

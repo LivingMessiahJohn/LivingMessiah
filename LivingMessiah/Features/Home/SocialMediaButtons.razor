@@ -8,23 +8,23 @@
 			<a href="https://twitter.com/LivingMessiah" target="_blank"
 				 class="btn btn-info mx-2" title="Follow us on Twitter"
 				 data-show-count="false" data-size="large" data-show-screen-name="false">
-				<i class="fab fa-twitter fa-fw fa-2x" aria-hidden="true"></i>
+				<i class="fab fa-twitter  @faCSS" aria-hidden="true"></i>
 			</a>
 
 			<a href="https://www.facebook.com/LivingMessiahMinistries" target="_blank"
 				 class="btn btn-primary me-2" title="See our Facebook page">
-				<i class="fab fa-facebook-f fa-fw fa-2x" aria-hidden="true"></i>
+				<i class="fab fa-facebook-f  @faCSS" aria-hidden="true"></i>
 			</a>
 
 			<a href="@SocialMedia.YouTube.YouTubeNormal()" target="_blank"
 				 class="btn btn-danger me-2" title="Watch our videos on YouTube">
-				<i class="fab fa-youtube fa-fw fa-2x" aria-hidden="true"></i>
+				<i class="fab fa-youtube  @faCSS" aria-hidden="true"></i>
 			</a>
 
 			<a href="https://github.com/LivingMessiahJohn/LivingMessiah" target="_blank"
 				 class="btn btn-warning me-2" title="Living Messiah website is NOW OPEN SOURCE!!!"
 				 data-show-count="false" data-size="large" data-show-screen-name="false">
-				<i class="fab fa-github fa-fw fa-2x" aria-hidden="true"></i>
+				<i class="fab fa-github @faCSS" aria-hidden="true"></i>
 			</a>
 			@* https://github.com/LivingMessiah *@
 
@@ -50,5 +50,6 @@
 @code {
 	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
 	protected string width => IsXsOrSm ? "" : "w-50 ";
+	protected string faCSS => IsXsOrSm ? "" : " fa-fw fa-2x ";
 
 }

@@ -1,0 +1,25 @@
+﻿@page "/Podcast"
+
+<PageHeader PageEnum="LivingMessiah.Enums.Nav.Podcast" />
+
+<a href="https://livingmessiah.podbean.com" target="_blank">
+	<img src="https://www.podbean.com/images/download_badges/5k.png" alt="badge image" width="150" height="150" />
+</a>
+
+<iframe title="Living Messiah Podcasts" id="multi_iframe"
+				src="https://www.podbean.com/media/player/multi?playlist=http%3A%2F%2Fplaylist.podbean.com%2F5183710%2Fplaylist_multi.xml&vjs=1&kdsowie31j4k1jlf913=fd4324e11ad14b09f2a6cee593b3c2a605a0c74a&size=430&skin=&episode_list_bg=%23ffffff&bg_left=%23000000&bg_mid=%230c5056&bg_right=%232a1844&auto=0&download=1&show_playlist_recent_number=10&pbad=1"
+				scrolling="no" width="100%" height="430" allowfullscreen="">
+</iframe>
+
+
+<div class="row mt-3">
+	<div class="col-md-6 text-center">
+		<img src="@Blobs.UrlOther("podcast-badge-published-episodes.jpg")"
+				 class="img-fluid" alt="podcast badge published episodes" />
+	</div>
+	<div class="col-md-6 text-center">
+		<img src="@Blobs.UrlOther("podcast-badge-downloads.jpg")"
+				 class="img-fluid" alt="podcast badge downloads" />
+	</div>
+</div>
+
