@@ -38,7 +38,7 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int Leadership = 11;
 		internal const int HeavensDeclare = 12;
 		internal const int ThresholdCovenant = 13;
-		internal const int NavigationSearch = 14;
+		internal const int Podcast = 14;
 	}
 	#endregion
 
@@ -57,7 +57,7 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav Leadership = new LeadershipSE();
 	public static readonly Nav HeavensDeclare = new HeavensDeclareSE();
 	public static readonly Nav ThresholdCovenant = new ThresholdCovenantSE();
-	public static readonly Nav NavigationSearch = new NavigationSearchSE();
+	public static readonly Nav Podcast = new PodcastSE();
 	#endregion
 
 	private Nav(string name, int value) : base(name, value)  // Constructor
@@ -279,16 +279,16 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false;
 	}
 
-	private sealed class NavigationSearchSE : Nav
+	private sealed class PodcastSE : Nav
 	{
-		public NavigationSearchSE() : base($"{nameof(Id.NavigationSearch)}", Id.NavigationSearch) { }
-		public override string Index => "/NavigationSearch";
-		public override string Title => "Navigation Search";
-		public override string Icon => "fas fa-search"; //fa-compass
-		public override int Sort => Id.NavigationSearch;
-		public override string HomeTitleSuffix => " baqash H1245";
-		public override string HomeFloatRightHebrew => "בָּקַשׁ";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout | PageListType.LayoutMd;
+		public PodcastSE() : base($"{nameof(Id.Podcast)}", Id.Podcast) { }
+		public override string Index => "/Podcast";
+		public override string Title => "Podcast";
+		public override string Icon => "fas fa-podcast"; 
+		public override int Sort => Id.Podcast;
+		public override string HomeTitleSuffix => "";
+		public override string HomeFloatRightHebrew => "";
+		public override PageListType PageListType => PageListType.Footer;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
