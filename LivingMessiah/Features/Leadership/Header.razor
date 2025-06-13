@@ -1,0 +1,19 @@
+﻿@using Page = LivingMessiah.Enums.Nav
+
+<PageTitle>@Page.Leadership.Title</PageTitle>
+
+@* border-bottom border-info *@
+<div class="d-flex justify-content-between align-items-center mt-2">
+	<h1 class=""><i class="@Page.Leadership.Icon">&nbsp;&nbsp;</i>@Page.Leadership.Title</h1>
+
+	<small>
+		&nbsp;&nbsp;&nbsp;@((MarkupString)AnchorEmail)
+	</small>
+
+</div>
+
+@code {
+
+	protected readonly MarkupString AnchorEmail =
+		new MarkupString($"<a href='mailto:{Emails.Info.Email()}{Emails.Info.Subject}'>{Emails.Info.Email()}</a>");
+}

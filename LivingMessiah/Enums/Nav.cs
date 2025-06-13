@@ -34,6 +34,8 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int Sitemap = 7;
 		internal const int HealthCheckTestLogger = 8;
 		internal const int Feasts = 9;
+		internal const int LunarMonth = 10;
+		internal const int Leadership = 11;
 	}
 	#endregion
 
@@ -48,6 +50,8 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav Sitemap = new SitemapSE();
 	public static readonly Nav HealthCheckTestLogger = new HealthCheckTestLoggerSE();
 	public static readonly Nav Feasts = new FeastsSE();
+	public static readonly Nav LunarMonth = new LunarMonthSE();
+	public static readonly Nav Leadership = new LeadershipSE();
 	#endregion
 
 	private Nav(string name, int value) : base(name, value)  // Constructor
@@ -214,5 +218,32 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false;
 	}
 
+	private sealed class LunarMonthSE : Nav
+	{
+		public LunarMonthSE() : base($"{nameof(Id.LunarMonth)}", Id.LunarMonth) { }
+		public override string Index => "/LunarMonthV2";
+		public override string Title => "Lunar Month";
+		public override string Icon => "fas fa-cloud-moon";
+		public override int Sort => Id.LunarMonth;
+		public override string HomeTitleSuffix => " yerach H3394"; // "Month yerach H3391";
+		public override string HomeFloatRightHebrew => "יָרֵחַ";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout | PageListType.LayoutMd;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	private sealed class LeadershipSE : Nav
+	{
+		public LeadershipSE() : base($"{nameof(Id.Leadership)}", Id.Leadership) { }
+		public override string Index => "/Leadership";
+		public override string Title => "Leadership";
+		public override string Icon => "fas fa-user-tie";
+		public override int Sort => Id.Leadership;
+		public override string HomeTitleSuffix => " zaken H2205";  //nasi H5387
+		public override string HomeFloatRightHebrew => "זָקֵן";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout | PageListType.LayoutMd;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
 	#endregion
 }
