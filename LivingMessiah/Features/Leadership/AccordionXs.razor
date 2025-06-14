@@ -12,8 +12,11 @@
 				<HeaderTemplate>
 					<div class="my-1">
 						<img src="@Blobs.Leadership(item.IconFile)" class="me-2 rounded-circle" />
+						@if (item.IsSpouseIncluded)
+						{
 						<img src="@Blobs.Leadership(item.IconFile2)" class="me-2 rounded-circle" />
-						<br /> @item.OfficeHolderName  <i>@item.Title</i>
+						}
+						<p class="mt-1 mb-2">@item.OfficeHolderName  <b><i>@item.Title</i></b></p>
 					</div>
 				</HeaderTemplate>
 				<ContentTemplate>
@@ -58,9 +61,10 @@
 	</AccordionItems>
 </SfAccordion>
 
+
 <style>
 	.e-accordion .e-acrdn-item.e-select > .e-acrdn-header {
-			background: #ffc107 !important;
+		background: #fff3cd !important; /* Optional: keep if you want selected header to be more prominent */
 	}
 </style>
 
