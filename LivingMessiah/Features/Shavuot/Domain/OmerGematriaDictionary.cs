@@ -1,6 +1,6 @@
 ﻿
 namespace LivingMessiah.Features.Shavuot.Domain;	
-//namespace MyHebrewBible.Client.Features.Home.Omer;
+//namespace LivingMessiah.Features.Home.Omer;
 
 public class OmerGematriaDictionary
 {
