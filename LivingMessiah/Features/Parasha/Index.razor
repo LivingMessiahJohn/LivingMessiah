@@ -1,0 +1,44 @@
+﻿@page "/Parasha"
+
+@using LivingMessiah.Enums
+@using Page = LivingMessiah.Enums.Nav
+
+<PageHeader PageEnum="Page.Parasha" />
+
+@* <CurrentParasha MediaQuery="@MediaQuery.XsOrSm" /> *@
+
+<div class="@MediaQuery.XsOrSm.DivClass"> <CurrentParasha MediaQuery="@MediaQuery.XsOrSm" /></div>
+<div class="@MediaQuery.MdOrLgOrXl.DivClass"><CurrentParasha MediaQuery="@MediaQuery.MdOrLgOrXl" /></div>
+
+<FilterPills CurrentFilter="@CurrentFilter"
+						 OnFilterSelected="@ReturnedFilter" />
+
+
+@if (CurrentFilter == ParashaButtonToShow.GridTab)
+{
+	<div class="@MediaQuery.XsOrSm.DivClass"> <Grid MediaQuery="@MediaQuery.XsOrSm" /></div>
+	<div class="@MediaQuery.MdOrLgOrXl.DivClass"><Grid MediaQuery="@MediaQuery.MdOrLgOrXl" /></div>
+}
+else
+{
+	if (CurrentFilter == ParashaButtonToShow.TableTab)
+	{
+		<div class="@MediaQuery.XsOrSm.DivClass"> <Table MediaQuery="@MediaQuery.XsOrSm" /></div>
+		<div class="@MediaQuery.MdOrLgOrXl.DivClass"><Table MediaQuery="@MediaQuery.MdOrLgOrXl" /></div>
+	}
+	else
+	{
+		<PrintFriendlyTable />
+	}
+}
+
+@code {
+	public ParashaButtonToShow? CurrentFilter { get; set; } = ParashaButtonToShow.TableTab;
+
+	private void ReturnedFilter(ParashaButtonToShow filter)
+	{
+		CurrentFilter = filter;
+		StateHasChanged();
+	}
+
+}

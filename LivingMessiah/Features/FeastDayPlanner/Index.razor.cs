@@ -22,7 +22,7 @@ public partial class Index
 
 	private void GetDefaultFeastDayType()
 	{
-		DateTime dateTimeWithoutTime = DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(Constants.Test.AddDays).AddHours(Utc.ArizonaUtcMinus7));
+		DateTime dateTimeWithoutTime = DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(Test.AddDays).AddHours(Utc.ArizonaUtcMinus7));
 
 		CurrentFilter = FeastDayType.List
 											.Where(w => w.Range.Max >= dateTimeWithoutTime)

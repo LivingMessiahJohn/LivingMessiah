@@ -1,10 +1,6 @@
 ﻿using LivingMessiah.Helpers;
 using FeastDayType = LivingMessiah.Features.Calendar.Enums.FeastDay;
 using LunarMonthType = LivingMessiah.Features.Calendar.Enums.LunarMonth;
-using LivingMessiah.Features.FeastDayPlanner;
-using FDPConstants = LivingMessiah.Features.FeastDayPlanner.Constants;
-
-using System;
 
 namespace LivingMessiah.Features.FeastDayPlanner.Data;
 
@@ -22,7 +18,7 @@ public class Service : IService
 			(
 				DateTime.Now.AddDays
 				(
-					FDPConstants.Test.AddDays).AddHours(Utc.ArizonaUtcMinus7
+					Test.AddDays).AddHours(Utc.ArizonaUtcMinus7
 				)
 			);
 
@@ -74,7 +70,7 @@ public class Service : IService
 			(
 				DateTime.Now.AddDays
 				(
-					FDPConstants.Test.AddDays).AddHours(Utc.ArizonaUtcMinus7
+					Test.AddDays).AddHours(Utc.ArizonaUtcMinus7
 				)
 			);
 

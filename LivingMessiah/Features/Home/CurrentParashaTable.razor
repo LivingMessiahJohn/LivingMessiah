@@ -1,0 +1,58 @@
+﻿@using TriennialEnum = LivingMessiah.Features.Parasha.Enums.Triennial
+@using ParashaEnums = LivingMessiah.Features.Parasha.Enums
+
+@inject IToastService? Toast
+
+@if (CurrentReading is not null)
+{
+	<div class="card mb-3 border-danger">
+		<div class="card-header"><h4 class="card-title text-center">Current Reading</h4></div>
+
+		<div class="card-body">
+			<TableTemplate Items="ReadingList!.ToList()">
+				<TableHeader>
+					<th class="text-success">Id</th>
+					<th class="text-success">Shabbat Date</th>
+					<th class="text-success">Parasha Date</th>
+					<th class="text-success">Parasha Title</th>
+					<th class="text-success">Parasha File</th>
+				</TableHeader>
+				<RowTemplate>
+					<td>@context.Value</td>
+					<td>@context.Date.ToString(@DateFormat.YYYY_MMMM_DD)</td>
+					<td>@context.Date.ToString(@DateFormat.YYYY_MM_DD)</td>
+					<td>@context.BCV</td>
+					<td>
+						@($"{context.TorahVerse.BibleBook.Abrv}-{FandR(context.TorahVerse.ChapterVerse)}")
+					</td>
+				</RowTemplate>
+			</TableTemplate>
+		</div>
+
+	</div>
+
+}
+
+@code {
+
+	private TriennialEnum? CurrentReading = ParashaEnums.Constants.GetCurrentReading();
+	private List<TriennialEnum>? ReadingList { get; set; }
+
+	protected override void OnInitialized()
+	{
+		if (CurrentReading is not null)
+		{
+			ReadingList = new List<TriennialEnum> { CurrentReading };
+		}
+		else
+		{
+			Toast!.ShowWarning($"Current Parasha reading not found; inside: {nameof(CurrentParashaTable)}!{nameof(OnInitialized)}");
+		}
+	}
+
+	private string FandR(string chapter)
+	{
+		return chapter.Replace("-", "-to-").Replace(":", "-");
+	}
+
+}

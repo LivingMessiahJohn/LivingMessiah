@@ -39,6 +39,7 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int HeavensDeclare = 12;
 		internal const int ThresholdCovenant = 13;
 		internal const int Podcast = 14;
+		internal const int Parasha = 15;
 	}
 	#endregion
 
@@ -58,6 +59,7 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav HeavensDeclare = new HeavensDeclareSE();
 	public static readonly Nav ThresholdCovenant = new ThresholdCovenantSE();
 	public static readonly Nav Podcast = new PodcastSE();
+	public static readonly Nav Parasha = new ParashaSE();
 	#endregion
 
 	private Nav(string name, int value) : base(name, value)  // Constructor
@@ -292,5 +294,22 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
+
+	private sealed class ParashaSE : Nav
+	{
+		public ParashaSE() : base($"{nameof(Id.Parasha)}", Id.Parasha) { }
+		//public override string Index => ParashaEnums.Constants.GetUrl()! ?? this.Name;
+		public override string Index => "/Parasha";
+		public override string Title => "Parasha";
+		public override string Icon => "far fa-bookmark";
+		public override int Sort => Id.Parasha;
+		public override string HomeTitleSuffix => " Parashat H6567";
+		public override string HomeFloatRightHebrew => "פָּרָשַׁת";
+		public override PageListType PageListType => PageListType.SitemapPage; // | PageListType.Layout;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+
 	#endregion
 }

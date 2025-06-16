@@ -1,0 +1,53 @@
+﻿@using LivingMessiah.Enums
+@using ParashaEnums = LivingMessiah.Features.Parasha.Enums
+@using TriennialEnum = LivingMessiah.Features.Parasha.Enums.Triennial
+
+@inject IToastService? Toast
+
+@if (CurrentReading is not null)
+{
+	<table class="table table-success table-sm table-hover">
+		<thead>
+			<tr>
+				<th>Read Date</th>
+				<th>Torah</th>
+				<th>Haftorah</th>
+				<th>Brit Chadashah</th>
+				<th><i class="fas fa-external-link-square-alt"></i></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>@CurrentReading!.Date.ToString(DateFormat.MMM_d)</td>
+				<td>@CurrentReading!.TorahAbrv</td>
+				<td>@CurrentReading!.Haftorah</td>
+				<td>@CurrentReading!.Brit</td>
+
+				<td>
+					<a href="@CurrentReading!.AhavtaURL"
+						 title="Ahavta URL [@CurrentReading!.Value]" target="_blank">
+						<i class="fas fa-external-link-alt"></i>
+					</a>
+				</td>
+			</tr>
+
+		</tbody>
+
+	</table>
+}
+
+@code {
+	[Parameter, EditorRequired] public MediaQuery? MediaQuery { get; set; }
+
+	private TriennialEnum? CurrentReading = ParashaEnums.Constants.GetCurrentReading();
+	protected string? Colspan;
+
+	protected override void OnInitialized()
+	{
+		Colspan = (MediaQuery != MediaQuery.XsOrSm) ? "8" : "6";
+		if (CurrentReading is null)
+		{
+			Toast!.ShowWarning($"Parasha not found; inside: {nameof(Index)}!{nameof(OnInitialized)}");
+		}
+	}
+}
