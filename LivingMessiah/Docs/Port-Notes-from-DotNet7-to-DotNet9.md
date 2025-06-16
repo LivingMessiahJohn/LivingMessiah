@@ -1,13 +1,21 @@
 ﻿# Port Notes from .Net7 to DotNet9
 
+## New features Added
+- [x] `Nav<SmartEnum` Replaced `Links` with the `Nav` gotten from `MHB`.
+- [x] NavBar with `More` and `Search`
+    - [x] Need to try and fix 
+- [-] Parasha file upload automation
+- [x] Podcast: Added as a share Icon?
+- [x] PageHeader
+
 ## Ported Components
 ### Layout
-- [x] This whole folder has been rewritten to some level.
+- [x] This whole folder has been rewritten and moved to root level.
 - [x] Address
-- [ ] LearnMoreModalTemplate: My approach to using needs to be rethought like into types, [see]("C:\Source\LivingeMessiahBackup\008-port-calendar-carousel\Wiki\Learn-More-Info-only-Bootstrap-Modal-no-code-behind-using-data-bs-and-fade.md") 
-- [ ] PageHeader
-- [ ] TableTemplate
-
+- [x] BibleQuote
+- [ ] LearnMoreModalTemplate: 
+    - [ ] My approach to using needs to be rethought like into types, [see]("C:\Source\LivingeMessiahBackup\008-port-calendar-carousel\Wiki\Learn-More-Info-only-Bootstrap-Modal-no-code-behind-using-data-bs-and-fade.md") 
+- [x] TableTemplate
 
 ## Ported Features
 - [x] Calendar
@@ -25,7 +33,6 @@
 
 ## Not yet ported
 - [ ] Articles
-- [ ] HeavensDeclare
 - [ ] ImportantLinks
 - [ ] Parasha: Hold off until a Razor Class Library is created from MHB
 - [ ] Psalms
@@ -46,12 +53,12 @@
 - [ ] IntroductionAndWelcomePage
 - [ ] Location
 - [ ] Mishpocha
-- [ ] Podcast: can this be a Share Icon?
 - [ ] Psa075.html
 - [ ] Store
 
 ## Not planning to port
 - InDepthStudy: Were not doing it anymore, so not porting it.
+- Search at the top of all pages
 
 
 ## Porting elsewhere
@@ -66,11 +73,17 @@
 - [ ] SukkotAdmin: This will be a big lift 
 - [ ] WindmillRanch:
 
-
 ## New features to add
-- [x] Nav Replaced `Links` with the `Nav` gotten from `MHB`.
-- [ ] Home Page
+- [-] Home Page
     - [ ] A Feature(s) Components, Next big event(s), see UpcomingEvents 
-- [ ] Sitemap: Navigation Search:
-        - [ ] Note, Blazored.Typeahead is "read only", need to find a replacement or write one.
+- [-] Sitemap: Navigation Search:
+    - See [Prompt](C:\Source\LivingMessiahBackup\Feature-Ideas\999-Calendar-based-on-Bootstrap-7-col-grid\999-Calendar-based-on-Bootstrap-7-col-grid.md)
+- [ ] Note, **Blazored.Typeahead** repo is "read only", need to find a replacement or write one.
 - [ ] Azure Function? PWA? 
+
+
+## New features to explore
+See local folder C:\Source\LivingeMessiahBackup\Feature-Ideas\
+
+- Moon Phases
+- Simplier ReadOnly Calendar (maybe based on Bootstrap 7 col grid)

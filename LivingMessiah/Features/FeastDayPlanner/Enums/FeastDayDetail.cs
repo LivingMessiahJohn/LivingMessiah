@@ -1,6 +1,5 @@
 ﻿using Ardalis.SmartEnum;
 using FeastDayType = LivingMessiah.Features.Calendar.Enums.FeastDay;
-using LivingMessiah.Features.FeastDayPlanner.Constants;
 using System;
 
 namespace LivingMessiah.Features.FeastDayPlanner.Enums;

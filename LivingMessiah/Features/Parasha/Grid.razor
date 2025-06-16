@@ -1,0 +1,78 @@
+﻿@using Microsoft.AspNetCore.Components.QuickGrid
+@using LivingMessiah.Enums
+@using ParashaEnums = LivingMessiah.Features.Parasha.Enums
+
+<div class="card border-info">
+
+	<div class="card-header">
+		<FilterButtons CurrentFilter="CurrentFilter"
+									 OnFilterSelected="ReturnedFilter"
+									 MediaQuery="@MediaQuery" />
+
+		<div class="d-flex justify-content-center mt-3">
+			<div class="pe-2 fs-4">
+				@CurrentFilter!.Name
+			</div>
+			<div class="pe-2 fs-4">
+				<i>@CurrentFilter.BibleBook.TransliterationInHebrew</i>
+			</div>
+			<div class="pe-2">
+				<span class="hebrew">@CurrentFilter.BibleBook.NameInHebrew</span>
+			</div>
+		</div>
+	</div>
+
+	<QuickGrid Items="@filteredItems">
+		@* <i class="fas fa-chevron-right"></i> *@
+
+		<TemplateColumn Title="Torah">
+			@context.TorahAbrv @context.Value @context.Date.ToString(DateFormat.YYYY_MM_DD)
+		</TemplateColumn>
+
+		<PropertyColumn Property="@(p => p.Date.ToString(@dateFormat))" Align="Align.Center" Title="Date" />
+
+		@if (MediaQuery == MediaQuery.MdOrLgOrXl)
+		{
+			<PropertyColumn Property="@(p => p.ParashaName)" Sortable="false" Align="Align.Left" Title="Parasha Name" />
+			<PropertyColumn Property="@(p => p.Meaning)" Sortable="false" Align="Align.Left" />
+			<PropertyColumn Property="@(p => p.Haftorah)" Sortable="false" Align="Align.Left" />
+			<PropertyColumn Property="@(p => p.Brit)" Sortable="false" Align="Align.Left" />
+		}
+		else
+		{
+			<TemplateColumn Title="Haftorah / Brit">
+				@context.HaftorahAbrv <br /> @context.BritAbrv
+			</TemplateColumn>
+		}
+	</QuickGrid>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public MediaQuery? MediaQuery { get; set; }
+
+	TorahBookFilter? CurrentFilter;
+
+	private string dateFormat => DateFormat.MMM_d;
+
+	List<ParashaEnums.Triennial>? itemList;
+	IQueryable<ParashaEnums.Triennial>? items;
+
+	IQueryable<ParashaEnums.Triennial>? filteredItems => items?
+		.Where(x => x.TorahBookFilter == CurrentFilter)
+		.OrderBy(o => o.Date);
+
+	protected override void OnInitialized()
+	{
+		//CurrentFilter = TorahBookFilter;
+		CurrentFilter = TorahBookFilter.Genesis;
+		itemList = ParashaEnums.Triennial.List.ToList();
+		items = itemList.AsQueryable();
+	}
+
+	private void ReturnedFilter(TorahBookFilter filter)
+	{
+		CurrentFilter = filter;
+	}
+
+}
+

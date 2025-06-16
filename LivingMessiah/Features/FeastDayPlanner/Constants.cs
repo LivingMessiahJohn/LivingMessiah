@@ -1,4 +1,4 @@
-﻿namespace LivingMessiah.Features.FeastDayPlanner.Constants;
+﻿namespace LivingMessiah.Features.FeastDayPlanner;
 
 public static class Progress
 {

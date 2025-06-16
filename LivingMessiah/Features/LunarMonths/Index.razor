@@ -1,10 +1,10 @@
 ﻿@page "/LunarMonth"
 
+@using LivingMessiah.Features.FeastDayPlanner
 @using LivingMessiah.Helpers
 @using LunarMonthType = LivingMessiah.Features.Calendar.Enums.LunarMonth
-@using Service = LivingMessiah.Features.FeastDayPlanner;
-
 @using Microsoft.Extensions.Logging
+@using Service = LivingMessiah.Features.FeastDayPlanner;
 
 @inject ILogger<Index>? Logger
 @inject Service.Data.IService? svc
@@ -36,7 +36,7 @@
 	private void GetDefaultLunarMonthType()
 	{
 		DateTime dateTimeWithoutTime = DateUtil.GetDateTimeWithoutTime(
-			DateTime.Now.AddDays(LivingMessiah.Features.FeastDayPlanner.Constants.Test.AddDays).AddHours(Utc.ArizonaUtcMinus7));
+			DateTime.Now.AddDays(Test.AddDays).AddHours(Utc.ArizonaUtcMinus7));
 
 		CurrentFilter = LunarMonthType.List
 											.Where(w => w.Date >= dateTimeWithoutTime)
