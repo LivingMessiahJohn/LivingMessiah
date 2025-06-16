@@ -1,0 +1,28 @@
+﻿@page "/"
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@* @attribute [Authorize]  Grok suggested but had to comment out *@ 
+
+<h1>Welcome, @userName!</h1>
+<p>This page is protected and only accessible to authenticated users.</p>
+
+@code {
+	private string? userName;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+
+		if (user.Identity != null && user.Identity.IsAuthenticated)
+		{
+			userName = user.Identity.Name;
+		}
+		else
+		{
+			userName = "Guest";
+		}
+	}
+}
