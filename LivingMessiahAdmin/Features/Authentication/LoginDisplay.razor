@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.OpenIdConnect
+
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthenticationStateProvider
+
+@if (User!.Identity!.IsAuthenticated)
+{
+	<div>
+		<span>Hello, @User.Identity.Name!</span>
+		<form action="/auth/signout" method="post">
+			<button type="submit" class="btn btn-link">Sign out</button>
+		</form>
+	</div>
+}
+else
+{
+	<div>
+		<a href="/auth/signin">Sign in</a>
+	</div>
+}
+
+@code {
+	private System.Security.Claims.ClaimsPrincipal? User { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		User = authState.User;
+	}
+}

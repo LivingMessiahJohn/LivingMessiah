@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LivingMessiahAdmin\LivingMessiahAdmin.csproj" />
     <ProjectReference Include="..\LivingMessiah\LivingMessiah.csproj" />
   </ItemGroup>
 
