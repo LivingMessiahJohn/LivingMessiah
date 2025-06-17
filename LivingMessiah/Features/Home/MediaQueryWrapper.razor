@@ -4,9 +4,20 @@
 				PDF=@GetCurrentTeaching()
 				IsXs=IsXsOrSm />
 
-@* <CurrentParashaTable /> *@
+@* 
+	<HebrewClassCard IsXsOrSm=IsXsOrSm PDF="https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-02-08-Hebrew-Class.pdf" />
+*@
 
-<HebrewClassCard IsXsOrSm=IsXsOrSm PDF="https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-02-08-Hebrew-Class.pdf" />
+	<div class="card card border-0 ">
+
+		<FeaturedPage FeaturedPageExists=false />
+
+		<div class="@MediaQuery.Xs.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Xs" /></div>
+		<div class="@MediaQuery.Sm.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Sm" /></div>
+		<div class="@MediaQuery.Md.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Md" /></div>
+		<div class="@MediaQuery.Lg.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Lg" /></div>
+		<div class="@MediaQuery.Xl.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Xl" /></div>
+	</div>
 
 <ShabbatMeter IsXsOrSm=IsXsOrSm />
 
