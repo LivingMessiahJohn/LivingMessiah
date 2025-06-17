@@ -59,7 +59,6 @@
 
   <ItemGroup>
     <Folder Include="Features\Feasts\Header\" />
-    <Folder Include="Features\Home\Enums\" />
     <Folder Include="wwwroot\css\bootstrap\" />
   </ItemGroup>
 

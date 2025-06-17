@@ -1,0 +1,14 @@
+﻿@using LivingMessiah.Enums
+
+@if (FeaturedPageExists)
+{
+	<div class="card-body px-0">
+		<div class="list-group">
+			@* <FancyFatNavButton Nav="Nav.Haggadah" MediaQuery="MediaQuery.Md" IsFeatured=true />  *@
+		</div>
+	</div>
+}
+
+@code {
+	[Parameter, EditorRequired] public bool FeaturedPageExists { get; set; } = false;
+}
