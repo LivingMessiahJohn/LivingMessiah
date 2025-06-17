@@ -72,7 +72,6 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav Podcast = new PodcastSE();
 	public static readonly Nav Parasha = new ParashaSE();
 	public static readonly Nav IntroductionAndWelcome = new IntroductionAndWelcomeSE();
-
 	public static readonly Nav ShabbatService = new ShabbatServiceSE(); 
 	public static readonly Nav UpcomingEvents = new UpcomingEventsSE();
 	public static readonly Nav WindmillRanch = new WindmillRanchSE();
@@ -159,9 +158,9 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.FeastTable;
 		public override string HomeTitleSuffix => " ";
 		public override string HomeFloatRightHebrew => "";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Footer | PageListType.Layout | PageListType.LayoutMd;
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => true;
+		public override bool Disabled => false;
 	}
 
 	private sealed class CalendarHealthCheckSE : Nav
@@ -345,7 +344,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeFloatRightHebrew => "שָׁלוֹם";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => true;
+		public override bool Disabled => false;
 	}
 
 	// Liturgy
@@ -360,7 +359,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeFloatRightHebrew => "שַׁבָּת";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => true;
+		public override bool Disabled => false;
 	}
 
 	private sealed class UpcomingEventsSE : Nav
@@ -374,7 +373,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeFloatRightHebrew => "";
 		public override PageListType PageListType => PageListType.SitemapPage; //  | PageListType.Layout
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => true;
+		public override bool Disabled => false;
 	}
 
 	private sealed class WindmillRanchSE : Nav
@@ -389,7 +388,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeFloatRightHebrew => "";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout; 
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => true;
+		public override bool Disabled => false;
 	}
 
 	private sealed class TorahTuesdaySE : Nav
@@ -403,7 +402,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeFloatRightHebrew => "תּוֹרָה";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => true;
+		public override bool Disabled => false;
 	}
 
 	private sealed class IndepthStudySE : Nav
@@ -417,7 +416,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeFloatRightHebrew => "תּוֹרָה";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => true;
+		public override bool Disabled => false;
 	}
 
 	private sealed class AboutSE : Nav
@@ -431,7 +430,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeFloatRightHebrew => "אודות";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => true;
+		public override bool Disabled => false;
 	}
 
 	private sealed class BloodMoonsSE : Nav
@@ -445,7 +444,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeFloatRightHebrew => "יָרֵחַ";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => true;
+		public override bool Disabled => false;
 	}
 
 	private sealed class ArticlesSE : Nav
@@ -459,7 +458,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeFloatRightHebrew => "כְּתֻבִים";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => true;
+		public override bool Disabled => false;
 	}
 
 	private sealed class FurtherStudiesSE : Nav
@@ -473,7 +472,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeFloatRightHebrew => "סֵפֶר";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => true;
+		public override bool Disabled => false;
 	}
 	
 	private sealed class ImportantLinksSE : Nav
@@ -487,7 +486,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeFloatRightHebrew => "רָקַד";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => true;
+		public override bool Disabled => false;
 	}
 
 	#endregion
