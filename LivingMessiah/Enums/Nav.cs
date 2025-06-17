@@ -143,8 +143,8 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Title => "Calendar";
 		public override string Icon => "far fa-calendar-alt";
 		public override int Sort => Id.Calendar;
-		public override string HomeTitleSuffix => " ";
-		public override string HomeFloatRightHebrew => "";
+		public override string HomeTitleSuffix => " chôdeshim H2320";
+		public override string HomeFloatRightHebrew => "חֳדָשִׁים";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Footer | PageListType.Layout | PageListType.LayoutMd;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;

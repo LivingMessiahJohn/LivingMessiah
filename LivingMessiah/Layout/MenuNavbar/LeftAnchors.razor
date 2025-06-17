@@ -1,0 +1,43 @@
+﻿<div class="d-flex align-items-center ">
+	<a class="navbar-brand nav-link text-warning me-0" title="@Nav.Home.Title" href="@Nav.Home.Index">
+		<img src='/favicon.ico' alt='Logo' width='24' height='24' class='d-inline-block align-text-top @MarginEnd rounded'>
+	</a>
+
+	<a class="nav-link btn btn-link text-white @MarginEnd"
+		 data-bs-toggle="modal" data-bs-target="#customModal"
+		 title="@SearchModal.Title">
+		<i class="@SearchModal.Icon @IconSize"></i>
+	</a>
+
+	<a class="nav-link text-white @MarginEnd"
+		 href="@Enums.Nav.Calendar.Index" title="@Enums.Nav.Calendar.Title">
+		<i class="@Nav.Calendar.Icon @IconSize"></i>
+	</a>
+
+	<a class="nav-link text-white @MarginEnd"
+		 href="@Enums.Nav.Donate.Index" title="@Enums.Nav.Donate.Title">
+		<i class="@Nav.Donate.Icon @IconSize"></i>
+	</a>
+
+	<a class="nav-link text-white @MarginEnd"
+		 href="@Enums.Nav.Parasha.Index" title="@Enums.Nav.Parasha.Title">
+		<i class="@Nav.Parasha.Icon @IconSize"></i>
+	</a>
+
+	<a class="nav-link text-white @MarginEnd"
+		 href="@Enums.Nav.Leadership.Index" title="@Enums.Nav.Leadership.Title">
+		<i class="@Nav.Leadership.Icon @IconSize"></i>
+	</a>
+
+	<a class="nav-link text-white @MarginEnd"
+		 href="@Enums.Nav.Feasts.Index" title="@Enums.Nav.Feasts.Title">
+		<i class="@Nav.Feasts.Icon @IconSize"></i>
+	</a>
+
+</div>
+
+@code {
+	[Parameter, EditorRequired] public bool IsXs { get; set; }
+	protected string IconSize => IsXs ? "" : " fa-fw fa-2x ";
+	protected string MarginEnd => IsXs ? "me-3" : " me-2 ";
+}

@@ -5,7 +5,8 @@
 	<div class="container-fluid">
 
 		<!-- Brand/Logo -->
-		<NavbarHomeButton />
+		<div class="@MediaQuery.Xs.DivClass"><LeftAnchors IsXs=true  /></div>
+		<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><LeftAnchors IsXs=false /></div>
 
 		<!-- Toggle button for mobile -->
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -17,12 +18,11 @@
 		<div class="collapse navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav me-auto mb-2 mb-sm-0">
 
-				<li class="nav-item">
+@* 				<li class="nav-item">
 					<a class="nav-link @active" aria-current="page" href="/">
 						<span class="text-warning"><i class="@Enums.Nav.Home.Icon" title="@Enums.Nav.Home.Title"></i></span>
 					</a>
 				</li>
-
 				<li class="nav-item">
 					<a class="nav-link text-white" href="@Enums.Nav.Calendar.Index" title="@Enums.Nav.Calendar.Title">
 						@Enums.Nav.Calendar.Title
@@ -40,15 +40,18 @@
 						@Enums.Nav.Parasha.Title
 					</a>
 				</li>
+ *@
 
 
+@* 						
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">More</a>
 
 					<ul class="dropdown-menu">
 						<li><a class="dropdown-item" href="@Enums.Nav.Leadership.Index" title="@Enums.Nav.Leadership.Title">@Enums.Nav.Leadership.Title</a></li>
-						<li><a class="dropdown-item" href="@Enums.Nav.Podcast.Index" title="@Enums.Nav.Podcast.Title">@Enums.Nav.Podcast.Title</a></li>
 						<li><a class="dropdown-item" href="@Enums.Nav.Feasts.Index" title="@Enums.Nav.Feasts.Title">@Enums.Nav.Feasts.Title</a></li>
+						
+						<li><a class="dropdown-item" href="@Enums.Nav.Podcast.Index" title="@Enums.Nav.Podcast.Title">@Enums.Nav.Podcast.Title</a></li>
 						<li><hr class="dropdown-divider"></li>
 						<li><a class="dropdown-item" href="@Enums.Nav.FeastTable.Index" title="@Enums.Nav.FeastTable.Title">@Enums.Nav.FeastTable.Title</a></li>
 						<li><a class="dropdown-item" href="@Enums.Nav.LunarMonth.Index" title="@Enums.Nav.LunarMonth.Title">@Enums.Nav.LunarMonth.Title</a></li>
@@ -58,23 +61,33 @@
 					</ul>
 
 				</li>
+ *@						
 			</ul>
 
 			<!-- Right-aligned items -->
 			<ul class="navbar-nav">
 
 				<li class="nav-item">
+				@* 					
 					<button type="button" class="nav-link btn btn-link text-white"
 									data-bs-toggle="modal" data-bs-target="#customModal"
-									title="@NavSearchModal.Title">
-						<i class="@NavSearchModal.Icon"></i>
-					</button>
+									title="@SearchModal.Title">
+						<i class="@SearchModal.Icon"></i>
+					</button> 
+				*@
 				</li>
 
 				<li class="nav-item">
+@* 
 					<a class="nav-link text-white" href="@Enums.Nav.Sitemap.Index" title="@Enums.Nav.Sitemap.Title">
 						@Enums.Nav.Sitemap.Title
 					</a>
+ *@
+					<a class="nav-link text-white "
+						 href="@Nav.Sitemap.Index" title="@Nav.Sitemap.Title">
+						<i class="@Nav.Sitemap.Icon"></i>
+					</a>
+
 				</li>
 				@* 
         <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
@@ -86,7 +99,7 @@
 	</div>
 </nav>
 
-<NavSearchModal />
+<SearchModal />
 
 @code {
 

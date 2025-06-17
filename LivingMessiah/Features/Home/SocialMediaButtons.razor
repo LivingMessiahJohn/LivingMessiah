@@ -1,8 +1,6 @@
 ﻿
 <div class="d-flex justify-content-center">
-
-	<div class="card @width border border-info border-3 rounded-top text-center mb-3 mt-3">
-
+	<div class=" @width ">
 		<div class="d-flex justify-content-center my-2">
 
 			<a href="https://twitter.com/LivingMessiah" target="_blank"
@@ -42,7 +40,6 @@
 
 
 		</div>
-
 	</div>
 
 </div>
@@ -51,5 +48,4 @@
 	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
 	protected string width => IsXsOrSm ? "" : "w-50 ";
 	protected string faCSS => IsXsOrSm ? "" : " fa-fw fa-2x ";
-
 }
