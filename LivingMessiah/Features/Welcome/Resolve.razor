@@ -1,18 +1,11 @@
 ﻿@using LivingMessiah.Enums
 
-@if (MediaQuery != MediaQuery.Xl)
-{
-	<h3><span class="badge bg-warning">Our Resolve</span></h3>
-	<h5><span class="badge bg-warning">Community Guidelines and Code of Conduct</span></h5>
-}
-else
-{
-	<h3><span class="badge bg-warning">Our Resolve - Community Guidelines and Code of Conduct</span></h3>
-}
 
-<h4>We Resolve To</h4>
+<h2 class="text-primary mt-4 mb-1">Our Resolve</h2>
 
-<ul class="fa-ul lead">
+<h3 class="text-center mt-4 mb-1">We resolve to...</h3>
+
+<ul class="fa-ul fs-5">
 	<li>
 		<i class="fa-li fas fa-caret-right"></i>
 		Be a Kingdom family, committed to the study of the entire Living Word of God, applying it in thought and deed to the best of our ability and understanding.
@@ -129,17 +122,9 @@ else
 
 
 </ul>
-<p>
-	<blockquote class="blockquote mx-5">
-		<footer class="blockquote-footer">
-			Mark Webb<br />
-			Congregational Leader<br />
-			Revised and Reviewed 7-15-2021<br />
 
-		</footer>
-	</blockquote>
-</p>
+<CongregationalLeaderQuote Revised="Revised and Reviewed 7-15-2021" />
 
 @code {
-	[Parameter, EditorRequired] public MediaQuery? MediaQuery { get; set; }
+
 }

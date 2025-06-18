@@ -1,17 +1,19 @@
 @page "/"
 
+@using LivingMessiah.Features.Home.Welcome
+
 <PageTitle>Home</PageTitle>
 
 <HomeImage />
 
-<LivingMessiah.Features.IntroductionAndWelcome.Index />
+<div class="@MediaQuery.Xs.DivClass"><Card IsXs=true /></div>
+<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><Card IsXs=false /></div>
 
 <div class="@MediaQuery.XsOrSm.DivClass">
 	<MediaQueryWrapper IsXsOrSm=true />
 </div>
 
 <div class="@MediaQuery.MdOrLgOrXl.DivClass">
-
 	<MediaQueryWrapper IsXsOrSm=false />
 </div>
 
