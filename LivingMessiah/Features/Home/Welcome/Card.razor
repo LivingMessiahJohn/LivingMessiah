@@ -1,0 +1,50 @@
+﻿@using LivingMessiah.Features.Welcome
+
+<div class="d-flex justify-content-center">
+	<div class="card @width bg-warning-subtle">
+
+		<div class="card-header">
+
+			<div class="d-flex justify-content-between">
+
+				<span class="text-dark">
+					<i class="@Nav.Welcome.Icon fa-fw @IconSize"></i>
+				</span>
+
+				<h1 class="@Nav.Welcome.TextColor text-center pt-1"><b>Welcome</b></h1>
+
+				<ShowHideToggle ContentIsShowing="ShowingDetails"
+												OnToggleSelected="ReturnedToggle" />
+			</div>
+
+			@if (ShowingDetails)
+			{
+				<hr />
+				<TableOfContent />
+				<Introduction />
+				<Vision />
+				<Mission />
+				<Resolve />
+
+				<div class="card-footer float-end">
+					<ShowHideToggle ContentIsShowing="ShowingDetails"
+													OnToggleSelected="ReturnedToggle" />
+				</div>
+			}
+		</div>
+
+	</div>
+
+</div>
+@code {
+	[Parameter, EditorRequired] public bool IsXs { get; set; }
+
+	protected string width => IsXs ? "w-100 " : "w-75 ";
+	protected string IconSize = " fa-3x"; // => $"{(MediaQuery == MediaQuery.Sm ? " fa-2x" : " fa-3x")}";
+
+	bool ShowingDetails = false; // get from local storage
+	private void ReturnedToggle()
+	{
+		ShowingDetails = !ShowingDetails;
+	}
+}

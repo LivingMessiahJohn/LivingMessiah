@@ -41,7 +41,7 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int ThresholdCovenant = 13;
 		internal const int Podcast = 14;
 		internal const int Parasha = 15;  // PageParasha.Archive
-		internal const int IntroductionAndWelcome = 16;
+		internal const int Welcome = 16;
 		internal const int ShabbatService = 17; // should I call it Liturgy
 		internal const int UpcomingEvents = 18;
 		internal const int WindmillRanch = 19;
@@ -71,7 +71,7 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav ThresholdCovenant = new ThresholdCovenantSE();
 	public static readonly Nav Podcast = new PodcastSE();
 	public static readonly Nav Parasha = new ParashaSE();
-	public static readonly Nav IntroductionAndWelcome = new IntroductionAndWelcomeSE();
+	public static readonly Nav Welcome = new WelcomeSE();
 	public static readonly Nav ShabbatService = new ShabbatServiceSE(); 
 	public static readonly Nav UpcomingEvents = new UpcomingEventsSE();
 	public static readonly Nav WindmillRanch = new WindmillRanchSE();
@@ -333,13 +333,13 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false;
 	}
 
-	private sealed class IntroductionAndWelcomeSE : Nav
+	private sealed class WelcomeSE : Nav
 	{
-		public IntroductionAndWelcomeSE() : base($"{nameof(Id.IntroductionAndWelcome)}", Id.IntroductionAndWelcome) { }
+		public WelcomeSE() : base($"{nameof(Id.Welcome)}", Id.Welcome) { }
 		public override string Index => "/IntroductionAndWelcome";
 		public override string Title => "Welcome";
 		public override string Icon => "far fa-handshake";
-		public override int Sort => Id.IntroductionAndWelcome;
+		public override int Sort => Id.Welcome;
 		public override string HomeTitleSuffix => " Shalom  H7695";
 		public override string HomeFloatRightHebrew => "שָׁלוֹם";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
