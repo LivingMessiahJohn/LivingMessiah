@@ -1,0 +1,43 @@
+﻿@inherits BaseSection
+
+@if (!LoadQuickly)
+{
+	@if (!IsPrinterFriendly)
+	{
+		<img src='@Blobs.UrlShabbatService(Section!.GraphicUrl)' alt="@Section.Title" class="img-fluid rounded mt-4" />
+	}
+}
+
+<div class="card mt-2 @CardCss" style="width: 100%">
+	<div class="card-header px-2">
+		<span class='badge @HeaderBadgeColor fs-5 pb-15'>@Section!.Title</span>
+		@if (!IsPrinterFriendly)
+		{
+			@if (IsCollapsed)
+			{
+				<button @onclick="Collapsed_ButtonClick"
+								class="btn-primary btn-sm  float-end">
+					Detail <i class='fas fa-chevron-down'></i>
+				</button>
+			}
+			else
+			{
+				<button @onclick="Collapsed_ButtonClick"
+								class="btn-primary btn-sm float-end">
+					Hide <i class='fas fa-chevron-up'></i>
+				</button>
+
+			}
+		}
+	</div>
+
+	@if (!IsCollapsed)
+	{
+		@ChildContent
+	}
+
+</div>
+
+@code {
+
+}

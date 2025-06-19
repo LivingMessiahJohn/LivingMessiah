@@ -42,6 +42,13 @@ public static class DateUtil
 		return (gregorianDate, hebrewDate);
 	}
 
+	public static int GetNextShabbatWeek()
+	{
+		DateTime start = DateTime.Today;
+		int daysToAdd = ((int)DayOfWeek.Saturday - (int)start.DayOfWeek + 7) % 7;
+		start = start.AddDays(daysToAdd);
+		return (start.Day - 1) / 7 + 1;
+	}
 
 	//https://stackoverflow.com/questions/2050805/getting-day-suffix-when-using-datetime-tostring
 	public static string GetDaySuffix(int day)
