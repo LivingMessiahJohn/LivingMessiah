@@ -1,0 +1,74 @@
+﻿@inherits IntroductionBase
+@*
+	Using an href that includes a fragment doesn't in Blazor out of the box
+		See Task #647 https://livingmessiah.visualstudio.com/LivingMessiah/_queries/edit/647/?triage=true
+*@
+<div class="card card-body bg-light" style="width: 100%">
+	@if (IsSpanish)
+	{
+		<h4>
+			<span class='badge bg-warning mb-0'><b>Itineraria</b></span>
+			<input type="checkbox" @onchange="CheckBoxChanged" /> English
+		</h4>
+		<div class="ms-2">
+			<ul class="fa-ul">
+
+				<li class="lead">
+					<span class="text-warning"><i class="fa-li fas fa-caret-right"></i></span>
+					El servicio principal va de <i class="text-warning far fa-clock"></i> 3:00 pm a 5:15 pm
+				</li>
+				@if (!String.IsNullOrEmpty(SpanishUrlId))
+				{
+					<li class="lead">
+						<span class="text-warning"><i class="fa-li fas fa-caret-right"></i></span>
+						Una transmisión en vivo del servicio se puede encontrar a continuación
+						Versión en español <i class="fas fa-share fa-rotate-90"></i>
+						@* ToDo: Task #647, see note above *@
+					</li>
+				}
+				else
+				{
+					<li class="lead">
+						<span class="text-warning"><i class="fa-li fas fa-caret-right"></i></span>
+						<b>No hay transmisión en vivo</b>
+					</li>
+				}
+			</ul>
+		</div>
+
+	}
+	else
+	{
+		<h4>
+			<span class='badge bg-warning mb-0'><b>Itinerary</b></span>
+			<input type="checkbox" @onchange="CheckBoxChanged" /> Spanish
+		</h4>
+		<div class="ms-2">
+			<ul class="fa-ul">
+
+				<li class="lead">
+					<span class="text-warning"><i class="fa-li fas fa-caret-right"></i></span>
+					The main service goes between <i class="text-warning far fa-clock"></i> 3:00 pm - 5:15 pm
+				</li>
+				<li class="lead">
+					<span class="text-warning"><i class="fa-li fas fa-caret-right"></i></span>
+					A <b>live feed</b> <i class='fas fa-satellite'></i> of the service can be found
+					below <i class="fas fa-share fa-rotate-90"></i>
+					@* ToDo: Task #647, see note above *@
+				</li>
+				<li class="lead">
+					<span class="text-warning"><i class="fa-li fas fa-caret-right"></i></span>
+					We also have an
+											<a href="@Nav.IndepthStudy.Index"
+							 title="@Nav.IndepthStudy.Title" class="btn btn-outline-primary btn-sm">
+							<i class="@Nav.IndepthStudy.Icon" aria-hidden="true"></i>
+							&nbsp;<b>@Nav.IndepthStudy.Title</b>
+						</a>
+					which starts earlier at <i class="text-warning far fa-clock"></i> 1:30 - 2:15 pm
+				</li>
+			</ul>
+		</div>
+
+	}
+
+</div>
