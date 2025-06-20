@@ -1,0 +1,61 @@
+﻿@inject IToastService? Toast
+@inject ILogger<Index>? Logger
+
+
+@if (DetailContent is not null)
+{
+	<div class="card border-primary ">
+
+		<div class="card-header bg-warning-subtle text-center">
+			<h2 class="mb-0">@CurrentEnumContent!.Title</h2>
+		</div>
+
+			@* <p class="text-center"><small>Numbers 6:22-27</small></p> *@
+
+			<DynamicComponent Type="DetailContent" />
+
+	</div> <!-- card -->
+}
+else
+{
+	<div class="alert alert-warning text-center" role="alert">
+		<b>DetailContentEng:</b> is null
+	</div>
+}
+
+@code {
+	[Parameter, EditorRequired] public Enums.Content? EnumContent { get; set; }
+
+	protected Enums.Content? CurrentEnumContent;
+	protected override void OnParametersSet()
+	{
+		//Section = 1;
+		//Logger!.LogInformation("OnParametersSet: Language: {Language}; Section: {Section}", Language, Section);
+		CurrentEnumContent = Enums.Content.List.FirstOrDefault(w => w.Value == EnumContent);
+		SetDetail();
+	}
+	protected Type? DetailContent;
+
+	private void SetDetail()
+	{
+		//Logger!.LogInformation("{Method}, EngPath: {EngPath}, EspPath: {EspPath}"
+		//	, nameof(SetDetail), Constants.DynamicComponentPathEng, Constants.DynamicComponentPathEsp);
+		try
+		{
+			DetailContent = Type.GetType($"{Constants.DynamicComponentPathEng}.{CurrentEnumContent!.Name}");
+
+			if (DetailContent is null)
+			{
+				Logger!.LogWarning("{Method}, DetailContentEng IS NULL; CurrentContent: {CurrentContent}"
+					, nameof(SetDetail), CurrentEnumContent);
+				Toast!.ShowError($"{Global.ToastShowError} {nameof(Index)}!{nameof(OnParametersSetAsync)}");
+				return;
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(SetDetail));
+			Toast!.ShowError($"{Global.ToastShowError} {nameof(Index)}!{nameof(OnParametersSetAsync)}");
+		}
+	}
+}

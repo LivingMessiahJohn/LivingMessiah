@@ -1,4 +1,4 @@
-﻿//using BibleBookEnum = MyHebrewBible.Client.Enums.BibleBook;
+﻿//using BibleBookEnum = LivingMessiah.Enums.BibleBook;
 
 namespace LivingMessiah.Enums;
 
@@ -11,7 +11,7 @@ public static class BookChapterFacts
 	public const int LastVerseInTaNaCh = 23145;
 	public const int LastVerseInBible = 31102;
 	*/
-	public const int LastBookInOT = 39; // used by MyHebrewBible.Client\Enums\BibleBook.cs
+	public const int LastBookInOT = 39; // used by LivingMessiah\Enums\BibleBook.cs
 	public const int FirstBook = 1;
 	public const int LastBook = 66;
 	/*

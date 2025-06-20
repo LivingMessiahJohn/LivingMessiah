@@ -42,7 +42,7 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int Podcast = 14;
 		internal const int Parasha = 15;  // PageParasha.Archive
 		internal const int Welcome = 16;
-		internal const int ShabbatService = 17; // should I call it Liturgy
+		internal const int ShabbatService = 17; 
 		internal const int UpcomingEvents = 18;
 		internal const int WindmillRanch = 19;
 		internal const int TorahTuesday = 20;
@@ -51,7 +51,8 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int BloodMoons = 23;
 		internal const int Articles = 24;
 		internal const int FurtherStudies = 25;	
-		internal const int ImportantLinks = 26;	
+		internal const int ImportantLinks = 26;
+		internal const int Liturgy = 27; 
 	}
 	#endregion
 
@@ -81,7 +82,8 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav BloodMoons = new BloodMoonsSE();
 	public static readonly Nav Articles = new ArticlesSE();
 	public static readonly Nav FurtherStudies = new FurtherStudiesSE();	
-	public static readonly Nav ImportantLinks = new ImportantLinksSE();	 
+	public static readonly Nav ImportantLinks = new ImportantLinksSE();
+	public static readonly Nav Liturgy = new LiturgySE();
 
 	#endregion
 
@@ -484,6 +486,24 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.ImportantLinks;
 		public override string HomeTitleSuffix => " rakad H7540";
 		public override string HomeFloatRightHebrew => "רָקַד";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	private sealed class LiturgySE : Nav
+	{
+		public LiturgySE() : base($"{nameof(Id.Liturgy)}", Id.Liturgy) { }
+		public override string Index => "/Liturgy";
+		public override string Title => "Shabbat Liturgy";
+		public override string Icon => "fas fa-book-open";
+		public override int Sort => Id.Liturgy;
+		public override string HomeTitleSuffix => " tefillah H8605";
+		public override string HomeFloatRightHebrew => "תפילה";
+		/*
+			public override string HomeTitleSuffix => " sidur H5468";  // H5468=seder 
+			public override string HomeFloatRightHebrew => "//סידור";
+		*/
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;

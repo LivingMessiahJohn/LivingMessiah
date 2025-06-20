@@ -1,0 +1,55 @@
+﻿@using LivingMessiah.Helpers
+
+
+@if (Forward)
+{
+	if (Section < Enums.Content.List.Count)
+	{
+		<button type="button" class="btn btn-outline-primary.Primary btn-lg @Margin"
+						title="Section: @Section"
+						@onclick="ButtonClick">
+			<i class="@Icon"></i>
+		</button>
+	}
+	else
+	{
+		<OnEdgeButton />
+	}
+}
+else
+{
+	if (Section != 1)
+	{
+		<button type="button" class="btn btn-outline-primary.Primary btn-lg @Margin"
+						title="Section: @Section"
+						@onclick="ButtonClick">
+			<i class="@Icon"></i>
+		</button>
+	}
+	else
+	{
+		<OnEdgeButton />
+	}
+}
+
+@code {
+	[Parameter, EditorRequired] public int Section { get; set; }
+	[Parameter, EditorRequired] public bool Forward { get; set; }
+	[Parameter, EditorRequired] public EventCallback<int> OnSectionSelected { get; set; }
+
+	private string Icon => Forward ? "fas fa-arrow-right" : "fas fa-arrow-left";
+	private string Margin => Forward ? "me-1" : "ms-1";
+
+	private void ButtonClick()
+	{
+		if (Forward)
+		{
+			OnSectionSelected.InvokeAsync(Section + 1);
+		}
+		else
+		{
+			OnSectionSelected.InvokeAsync(Section - 1);
+		}
+	}
+}
+
