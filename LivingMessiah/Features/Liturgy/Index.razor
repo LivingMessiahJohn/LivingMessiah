@@ -1,0 +1,71 @@
+﻿@page "/Liturgy"
+@using LivingMessiah.Features.Liturgy.Toolbar
+@using LivingMessiah.Features.Liturgy.Toolbar.Modal
+
+@inject IToastService? Toast
+@inject ILogger<Index>? Logger
+
+@using Page = LivingMessiah.Enums.Nav
+
+<PageTitle>@Page.Liturgy.Title</PageTitle>
+<div class="mt-3">
+	<h3 class="text-center"><i class="@Page.Liturgy.Icon"></i>&nbsp;&nbsp;@Page.Liturgy.Title</h3>
+</div>
+
+<NavSkeleton>
+
+	<JustifyStartRF>
+		@* <HomeButton /> *@
+		<a class="btn btn-primary" title="@Nav.Home.Title" href="@Nav.Home.Index">
+			<i class="@Page.Home.Icon"></i>
+		</a>
+	</JustifyStartRF>
+
+	<PrevButtonDivRF>
+		<PreviousOrNextButton Section="Section"
+													Forward=false
+													OnSectionSelected="ReturnedSection" />
+	</PrevButtonDivRF>
+
+	<ProgressBarDivRF>
+		<div class="@MediaQuery.XsOrSm.DivClass">
+			<Progressbar Section="Section" IsXsOrSm=true />
+		</div>
+		<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+			<Progressbar Section="Section" IsXsOrSm=false />
+		</div>
+	</ProgressBarDivRF>
+
+	<NextButtonDivRF>
+		<PreviousOrNextButton Section="Section"
+													Forward=true
+													OnSectionSelected="ReturnedSection" />
+	</NextButtonDivRF>
+
+	<JustifyEndRF>
+		@* <ModalMenuItemButtons OnModalSelected="ReturnedModalMenuItem" /> *@
+	</JustifyEndRF>
+
+</NavSkeleton>
+
+<Detail EnumContent="CurrentContent" />
+
+@code {
+
+	protected Enums.Content? CurrentContent;
+	protected int Section = 1;
+
+	protected override void OnInitialized()
+	{
+		CurrentContent = Enums.Content.List.FirstOrDefault(w => w.Value == Section);
+	}
+
+	// Called by: PreviousOrNextButton
+	private void ReturnedSection(int section)
+	{
+		Section = section;
+		CurrentContent = Enums.Content.List.FirstOrDefault(w => w.Value == Section);
+		// save to local storage
+	}
+
+}

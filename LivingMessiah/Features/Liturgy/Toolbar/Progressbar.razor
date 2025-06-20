@@ -1,0 +1,31 @@
+﻿@using LivingMessiah.Helpers
+
+<div class="progress" style="height: 40px;">
+	<div class="progress-bar bg-info text-dark" style='@GetProgressStyle()'>
+		<span class="@SpanCSS">@GetProgressPercent()</span>
+	</div>
+</div>
+
+@code {
+
+	[Parameter, EditorRequired] public int Section { get; set; }
+	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
+
+	protected string SpanCSS => IsXsOrSm ? "" : "fs-4 fw-bold";
+
+	protected string GetProgressStyle()
+	{
+		return $"width:{CalculatePercentage()}%";
+	}
+
+	protected string GetProgressPercent()
+	{
+		return $"{CalculatePercentage()}%";
+	}
+
+	private int CalculatePercentage()
+	{
+		return (Section * 100) / Enums.Content.List.Count;
+	}
+
+}
