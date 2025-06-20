@@ -10,6 +10,9 @@ public class Helper
 	// OBA = One Based Arrays	
 	// TransformTriennialToBCV
 	// TransformTriennialToMenuHierachy
+	
+	/* 
+	NOT USED, ONLY USED IN MHB
 	public static (int, int) CalculateChapterAndVerse(BibleBook bibleBook, int begId)
 	{
 		int runningTotal = SumPriorLastVerses(bibleBook);  // Where(w => w.Value < bibleBook.Value))
@@ -33,7 +36,6 @@ public class Helper
 
 		return (chapter, verse);
 	}
-
 	private static int SumPriorLastVerses(BibleBook bibleBook)
 	{
 		int i = 0;
@@ -44,6 +46,7 @@ public class Helper
 		return i;
 	}
 
+	*/
 
 
 }

@@ -1,0 +1,23 @@
+﻿@using System.Linq
+
+	<ul class="dropdown-menu">
+
+		@foreach (var group in Enums.ModalMenuItem.List
+			.GroupBy(item => item.Category)
+			.OrderBy(g => g.Key))
+		{
+			<li><strong class="dropdown-header">@group.Key</strong></li>
+
+			@foreach (var item in group.OrderBy(o => o.Value))
+			{
+				<li class="dropdown-item">
+					<button @onclick="@(e => ButtonClick(item))"
+									type="button" class="btn btn.primary btn-sm">
+						@item.Title
+					</button>
+				</li>
+			}
+			<li><hr class="dropdown-divider" /></li>
+		}
+
+	</ul>
