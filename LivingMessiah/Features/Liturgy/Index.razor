@@ -14,12 +14,7 @@
 
 <NavSkeleton>
 
-	<JustifyStartRF>
-		@* <HomeButton /> *@
-		<a class="btn btn-primary" title="@Nav.Home.Title" href="@Nav.Home.Index">
-			<i class="@Page.Home.Icon"></i>
-		</a>
-	</JustifyStartRF>
+	<JustifyStartRF><HomeButton /></JustifyStartRF>	
 
 	<PrevButtonDivRF>
 		<PreviousOrNextButton Section="Section"
@@ -29,10 +24,10 @@
 
 	<ProgressBarDivRF>
 		<div class="@MediaQuery.XsOrSm.DivClass">
-			<Progressbar Section="Section" IsXsOrSm=true />
+			<Progressbar Section="Section" CurrentContent=CurrentContent IsXsOrSm=true />
 		</div>
 		<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-			<Progressbar Section="Section" IsXsOrSm=false />
+			<Progressbar Section="Section" CurrentContent=CurrentContent IsXsOrSm=false />
 		</div>
 	</ProgressBarDivRF>
 
@@ -43,29 +38,58 @@
 	</NextButtonDivRF>
 
 	<JustifyEndRF>
-		@* <ModalMenuItemButtons OnModalSelected="ReturnedModalMenuItem" /> *@
+		<ModalMenuItemButtons OnModalSelected="ReturnedModalMenuItem" />
 	</JustifyEndRF>
 
 </NavSkeleton>
 
-<Detail EnumContent="CurrentContent" />
+<ModalSkeleton ShowMenuItem="CurrentModalToShow">
+	<!-- Instructions -->
+	<InstructionsRF>
+		<Template OnClose="ReturnedCloseEvent">
+			<HeaderRF>Liturgy Instructions</HeaderRF>
+			<BodyRF>
+				<PageInstructions />
+			</BodyRF>
+		</Template>
+
+	</InstructionsRF>
+
+	<!-- User Settings -->
+</ModalSkeleton>
+
+<Detail EnumContent="CurrentContent" ShowImages=ShowImages />
 
 @code {
 
 	protected Enums.Content? CurrentContent;
 	protected int Section = 1;
+	protected bool ShowImages = false;
 
 	protected override void OnInitialized()
 	{
 		CurrentContent = Enums.Content.List.FirstOrDefault(w => w.Value == Section);
 	}
 
-	// Called by: PreviousOrNextButton
 	private void ReturnedSection(int section)
 	{
 		Section = section;
 		CurrentContent = Enums.Content.List.FirstOrDefault(w => w.Value == Section);
 		// save to local storage
 	}
+
+	protected Enums.ModalMenuItem? CurrentModalToShow { get; set; }
+	private void ReturnedModalMenuItem(Enums.ModalMenuItem modalMenuItem)
+	{
+		CurrentModalToShow = modalMenuItem;
+		if (CurrentModalToShow == Enums.ModalMenuItem.ShowImages) { ShowImages = !ShowImages; }
+	}
+
+	private void ReturnedCloseEvent()
+	{
+		CurrentModalToShow = null;
+		//Logger!.LogInformation("{Method}, CurrentModalToShow set to null", nameof(ReturnedCloseEvent));
+	}
+
 
 }

@@ -1,8 +1,25 @@
-﻿<h3>ModalSkeleton</h3>
+﻿@if (ShowMenuItem is not null)
+{
+  @switch (ShowMenuItem)
+  {
+    // Instructions
+    case var item when item == Enums.ModalMenuItem.Instructions:
+      @InstructionsRF
+      break;
+
+    //Appendix
+    case var item when item == Enums.ModalMenuItem.ShowImages:
+      break;
+
+    default:
+      <p>Unknown modal type.</p>
+      break;
+  }
+}
+
 
 @code {
-  //[Parameter, EditorRequired] public Enums.ModalMenuItem? ShowMenuItem { get; set; }
-
+  [Parameter, EditorRequired] public Enums.ModalMenuItem? ShowMenuItem { get; set; }
   [Parameter, EditorRequired] public RenderFragment? InstructionsRF { get; set; }
 
 }
