@@ -1,36 +1,38 @@
 ﻿@using LivingMessiah.Helpers
+@inject IJSRuntime JS
 
-
-@if (Forward)
-{
-	if (Section < Enums.Content.List.Count)
+<div tabindex="0" @onkeydown="HandleKeyDown" style="display:inline;">
+	@if (Forward)
 	{
-		<button type="button" class="btn btn-outline-primary btn-md @Margin"
-						title="Section: @Section"
-						@onclick="ButtonClick">
-			<i class="@Icon"></i>
-		</button>
+		if (Section < Enums.Content.List.Count)
+		{
+			<button @ref="buttonArrowRightRef" type="button" class="btn btn-outline-primary btn-md @Margin"
+							title="Section: @Section"
+							@onclick="ButtonClick">
+				<i class="@Icon"></i>
+			</button>
+		}
+		else
+		{
+			<OnEdgeButton />
+		}
 	}
 	else
 	{
-		<OnEdgeButton />
+		if (Section != 1)
+		{
+			<button @ref="buttonArrowLeftRef" type="button" class="btn btn-outline-primary btn-md @Margin"
+							title="Section: @Section"
+							@onclick="ButtonClick">
+				<i class="@Icon"></i>
+			</button>
+		}
+		else
+		{
+			<OnEdgeButton />
+		}
 	}
-}
-else
-{
-	if (Section != 1)
-	{
-		<button type="button" class="btn btn-outline-primary btn-md @Margin"
-						title="Section: @Section"
-						@onclick="ButtonClick">
-			<i class="@Icon"></i>
-		</button>
-	}
-	else
-	{
-		<OnEdgeButton />
-	}
-}
+</div>
 
 @code {
 	[Parameter, EditorRequired] public int Section { get; set; }
@@ -39,6 +41,18 @@ else
 
 	private string Icon => Forward ? "fas fa-arrow-right" : "fas fa-arrow-left";
 	private string Margin => Forward ? "me-1" : "ms-1";
+
+	private ElementReference buttonArrowRightRef;
+	private ElementReference buttonArrowLeftRef;
+
+	public async Task FocusAsync()
+	{
+		// Focus the button if it is rendered (for both forward and backward)
+		if ((Forward && Section < Enums.Content.List.Count) || (!Forward && Section != 1))
+		{
+			await buttonArrowRightRef.FocusAsync();
+		}
+	}
 
 	private void ButtonClick()
 	{
@@ -49,6 +63,24 @@ else
 		else
 		{
 			OnSectionSelected.InvokeAsync(Section - 1);
+		}
+	}
+
+	private void HandleKeyDown(KeyboardEventArgs e)
+	{
+		if (e.Key == "ArrowLeft" || e.Key == "ArrowRight")
+		{
+			if (Forward && e.Key == "ArrowRight")
+			{
+				ButtonClick();
+			}
+			else
+			{
+				if (e.Key == "ArrowLeft")
+				{
+					ButtonClick();
+				}
+			}
 		}
 	}
 }
