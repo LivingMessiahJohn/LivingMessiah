@@ -16,10 +16,10 @@ public abstract class Content : SmartEnum<Content>
 		internal const int OsehShalom = 6; 
 		internal const int Shema = 7;  // NOT SPLIT OUT
 		internal const int Vahavta = 8;   // NOT SPLIT OUT
-		internal const int Announcements = 9;
-		internal const int PsalmsAndProverbs = 10;
+		internal const int PsalmsAndProverbs = 9;
+		internal const int Announcements = 10;
 		internal const int EtzChaim = 11;  // SiddurPrayer = 11.5;
-		internal const int TorahParahsa = 12; // Could combine Midrash with TorahParasha
+		internal const int TorahParahsa = 12; 
 		internal const int Midrash = 13; 
 		internal const int Avinu = 14;
 		internal const int AhronicBlessing = 15;
@@ -38,8 +38,8 @@ public abstract class Content : SmartEnum<Content>
 	public static readonly Content OsehShalom = new OsehShalomSE();
 	public static readonly Content Shema = new ShemaSE();
 	public static readonly Content Vahavta = new VahavtaSE();
-	public static readonly Content Announcements = new AnnouncementsSE();
 	public static readonly Content PsalmsAndProverbs = new PsalmsAndProverbsSE();
+	public static readonly Content Announcements = new AnnouncementsSE();
 	public static readonly Content EtzChaim = new EtzChaimSE();
 	public static readonly Content TorahParahsa = new TorahParahsaSE();
 	public static readonly Content Midrash = new MidrashSE();
@@ -75,15 +75,17 @@ public abstract class Content : SmartEnum<Content>
 		public OpeningAdorationSE() : base($"{nameof(Id.OpeningAdoration)}", Id.OpeningAdoration) { }
 		public override string Title => "Opening Adoration";
 		public override string GraphicUrl => "blessed-be-he-who-spoke-1024-385.jpeg";
-		public override string Time => "3:03 pm";
+		public override string Time => "3:01 pm";
 	}
+
+	// Add Prayer of Thanks giving |  Toda Raba! 3:02
 
 	private sealed class PraiseAndWorshipSE : Content
 	{
 		public PraiseAndWorshipSE() : base($"{nameof(Id.PraiseAndWorship)}", Id.PraiseAndWorship) { }
 		public override string Title => "Praise and Worship";
 		public override string GraphicUrl => "praise-and-worship-1024-385.jpeg"; 
-		public override string Time => "3:10 pm";
+		public override string Time => "3:05 pm";
 	}
 
 	private sealed class CommunityPrayerSE : Content
@@ -91,7 +93,7 @@ public abstract class Content : SmartEnum<Content>
 		public CommunityPrayerSE() : base($"{nameof(Id.CommunityPrayer)}", Id.CommunityPrayer) { }
 		public override string Title => "Community Prayer";
 		public override string GraphicUrl => "community-prayer-1024-385.jpeg"; 
-		public override string Time => "3:22 pm";
+		public override string Time => "3:33 pm";
 	}
 
 	private sealed class ChildrensBlessingSE : Content
@@ -99,7 +101,7 @@ public abstract class Content : SmartEnum<Content>
 		public ChildrensBlessingSE() : base($"{nameof(Id.ChildrensBlessing)}", Id.ChildrensBlessing) { }
 		public override string Title => "Children's Blessing";
 		public override string GraphicUrl => "childrens-blessing-1024-385.jpeg";
-		public override string Time => "3:34 pm";
+		public override string Time => "3:46 pm";
 	}
 
 	private sealed class OsehShalomSE : Content
@@ -107,7 +109,7 @@ public abstract class Content : SmartEnum<Content>
 		public OsehShalomSE() : base($"{nameof(Id.OsehShalom)}", Id.OsehShalom) { }
 		public override string Title => "Oseh Shalom";
 		public override string GraphicUrl => "oseh-shalom-1024-385.jpeg"; 
-		public override string Time => "3:36 pm";
+		public override string Time => "3:48 pm";
 	}
 
 	private sealed class ShemaSE : Content
@@ -115,7 +117,7 @@ public abstract class Content : SmartEnum<Content>
 		public ShemaSE() : base($"{nameof(Id.Shema)}", Id.Shema) { }
 		public override string Title => "Shema";
 		public override string GraphicUrl => "shema-yisrael-brown-1024-385.jpeg"; //shema-yisrael-pink-1024-385.jpeg
-		public override string Time => "3:38 pm";
+		public override string Time => "3:50 pm";
 	}
 
 	private sealed class VahavtaSE : Content
@@ -123,15 +125,7 @@ public abstract class Content : SmartEnum<Content>
 		public VahavtaSE() : base($"{nameof(Id.Vahavta)}", Id.Vahavta) { }
 		public override string Title => "Vahavta";
 		public override string GraphicUrl => "vahavta-1024-385.jpeg";
-		public override string Time => "3:40 pm";
-	}
-
-	private sealed class AnnouncementsSE : Content
-	{
-		public AnnouncementsSE() : base($"{nameof(Id.Announcements)}", Id.Announcements) { }
-		public override string Title => "Announcements";
-		public override string GraphicUrl => "announcements-1024-385.jpeg"; 
-		public override string Time => "3:42 pm";
+		public override string Time => "3:51 pm";
 	}
 
 	private sealed class PsalmsAndProverbsSE : Content
@@ -139,8 +133,18 @@ public abstract class Content : SmartEnum<Content>
 		public PsalmsAndProverbsSE() : base($"{nameof(Id.PsalmsAndProverbs)}", Id.PsalmsAndProverbs) { }
 		public override string Title => "Psalms and Proverbs";
 		public override string GraphicUrl => "psalms-and-proverbs-1024-385.jpeg";
-		public override string Time => "3:7 pm";
+		public override string Time => "3:53 pm";
 	}
+
+	private sealed class AnnouncementsSE : Content
+	{
+		public AnnouncementsSE() : base($"{nameof(Id.Announcements)}", Id.Announcements) { }
+		public override string Title => "Announcements";
+		public override string GraphicUrl => "announcements-1024-385.jpeg"; 
+		public override string Time => "3:55 pm";
+	}
+
+	// Donation
 
 	private sealed class EtzChaimSE : Content
 	{
@@ -162,7 +166,7 @@ public abstract class Content : SmartEnum<Content>
 	{
 		public MidrashSE() : base($"{nameof(Id.Midrash)}", Id.Midrash) { }
 		public override string Title => "Midrash";
-		public override string GraphicUrl => "";  // midrash-1024-385.jpeg ... can't find
+		public override string GraphicUrl => "torah-time-720-508.jpg";  // midrash-1024-385.jpeg ... can't find
 		public override string Time => "4:03 pm";
 	}
 
@@ -171,7 +175,7 @@ public abstract class Content : SmartEnum<Content>
 		public AvinuSE() : base($"{nameof(Id.Avinu)}", Id.Avinu) { }
 		public override string Title => "Avinu";
 		public override string GraphicUrl => "avinu-1024-385.jpeg"; 
-		public override string Time => "4:10 pm";
+		public override string Time => "5:43 pm";
 	}
 
 	private sealed class AhronicBlessingSE : Content
@@ -179,7 +183,7 @@ public abstract class Content : SmartEnum<Content>
 		public AhronicBlessingSE() : base($"{nameof(Id.AhronicBlessing)}", Id.AhronicBlessing) { }
 		public override string Title => "Aaronic Blessing";
 		public override string GraphicUrl => "ahronic-blessing-1024-385.jpeg";
-		public override string Time => "5:00 pm";
+		public override string Time => "5:45 pm";
 	}
 
 	private sealed class WineAndBreadSE : Content
@@ -187,7 +191,7 @@ public abstract class Content : SmartEnum<Content>
 		public WineAndBreadSE() : base($"{nameof(Id.WineAndBread)}", Id.WineAndBread) { }
 		public override string Title => "Wine and Bread";
 		public override string GraphicUrl => "wine-and-bread-1024-385.jpeg"; 
-		public override string Time => "5:10 pm";
+		public override string Time => "5:46 pm";
 	}
 
 	private sealed class ThankYouSE : Content
@@ -195,7 +199,7 @@ public abstract class Content : SmartEnum<Content>
 		public ThankYouSE() : base($"{nameof(Id.ThankYou)}", Id.ThankYou) { }
 		public override string Title => "Thank You";
 		public override string GraphicUrl => "thank-you-1024-385.jpeg"; 
-		public override string Time => "5:30 pm";
+		public override string Time => "5:47 pm";
 	}
 
 	#endregion

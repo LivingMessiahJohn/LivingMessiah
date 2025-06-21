@@ -17,9 +17,7 @@
 	<JustifyStartRF><HomeButton /></JustifyStartRF>	
 
 	<PrevButtonDivRF>
-		<PreviousOrNextButton Section="Section"
-													Forward=false
-													OnSectionSelected="ReturnedSection" />
+		<ButtonPrevious Section="Section"  OnSectionSelected="ReturnedSection" />
 	</PrevButtonDivRF>
 
 	<ProgressBarDivRF>
@@ -32,9 +30,7 @@
 	</ProgressBarDivRF>
 
 	<NextButtonDivRF>
-		<PreviousOrNextButton Section="Section"
-													Forward=true
-													OnSectionSelected="ReturnedSection" />
+		<ButtonNext Section="Section" OnSectionSelected="ReturnedSection" />
 	</NextButtonDivRF>
 
 	<JustifyEndRF>
@@ -90,6 +86,4 @@
 		CurrentModalToShow = null;
 		//Logger!.LogInformation("{Method}, CurrentModalToShow set to null", nameof(ReturnedCloseEvent));
 	}
-
-
 }

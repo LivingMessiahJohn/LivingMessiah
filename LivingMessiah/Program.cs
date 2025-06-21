@@ -35,12 +35,14 @@ try
 {
 	builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(configuration));
 
+	/*
 	Log.Warning("{Class}, SyncfusionLicense: {SyncfusionLicense}",
 		nameof(Program),
 		string.IsNullOrEmpty(builder.Configuration["SyncfusionLicense"])
 				? "IsNullOrEmpty"
 				: builder.Configuration["SyncfusionLicense"]);
 
+	*/
 	Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(builder.Configuration["SyncfusionLicense"] ?? "");
 
 	builder.Services.AddBlazoredToast();
