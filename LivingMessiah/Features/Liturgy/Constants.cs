@@ -5,19 +5,29 @@ public static class Constants
 	public const string DynamicComponentPathEng = "LivingMessiah.Features.Liturgy.DetailContent";
 }
 
-public static class Icon
+public static class Previous
 {
-	public static class Arrow
-	{
-		public const string Right = " fas fa-arrow-right";
-		public const string Left = " fas fa-arrow-left";
-	}
-
-	public static class Menu
-	{
-		public const string Dropdown = " fas fa-cogs";
-	}
+	public const string Icon = " fas fa-arrow-left";
 }
+
+public static class Next
+{
+	public const string Icon = " fas fa-arrow-right";
+}
+
+public static class JsonKeyboard
+{
+	public const string Method = "addArrowKeyListener";
+	public const string Dispose = "removeArrowKeyListener";
+}
+
+
+public static class Menu
+{
+	public const string Dropdown = " fas fa-cogs";
+}
+
+
 
 //public static class BarColor
 //{

@@ -17,20 +17,15 @@
 	<JustifyStartRF><HomeButton /></JustifyStartRF>	
 
 	<PrevButtonDivRF>
-		<ButtonPrevious Section="Section"  OnSectionSelected="ReturnedSection" />
+		<PreviousOrNextButton Section="Section" Direction=Enums.Direction.Previous OnSectionSelected="ReturnedSection" />
 	</PrevButtonDivRF>
 
 	<ProgressBarDivRF>
-		<div class="@MediaQuery.XsOrSm.DivClass">
-			<Progressbar Section="Section" CurrentContent=CurrentContent IsXsOrSm=true />
-		</div>
-		<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-			<Progressbar Section="Section" CurrentContent=CurrentContent IsXsOrSm=false />
-		</div>
+		<Progressbar Section="Section" CurrentContent=CurrentContent/>
 	</ProgressBarDivRF>
 
 	<NextButtonDivRF>
-		<ButtonNext Section="Section" OnSectionSelected="ReturnedSection" />
+		<PreviousOrNextButton Section="Section" Direction=Enums.Direction.Next OnSectionSelected="ReturnedSection" />
 	</NextButtonDivRF>
 
 	<JustifyEndRF>

@@ -1,87 +1,111 @@
 ﻿@using LivingMessiah.Helpers
-@inject IJSRuntime JS
 
-<div tabindex="0" @onkeydown="HandleKeyDown" style="display:inline;">
-	@if (Forward)
+@inject ILogger<PreviousOrNextButton>? Logger
+@inject IJSRuntime JS
+@inject IToastService? Toast
+
+
+@if (Direction == Enums.Direction.Previous)
+{
+	@if (Section != 1)
 	{
-		if (Section < Enums.Content.List.Count)
-		{
-			<button @ref="buttonArrowRightRef" type="button" class="btn btn-outline-primary btn-md @Margin"
-							title="Section: @Section"
-							@onclick="ButtonClick">
-				<i class="@Icon"></i>
-			</button>
-		}
-		else
-		{
-			<OnEdgeButton />
-		}
+		<button type="button" class="btn btn-outline-primary btn-md @Direction.Margin"
+						title="Section: @Section"
+						@onclick="ButtonClick">
+			<i class="@Direction.Icon"></i>
+		</button>
 	}
 	else
 	{
-		if (Section != 1)
-		{
-			<button @ref="buttonArrowLeftRef" type="button" class="btn btn-outline-primary btn-md @Margin"
-							title="Section: @Section"
-							@onclick="ButtonClick">
-				<i class="@Icon"></i>
-			</button>
-		}
-		else
-		{
-			<OnEdgeButton />
-		}
+		<OnEdgeButton />
 	}
-</div>
+}
+else  @* Direction.Next *@
+{
+	@if (Section < Enums.Content.List.Count)
+	{
+		<button type="button" class="btn btn-outline-primary btn-md @Direction.Margin"
+						title="Section: @Section"
+						@onclick="ButtonClick">
+			<i class="@Direction.Icon"></i>
+		</button>
+	}
+	else
+	{
+		<OnEdgeButton />
+	}
+}
 
 @code {
 	[Parameter, EditorRequired] public int Section { get; set; }
-	[Parameter, EditorRequired] public bool Forward { get; set; }
+	[Parameter, EditorRequired] public Enums.Direction Direction { get; set; }
 	[Parameter, EditorRequired] public EventCallback<int> OnSectionSelected { get; set; }
 
-	private string Icon => Forward ? "fas fa-arrow-right" : "fas fa-arrow-left";
-	private string Margin => Forward ? "me-1" : "ms-1";
+	private IJSObjectReference? _jsModule;
+	private DotNetObjectReference<PreviousOrNextButton>? _dotNetRef;
 
-	private ElementReference buttonArrowRightRef;
-	private ElementReference buttonArrowLeftRef;
-
-	public async Task FocusAsync()
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		// Focus the button if it is rendered (for both forward and backward)
-		if ((Forward && Section < Enums.Content.List.Count) || (!Forward && Section != 1))
+		if (firstRender)
 		{
-			await buttonArrowRightRef.FocusAsync();
+			try
+			{
+				_jsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/keyboard.js");
+				_dotNetRef = DotNetObjectReference.Create(this);
+				await _jsModule.InvokeVoidAsync(JsonKeyboard.Method, _dotNetRef);
+				//Logger!.LogInformation("{Method}, JSMethod: {JSMethod}", nameof(OnAfterRenderAsync), JsonKeyboard.Method);
+			}
+			catch (Exception ex)
+			{
+				Logger!.LogError(ex, "{Method}", nameof(OnAfterRenderAsync));
+				Toast!.ShowError("An invalid operation occurred, contact your administrator");
+			}
 		}
 	}
 
 	private void ButtonClick()
 	{
-		if (Forward)
-		{
-			OnSectionSelected.InvokeAsync(Section + 1);
-		}
-		else
+		//Logger!.LogInformation("{Method}, Section: {Section}", nameof(ButtonClick), Section);
+
+		if (Direction == Enums.Direction.Previous)
 		{
 			OnSectionSelected.InvokeAsync(Section - 1);
 		}
-	}
-
-	private void HandleKeyDown(KeyboardEventArgs e)
-	{
-		if (e.Key == "ArrowLeft" || e.Key == "ArrowRight")
+		else
 		{
-			if (Forward && e.Key == "ArrowRight")
-			{
-				ButtonClick();
-			}
-			else
-			{
-				if (e.Key == "ArrowLeft")
-				{
-					ButtonClick();
-				}
-			}
+			OnSectionSelected.InvokeAsync(Section + 1);
 		}
 	}
+
+	[JSInvokable]
+	public void HandleArrowKey(string key)
+	{
+		//Logger!.LogInformation("{Method}, key: {key}, KeyboardKey: {KeyboardKey}", nameof(HandleArrowKey), key, Direction.KeyboardKey);
+
+		if (Direction == Enums.Direction.Previous && key == Enums.Direction.Previous.KeyboardKey && Section != 1)
+		{
+			ButtonClick();
+			return;
+		}
+
+		if (Direction == Enums.Direction.Next && key == Enums.Direction.Next.KeyboardKey && Section < Enums.Content.List.Count)
+		{
+			ButtonClick();
+			return;
+		}
+
+
+	}
+
+	public void Dispose()
+	{
+		if (_jsModule != null)
+		{
+			_jsModule.InvokeVoidAsync(JsonKeyboard.Dispose);
+			_jsModule.DisposeAsync();
+		}
+		_dotNetRef?.Dispose();
+	}
+
 }
 
