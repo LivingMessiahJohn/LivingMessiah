@@ -1,18 +1,24 @@
 ﻿@using LivingMessiah.Helpers
 
 <div class="progress" style="height: 40px;">
-	<div class="progress-bar bg-info text-dark" style='@GetProgressStyle()'>
-		<span class="@SpanCSS">@GetProgressTimeStamp()</span>
-	</div>
+
+	@if(CalculatePercentage() < 50)
+	{
+		<div class="progress-bar bg-info text-dark" style='@GetProgressStyle()'></div>
+		<span class="fs-4 fw-bold mt-2">&nbsp;@GetProgressTimeStamp()</span>
+	}
+	else
+	{
+		<div class="progress-bar bg-info text-dark" style='@GetProgressStyle()'>
+			<span class="fs-4 fw-bold mt-2 float-end">@GetProgressTimeStamp() </span>
+		</div>
+	}
 </div>
 
 @code {
 
 	[Parameter, EditorRequired] public int Section { get; set; }
 	[Parameter, EditorRequired] public Enums.Content? CurrentContent { get; set; }
-	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
-
-	protected string SpanCSS => IsXsOrSm ? "" : "fs-6 fw-bold"; // s-4 fw-bold
 
 	protected string GetProgressStyle()
 	{
