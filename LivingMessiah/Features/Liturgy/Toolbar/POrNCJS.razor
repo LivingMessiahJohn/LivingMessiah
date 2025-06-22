@@ -1,6 +1,6 @@
 ﻿@using LivingMessiah.Helpers
 
-@inject ILogger<PreviousOrNextButton>? Logger
+@inject ILogger<PreviousOrNextButtonCJS>? Logger
 @inject IJSRuntime JS
 @inject IToastService? Toast
 
@@ -19,7 +19,6 @@ else
 	</button>
 }
 
-
 @code {
 	[Parameter, EditorRequired] public int Section { get; set; }
 	[Parameter, EditorRequired] public Enums.Direction Direction { get; set; }
@@ -30,7 +29,7 @@ else
 	(Direction == Enums.Direction.Next && Section >= Enums.Content.List.Count);
 
 	private IJSObjectReference? _jsModule;
-	private DotNetObjectReference<PreviousOrNextButton>? _dotNetRef;
+	private DotNetObjectReference<PreviousOrNextButtonCJS>? _dotNetRef;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -41,7 +40,6 @@ else
 				_jsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/keyboard.js");
 				_dotNetRef = DotNetObjectReference.Create(this);
 				await _jsModule.InvokeVoidAsync(JsonKeyboard.Method, _dotNetRef);
-				//Logger!.LogInformation("{Method}, JSMethod: {JSMethod}", nameof(OnAfterRenderAsync), JsonKeyboard.Method);
 			}
 			catch (Exception ex)
 			{
