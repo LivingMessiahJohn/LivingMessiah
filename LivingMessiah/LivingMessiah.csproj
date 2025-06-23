@@ -61,6 +61,7 @@
     <Folder Include="Features\Feasts\Header\" />
     <Folder Include="Features\Welcome\Enums\" />
     <Folder Include="wwwroot\css\bootstrap\" />
+    <Folder Include="wwwroot\js\" />
   </ItemGroup>
 
 </Project>

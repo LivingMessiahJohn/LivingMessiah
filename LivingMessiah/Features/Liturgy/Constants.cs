@@ -15,13 +15,6 @@ public static class Next
 	public const string Icon = " fas fa-arrow-right";
 }
 
-public static class JsonKeyboard
-{
-	public const string Method = "addArrowKeyListener";
-	public const string Dispose = "removeArrowKeyListener";
-}
-
-
 public static class Menu
 {
 	public const string Dropdown = " fas fa-cogs";
