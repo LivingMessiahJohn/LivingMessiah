@@ -19,17 +19,16 @@ else
 	</button>
 }
 
-
 @code {
 	[Parameter, EditorRequired] public int Section { get; set; }
 	[Parameter, EditorRequired] public Enums.Direction Direction { get; set; }
 	[Parameter, EditorRequired] public EventCallback<int> OnSectionSelected { get; set; }
 
 	private bool IsEdge =>
-	(Direction == Enums.Direction.Previous && Section == 1) ||
-	(Direction == Enums.Direction.Next && Section >= Enums.Content.List.Count);
+		(Direction == Enums.Direction.Previous && Section == 1) ||
+		(Direction == Enums.Direction.Next && Section >= Enums.Content.List.Count);
 
-	private IJSObjectReference? _jsModule;
+	private IJSObjectReference? jsModule;
 	private DotNetObjectReference<PreviousOrNextButton>? _dotNetRef;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -38,9 +37,9 @@ else
 		{
 			try
 			{
-				_jsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/keyboard.js");
+				jsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./Features/Liturgy/Toolbar/PreviousOrNextButton.razor.js");
 				_dotNetRef = DotNetObjectReference.Create(this);
-				await _jsModule.InvokeVoidAsync(JsonKeyboard.Method, _dotNetRef);
+				await jsModule.InvokeVoidAsync("addArrowKeyListener", _dotNetRef);
 				//Logger!.LogInformation("{Method}, JSMethod: {JSMethod}", nameof(OnAfterRenderAsync), JsonKeyboard.Method);
 			}
 			catch (Exception ex)
@@ -54,7 +53,6 @@ else
 	private void ButtonClick()
 	{
 		//Logger!.LogInformation("{Method}, Section: {Section}", nameof(ButtonClick), Section);
-
 		if (Direction == Enums.Direction.Previous)
 		{
 			OnSectionSelected.InvokeAsync(Section - 1);
@@ -69,7 +67,6 @@ else
 	public void HandleArrowKey(string key)
 	{
 		//Logger!.LogInformation("{Method}, key: {key}, KeyboardKey: {KeyboardKey}", nameof(HandleArrowKey), key, Direction.KeyboardKey);
-
 		if (Direction == Enums.Direction.Previous && key == Enums.Direction.Previous.KeyboardKey && Section != 1)
 		{
 			ButtonClick();
@@ -81,19 +78,16 @@ else
 			ButtonClick();
 			return;
 		}
-
-
 	}
 
-	public void Dispose()
+	public async ValueTask DisposeAsync()
 	{
-		if (_jsModule != null)
+		if (jsModule != null)
 		{
-			_jsModule.InvokeVoidAsync(JsonKeyboard.Dispose);
-			_jsModule.DisposeAsync();
+			await jsModule.InvokeVoidAsync("removeArrowKeyListener");
+			await jsModule.DisposeAsync();
 		}
 		_dotNetRef?.Dispose();
 	}
-
 }
 
