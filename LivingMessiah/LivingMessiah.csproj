@@ -8,16 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\**" />
     <Compile Remove="Features\Calendar\ManageKeyDates\**" />
     <Compile Remove="Features\Calendar\ManageParashaCalendar\**" />
-    <Content Remove="Data\**" />
     <Content Remove="Features\Calendar\ManageKeyDates\**" />
     <Content Remove="Features\Calendar\ManageParashaCalendar\**" />
-    <EmbeddedResource Remove="Data\**" />
     <EmbeddedResource Remove="Features\Calendar\ManageKeyDates\**" />
     <EmbeddedResource Remove="Features\Calendar\ManageParashaCalendar\**" />
-    <None Remove="Data\**" />
     <None Remove="Features\Calendar\ManageKeyDates\**" />
     <None Remove="Features\Calendar\ManageParashaCalendar\**" />
   </ItemGroup>
@@ -30,9 +26,13 @@
   <ItemGroup>
     <PackageReference Include="Ardalis.SmartEnum" Version="8.2.0" />
     <PackageReference Include="Aspire.Seq" Version="9.3.0" />
+    <PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
 		<PackageReference Include="Blazored.Toast" Version="4.2.1" />
+		<PackageReference Include="Dapper" Version="2.1.66" />
 		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.6" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="9.0.6" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
 		<PackageReference Include="Seq.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
@@ -59,6 +59,7 @@
 
   <ItemGroup>
     <Folder Include="Features\Feasts\Header\" />
+    <Folder Include="Features\Sukkot\Services\" />
     <Folder Include="Features\Welcome\Enums\" />
     <Folder Include="wwwroot\css\bootstrap\" />
     <Folder Include="wwwroot\js\" />

@@ -18,39 +18,41 @@
 - [x] TableTemplate
 
 ## Ported Features
+- [x] About (AboutUs redirects to About)
 - [x] Calendar
 - [x] Donations
 - [x] FeastDayPlanner
 - [x] Feasts
+- [x] IntroductionAndWelcomePage 
+    - [x] converted into a drop down Learn More
+    - [ ] Needs to have State added to it.
 - [x] Leadership
 - [x] HeavensDeclare
 - [x] <strike>NavigationSearch</strike> this is now NavSearchModal
 - [x] ThresholdCovenant
 - [x] LunarMonths
+- [x] ShabbatService: This need a rewrite.
 - [ ] Shavuot: Only `OmerGematriaDictionary.cs` ported, need to move elsewhere.
 - [x] SiteMap
 - [ ] Sukkot: lots to think about here, 
 
 ## Not yet ported
+- [ ] AboutUs **The content of this page needs review**
 - [ ] Articles
 - [ ] ImportantLinks
 - [ ] Parasha: Hold off until a Razor Class Library is created from MHB
 - [ ] Psalms
-- [ ] ShabbatService: This need a rewrite.
 - [ ] TorahTuesday: Don't know what to do with this yet.
 - [ ] UpcomingEvents
 - [ ] Pages\Account: Auth0 
 
 ## Not yet ported <mark>Other Folder<mark>
-- [ ] About
-- [ ] AboutUs
 - [ ] Announcements
 - [ ] BloodMoons
 - [ ] Community
 - [ ] FurtherStudies
 - [ ] FurtherStudies.cs
 - [ ] Gallery
-- [ ] IntroductionAndWelcomePage
 - [ ] Location
 - [ ] Mishpocha
 - [ ] Psa075.html

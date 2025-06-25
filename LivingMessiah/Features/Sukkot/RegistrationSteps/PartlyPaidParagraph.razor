@@ -1,0 +1,58 @@
+﻿@using LivingMessiah.Features.Sukkot.Constants
+@using LivingMessiah.Features.Sukkot.Enums
+
+<div class="card mt-0 mb-3">
+	<div class="card-body bg-light">
+		
+		@((MarkupString)RemainderAndTotal(RegistrationStep!.RemainingCost, RegistrationStep.TotalDonation))
+
+		<p class="lead">
+			Three Payment Options
+			<ol class="lead">
+				<li>
+					<b>Preferred Option</b>.  Pay with <u>Debit or Credit Card</u>.  Click the
+					<CommonButtons RegistrationStepId="RegistrationStep.Id"
+												 NavButton="NavButton.Donation">
+					</CommonButtons>
+					button and follow the instructions.
+					<br />See the
+
+					<a href="@LivingMessiah.Features.Sukkot.Constants.Blobs.UrlPDF(PDFs.StripeWalkThrough)"
+						 target="_blank">
+						<i class="fas fa-file-pdf"></i> <u>Stripe walk through</u>
+					</a> if you need more details.
+					Note, a <em>Stripe</em> &reg; account is <u>not</u> necessary, Living Messiah just uses them to process financial transactions.
+					<br /><em>Or</em>...<br />
+				</li>
+				<li>
+					Pay via <u>Zelle</u>.  Click
+					<CommonButtons RegistrationStepId="RegistrationStep.Id"
+												 NavButton="NavButton.DetailsPrint">
+					</CommonButtons> and follow the instructions.
+				</li>
+				<li>
+					Pay via <u>Check</u>.  Click
+					<CommonButtons RegistrationStepId="RegistrationStep.Id"
+												 NavButton="NavButton.DetailsPrint">
+					</CommonButtons>  and follow the instructions.
+				</li>
+			</ol>
+		</p>
+
+	</div>
+</div>
+
+
+@code {
+	[Parameter, EditorRequired] public RegistrationStep? RegistrationStep { get; set; }
+
+	public static MarkupString RemainderAndTotal(decimal remainingCost, decimal totalDonation)
+	{
+		string remainingCostToString = remainingCost.ToString("C0");
+		string totalDonationToString = totalDonation.ToString("C0");
+		return totalDonation == 0 && remainingCost == 00 ?
+				(MarkupString)(string.Empty) :
+				(MarkupString)$"<p class='lead'>Remainder: <b>{remainingCostToString}</b>; Previous donation(s): <b>{totalDonationToString}</b></p>";
+	}
+}
+

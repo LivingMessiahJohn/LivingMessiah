@@ -52,7 +52,8 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int Articles = 24;
 		internal const int FurtherStudies = 25;	
 		internal const int ImportantLinks = 26;
-		internal const int ShabbatService = 27; 
+		internal const int ShabbatService = 27;
+		internal const int Sukkot = 28;
 	}
 	#endregion
 
@@ -83,8 +84,8 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav Articles = new ArticlesSE();
 	public static readonly Nav FurtherStudies = new FurtherStudiesSE();	
 	public static readonly Nav ImportantLinks = new ImportantLinksSE();
-	public static readonly Nav ShabbatService = new ShabbatServiceSE(); 
-
+	public static readonly Nav ShabbatService = new ShabbatServiceSE();
+	public static readonly Nav Sukkot = new SukkotSE();
 	#endregion
 
 
@@ -349,7 +350,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false;
 	}
 
-	// Liturgy
 	private sealed class ShabbatServiceSE : Nav
 	{
 		public ShabbatServiceSE() : base($"{nameof(Id.ShabbatService)}", Id.ShabbatService) { }
@@ -504,6 +504,20 @@ public abstract class Nav : SmartEnum<Nav>
 			public override string HomeTitleSuffix => " sidur H5468";  // H5468=seder 
 			public override string HomeFloatRightHebrew => "//סידור";
 		*/
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	private sealed class SukkotSE : Nav
+	{
+		public SukkotSE() : base($"{nameof(Id.Sukkot)}", Id.Sukkot) { }
+		public override string Index => "/Sukkot";
+		public override string Title => "Sukkot";
+		public override string Icon => "fas fa-campground";
+		public override int Sort => Id.Sukkot;
+		public override string HomeTitleSuffix => " sukkot H5521";
+		public override string HomeFloatRightHebrew => "סֻּכּוֹת";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;

@@ -14,29 +14,28 @@ public class Service(ILogger<Service> logger) : IService
 
 	public List<ScheduleData.ReadonlyEventsData> GetData()
 	{
-		string inside = $"{nameof(Service)}!{nameof(GetData)}";
 		int _RunningCount = 0;
-		Logger!.LogDebug(string.Format("Inside {0}", inside));
+		Logger.LogDebug("{Method}", nameof(GetData));
 
 		List<ScheduleData.ReadonlyEventsData>? _DataList = new List<ScheduleData.ReadonlyEventsData>();
 
 		var _Tuple1 = LoadFeastDaysExceptHanukkah(_RunningCount, _DataList);
-		Logger!.LogDebug(string.Format("...After {0}  _Tuple1.RunningCount: {1}", nameof(LoadFeastDaysExceptHanukkah), _Tuple1.RunningCount));
-
+		Logger.LogDebug("...{After}: _Tuple1.RunningCount: {RunningCount}", nameof(LoadFeastDaysExceptHanukkah), _Tuple1.RunningCount);
+	
 		var _Tuple2 = LoadFeastDayDetails(_Tuple1.RunningCount, _Tuple1.DataList);
-		Logger!.LogDebug(string.Format("...After {0} _Tuple2.RunningCount: {1}", nameof(LoadFeastDayDetails), _Tuple2.RunningCount));
+		Logger.LogDebug("...{After}: _Tuple2.RunningCount: {RunningCount}", nameof(LoadFeastDayDetails), _Tuple2.RunningCount);
 
 		var _Tuple3 = LoadOmerDates(_Tuple2.RunningCount, _Tuple2.DataList);
-		Logger!.LogDebug(string.Format("...After {0} _Tuple3.RunningCount: {1}", nameof(LoadOmerDates), _Tuple3.RunningCount));
+		Logger.LogDebug("...{After}: _Tuple3.RunningCount: {RunningCount}", nameof(LoadOmerDates), _Tuple3.RunningCount);
 
 		var _Tuple4 = LoadHanukkahDates(_Tuple3.RunningCount, _Tuple3.DataList);
-		Logger!.LogDebug(string.Format("...After {0} _Tuple4.RunningCount: {1}", nameof(LoadHanukkahDates), _Tuple4.RunningCount));
+		Logger.LogDebug("...{After}: _Tuple4.RunningCount: {RunningCount}", nameof(LoadHanukkahDates), _Tuple4.RunningCount);
 
 		var _Tuple5 = LoadMonths(_Tuple4.RunningCount, _Tuple4.DataList);
-		Logger!.LogDebug(string.Format("...After {0} _Tuple5.RunningCount: {1}", nameof(LoadMonths), _Tuple5.RunningCount));
+		Logger.LogDebug("...{After}: _Tuple5.RunningCount: {RunningCount}", nameof(LoadMonths), _Tuple5.RunningCount);
 
 		var _Tuple6 = LoadSeasons(_Tuple5.RunningCount, _Tuple5.DataList);
-		Logger!.LogDebug(string.Format("...After {0} _Tuple6.RunningCount: {1}", nameof(LoadSeasons), _Tuple6.RunningCount));
+		Logger.LogDebug("...{After}: _Tuple6.RunningCount: {RunningCount}", nameof(LoadSeasons), _Tuple6.RunningCount);
 
 		return _Tuple6.DataList;
 	}

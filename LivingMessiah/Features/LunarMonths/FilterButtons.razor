@@ -25,14 +25,13 @@
 	private LunarMonthType? _SelectedFilter;
 	protected override void OnParametersSet()
 	{
-		string inside = $"{nameof(FilterButtons)}!{nameof(OnParametersSet)}";
-		Logger!.LogDebug(string.Format("inside {0}", inside));
+		Logger!.LogDebug("{Method}", nameof(OnParametersSet));
 		_SelectedFilter = CurrentFilter;
 	}
 
 	private void OnButtonClicked(LunarMonthType filter)
 	{
-		//Logger!.LogDebug(string.Format("Inside {0}; {1}, action: {2}", inside, nameof(OnButtonClicked), filter.Name));
+		//Logger!.LogDebug("{Method}, filter: {filter}", nameof(OnButtonClicked), filter.Name);
 		OnFilterSelected.InvokeAsync(filter);
 	}
 
