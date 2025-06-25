@@ -1,0 +1,18 @@
+﻿
+@using LivingMessiah.Features.Sukkot.Enums
+
+<div class="row d-print-none mt-5">
+	<div class="col-12">
+		<a href="@Pages.RegistrationSteps.Index"
+			 class="btn btn-info" title="@Title">
+			<i class="far fa-arrow-alt-circle-left"></i> Title 
+		</a>
+	</div>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public bool BackwardDirection { get; set; }
+
+	public string Title => BackwardDirection ? Constants.Breadcrumbs.BackTo.Text : Constants.Breadcrumbs.Start.Text;
+
+}

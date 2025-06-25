@@ -1,0 +1,58 @@
+﻿@inherits BasePaymentSummary
+
+<div class="row">
+	<div class="col-12">
+		<h5 class="text-center">Detailed Costs</h5>
+	</div>
+</div>
+
+<br />
+
+<div class="row">
+	<div class="col-sm-6">
+		<dl class="row">
+			<dt class="col-6">Registration Fee:</dt>
+			<dd class="col-6"><span class="float-end">@RegistrationSummary!.RegistrationFeeAdjusted.ToString("C0")</span></dd>
+		</dl>
+	</div>
+	<div class="col-sm-6">
+		Early or Regular Fee
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-sm-6">
+		<dl class="row">
+			<dt class="col-6">Total Cost:</dt>
+			<dd class="col-6"><span class="float-end">@RegistrationSummary!.TotalCost.ToString("C0")</span></dd>
+		</dl>
+	</div>
+	<div class="col-sm-6">
+		@RegistrationSummary.RegistrationFeeAdjusted.ToString("C0")  <small>(Reg Fee)</small>
+	</div>
+</div>
+
+
+<div class="row">
+	<div class="col-sm-6">
+		<dl class="row">
+			<dt class="col-6">Prior Donation(s):</dt>
+			<dd class="col-6"><span class="float-end">@RegistrationSummary.TotalDonation.ToString("C0")</span></dd>
+		</dl>
+	</div>
+	<div class="col-sm-6">
+		Summation of prior donation(s) (if any).
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-sm-6">
+		<dl class="row">
+			<dt class="col-6">Remaining Cost:</dt>
+			<dd class="col-6"><span class="text-success float-end"><u><b>@RegistrationSummary.RemainingCost.ToString("C0")</b></u></span></dd>
+		</dl>
+	</div>
+	<div class="col-sm-6">
+		@RegistrationSummary.TotalCost.ToString("C0") - @RegistrationSummary.TotalDonation.ToString("C0") <small>(Cost - Donation)</small>
+	</div>
+</div>

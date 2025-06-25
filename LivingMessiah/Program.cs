@@ -1,7 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.ApplicationInsights.AspNetCore;
-using Serilog.Sinks.ApplicationInsights;
-
 using Serilog;
 using Syncfusion.Blazor;
 using Blazored.Toast;
@@ -10,6 +6,7 @@ using LivingMessiah.Components;
 using LivingMessiah.Settings;
 using LivingMessiah.Features.Calendar;
 using LivingMessiah.Features.FeastDayPlanner.Data;
+using LivingMessiah;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,10 +49,12 @@ try
 
 
 	//Services
+	builder.Services.AddDataStores();
 	builder.Services.AddCalendar();
 	builder.Services.AddFeastDayPlanner();
 
 	builder.Services.Configure<AppSettings>(options => configuration.GetSection("AppSettings").Bind(options));
+	builder.Services.Configure<SukkotSettings>(options => configuration.GetSection("SukkotSettings").Bind(options));
 
 	builder.Services.AddRazorComponents()
 			.AddInteractiveServerComponents();
