@@ -51,34 +51,4 @@
 
 <Detail EnumContent="CurrentContent" ShowImages=ShowImages />
 
-@code {
 
-	protected Enums.Content? CurrentContent;
-	protected int Section = 1;
-	protected bool ShowImages = false;
-
-	protected override void OnInitialized()
-	{
-		CurrentContent = Enums.Content.List.FirstOrDefault(w => w.Value == Section);
-	}
-
-	private void ReturnedSection(int section)
-	{
-		Section = section;
-		CurrentContent = Enums.Content.List.FirstOrDefault(w => w.Value == Section);
-		// save to local storage
-	}
-
-	protected Enums.ModalMenuItem? CurrentModalToShow { get; set; }
-	private void ReturnedModalMenuItem(Enums.ModalMenuItem modalMenuItem)
-	{
-		CurrentModalToShow = modalMenuItem;
-		if (CurrentModalToShow == Enums.ModalMenuItem.ShowImages) { ShowImages = !ShowImages; }
-	}
-
-	private void ReturnedCloseEvent()
-	{
-		CurrentModalToShow = null;
-		//Logger!.LogInformation("{Method}, CurrentModalToShow set to null", nameof(ReturnedCloseEvent));
-	}
-}

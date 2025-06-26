@@ -1,12 +1,14 @@
 using Serilog;
 using Syncfusion.Blazor;
 using Blazored.Toast;
+using Blazored.LocalStorage;
 
+using LivingMessiah;
 using LivingMessiah.Components;
-using LivingMessiah.Settings;
 using LivingMessiah.Features.Calendar;
 using LivingMessiah.Features.FeastDayPlanner.Data;
-using LivingMessiah;
+using LivingMessiah.Settings;
+using LivingMessiah.State; 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,7 +45,13 @@ try
 	Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(builder.Configuration["SyncfusionLicense"] ?? "");
 
 	builder.Services.AddBlazoredToast();
+	builder.Services.AddBlazoredLocalStorage();
 
+	/*
+	builder.Services.AddSingleton<AppState>(); 
+	==> Cannot consume scoped service 'Blazored.LocalStorage.ILocalStorageService' from singleton 'LivingMessiah.State.AppState'. 
+	 */
+	builder.Services.AddScoped<AppState>(); // Scoped is more common for Blazor Server apps	
 
 	builder.Services.AddApplicationInsightsTelemetry();
 
@@ -60,6 +68,7 @@ try
 			.AddInteractiveServerComponents();
 
 	builder.Services.AddSyncfusionBlazor();
+
 
 	var app = builder.Build();
 	app.MapDefaultEndpoints();
