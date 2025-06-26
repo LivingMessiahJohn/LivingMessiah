@@ -138,7 +138,7 @@ public static class RegistrationMeta
 
 public static class Other
 {
-	public const string Banner = "2024-sukkot-banner-1020-430-3d.jpg";
+	public const string Banner = "2025-sukkot-banner-1051-588-3d.jpg";
 	public const string BannerAlt = $"{Year.String} Sukkot Registration Banner";
 	public static string DetailsTitle { get; set; } = $"Living Messiah Sukkot Registration {Year.String}";
 

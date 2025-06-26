@@ -13,7 +13,7 @@
 *@
 
 
-@using static LivingMessiah.Services.Auth0 
+@using static LivingMessiah.Services.Auth0
 @* 
 <AuthorizeView Roles="@Roles.SukkotMenuBar">
 	<SukkotSettingsList />
@@ -24,6 +24,13 @@
 <PageHeader PageEnum="Nav.Sukkot" />
 
 <BreadCrumbNav Page1Active="" />
+
+<div class="row">
+	<div class="col-12">
+		<p class="text-black-50 float-end"><small>SukIsOp @SukkotSettings.Value.SukkotIsOpen; IsRegCl @SukkotSettings.Value.IsRegistrationClosed</small></p>
+	</div>
+</div>
+
 
 @* 
 <AuthorizeView>
@@ -39,12 +46,10 @@
 @if (SukkotSettings.Value.SukkotIsOpen)
 {
 	<div class="d-print-none">
-		<div class="row">
-			<div class="col-12">
-				<img src="@Constants.Blobs.UrlEvents(Other.Banner)"
-						 alt="@Constants.Blobs.Url(Other.BannerAlt)"
-						 class="img-fluid rounded" />
-			</div>
+		<div class="d-flex justify-content-center">
+			<img src="@Constants.Blobs.UrlEvents(Other.Banner)"
+					 alt="@Constants.Blobs.Url(Other.BannerAlt)"
+					 class="img-fluid rounded" />
 		</div>
 	</div>
 
@@ -99,12 +104,16 @@
 }
 else
 {
-	<div class="p-5 mb-4 bg-danger rounded-3">
+	<div class="p-5 mb-4 bg-body-secondary rounded-3">
 		<div class="container-fluid py-5">
-			<h1 class="display-5 text-warning">Registration is Over</h1>
+			@* <h1 class="display-5 text-warning">Registration is Over</h1> *@
+			<h1 class="display-5 text-success">Registration is Not Ready Yet, Try Later. Thanks</h1>
 		</div>
 	</div>
+
 }
+
+
 
 @code {
 
@@ -119,6 +128,6 @@ else
 	protected override async Task OnInitializedAsync()
 	{
 		base.OnInitialized();
-		Salutation = await SvcClaims!.GetUserName(); 
+		Salutation = await SvcClaims!.GetUserName();
 	}
 }
