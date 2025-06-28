@@ -9,9 +9,10 @@ public static class Auth0
 
 	public static class Configuration
 	{
-		public const string Domain = "Auth0:Domain";
-		public const string ClientId = "Auth0:ClientId";
-		public const string ClientSecret = "Auth0:ClientSecret";
+	// using auth0 instead of Auth0 which was in version 7
+		public const string Domain = "auth0:Domain";
+		public const string ClientId = "auth0:ClientId";
+		public const string ClientSecret = "auth0:ClientSecret";
 	}
 
 	public static class Tokens

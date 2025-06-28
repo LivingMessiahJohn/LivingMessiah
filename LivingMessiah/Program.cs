@@ -8,7 +8,12 @@ using LivingMessiah.Components;
 using LivingMessiah.Features.Calendar;
 using LivingMessiah.Features.FeastDayPlanner.Data;
 using LivingMessiah.Settings;
-using LivingMessiah.State; 
+using LivingMessiah.State;
+
+using Auth0.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using static LivingMessiah.Services.Auth0.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +51,7 @@ try
 
 	builder.Services.AddBlazoredToast();
 	builder.Services.AddBlazoredLocalStorage();
+	builder.Services.AddAuthorizationCore();
 
 	/*
 	builder.Services.AddSingleton<AppState>(); 
@@ -60,6 +66,14 @@ try
 	builder.Services.AddDataStores();
 	builder.Services.AddCalendar();
 	builder.Services.AddFeastDayPlanner();
+
+	builder.Services.AddAuth0WebAppAuthentication(options => {
+		options.Domain = builder.Configuration[Domain] ?? "";
+		options.ClientId = builder.Configuration[ClientId] ?? "";
+		options.Scope = "openid profile email";
+	});
+	//builder.Services.AddScoped<TokenProvider>();
+	//TokenProvider used by _Host App
 
 	builder.Services.Configure<AppSettings>(options => configuration.GetSection("AppSettings").Bind(options));
 	builder.Services.Configure<SukkotSettings>(options => configuration.GetSection("SukkotSettings").Bind(options));

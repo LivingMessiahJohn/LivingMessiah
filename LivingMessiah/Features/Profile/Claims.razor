@@ -1,0 +1,36 @@
+﻿
+@if (ClaimList != null)
+{
+	@if (ClaimList.Any())
+	{
+		<div class="card my-5" style="max-width: 540px;">
+			<div class="row">
+				<div class="col-12">
+					<img src="@ProfileImage" alt="" class="img-fluid rounded" />
+				</div>
+			</div>
+		</div>
+	}
+}
+
+
+@if (ClaimList != null)
+{
+	@if (ClaimList.Any())
+	{
+		<h3 class="text-warning mt-5 mb-0">Claims List</h3>
+		<TableTemplate Items="@ClaimList">
+			<TableHeader>
+
+				<th>Claim</th>
+				<th>Value</th>
+
+			</TableHeader>
+			<RowTemplate>
+				<td>@context.Type</td>
+				<td>@context.Value</td>
+			</RowTemplate>
+		</TableTemplate>
+
+	}
+}

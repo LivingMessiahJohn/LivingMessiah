@@ -14,7 +14,16 @@
 		</div>
 
 		<div class="col">
-			@ProgressBarDivRF
+			@if (Section != 0)
+			{
+				@ProgressBarDivRF
+			}
+			else
+			{
+				<div class="col">Sec:@Section	</div>
+			}
+			
+		
 		</div>
 
 		<div class="px-1">
@@ -39,5 +48,6 @@
 	[Parameter, EditorRequired] public RenderFragment? NextButtonDivRF { get; set; }
 	[Parameter, EditorRequired] public RenderFragment? JustifyEndRF { get; set; }
 	// [Parameter, EditorRequired] public RenderFragment? DialogRF { get; set; }
+	[Parameter, EditorRequired] public int Section { get; set; }
 
 }

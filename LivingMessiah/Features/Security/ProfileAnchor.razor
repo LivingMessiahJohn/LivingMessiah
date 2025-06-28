@@ -1,0 +1,6 @@
+﻿@using Page = LivingMessiah.Enums
+
+<a href="@Page.Nav.Profile.Index" class="@CssClass"
+	title="Role: @Role; IsAdmin:@IsAdmin; Email:@EmailAddress">
+	@((MarkupString)NameTiny) @((MarkupString)BlueCheck)
+</a>

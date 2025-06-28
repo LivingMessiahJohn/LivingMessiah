@@ -54,6 +54,8 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int ImportantLinks = 26;
 		internal const int ShabbatService = 27;
 		internal const int Sukkot = 28;
+		internal const int Profile = 29;
+		internal const int PasswordChanged = 29;
 	}
 	#endregion
 
@@ -86,6 +88,9 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav ImportantLinks = new ImportantLinksSE();
 	public static readonly Nav ShabbatService = new ShabbatServiceSE();
 	public static readonly Nav Sukkot = new SukkotSE();
+	public static readonly Nav Profile = new ProfileSE();
+	public static readonly Nav PasswordChanged = new PasswordChangedSE();
+	
 	#endregion
 
 
@@ -523,6 +528,39 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false;
 	}
 
+	private sealed class ProfileSE : Nav
+	{
+		public ProfileSE() : base($"{nameof(Id.Profile)}", Id.Profile) { }
+		public override string Index => "/Profile";
+		public override string Title => "Profile";
+		public override string Icon => "fab fa-superpowers";
+		public override int Sort => Id.Profile;
+		public override string HomeTitleSuffix => "";
+		public override string HomeFloatRightHebrew => "";
+		public override PageListType PageListType => PageListType.SitemapPage;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	/*
+	ToDo: instead of a @page component that's define in Enums.Nav, 
+	maybe this could be a message saved to local storage and pushed through to a Notification button via CascadingAppState
+	*/
+	private sealed class PasswordChangedSE : Nav
+	{
+		public PasswordChangedSE() : base($"{nameof(Id.PasswordChanged)}", Id.PasswordChanged) { }
+		public override string Index => "/Account/PasswordChanged";
+		public override string Title => "Password Changed Successfully";
+		//public const string PageTitle = " Password Changed";
+		public override string Icon => "fas fa-key";
+		public override int Sort => Id.PasswordChanged;
+		public override string HomeTitleSuffix => "";
+		public override string HomeFloatRightHebrew => "";
+		public override PageListType PageListType => PageListType.SitemapPage;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+	
 	#endregion
 
 }

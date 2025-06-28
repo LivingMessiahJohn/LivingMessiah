@@ -3,23 +3,20 @@
 @using LivingMessiah.Services
 
 @using LivingMessiah.Settings
+@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.Extensions.Options
 @inject IOptions<SukkotSettings> SukkotSettings
 @inject ISecurityClaimsService SvcClaims
 
-@* 
-@inject AuthenticationStateProvider SukkotSettings
-[Inject] public AuthenticationStateProvider? AuthenticationStateProvider { get; set; } 
-*@
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@* [Inject] public AuthenticationStateProvider? AuthenticationStateProvider { get; set; } *@
 
 
 @using static LivingMessiah.Services.Auth0
-@* 
 <AuthorizeView Roles="@Roles.SukkotMenuBar">
 	<SukkotSettingsList />
-	<SukkotAdminMenubar></SukkotAdminMenubar>
+	@* <SukkotAdminMenubar></SukkotAdminMenubar> *@
 </AuthorizeView>
-*@
 
 <PageHeader PageEnum="Nav.Sukkot" />
 
@@ -31,8 +28,6 @@
 	</div>
 </div>
 
-
-@* 
 <AuthorizeView>
 	<Authorized>
 		<h3>Hello, @Salutation !</h3>
@@ -41,7 +36,7 @@
 	<NotAuthorized>
 	</NotAuthorized>
 </AuthorizeView>
- *@
+
 
 @if (SukkotSettings.Value.SukkotIsOpen)
 {
