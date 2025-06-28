@@ -10,13 +10,12 @@
 	else
 	{
 		<div class="progress-bar bg-info text-dark" style='@GetProgressStyle()'>
-			<span class="fs-4 fw-bold mt-2 float-end">@GetProgressTimeStamp() </span>
+			<span class="fs-4 fw-bold mt-2 float-end">@GetProgressTimeStamp()</span>
 		</div>
 	}
 </div>
 
 @code {
-
 	[Parameter, EditorRequired] public int Section { get; set; }
 	[Parameter, EditorRequired] public Enums.Content? CurrentContent { get; set; }
 

@@ -1,10 +1,12 @@
 ﻿@using LivingMessiah.State
+@using Microsoft.AspNetCore.Components.Authorization
 
 @inject AppState AppState
 @inject ILogger<Routes>? Logger
 
-<CascadingAppState>
-	@* <ProcessError> *@
+<CascadingAuthenticationState>
+	<CascadingAppState>
+		@* <ProcessError> *@
 		<Router AppAssembly="typeof(Program).Assembly">
 			<Found Context="routeData">
 				<RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
@@ -12,7 +14,8 @@
 			</Found>
 		</Router>
 		@* </ProcessError> *@
-</CascadingAppState>
+	</CascadingAppState>
+</CascadingAuthenticationState>
 
 @code {
 	protected override async Task OnAfterRenderAsync(bool firstRender)

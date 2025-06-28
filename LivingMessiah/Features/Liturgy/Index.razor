@@ -12,20 +12,20 @@
 	<h3 class="text-center"><i class="@Page.Liturgy.Icon"></i>&nbsp;&nbsp;@Page.Liturgy.Title</h3>
 </div>
 
-<NavSkeleton>
+<NavSkeleton Section="Section">
 
-	<JustifyStartRF><HomeButton /></JustifyStartRF>	
+	<JustifyStartRF><HomeButton /></JustifyStartRF>
 
 	<PrevButtonDivRF>
 		<PreviousOrNextButton Section="Section" Direction=Enums.Direction.Previous OnSectionSelected="ReturnedSection" />
 	</PrevButtonDivRF>
 
 	<ProgressBarDivRF>
-		<Progressbar Section="Section" CurrentContent=CurrentContent/>
+		<Progressbar Section="Section" CurrentContent=CurrentContent />
 	</ProgressBarDivRF>
 
 	<NextButtonDivRF>
-		<PreviousOrNextButton Section="Section" Direction=Enums.Direction.Next OnSectionSelected="ReturnedSection" /> 
+		<PreviousOrNextButton Section="Section" Direction=Enums.Direction.Next OnSectionSelected="ReturnedSection" />
 	</NextButtonDivRF>
 
 	<JustifyEndRF>
@@ -52,3 +52,51 @@
 <Detail EnumContent="CurrentContent" ShowImages=ShowImages />
 
 
+@code {
+	[CascadingParameter] public CascadingAppState? State { get; set; }
+
+	protected Enums.Content? CurrentContent;
+	protected int Section;
+	protected bool ShowImages;
+
+	protected override void OnParametersSet()
+	{
+		int id = State!.AppState!.LiturgyState!.GetContentId();
+		CurrentContent = Enums.Content.TryFromValue(id, out _)
+		? Enums.Content.FromValue(id)
+		: Enums.Content.CallToService;
+		Section = CurrentContent?.Value ?? 0;	
+
+		ShowImages = State!.AppState!.LiturgyState!.GetIsShowingImage();
+
+	}
+
+	private async Task ReturnedSection(int section)
+	{
+		Section = section;
+		CurrentContent = Enums.Content.List.FirstOrDefault(w => w.Value == Section);
+
+		await State!.AppState!.LiturgyState!.UpdateContentId(section);
+	}
+
+	// ToDo: this doesn't, 
+	//private async Task ReturnedModalMenuItem(Enums.ModalMenuItem modalMenuItem)
+	protected Enums.ModalMenuItem? CurrentModalToShow { get; set; }
+	private void ReturnedModalMenuItem(Enums.ModalMenuItem modalMenuItem)
+	{
+		// Logger!.LogInformation("{Method}, modalMenuItem: {modalMenuItem}", nameof(ReturnedModalMenuItem), modalMenuItem);
+		// if (CurrentModalToShow == Enums.ModalMenuItem.ShowImages) 
+		// { 
+		 	  ShowImages = !ShowImages;
+		// 	await State!.AppState!.LiturgyState!.UpdateIsShowingImage(ShowImages);
+		// 	Logger!.LogInformation("{Method}, ShowImages: {ShowImages}", nameof(ReturnedModalMenuItem), ShowImages);
+		// }
+	}
+
+	private void ReturnedCloseEvent()
+	{
+		CurrentModalToShow = null;
+		//Logger!.LogInformation("{Method}, CurrentModalToShow set to null", nameof(ReturnedCloseEvent));
+	}
+
+}

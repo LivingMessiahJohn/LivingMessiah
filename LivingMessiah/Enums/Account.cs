@@ -9,16 +9,16 @@ public abstract class Account : SmartEnum<Account>
 	{
 		internal const int Login = 1;
 		internal const int Logout = 2;
-		internal const int PasswordChanged = 3;
-		internal const int Profile = 4;
+		//internal const int PasswordChanged = 3; Moved to Nav
+		//internal const int Profile = 4; Moved to Nav
 	}
 	#endregion
 
 	#region Declared Public Instances
 	public static readonly Account Login = new LoginSE();
 	public static readonly Account Logout = new LogoutSE();
-	public static readonly Account PasswordChanged = new PasswordChangedSE();
-	public static readonly Account Profile = new ProfileSE();
+	//public static readonly Account PasswordChanged = new PasswordChangedSE(); Moved to Nav
+	//public static readonly Account Profile = new ProfileSE();  Moved to Nav
 	#endregion
 
 	private Account(string name, int value) : base(name, value)  // Constructor
@@ -29,6 +29,7 @@ public abstract class Account : SmartEnum<Account>
 	public abstract string Index { get; }
 	public abstract string Title { get; }
 	public abstract string Icon { get; }
+	public abstract string Action { get; }
 	#endregion
 
 	#region Private Instantiation
@@ -39,6 +40,7 @@ public abstract class Account : SmartEnum<Account>
 		public override string Index => "/Account/Login";
 		public override string Title => "Login";  //Log in
 		public override string Icon => "fas fa-sign-in-alt";
+		public override string Action => "";
 	}
 
 	private sealed class LogoutSE : Account
@@ -47,7 +49,11 @@ public abstract class Account : SmartEnum<Account>
 		public override string Index => "/Account/Logout";
 		public override string Title => "Log out";
 		public override string Icon => "fas fa-sign-in-alt";
+		public override string Action => "Account/LogOut";
 	}
+
+	/*
+	PasswordChanged and Profile moved to Nav
 
 	private sealed class PasswordChangedSE : Account
 	{
@@ -56,6 +62,7 @@ public abstract class Account : SmartEnum<Account>
 		public override string Title => "Password Changed Successfully";
 		//public const string PageTitle = " Password Changed";
 		public override string Icon => "fas fa-key";
+		public override string Action => "";
 	}
 
 	private sealed class ProfileSE : Account
@@ -65,11 +72,14 @@ public abstract class Account : SmartEnum<Account>
 		public override string Title => " Profile";
 		public override string Icon => "fab fa-superpowers";
 	}
-
+	*/
 	#endregion
 }
 
-// Used in Login-/Logout- and Profile-views
+
+
+/*
+Used in Login-/Logout- and Profile-views
 public static class AccountConstants
 {
 	public const string LogoutAction = "Account/LogOut";
@@ -84,6 +94,7 @@ public static class AccountConstants
 		public const string Profile = "fas fa-user";
 	}
 }
+*/
 
 
 

@@ -19,41 +19,66 @@ public class State
 	#endregion
 
 	private const string Key = "liturgy-content-id";
+	private const string KeyShowImage = "liturgy-show-image";
 
 	private bool _isInitialized;
 	private void NotifyStateHasChanged() => OnChange?.Invoke();
 	public event Action? OnChange;
 
 	private int _ContentId;
+	private bool _IsShowingImage;
 
 	public async Task Initialize()
 	{
 		if (!_isInitialized)
 		{
-				int? i = await localStorage!.GetItemAsync<int>(Key);
-					if (i is null || i == 0)
-					{
-						await UpdateContent(Enums.Content.CallToService);  
-					}
-					else
-					{
-				_ContentId = i.Value;
-					}
-			
+			int i = await localStorage!.GetItemAsync<int>(Key);
+			if (i == 0)
+			{
+				await UpdateContentId(Enums.Content.CallToService); // default value
+			}
+			else
+			{
+				_ContentId = i;
+			}
+
+			bool? _showImage = await localStorage!.GetItemAsync<bool?>(KeyShowImage);
+			if (!_showImage.HasValue)
+			{
+				await UpdateIsShowingImage(false); // default value
+			}
+			else
+			{
+				_IsShowingImage = false;
+			}
+
 			_isInitialized = true;
 		}
 	}
 
-	public async Task UpdateContent(int contentId)
+	public async Task UpdateContentId(int contentId)
 	{
 		_ContentId = contentId;
 		await localStorage!.SetItemAsync(Key, _ContentId);
 		NotifyStateHasChanged();
 	}
 
-	public int Get()
+	public int GetContentId()
 	{
 		//Logger!.LogInformation("{Method}, permutation: {permutation}", nameof(Get), _permutation); // DEBUG 
 		return _ContentId;
 	}
+
+	public async Task UpdateIsShowingImage(bool isShowingImage)
+	{
+		_IsShowingImage = isShowingImage;
+		await localStorage!.SetItemAsync(KeyShowImage, _IsShowingImage);
+		NotifyStateHasChanged();
+	}
+
+	public bool GetIsShowingImage()
+	{
+		return _IsShowingImage;
+	}
+
 }

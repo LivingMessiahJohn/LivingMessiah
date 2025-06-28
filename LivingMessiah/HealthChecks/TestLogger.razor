@@ -1,4 +1,5 @@
 ﻿@page "/HealthCheck/TestLogger"
+@using Microsoft.AspNetCore.Components.Authorization
 @using Page = LivingMessiah.Enums.Nav
 @using Microsoft.Extensions.Options;
 @using LivingMessiah.Settings
@@ -7,10 +8,8 @@
 
 @inject ILogger<TestLogger>? Logger
 @inject IToastService? Toast
-
 @inject IConfiguration Configuration
 
-@* 
 @using static LivingMessiah.Services.Auth0
 
 <AuthorizeView Roles="@Roles.Admin">
@@ -20,13 +19,12 @@
 		<div class="card border-warning my-5">
 			<div class="card-header">Not Authorized</div>
 			<div class="card-body">
-				<h5 class="">To view <b>@Page.Dashboard.Text</b> you need to be logged in.</h5>
-				<LoginRedirectButton ReturnUrl="@Page.Dashboard.Index" />
+				<h5 class="">To view <b>@Page.HealthCheckTestLogger.Title</b> you need to be logged in.</h5>
+				<LoginRedirectButton ReturnUrl="@Page.HealthCheckTestLogger.Index" />
 			</div>
 		</div>
 	</NotAuthorized>
-</AuthorizeView>
- *@
+</AuthorizeView> 
 
 <div class="card">
 	<div class="card-header">Administrative Links</div>

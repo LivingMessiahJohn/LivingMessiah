@@ -52,14 +52,14 @@ else
 			{
 				Logger!.LogWarning("{Method}, DetailContentEng IS NULL; CurrentContent: {CurrentContent}"
 					, nameof(SetDetail), CurrentEnumContent);
-				Toast!.ShowError($"{Global.ToastShowError} {nameof(Index)}!{nameof(OnParametersSetAsync)}");
+				Toast!.ShowError($"{Global.ToastShowError} {nameof(Index)}!{nameof(SetDetail)}");
 				return;
 			}
 		}
 		catch (Exception ex)
 		{
 			Logger!.LogError(ex, "{Method}", nameof(SetDetail));
-			Toast!.ShowError($"{Global.ToastShowError} {nameof(Index)}!{nameof(OnParametersSetAsync)}");
+			Toast!.ShowError($"{Global.ToastShowError} {nameof(Index)}!{nameof(SetDetail)}");
 		}
 	}
 }

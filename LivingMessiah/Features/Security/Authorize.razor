@@ -1,0 +1,24 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+<div class="row pt-2 pb-1 d-print-none">
+	<AuthorizeView>
+		<Authorized>
+
+			<div class="col-12">
+				<LogoutForm />
+				@* <ProfileAnchor IsXsOrSm="false" /> *@
+			</div>
+
+		</Authorized>
+
+		<NotAuthorized>
+			<div class="col-12">
+				<LoginAnchor />
+			</div>
+
+		</NotAuthorized>
+	</AuthorizeView>
+</div>
+
+@code {
+
+}
