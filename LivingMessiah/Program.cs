@@ -11,9 +11,10 @@ using LivingMessiah.Settings;
 using LivingMessiah.State;
 
 using Auth0.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
 using static LivingMessiah.Services.Auth0.Configuration;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using AccountEnum = LivingMessiah.Enums.Account;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,7 +84,6 @@ try
 
 	builder.Services.AddSyncfusionBlazor();
 
-
 	var app = builder.Build();
 	app.MapDefaultEndpoints();
 
@@ -103,6 +103,24 @@ try
 	app.UseAntiforgery();
 
 	app.MapStaticAssets(); // new for .Net 9; 
+
+	app.MapGet(AccountEnum.Login.Index, async (HttpContext httpContext, string returnUrl = "/") =>
+	{
+		var authenticationProperties = new LoginAuthenticationPropertiesBuilder()
+						.WithRedirectUri(returnUrl)
+						.Build();
+		await httpContext.ChallengeAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
+	});
+
+	app.MapGet(AccountEnum.Logout.Index, async (HttpContext httpContext) =>
+	{
+		var authenticationProperties = new LogoutAuthenticationPropertiesBuilder()
+						.WithRedirectUri("/")
+						.Build();
+		await httpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
+		await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+	});
+
 	app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();
 
