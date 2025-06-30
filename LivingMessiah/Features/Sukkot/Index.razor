@@ -32,8 +32,7 @@
 
 <div class="row">
 	<div class="col-12">
-		@* <p class="text-black-50 float-end"><small>SukIsOp @SukkotSettings.Value.SukkotIsOpen; IsRegCl @SukkotSettings.Value.IsRegistrationClosed</small></p> *@
-		<p class="text-black-50 float-end"><small><b>SukkotIsOpen:</b> @SukkotSettings.Value.SukkotIsOpen; <b>SukkotRegistrationIsClosed:</b> @SukkotSettings.Value.SukkotRegistrationIsClosed</small></p>
+		<p class="text-black-50 float-end"><small><b>SukkotIsOpen:</b> @SukkotSettings.Value.SukkotIsOpen; <b>IsRegistrationClosed:</b> @SukkotSettings.Value.IsRegistrationClosed</small></p>
 	</div>
 </div>
 
@@ -58,9 +57,7 @@
 		</div>
 	</div>
 
-	@* @if (SukkotSettings.Value.IsRegistrationClosed) *@
-	
-	@if (SukkotSettings.Value.SukkotRegistrationIsClosed)
+	@if (SukkotSettings.Value.IsRegistrationClosed) 
 	{
 		<div class="p-5 mb-4 bg-danger rounded-3">
 			<div class="container-fluid py-5">
@@ -76,17 +73,14 @@
 	}
 
 	<Introduction />
-	@* @if (!SukkotSettings.Value.IsRegistrationClosed) *@
-
-	@if (!SukkotSettings.Value.SukkotRegistrationIsClosed)
+	@if (!SukkotSettings.Value.IsRegistrationClosed)
 	{
 		<RegistrationInfo />
 		<PaymentInfo />
 	}
 	<Documents />
 
-	@* @if (!SukkotSettings.Value.IsRegistrationClosed) *@
-	@if (!SukkotSettings.Value.SukkotRegistrationIsClosed)
+	@if (!SukkotSettings.Value.IsRegistrationClosed)
 	{
 		<br />
 		<p class="lead">
@@ -117,7 +111,7 @@ else
 		<div class="container-fluid py-5">
 			@* <h1 class="display-5 text-warning">Registration is Over</h1> *@
 			<h1 class="display-5 text-success">Registration is Not Ready Yet, Try Later. Thanks</h1>
-			<p class="display-5 text-success">SukkotRegistrationIsClosed: @SukkotSettings.Value.SukkotRegistrationIsClosed</p>
+			<p class="text-black-50 float-end"><b>IsRegistrationClosed:</b> @SukkotSettings.Value.IsRegistrationClosed</p>
 			
 		</div>
 	</div>
