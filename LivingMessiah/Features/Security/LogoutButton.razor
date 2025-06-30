@@ -1,0 +1,20 @@
+﻿@using AccountEnum = LivingMessiah.Enums.Account
+@using NavEnum = LivingMessiah.Enums.Nav
+
+@inject NavigationManager NavigationManager
+@inject ILogger<LogoutButton>? Logger
+
+<button type="button"
+				class="btn btn-xs btn-outline-info float-end text-black-50 me-2"
+				@onclick="ButtonClick">
+		<u>@AccountEnum.Logout.Title</u> <i class="@AccountEnum.Logout.Icon"></i>
+</button>
+
+@code {
+	private void ButtonClick()
+	{
+		Logger!.LogInformation("{Method}, LogoutIndex: {LogoutIndex}, ReturnURL: {ReturnURL}"
+		, nameof(ButtonClick), AccountEnum.Logout.Index, @NavEnum.Home.Index);
+		NavigationManager!.NavigateTo($"{AccountEnum.Logout.Index}?returnUrl={@NavEnum.Home.Index}", true);
+	}
+}

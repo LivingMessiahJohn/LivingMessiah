@@ -1,6 +1,73 @@
-﻿@using Page = LivingMessiah.Enums
+﻿@using LivingMessiah.Helpers
+@using Microsoft.AspNetCore.Components.Authorization
 
-<a href="@Page.Nav.Profile.Index" class="@CssClass"
-	title="Role: @Role; IsAdmin:@IsAdmin; Email:@EmailAddress">
+@using NavEnum = LivingMessiah.Enums.Nav
+@using System.Security.Claims
+
+<a href="@NavEnum.Profile.Index" class="me-2"
+	 title="Role: @Role; IsAdmin:@IsAdmin; Email:@EmailAddress">
 	@((MarkupString)NameTiny) @((MarkupString)BlueCheck)
 </a>
+
+@code {
+	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+
+	private string Username = "";
+	public string? EmailAddress { get; set; }
+	public bool Verified { get; set; }
+	private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+	public string? Role { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		base.OnInitialized();
+
+		if (authenticationState is not null)
+		{
+			var state = await authenticationState;
+			Username = state?.User?.Identity?.Name ?? "???"; // string.Empty
+
+			if (state!.User.Identity is not null)
+			{
+				if (state.User.Identity.IsAuthenticated)
+				{
+					Verified = true;
+					_claims = state.User.Claims;
+				}
+				else
+				{
+					Verified = false;
+				}
+
+				EmailAddress = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+				Role = state.User.Claims.FirstOrDefault(c => c.Type == "https://schemas.livingmessiah.com/roles")?.Value;
+			}
+
+		}
+	}
+
+	public bool IsAdmin
+	{
+		get
+		{
+			return Verified && Role!.Contains("admin", StringComparison.InvariantCultureIgnoreCase);
+		}
+	}
+
+	public string NameTiny =>
+	!string.IsNullOrEmpty(Username)
+	? $"<span class='text-success'><b>{Username.Truncate(25)}</b></span>"
+	: "";
+
+	public string BlueCheck
+	{
+		get
+		{
+			return Verified
+			? "<span class='text-primary'><i class='fas fa-check'></i></span>"
+			: "<span class='text-danger'>Unverified<i class='fas fa-question'></i></span>";
+		}
+	}
+
+
+}

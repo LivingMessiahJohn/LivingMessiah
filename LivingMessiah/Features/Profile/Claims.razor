@@ -1,18 +1,15 @@
-﻿
-@if (ClaimList != null)
-{
-	@if (ClaimList.Any())
-	{
-		<div class="card my-5" style="max-width: 540px;">
-			<div class="row">
-				<div class="col-12">
-					<img src="@ProfileImage" alt="" class="img-fluid rounded" />
-				</div>
-			</div>
-		</div>
-	}
-}
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 
+@inject IToastService? Toast
+@inject ILogger<Claims>? Logger
+
+@if (!string.IsNullOrEmpty(ProfileImage))
+{
+	<div class="card my-5" style="max-width: 180px;">
+		<img src="@ProfileImage" alt="" class="img-fluid rounded" />
+	</div>
+}
 
 @if (ClaimList != null)
 {
@@ -21,16 +18,71 @@
 		<h3 class="text-warning mt-5 mb-0">Claims List</h3>
 		<TableTemplate Items="@ClaimList">
 			<TableHeader>
-
 				<th>Claim</th>
 				<th>Value</th>
-
 			</TableHeader>
 			<RowTemplate>
 				<td>@context.Type</td>
 				<td>@context.Value</td>
 			</RowTemplate>
 		</TableTemplate>
-
 	}
 }
+
+@code {
+	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+
+	private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+	protected List<Claim>? ClaimList;
+	public string? ProfileImage { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		base.OnInitialized();
+		//Logger!.LogInformation("{Method}", nameof(OnInitializedAsync));
+		try
+		{
+			if (authenticationState is not null)
+			{
+				var state = await authenticationState;
+				string _username = state?.User?.Identity?.Name ?? string.Empty;
+
+				if (!string.IsNullOrEmpty(_username))
+				{
+					if (state!.User.Identity is not null)
+					{
+						if (state.User.Identity.IsAuthenticated)
+						{
+							Toast!.ShowWarning($"{_username} is authenticated!");
+							_claims = state.User.Claims;
+							ClaimList = _claims.ToList();
+							ProfileImage = _claims.FirstOrDefault(c => c.Type == "picture")?.Value;
+						}
+						else
+						{
+							Toast!.ShowWarning("The user is NOT authenticated.");
+						}
+					}
+					else
+					{
+						Toast!.ShowWarning("no identity");
+					}
+				}
+				else
+				{
+					Toast!.ShowWarning("no name");
+				}
+			}
+			else
+			{
+				Toast!.ShowWarning("Authentication state is null");
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+			Toast!.ShowError($"{Global.ToastShowError}");
+		}
+	}
+}
+
