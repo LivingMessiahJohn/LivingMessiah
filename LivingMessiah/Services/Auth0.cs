@@ -15,11 +15,13 @@ public static class Auth0
 		public const string ClientSecret = "auth0:ClientSecret";
 	}
 
+	/*
 	public static class Tokens
 	{
 		public const string Access = "access_token";
 		public const string Id = "id_token";
 	}
+	*/
 
 	public static class Roles
 	{

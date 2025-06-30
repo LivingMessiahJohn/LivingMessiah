@@ -9,8 +9,6 @@
 @inject ISecurityClaimsService SvcClaims
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@* [Inject] public AuthenticationStateProvider? AuthenticationStateProvider { get; set; } *@
-
 
 @using static LivingMessiah.Services.Auth0
 <AuthorizeView Roles="@Roles.SukkotMenuBar">
@@ -18,15 +16,27 @@
 	@* <SukkotAdminMenubar></SukkotAdminMenubar> *@
 </AuthorizeView>
 
+@* 
+<AuthorizeView Roles="@Roles.SukkotMenuBar">
+	<NotAuthorized>
+		<div class="alert alert-danger" role="alert">
+			You are not authorized to view SukkotSettingsList
+		</div>	
+	</NotAuthorized>
+</AuthorizeView>
+ *@
+
 <PageHeader PageEnum="Nav.Sukkot" />
 
 <BreadCrumbNav Page1Active="" />
 
 <div class="row">
 	<div class="col-12">
-		<p class="text-black-50 float-end"><small>SukIsOp @SukkotSettings.Value.SukkotIsOpen; IsRegCl @SukkotSettings.Value.IsRegistrationClosed</small></p>
+		@* <p class="text-black-50 float-end"><small>SukIsOp @SukkotSettings.Value.SukkotIsOpen; IsRegCl @SukkotSettings.Value.IsRegistrationClosed</small></p> *@
+		<p class="text-black-50 float-end"><small><b>SukkotIsOpen:</b> @SukkotSettings.Value.SukkotIsOpen; <b>SukkotRegistrationIsClosed:</b> @SukkotSettings.Value.SukkotRegistrationIsClosed</small></p>
 	</div>
 </div>
+
 
 <AuthorizeView>
 	<Authorized>
@@ -48,7 +58,9 @@
 		</div>
 	</div>
 
-	@if (SukkotSettings.Value.IsRegistrationClosed)
+	@* @if (SukkotSettings.Value.IsRegistrationClosed) *@
+	
+	@if (SukkotSettings.Value.SukkotRegistrationIsClosed)
 	{
 		<div class="p-5 mb-4 bg-danger rounded-3">
 			<div class="container-fluid py-5">
@@ -64,15 +76,17 @@
 	}
 
 	<Introduction />
+	@* @if (!SukkotSettings.Value.IsRegistrationClosed) *@
 
-	@if (!SukkotSettings.Value.IsRegistrationClosed)
+	@if (!SukkotSettings.Value.SukkotRegistrationIsClosed)
 	{
 		<RegistrationInfo />
 		<PaymentInfo />
 	}
 	<Documents />
 
-	@if (!SukkotSettings.Value.IsRegistrationClosed)
+	@* @if (!SukkotSettings.Value.IsRegistrationClosed) *@
+	@if (!SukkotSettings.Value.SukkotRegistrationIsClosed)
 	{
 		<br />
 		<p class="lead">
@@ -103,6 +117,8 @@ else
 		<div class="container-fluid py-5">
 			@* <h1 class="display-5 text-warning">Registration is Over</h1> *@
 			<h1 class="display-5 text-success">Registration is Not Ready Yet, Try Later. Thanks</h1>
+			<p class="display-5 text-success">SukkotRegistrationIsClosed: @SukkotSettings.Value.SukkotRegistrationIsClosed</p>
+			
 		</div>
 	</div>
 

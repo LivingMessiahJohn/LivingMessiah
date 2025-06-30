@@ -72,7 +72,27 @@ try
 		options.Domain = builder.Configuration[Domain] ?? "";
 		options.ClientId = builder.Configuration[ClientId] ?? "";
 		options.Scope = "openid profile email";
+		/*
+		options.OpenIdConnectEvents = new Microsoft.AspNetCore.Authentication.OpenIdConnect.OpenIdConnectEvents
+		{
+			OnTokenValidated = context =>
+			{
+				var identity = context.Principal?.Identity as System.Security.Claims.ClaimsIdentity;
+				if (identity != null)
+				{
+					// Map custom roles claim to standard role claim
+					var roleClaims = identity.FindAll("https://livingmessiah.auth0.com/claims/roles");
+					foreach (var rc in roleClaims)
+					{
+						identity.AddClaim(new System.Security.Claims.Claim(identity.RoleClaimType, rc.Value));
+					}
+				}
+				return System.Threading.Tasks.Task.CompletedTask;
+			}
+		};
+		*/
 	});
+
 	//builder.Services.AddScoped<TokenProvider>();
 	//TokenProvider used by _Host App
 

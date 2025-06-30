@@ -14,6 +14,31 @@
 
 <AuthorizeView Roles="@Roles.Admin">
 	<Authorized>
+
+		<div class="card">
+			<div class="card-header">Administrative Links</div>
+
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item">
+					<button @onclick="@(e => ButtonClickThrowException())"
+									class="list-group-item list-group-item-warning">
+						<b>Throw Exception</b>
+						<i class="fas fa-chevron-right"></i>
+					</button>
+				</li>
+			</ul>
+			@* 
+			<div class="card-body">
+				<div class="card-title"><h5>Configuration</h5></div>
+				<p class="p-1">
+					<b>_SyncfusionLicense</b>: @_SyncfusionLicense
+				</p>
+			</div>
+			*@
+		</div>
+
+
+
 	</Authorized>
 	<NotAuthorized>
 		<div class="card border-warning my-5">
@@ -24,32 +49,7 @@
 			</div>
 		</div>
 	</NotAuthorized>
-</AuthorizeView> 
-
-<div class="card">
-	<div class="card-header">Administrative Links</div>
-
-	<ul class="list-group list-group-flush">
-
-		<li class="list-group-item">
-			<button @onclick="@(e => ButtonClickThrowException())"
-							class="list-group-item list-group-item-warning">
-				<b>Throw Exception</b>
-				<i class="fas fa-chevron-right"></i>
-			</button>
-		</li>
-	</ul>
-
-@* 
-	<div class="card-body">
-		<div class="card-title"><h5>Configuration</h5></div>
-		<p class="p-1">
-			<b>_SyncfusionLicense</b>: @_SyncfusionLicense
-		</p>
-	</div>
- *@
-
-</div>
+</AuthorizeView>
 
 @code {
 
