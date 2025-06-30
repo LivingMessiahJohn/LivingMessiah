@@ -81,9 +81,9 @@ public static class PDFs
 {
 	public const string RegistrationWalkThrough = "sukkot-registration-walkthrough-users-manual.pdf";
 	public const string StripeWalkThrough = "sukkot-making-a-payment-with-stripe.pdf";  // ToDo: these needs to be updated
-	public const string Schedule = "sukkot-2024-schedule.pdf";
+	public const string Schedule = "sukkot-2025-schedule.pdf";
 	public const string LiabilityWaiver = "sukkot-2022-liability-waiver.pdf"; // NOT DONE YET
-	public const string HouseRules = "sukkot-2024-house-rules.pdf";
+	public const string HouseRules = "sukkot-2025-house-rules.pdf";
 	public const string LegalAgreementVerbiage = "Sukkot-2024-Legal-Agreement-Verbiage.pdf";
 
 	// Where are these used?, both written 8/7/2021
@@ -126,8 +126,8 @@ public static class RegistrationMeta
 	public static bool IsThereEarlyRegistration { get; set; } = false;
 	public static System.DateTime EarlyRegistrationLastDay = new System.DateTime(Year.Int, 9, 16);
 	public const decimal EarlyRegistrationFee = 75.0m;
-	public static System.DateTime RegistrationLastDay = new System.DateTime(Year.Int, 10, 15);
-	public const decimal RegistrationFee = 75.0m;
+	public static System.DateTime RegistrationLastDay = new System.DateTime(Year.Int, 10, 1);
+	public const decimal RegistrationFee = 100.0m;
 
 	/*
 	Represented in the Sql Server table Sukkot.Constants; columns AttendanceMinDate and AttendanceMaxDate
