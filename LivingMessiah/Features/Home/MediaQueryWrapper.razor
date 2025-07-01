@@ -1,4 +1,5 @@
-﻿
+﻿@using FeastEnums = LivingMessiah.Features.Feasts.Enums
+
 <Header Title=@GetCurrentTitle()
 				Teaching="Pdf Download"
 				PDF=@GetCurrentTeaching()
@@ -8,16 +9,17 @@
 	<HebrewClassCard IsXsOrSm=IsXsOrSm PDF="https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-02-08-Hebrew-Class.pdf" />
 *@
 
-	<div class="card card border-0 ">
+<div class="@MediaQuery.Xs.DivClass"><ImageHorizontalCard FeastList="FeastList" IsXs="true" /></div>
+<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><ImageHorizontalCard FeastList="FeastList" IsXs="false" /></div>
 
-		<FeaturedPage FeaturedPageExists=false />
+<div class="card card border-0 ">
 
-		<div class="@MediaQuery.Xs.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Xs" /></div>
-		<div class="@MediaQuery.Sm.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Sm" /></div>
-		<div class="@MediaQuery.Md.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Md" /></div>
-		<div class="@MediaQuery.Lg.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Lg" /></div>
-		<div class="@MediaQuery.Xl.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Xl" /></div>
-	</div>
+	<div class="@MediaQuery.Xs.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Xs" /></div>
+	<div class="@MediaQuery.Sm.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Sm" /></div>
+	<div class="@MediaQuery.Md.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Md" /></div>
+	<div class="@MediaQuery.Lg.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Lg" /></div>
+	<div class="@MediaQuery.Xl.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Xl" /></div>
+</div>
 
 <ShabbatMeter IsXsOrSm=IsXsOrSm />
 
@@ -31,6 +33,9 @@
 	private string ParashaTitle = "Genesis 38";
 	private string ParashaDate = "2025-06-28";
 	private string ParashaFile = "Gen-38";
+
+	//List<Nav>? NavList = new List<Nav>() {Nav.Sukkot, Nav.Feasts, Nav.Parasha };
+	List<FeastEnums.Feast>? FeastList = new List<FeastEnums.Feast>() { FeastEnums.Feast.Trumpets, FeastEnums.Feast.YomKippur, FeastEnums.Feast.Tabernacles };
 
 	private string GetCurrentTitle()
 	{

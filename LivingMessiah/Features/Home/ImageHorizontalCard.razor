@@ -1,0 +1,70 @@
+﻿@using FeastEnums = LivingMessiah.Features.Feasts.Enums
+@using NavEnums = LivingMessiah.Enums.Nav
+
+@inject NavigationManager NavigationManager
+
+@if (FeastList is not null && FeastList.Count() != 0)
+{
+	<div class="card  border border-warning border-3 rounded-top text-center mt-3 mb-3">
+		<div class="d-flex justify-content-center">
+
+			<div class="card-header ">
+				<h2 class="text-center text-black ">
+					Up Coming Events
+				</h2>
+			</div>
+
+		</div>
+
+
+	@foreach (var item in FeastList)
+	{
+		<div class="d-flex justify-content-center">
+
+			<div class="card  mb-3">
+				<div class="row g-0">
+					<div class="col-4 text-center ">
+						<img src="@item.Image" class="img-fluid rounded-start" alt="@item.Title">
+					</div>
+					<div class="col-8">
+
+						<div class="list-group">
+							<button @onclick="@(e => ButtonClicked(item.Index))" type="button" title="@item!.Title @item.Hebrew.TitleSuffix"
+											class="list-group-item list-group-item-warning @Padding ">
+								<div class="d-flex w-100 justify-content-between">
+									<i class="@item!.Icon fa-fw @IconSize text-dark" aria-hidden="true"></i>
+									<span class="@FontSize text-primary">@item!.Title</span>
+									<span class="float-end text-info">
+										<span class="hebrew">@item!.Hebrew.FloatRightHebrew</span>
+									</span>
+								</div>
+							</button>
+						</div>
+
+						<div class="card-footer">
+							<p class="text-center"><small class="text-body-secondary">120 days away</small></p>
+						</div>
+					</div>
+				</div>
+			</div> <!-- Comments-->
+		</div>
+
+	}
+
+	</div>
+}
+
+@code {
+	[Parameter, EditorRequired] public List<FeastEnums.Feast>? FeastList { get; set; }
+	[Parameter, EditorRequired] public bool IsXs { get; set; }
+
+	//protected string width => IsXs ? "" : "w-75 ";
+	protected string IconSize => IsXs ? " fa-2x" : " fa-3x";
+	protected string FontSize => IsXs ? " fs-4" : " fs-3";
+	protected string Padding => IsXs ? "  px-1" : "";
+
+	private void ButtonClicked(string index) //  Enums.Nav nav
+	{
+		NavigationManager!.NavigateTo(index);  //nav.Index
+	}
+}

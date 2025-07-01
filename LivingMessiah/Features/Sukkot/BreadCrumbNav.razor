@@ -8,11 +8,11 @@
 
 				@if (!String.IsNullOrEmpty(Page2Index))
 				{
-					<a href="@Page1Index">@Page1Title @Constants.Year.String</a>
+					<a href="@Page1Index">@Page1Title &nbsp; @Constants.Year.String</a>
 				}
 				else
 				{
-					@Page1Title @Constants.Year.String
+					<span>@Page1Title &nbsp; @Constants.Year.String</span>								
 				}
 			</li>
 

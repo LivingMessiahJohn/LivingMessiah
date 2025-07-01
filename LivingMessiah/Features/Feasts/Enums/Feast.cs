@@ -57,6 +57,7 @@ public abstract class Feast : SmartEnum<Feast>
 	public abstract string Index { get; }
 	public abstract string Title { get; }
 	public abstract string Icon { get; }
+	public abstract string Image { get; }  // /images/header-2017-md.jpg
 	public abstract string ListGroupItemColor { get; }
 	public abstract Hebrew Hebrew { get; }
 	public abstract MarkupString Verses { get; }
@@ -69,6 +70,7 @@ public abstract class Feast : SmartEnum<Feast>
 		public override string Index => "/Shabbat";
 		public override string Title => "Shabbat";
 		public override string Icon => "far fa-hand-spock";
+		public override string Image => "https://picsum.photos/200/150";
 		public override string ListGroupItemColor => "list-group-item-warning";
 		public override Hebrew Hebrew => new Hebrew { TitleSuffix = "Shabbat", FloatRightHebrew = "שַׁבָּת", Strongs = "H7676" };
 		public override MarkupString Verses => new MarkupString($"");
@@ -79,7 +81,8 @@ public abstract class Feast : SmartEnum<Feast>
 		public HanukkahSE() : base($"{nameof(Id.Hanukkah)}", Id.Hanukkah) { }
 		public override string Index => "/Hanukkah"; 
 		public override string Title => "Hanukkah";
-		public override string Icon => "fas fa-hanukiah"; 
+		public override string Icon => "fas fa-hanukiah";
+		public override string Image => "https://picsum.photos/200/150";
 		public override string ListGroupItemColor => "list-group-item-success";
 		public override Hebrew Hebrew => new Hebrew { TitleSuffix = "Hanukkah", FloatRightHebrew = "חֲנֻכָּה", Strongs = "H2598" };
 		public override MarkupString Verses => new MarkupString($"");
@@ -91,6 +94,7 @@ public abstract class Feast : SmartEnum<Feast>
 		public override string Index => "/Purim"; 
 		public override string Title => "Purim";
 		public override string Icon => "far fa-square";
+		public override string Image => "https://picsum.photos/200/150";
 		public override string ListGroupItemColor => "list-group-item-success";
 		public override Hebrew Hebrew => new Hebrew { TitleSuffix = "Purim", FloatRightHebrew = "פּוּר", Strongs = "H6332" };
 		public override MarkupString Verses => new MarkupString($"");
@@ -102,6 +106,7 @@ public abstract class Feast : SmartEnum<Feast>
 		public override string Index => "/Passover"; 
 		public override string Title => "Passover";
 		public override string Icon => "fas fa-door-open";
+		public override string Image => "https://picsum.photos/200/150";
 		public override string ListGroupItemColor => "list-group-item-warning";
 		public override Hebrew Hebrew => new Hebrew { TitleSuffix = "Pesach", FloatRightHebrew = "פֶּסַח", Strongs = "H6453" };
 		public override MarkupString Verses => new MarkupString($"");
@@ -124,6 +129,7 @@ public abstract class Feast : SmartEnum<Feast>
 		public override string Index => "/Weeks"; 
 		public override string Title => "Weeks";
 		public override string Icon => "fab fa-creative-commons-zero";
+		public override string Image => "https://picsum.photos/200/150";
 		public override string ListGroupItemColor => "list-group-item-warning";
 		public override Hebrew Hebrew => new Hebrew { TitleSuffix = "Shavu'ot", FloatRightHebrew = "שָׁבוּעוֹת", Strongs = "H7620" };
 		public override MarkupString Verses => new MarkupString($"");
@@ -135,6 +141,7 @@ public abstract class Feast : SmartEnum<Feast>
 		public override string Index => "/Trumpets"; 
 		public override string Title => "Trumpets";
 		public override string Icon => "fas fa-bullhorn";
+		public override string Image => "/images/yom-teruah-200-x-151.jpg"; 
 		public override string ListGroupItemColor => "list-group-item-warning";
 		public override Hebrew Hebrew => new Hebrew { TitleSuffix = "Yom Teruah", FloatRightHebrew = "יוֹם תְּרוּעָה", Strongs = "H8643" };
 		public override MarkupString Verses => new MarkupString($"");
@@ -144,8 +151,9 @@ public abstract class Feast : SmartEnum<Feast>
 	{
 		public YomKippurSE() : base($"{nameof(Id.YomKippur)}", Id.YomKippur) { }
 		public override string Index => "/YomKippur"; 
-		public override string Title => "YomKippur";
+		public override string Title => "Yom Kippur";
 		public override string Icon => "fas fa-hands-helping";
+		public override string Image => "/images/yom-kippur-200-x-150.jpg";
 		public override string ListGroupItemColor => "list-group-item-warning";
 		public override Hebrew Hebrew => new Hebrew { TitleSuffix = "Yom Kippur", FloatRightHebrew = "יוֹם כִּיפּוּר", Strongs = "H3725" };
 		public override MarkupString Verses => new MarkupString($"");
@@ -157,6 +165,7 @@ public abstract class Feast : SmartEnum<Feast>
 		public override string Index => "/Tabernacles"; 
 		public override string Title => "Tabernacles";
 		public override string Icon => "fas fa-campground";
+		public override string Image => "/images/sukkot-200-172.jpg";
 		public override string ListGroupItemColor => "list-group-item-warning";
 		public override Hebrew Hebrew => new Hebrew { TitleSuffix = "Sukkot", FloatRightHebrew = "סֻּכּוֹת", Strongs = "H5523" };
 		public override MarkupString Verses => new MarkupString($"");
