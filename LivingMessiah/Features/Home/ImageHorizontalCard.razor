@@ -1,7 +1,10 @@
 ﻿@using FeastEnums = LivingMessiah.Features.Feasts.Enums
+@using FeastDayType = LivingMessiah.Features.Calendar.Enums.FeastDay
 @using NavEnums = LivingMessiah.Enums.Nav
+@using LivingMessiah.Features.FeastDayPlanner.Data
 
 @inject NavigationManager NavigationManager
+@inject IService? Service
 
 @if (FeastList is not null && FeastList.Count() != 0)
 {
@@ -17,39 +20,42 @@
 		</div>
 
 
-	@foreach (var item in FeastList)
-	{
-		<div class="d-flex justify-content-center">
+		@foreach (var item in FeastList)
+		{
+			<div class="d-flex justify-content-center">
 
-			<div class="card  mb-3">
-				<div class="row g-0">
-					<div class="col-4 text-center ">
-						<img src="@item.Image" class="img-fluid rounded-start" alt="@item.Title">
-					</div>
-					<div class="col-8">
-
-						<div class="list-group">
-							<button @onclick="@(e => ButtonClicked(item.Index))" type="button" title="@item!.Title @item.Hebrew.TitleSuffix"
-											class="list-group-item list-group-item-warning @Padding ">
-								<div class="d-flex w-100 justify-content-between">
-									<i class="@item!.Icon fa-fw @IconSize text-dark" aria-hidden="true"></i>
-									<span class="@FontSize text-primary">@item!.Title</span>
-									<span class="float-end text-info">
-										<span class="hebrew">@item!.Hebrew.FloatRightHebrew</span>
-									</span>
-								</div>
-							</button>
+				<div class="card  mb-3">
+					<div class="row g-0">
+						<div class="col-4 text-center ">
+							<img src="@item.Image" class="img-fluid rounded-start" alt="@item.Title">
 						</div>
+						<div class="col-8">
 
-						<div class="card-footer">
-							<p class="text-center"><small class="text-body-secondary">120 days away</small></p>
+							<div class="list-group">
+								<button @onclick="@(e => ButtonClicked(item.Index))" type="button" title="@item!.Title @item.Hebrew.TitleSuffix"
+												class="list-group-item list-group-item-warning @Padding ">
+									<div class="d-flex w-100 justify-content-between">
+										<i class="@item!.Icon fa-fw @IconSize text-dark" aria-hidden="true"></i>
+										<span class="@FontSize text-primary">@item!.Title</span>
+										<span class="float-end text-info">
+											<span class="hebrew">@item!.Hebrew.FloatRightHebrew</span>
+										</span>
+									</div>
+								</button>
+							</div>
+
+							<div class="card-body">
+								@if (item.FeastDay is not null)
+								{
+									<p class="text-center fs-4">@GetDays(item.FeastDay) days away</p>
+								}
+							</div>
 						</div>
 					</div>
-				</div>
-			</div> <!-- Comments-->
-		</div>
+				</div> <!-- Comments-->
+			</div>
 
-	}
+		}
 
 	</div>
 }
@@ -66,5 +72,12 @@
 	private void ButtonClicked(string index) //  Enums.Nav nav
 	{
 		NavigationManager!.NavigateTo(index);  //nav.Index
+	}
+
+	protected int GetDays(FeastDayType feastDayType)
+	{
+		LivingMessiah.Features.FeastDayPlanner.HeaderServiceModel? vm = new();
+		vm = Service!.GetHeaderServiceModel(feastDayType!);
+		return vm.DaysDifferent;
 	}
 }
