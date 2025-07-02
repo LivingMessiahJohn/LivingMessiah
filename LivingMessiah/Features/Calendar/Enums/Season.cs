@@ -1,5 +1,4 @@
 ﻿using Ardalis.SmartEnum;
-using System;
 
 namespace LivingMessiah.Features.Calendar.Enums;
 

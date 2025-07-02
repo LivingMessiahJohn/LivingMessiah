@@ -1,0 +1,38 @@
+﻿@using LunarMonthEnum = LivingMessiah.Features.Calendar.Enums.LunarMonth;
+
+@if (LunarMonth is not null)
+{
+	<div class="card position-relative" style="max-width: 400px;">
+		<img src='@ImageFile' class="" alt="Moon @LunarMonth.FullName">
+		<div class="card-img-overlay">
+			<div class="d-flex justify-content-between">
+				<h3 class="text-warning"><i>@LunarMonth.FullName</i></h3>
+				<h3 class="text-warning">@DaysToGo days</h3>
+			</div>
+			<div class="position-absolute bottom-0 start-0 p-2">
+				<h3 class="text-warning"><i>@LunarMonth.BiblicalName</i></h3>
+			</div>
+			<div class="position-absolute bottom-0 end-0 p-2">
+				<h3 class="text-warning hebrew30">@LunarMonth.BiblicalHebrew</h3>
+			</div>
+		</div>
+	</div>
+}
+else
+{
+	<div class="card " style="max-width: 400px;">
+		<img src='@ImageFile' class="" alt="moon made of cheese">
+		<div class="card-img-overlay">
+			<div class="d-flex justify-content-between">
+				<h3 class="text-warning"><i>???</i></h3>
+			</div>
+		</div>
+	</div>
+}
+
+@code {
+	[Parameter, EditorRequired] public LunarMonthEnum? LunarMonth { get; set; }
+	[Parameter, EditorRequired] public int DaysToGo { get; set; }
+
+	private string ImageFile => LunarMonth is not null ? $"/images/moons/{DaysToGo.ToString("D2")}.jpg" : "/images/moons/moon-not-found.jpg";
+}

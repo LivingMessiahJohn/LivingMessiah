@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
 using FeastDayType = LivingMessiah.Features.Calendar.Enums.FeastDay;
 using LivingMessiah.Helpers;
 
