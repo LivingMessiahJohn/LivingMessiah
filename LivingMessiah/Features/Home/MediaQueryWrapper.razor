@@ -1,4 +1,22 @@
 ﻿@using FeastEnums = LivingMessiah.Features.Feasts.Enums
+@using LunarMonthEnum = LivingMessiah.Features.Calendar.Enums.LunarMonth
+@using LivingMessiah.Helpers
+@using SeasonEnum = LivingMessiah.Features.Calendar.Enums.Season
+
+<div class="@MediaQuery.Xs.DivClass"><ImageHorizontalCard FeastList="FeastList" IsXs="true" /></div>
+<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><ImageHorizontalCard FeastList="FeastList" IsXs="false" /></div>
+
+<div class="@MediaQuery.Xs.DivClass">
+	<ShabbatMeter IsXsOrSm=IsXsOrSm />
+	<LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" />
+</div>
+
+<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+	<div class="d-flex justify-content-evenly">
+		<ShabbatMeter IsXsOrSm=IsXsOrSm />
+		<LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" />
+	</div>
+</div>
 
 <Header Title=@GetCurrentTitle()
 				Teaching="Pdf Download"
@@ -6,11 +24,12 @@
 				IsXs=IsXsOrSm />
 
 @* 
-	<HebrewClassCard IsXsOrSm=IsXsOrSm PDF="https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-02-08-Hebrew-Class.pdf" />
-*@
+<div class="row">
+	<div class="col-4"><Moon /></div>
+	<div class="col-8"><ShabbatMeter IsXsOrSm=IsXsOrSm /></div>
+</div>
 
-<div class="@MediaQuery.Xs.DivClass"><ImageHorizontalCard FeastList="FeastList" IsXs="true" /></div>
-<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><ImageHorizontalCard FeastList="FeastList" IsXs="false" /></div>
+ *@
 
 <div class="card card border-0 ">
 
@@ -21,7 +40,6 @@
 	<div class="@MediaQuery.Xl.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Xl" /></div>
 </div>
 
-<ShabbatMeter IsXsOrSm=IsXsOrSm />
 
 <SocialMediaButtons IsXsOrSm=IsXsOrSm />
 
@@ -29,13 +47,37 @@
 @code {
 	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
 
+
+	List<FeastEnums.Feast>? FeastList = null;
+
+	LunarMonthEnum? LunarMonth = null;
+	int DaysToGo = 0;
+
+	protected override void OnInitialized()
+	{
+		DateTime dateTimeWithoutTime = DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(0).AddHours(Utc.ArizonaUtcMinus7));
+		
+		LunarMonth = LunarMonthEnum.List
+			.Where(w => w.Date >= dateTimeWithoutTime)
+			.FirstOrDefault();
+		if (LunarMonth != null) 
+		{ 
+			DaysToGo = (LunarMonth.Date - dateTimeWithoutTime).Days; 
+		}	
+
+		//.Where(w => w.Value != FeastEnums.Feast.Shabbat)
+		FeastList = FeastEnums.Feast.List.ToList()
+		.Where(w => w.Season == SeasonEnum.Fall)
+		.OrderBy(o => o.Value).ToList();
+
+
+	}
+
+
 	private string ShabbatDate = "2025 June 28";
 	private string ParashaTitle = "Genesis 38";
 	private string ParashaDate = "2025-06-28";
 	private string ParashaFile = "Gen-38";
-
-	//List<Nav>? NavList = new List<Nav>() {Nav.Sukkot, Nav.Feasts, Nav.Parasha };
-	List<FeastEnums.Feast>? FeastList = new List<FeastEnums.Feast>() { FeastEnums.Feast.Trumpets, FeastEnums.Feast.YomKippur, FeastEnums.Feast.Tabernacles };
 
 	private string GetCurrentTitle()
 	{
