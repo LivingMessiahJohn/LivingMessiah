@@ -8,13 +8,13 @@
 
 <div class="@MediaQuery.Xs.DivClass">
 	<ShabbatMeter IsXsOrSm=IsXsOrSm />
-	<LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" />
+	<LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" DaysOld="DaysOld" />
 </div>
 
 <div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
 	<div class="d-flex justify-content-evenly">
 		<ShabbatMeter IsXsOrSm=IsXsOrSm />
-		<LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" />
+		<LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" DaysOld="DaysOld" />
 	</div>
 </div>
 
@@ -52,6 +52,7 @@
 
 	LunarMonthEnum? LunarMonth = null;
 	int DaysToGo = 0;
+	int DaysOld = 0;
 
 	protected override void OnInitialized()
 	{
@@ -63,6 +64,7 @@
 		if (LunarMonth != null) 
 		{ 
 			DaysToGo = (LunarMonth.Date - dateTimeWithoutTime).Days; 
+			DaysOld = 30-(LunarMonth.Date - dateTimeWithoutTime).Days;
 		}	
 
 		//.Where(w => w.Value != FeastEnums.Feast.Shabbat)

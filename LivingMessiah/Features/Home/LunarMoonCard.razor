@@ -33,6 +33,7 @@ else
 @code {
 	[Parameter, EditorRequired] public LunarMonthEnum? LunarMonth { get; set; }
 	[Parameter, EditorRequired] public int DaysToGo { get; set; }
+	[Parameter, EditorRequired] public int DaysOld { get; set; }
 
-	private string ImageFile => LunarMonth is not null ? $"/images/moons/{DaysToGo.ToString("D2")}.jpg" : "/images/moons/moon-not-found.jpg";
+	private string ImageFile => LunarMonth is not null ? $"/images/moons/{DaysOld.ToString("D2")}.jpg" : "/images/moons/moon-not-found.jpg";
 }
