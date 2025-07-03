@@ -1,10 +1,13 @@
 ﻿@page "/sukkot"
+
+@using LivingMessiah.Features.Sukkot.IndexComponents
 @using LivingMessiah.Features.Sukkot.Constants
 @using LivingMessiah.Services
 
 @using LivingMessiah.Settings
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.Extensions.Options
+
 @inject IOptions<SukkotSettings> SukkotSettings
 @inject ISecurityClaimsService SvcClaims
 
@@ -15,6 +18,8 @@
 	<SukkotSettingsList />
 	@* <SukkotAdminMenubar></SukkotAdminMenubar> *@
 </AuthorizeView>
+
+@* <Debug /> *@
 
 @* 
 <AuthorizeView Roles="@Roles.SukkotMenuBar">
@@ -28,16 +33,7 @@
 
 <PageHeader PageEnum="Nav.Sukkot" />
 
-<BreadCrumbNav Page1Active="" />
-
-@* 
-	<div class="row">
-	<div class="col-12">
-		<p class="text-black-50 float-end"><small><b>SukkotIsOpen:</b> @SukkotSettings.Value.SukkotIsOpen; <b>IsRegistrationClosed:</b> @SukkotSettings.Value.IsRegistrationClosed</small></p>
-	</div>
-</div> 
-*@
-
+@* <BreadCrumbNav Page1Active="" /> *@
 
 <AuthorizeView>
 	<Authorized>
@@ -48,62 +44,24 @@
 	</NotAuthorized>
 </AuthorizeView>
 
-
 @if (SukkotSettings.Value.SukkotIsOpen)
 {
-	<div class="d-print-none">
-		<div class="d-flex justify-content-center">
-			<img src="@Constants.Blobs.UrlEvents(Other.Banner)"
-					 alt="@Constants.Blobs.Url(Other.BannerAlt)"
-					 class="img-fluid rounded" />
-		</div>
-	</div>
+ 	<div class="@MediaQuery.XsOrSm.DivClass"><Header IsXsOrSm=true /></div>
+	<div class="@MediaQuery.MdOrLgOrXl.DivClass"><Header IsXsOrSm=false /></div> 
+	<CalendarWeek />
+	<Location />
+	<Documents />
 
 	@if (SukkotSettings.Value.IsRegistrationClosed) 
 	{
-		<div class="p-5 mb-4 bg-danger rounded-3">
-			<div class="container-fluid py-5">
-				<h1 class="display-5 fw-bold">Registration is CLOSED</h1>
-				<h3>
-					<span class="text-warning">
-						If you would like to join us for Sukkot, please	contact @RegistrationClosedEmail.Name at
-						<a href="mailto:@RegistrationClosedEmail.Email?Subject=@RegistrationClosedEmail.Subject" target="_top">@RegistrationClosedEmail.Email</a> &nbsp;<i class="far fa-envelope"></i>.
-					</span>
-				</h3>
-			</div>
-		</div>
+		<RegistrationClosed />
 	}
 
-	<Introduction />
 	@if (!SukkotSettings.Value.IsRegistrationClosed)
 	{
 		<RegistrationInfo />
-		<PaymentInfo />
+		@* <PaymentInfo /> *@
 	}
-	<Documents />
-
-	@if (!SukkotSettings.Value.IsRegistrationClosed)
-	{
-		<br />
-		<p class="lead">
-			Click the big green button to begin registration.
-		</p>
-
-		<div class="row">
-			<div class="col-12">
-
-				<a class="btn btn-success btn-lg"
-					 href="@Enums.Pages.RegistrationSteps.Index">
-					@Constants.Breadcrumbs.Start.Text
-					<i class="@Constants.Breadcrumbs.Start.Icon"></i>
-				</a>
-
-			</div>
-		</div>
-
-	}
-
-	<hr />
 
 	<SukkotTShirt></SukkotTShirt>
 }

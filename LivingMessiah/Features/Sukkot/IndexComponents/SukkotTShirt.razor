@@ -1,0 +1,28 @@
+﻿@using LivingMessiah.Features.Sukkot.Constants
+
+<div class="card border border-warning border-4 bg-warning-subtle mt-4 ">
+	<h2 class=" py-2 text-center text-black"><b>Sukkot T-shirts!</b></h2>
+
+	<div class="card-body">
+
+		@if (TShirts.IsAvailableForSale)
+		{
+			<h5>@TShirts.ForSaleMessage</h5>
+			<a href="@TShirts.Href" target="_blank">
+				<img src="@TShirts.ImgSrc"
+						 alt="@TShirts.Title" class="img-fluid rounded" />
+			</a>
+			@* <i class="fas fa-external-link-alt"></i> *@
+		}
+		else
+		{
+			<h2 class="text-center">@TShirts.ComingSoonMessage</h2>
+		}
+
+
+	</div>
+
+</div>
+
+
+

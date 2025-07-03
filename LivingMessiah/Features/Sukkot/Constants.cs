@@ -128,17 +128,11 @@ public static class RegistrationMeta
 	public const decimal EarlyRegistrationFee = 75.0m;
 	public static System.DateTime RegistrationLastDay = new System.DateTime(Year.Int, 10, 1);
 	public const decimal RegistrationFee = 100.0m;
-
-	/*
-	Represented in the Sql Server table Sukkot.Constants; columns AttendanceMinDate and AttendanceMaxDate
-	public override DateRange Range => new DateRange(Convert.ToDateTime("2025-10-05"), Convert.ToDateTime("2025-10-14"));	
-	*/
-	public const string IntroductionDates = "sundown Monday, October 6, through sundown Monday, October 13th";
 }
 
 public static class Other
 {
-	public const string Banner = "2025-sukkot-banner-1051-588-3d.jpg";
+	public const string Banner = "2025-sukkot-banner-550-x-550.jpg";
 	public const string BannerAlt = $"{Year.String} Sukkot Registration Banner";
 	public static string DetailsTitle { get; set; } = $"Living Messiah Sukkot Registration {Year.String}";
 
