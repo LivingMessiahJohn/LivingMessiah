@@ -1,0 +1,90 @@
+﻿@using FeastEnums = LivingMessiah.Features.Feasts.Enums
+@using FeastDayType = LivingMessiah.Features.Calendar.Enums.FeastDay
+@using NavEnums = LivingMessiah.Enums.Nav
+@using LivingMessiah.Features.FeastDayPlanner
+@using LivingMessiah.Features.FeastDayPlanner.Data
+
+@inject IService? Service
+
+<div class="container text-center">
+	@if (IsXs)
+	{
+		<h3 class="bg-warning text-black mt-5 mb-3 p-2"><b>Upcoming Feasts</b></h3>
+	}
+	else
+	{
+		<div class="row mt-4">
+			<div class="col-1"></div>
+			<div class="col-10">
+				<h2 class="bg-warning text-center text-black p-2"><b>Upcoming Feasts</b></h2>
+			</div>
+			<div class="col-1"></div>
+		</div>
+	}
+</div>
+
+@foreach (var item in FeastList)
+{
+	@if (IsXs)
+	{
+		<div class="container">
+			@if (item.FeastDay is not null)
+			{
+				<p class="mb-0 text-end fs-6 text-black-50">@GetDays(item.FeastDay) days away</p>
+			}
+			<div class="card border border-warning border-4 mb-4">
+				<div class="row g-0">
+					<div class="col-5 "><img src="@item.Image" class="img-fluid rounded-start" alt="@item.Title"></div>
+					<div class="col-7 bg-warning-subtle text-center">
+						<div class="mt-2"><RelatedVersesAnchor Feast="@item" FontSize="@FontSize" /></div>
+						<div class="text-primary @HebrewCSS">@item!.Hebrew.FloatRightHebrew</div>
+						<div class=""><SpecialEventAnchor Feast="@item" IsXs=IsXs /></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	}
+	else
+	{
+		<div class="container">
+			<div class="row">
+				<div class="col-1"></div>
+				<div class="col-10">
+					@if (item.FeastDay is not null)
+					{
+						<p class="mb-0 text-end fs-6 text-black-50">@GetDays(item.FeastDay) days away</p>
+					}
+					<div class="card border border-warning border-4 mb-4">
+						<div class="row g-0">
+							<div class="col-5 "><img src="@item.Image" class="img-fluid rounded-start" alt="@item.Title"></div>
+							<div class="col-7 bg-warning-subtle text-center">
+								<div class="mt-2"><RelatedVersesAnchor Feast="@item" FontSize="@FontSize" /></div>
+								<div class="text-primary @HebrewCSS">@item!.Hebrew.FloatRightHebrew</div>
+								<div class=""><SpecialEventAnchor Feast="@item" IsXs=IsXs /></div>
+								@* <div class=""><SpecialEventAnchor Feast="@item" IsXs=IsXs /></div> *@
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-1"></div>
+			</div>
+		</div>
+	}
+}
+
+
+@code {
+	[Parameter, EditorRequired] public List<FeastEnums.Feast> FeastList { get; set; }
+	[Parameter, EditorRequired] public bool IsXs { get; set; }
+
+	protected string FontSize => IsXs ? " fs-5" : " fs-2";
+	protected string HebrewCSS => IsXs ? " hebrew" : "  hebrew44";
+
+	protected int GetDays(FeastDayType feastDayType)
+	{
+		HeaderServiceModel? vm = new();
+		vm = Service!.GetHeaderServiceModel(feastDayType!);
+		return vm.DaysDifferent;
+	}
+}

@@ -1,0 +1,17 @@
+﻿@using FeastEnums = LivingMessiah.Features.Feasts.Enums
+
+@if (!String.IsNullOrEmpty(Feast.SpecialEventIndex))
+{
+	<a href='@Feast.SpecialEventIndex' class='btn @ButtonSize btn-outline-primary'
+		 title='Special Event for @Feast.Title'>
+		Sukkot 2025
+		<i class='fas fa-chevron-circle-right'></i>
+	</a>
+}
+
+@code {
+	[Parameter, EditorRequired] public FeastEnums.Feast Feast { get; set; }
+	[Parameter, EditorRequired] public bool IsXs { get; set; }
+
+	protected string ButtonSize => IsXs ? " btn-xs " : " btn-lg ";
+}

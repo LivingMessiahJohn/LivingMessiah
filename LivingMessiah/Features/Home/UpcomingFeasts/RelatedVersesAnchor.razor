@@ -1,0 +1,11 @@
+﻿@using FeastEnums = LivingMessiah.Features.Feasts.Enums
+
+<a href='@Feast!.Index' class='btn btn-outline-primary btn-sm'
+	 title='Related verses for @Feast.Title'>
+	<span class=" @FontSize">@Feast.Title</span>
+</a>
+
+@code {
+	[Parameter, EditorRequired] public FeastEnums.Feast Feast { get; set; }
+	[Parameter, EditorRequired] public string FontSize { get; set; }
+}

@@ -1,6 +1,9 @@
 @page "/"
 
-@using LivingMessiah.Features.Home.Welcome
+@using SeasonEnum = LivingMessiah.Features.Calendar.Enums.Season
+@using FeastEnums = LivingMessiah.Features.Feasts.Enums
+
+@using LivingMessiah.Features.Home.UpcomingFeasts
 
 <PageTitle>Home</PageTitle>
 
@@ -8,10 +11,25 @@
 
 <HomeImage />
 
+<div class="container">
+	<div class="@MediaQuery.Xs.DivClass">
+		<WelcomeCard />
+	</div>
+	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+		<div class="row">
+			<div class="col-1"></div>
+			<div class="col-10"><WelcomeCard /></div>
+			<div class="col-1"></div>
+		</div>
+	</div>
+</div>
 
+@if (FeastList is not null && FeastList.Count() != 0)
+{
+	<div class="@MediaQuery.Xs.DivClass"><FeastCards FeastList="FeastList" IsXs="true" /></div>
+	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><FeastCards FeastList="FeastList" IsXs="false" /></div>
+}
 
-<div class="@MediaQuery.Xs.DivClass"><Card IsXs=true /></div>
-<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><Card IsXs=false /></div>
 
 <div class="@MediaQuery.XsOrSm.DivClass">
 	<MediaQueryWrapper IsXsOrSm=true />
@@ -21,5 +39,14 @@
 	<MediaQueryWrapper IsXsOrSm=false />
 </div>
 
+@code {
+	List<FeastEnums.Feast>? FeastList = null;
 
-
+	protected override void OnInitialized()
+	{
+		//.Where(w => w.Value != FeastEnums.Feast.Shabbat)
+		FeastList = FeastEnums.Feast.List.ToList()
+		.Where(w => w.Season == SeasonEnum.Fall)
+		.OrderBy(o => o.Value).ToList();
+	}
+}
