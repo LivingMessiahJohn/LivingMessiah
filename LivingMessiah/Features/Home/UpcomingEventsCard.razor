@@ -7,6 +7,10 @@
 @inject NavigationManager NavigationManager
 @inject IService? Service
 
+@* fa-fw fa-2x *@
+
+
+
 @if (FeastList is not null && FeastList.Count() != 0)
 {
 	<div class="container text-center">
@@ -53,6 +57,22 @@
 								<p class="@FontSize2 text-black-50">@GetDays(item.FeastDay) days away</p>
 							}
 						</div>
+
+						<div class="">
+							<a href='@item.Index' class='btn btn-primary btn-md'>
+								<i class='fas fa-info'></i>
+							</a>
+							&nbsp;
+							@if (!String.IsNullOrEmpty(item.SpecialEventIndex))
+							{
+								<a href='@item.SpecialEventIndex' class='btn btn-primary btn-md'>
+									Sukkot 2025
+									<i class='fas fa-chevron-circle-right'></i>
+								</a>
+							}
+						</div>
+
+
 					</div>
 				</div>
 			</div> <!-- Comments-->
@@ -68,7 +88,7 @@
 	//protected string width => IsXs ? "" : "w-75 ";
 	//protected string IconSize => IsXs ? " fa-2x" : " fa-3x";
 	protected string FontSize => IsXs ? " fs-5" : " fs-2";
-	protected string FontSize2 => IsXs ? " fs-6" : " fs-3";
+	protected string FontSize2 => IsXs ? " fs-6" : " fs-4";
 	//protected string Padding => IsXs ? "  px-1" : "";
 	protected string HebrewCSS => IsXs ? " hebrew" : "  hebrew44";
 

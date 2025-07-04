@@ -3,8 +3,8 @@
 @using LivingMessiah.Helpers
 @using SeasonEnum = LivingMessiah.Features.Calendar.Enums.Season
 
-<div class="@MediaQuery.Xs.DivClass"><ImageHorizontalCard FeastList="FeastList" IsXs="true" /></div>
-<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><ImageHorizontalCard FeastList="FeastList" IsXs="false" /></div>
+<div class="@MediaQuery.Xs.DivClass"><UpcomingEventsCard FeastList="FeastList" IsXs="true" /></div>
+<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><UpcomingEventsCard FeastList="FeastList" IsXs="false" /></div>
 
 <div class="@MediaQuery.Xs.DivClass">
 	<ShabbatMeter IsXsOrSm=IsXsOrSm />
