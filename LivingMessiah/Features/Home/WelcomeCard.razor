@@ -1,18 +1,20 @@
 ﻿@using LivingMessiah.Features.Welcome
 
-@* <div class="d-flex justify-content-center"></div> *@
+@* @inject IToastService? Toast *@
+
+@* 
+@if(StateGotten)
+{
+
+	<p>ShowingDetails: @ShowingDetails</p> *@
+
 	<div class="card bg-warning-subtle">
-
 		<div class="card-header">
-
 			<div class="d-flex justify-content-between">
-
 				<span class="text-dark">
 					<i class="@Nav.Welcome.Icon fa-fw fa-3x"></i>
 				</span>
-
 				<h1 class="@Nav.Welcome.TextColor text-center pt-1"><b>Welcome</b></h1>
-
 				<ShowHideToggle ContentIsShowing="ShowingDetails"
 												OnToggleSelected="ReturnedToggle" />
 			</div>
@@ -32,16 +34,30 @@
 				</div>
 			}
 		</div>
-
 	</div>
-
-
+@* }
+else
+{
+	<p> STATE NOT GOTTEN</p>
+} *@
 
 @code {
 
-	bool ShowingDetails = false; // get from local storage
-	private void ReturnedToggle()
+	[CascadingParameter] public CascadingAppState? State { get; set; }
+
+	//bool StateGotten = false;
+	bool ShowingDetails;
+
+	protected override void OnParametersSet()
 	{
-		ShowingDetails = !ShowingDetails;
+		ShowingDetails = State!.AppState!.HomeState!.GetIsShowingImage();
+		//StateGotten = true;
+		//Toast!.ShowWarning($"ShowingDetails: {ShowingDetails}");
+	}
+
+	private async Task ReturnedToggle()
+	{
+		//ShowingDetails = !ShowingDetails;
+		await State!.AppState!.HomeState!.UpdateIsShowingWelcomeDetails(ShowingDetails);
 	}
 }

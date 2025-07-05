@@ -6,7 +6,8 @@ namespace LivingMessiah.State;
 public class AppState 
 {
 	public Features.Sukkot.State? SukkotState { get; }
-	public Features.Liturgy.State? LiturgyState { get; }	
+	public Features.Liturgy.State? LiturgyState { get; }
+	public Features.Home.State? HomeState { get; }
 
 	#region Constructor and DI
 	private readonly ILogger? Logger;
@@ -17,7 +18,8 @@ public class AppState
 		Logger = logger;
 		this.localStorage = localStorage;
 		SukkotState = new Features.Sukkot.State(localStorage, logger);
-		LiturgyState = new Features.Liturgy.State(localStorage, logger);	
+		LiturgyState = new Features.Liturgy.State(localStorage, logger);
+		HomeState = new Features.Home.State(localStorage, logger);
 		//Logger!.LogInformation("ctor of {Project}!{Class}", nameof(LivingMessiah), nameof(AppState));
 	}
 	#endregion
@@ -32,7 +34,8 @@ public class AppState
 			try
 			{
 				await SukkotState!.Initialize();
-				await LiturgyState!.Initialize();	
+				await LiturgyState!.Initialize();
+				await HomeState!.Initialize();
 				//Logger!.LogWarning("{Method} ParashaState.Get: {ParashaState}", nameof(Initialize), ParashaState.Get());
 				_isInitialized = true;
 			}
