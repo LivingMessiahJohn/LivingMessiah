@@ -24,22 +24,62 @@
 	</div>
 </div>
 
+<div class="container">
+	<div class="@MediaQuery.Xs.DivClass">
+		<LyricsLiturgyTeaching Title=@GetCurrentTitle()
+													 Teaching="Pdf Download"
+													 PDF=@GetCurrentTeaching() />
+	</div>
+	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+		<div class="row">
+			<div class="col-1"></div>
+			<div class="col-10">
+				<LyricsLiturgyTeaching Title=@GetCurrentTitle()
+															 Teaching="Pdf Download"
+															 PDF=@GetCurrentTeaching() />
+			</div>
+			<div class="col-1"></div>
+		</div>
+	</div>
+</div>
+
+<DailyWrapper />
+
 @if (FeastList is not null && FeastList.Count() != 0)
 {
 	<div class="@MediaQuery.Xs.DivClass"><FeastCards FeastList="FeastList" IsXs="true" /></div>
 	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><FeastCards FeastList="FeastList" IsXs="false" /></div>
 }
 
-
-<div class="@MediaQuery.XsOrSm.DivClass">
-	<MediaQueryWrapper IsXsOrSm=true />
+<div class="card card border-0 ">
+	<div class="@MediaQuery.Xs.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Xs" /></div>
+	<div class="@MediaQuery.Sm.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Sm" /></div>
+	<div class="@MediaQuery.Md.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Md" /></div>
+	<div class="@MediaQuery.Lg.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Lg" /></div>
+	<div class="@MediaQuery.Xl.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Xl" /></div>
 </div>
 
-<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-	<MediaQueryWrapper IsXsOrSm=false />
-</div>
+<div class="@MediaQuery.XsOrSm.DivClass"><SocialMediaButtons IsXsOrSm=true /></div>
+<div class="@MediaQuery.MdOrLgOrXl.DivClass"><SocialMediaButtons IsXsOrSm=false /></div>
 
 @code {
+	private string ShabbatDate = "2025 July 5";
+	private string ParashaTitle = "Genesis 39";
+	private string ParashaDate = "2025-07-05";
+	private string ParashaFile = "Gen-39";
+
+	private string GetCurrentTitle()
+	{
+		return $"{ShabbatDate} | {ParashaTitle}";
+	}
+
+	//https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-07-05-Gen-39.pdf
+	//https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-06-07-Gen-33-18-to-35-08.pdf
+	private string GetCurrentTeaching()
+	{
+		return $"{Constants.TeachingBlobFolder}{ParashaDate}-{ParashaFile}.pdf";
+	}
+
 	List<FeastEnums.Feast>? FeastList = null;
 
 	protected override void OnInitialized()
@@ -50,3 +90,8 @@
 		.OrderBy(o => o.Value).ToList();
 	}
 }
+
+
+
+
+
