@@ -51,7 +51,7 @@ public class State
 		NotifyStateHasChanged();
 	}
 
-	public bool GetIsShowingImage()
+	public bool GetIsShowingWelcomeDetails()
 	{
 		return _IsShowingWelcomeDetails;
 	}

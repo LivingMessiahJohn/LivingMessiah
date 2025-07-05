@@ -1,13 +1,13 @@
 ﻿@using LivingMessiah.Features.Welcome
 
+@* @inject ILogger<WelcomeCard>? Logger *@
 @* @inject IToastService? Toast *@
 
 @* 
 @if(StateGotten)
 {
-
-	<p>ShowingDetails: @ShowingDetails</p> *@
-
+	<p>ShowingDetails: @ShowingDetails</p> 
+*@
 	<div class="card bg-warning-subtle">
 		<div class="card-header">
 			<div class="d-flex justify-content-between">
@@ -35,11 +35,13 @@
 			}
 		</div>
 	</div>
-@* }
+@* 
+}
 else
 {
 	<p> STATE NOT GOTTEN</p>
-} *@
+} 
+*@
 
 @code {
 
@@ -50,14 +52,15 @@ else
 
 	protected override void OnParametersSet()
 	{
-		ShowingDetails = State!.AppState!.HomeState!.GetIsShowingImage();
+		//Logger!.LogInformation("{Method}, ShowingDetails: {ShowingDetails}", nameof(OnParametersSet), ShowingDetails);
+		ShowingDetails = State!.AppState!.HomeState!.GetIsShowingWelcomeDetails();
 		//StateGotten = true;
 		//Toast!.ShowWarning($"ShowingDetails: {ShowingDetails}");
 	}
 
 	private async Task ReturnedToggle()
 	{
-		//ShowingDetails = !ShowingDetails;
+		ShowingDetails = !ShowingDetails;
 		await State!.AppState!.HomeState!.UpdateIsShowingWelcomeDetails(ShowingDetails);
 	}
 }
