@@ -5,8 +5,10 @@
 
 <PageHeader PageEnum="Page.Profile" />
 
- <AuthorizeView>
-	<Authorized><Claims /></Authorized> 
+<AuthorizeView>
+	<Authorized>
+		<Claims />
+	</Authorized>
 	<NotAuthorized>
 		<div class="card border-warning my-5">
 			<div class="card-header">Not Authorized</div>
@@ -16,4 +18,4 @@
 			</div>
 		</div>
 	</NotAuthorized>
-</AuthorizeView> 
+</AuthorizeView>

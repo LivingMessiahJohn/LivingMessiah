@@ -76,7 +76,7 @@ public class SecurityClaimsService : ISecurityClaimsService
 		string roles = "";
 		foreach (var claim in _user.Claims)
 		{
-			if (claim.Type == SchemaNameSpace)
+			if (claim.Type == MicrosoftSchemaIdentityClaimsRole)
 			{
 				roles += claim.Value;
 			}
@@ -107,13 +107,13 @@ public class SecurityClaimsService : ISecurityClaimsService
 	{
 		foreach (var claim in claims)
 		{
-			if (claim.Type == SchemaNameSpace && claim.Value == role1)
+			if (claim.Type == MicrosoftSchemaIdentityClaimsRole && claim.Value == role1)
 			{
 				return true;
 			}
 			else
 			{
-				if (claim.Type == SchemaNameSpace && claim.Value == role2)
+				if (claim.Type == MicrosoftSchemaIdentityClaimsRole && claim.Value == role2)
 				{
 					return true;
 				}

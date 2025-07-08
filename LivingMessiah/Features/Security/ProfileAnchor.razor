@@ -5,18 +5,20 @@
 @using System.Security.Claims
 
 <a href="@NavEnum.Profile.Index" class="me-2"
-	 title="Role: @Role; IsAdmin:@IsAdmin; Email:@EmailAddress">
-	@((MarkupString)NameTiny) @((MarkupString)BlueCheck)
+	 title="Role(s): @Roles; Status: @Status">
+	@((MarkupString)NameTiny) @((MarkupString)BlueCheck) @((MarkupString)Thumbs)
 </a>
 
 @code {
 	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
 
 	private string Username = "";
-	public string? EmailAddress { get; set; }
-	public bool Verified { get; set; }
+	public string? EmailAddress { get; set; }  // Email:@EmailAddress
+	public bool Authenticated { get; set; }
 	private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
-	public string? Role { get; set; }
+	private bool IsEmailVerified { get; set; }
+	private string? Email { get; set; }
+	public string? Roles { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -31,41 +33,62 @@
 			{
 				if (state.User.Identity.IsAuthenticated)
 				{
-					Verified = true;
+					Email = state.User.FindFirst(ClaimTypes.Email)?.Value;
+					IsEmailVerified = state.User.FindFirst("email_verified")?.Value == "true";
+
+					Authenticated = true;
 					_claims = state.User.Claims;
+					Roles = string.Join(", ", _claims.Where(w => w.Type == Services.Auth0.MicrosoftSchemaIdentityClaimsRole).Select(s => s.Value));
 				}
 				else
 				{
-					Verified = false;
+					Authenticated = false;
 				}
 
 				EmailAddress = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-				Role = state.User.Claims.FirstOrDefault(c => c.Type == "https://schemas.livingmessiah.com/roles")?.Value;
 			}
 
 		}
 	}
 
+	/*
+	IsAdmin: @IsAdmin
 	public bool IsAdmin
 	{
 		get
 		{
-			return Verified && Role!.Contains("admin", StringComparison.InvariantCultureIgnoreCase);
+			if (Roles is null) { return false; }
+			return Authenticated && Roles!.Contains(Services.Auth0.Roles.Admin, StringComparison.InvariantCultureIgnoreCase);
 		}
 	}
+	*/
 
 	public string NameTiny =>
 	!string.IsNullOrEmpty(Username)
 	? $"<span class='text-success'><b>{Username.Truncate(25)}</b></span>"
 	: "";
+	
+	public string Status =>
+	(Authenticated ? "Authenticated" : "NOT Authenticated") + " / " +
+	(IsEmailVerified ? "Email Verified" : "Email NOT Verified");
 
 	public string BlueCheck
 	{
 		get
 		{
-			return Verified
+			return Authenticated
 			? "<span class='text-primary'><i class='fas fa-check'></i></span>"
-			: "<span class='text-danger'>Unverified<i class='fas fa-question'></i></span>";
+			: "<span class='text-danger'><i class='fas fa-question'></i></span>";
+		}
+	}
+
+	public string Thumbs
+	{
+		get
+		{
+			return IsEmailVerified
+			? "<span class='text-primary'><i class='far fa-thumbs-up'></i></span>"
+			: "<span class='text-danger'><i class='far fa-thumbs-down'></i></span>";
 		}
 	}
 

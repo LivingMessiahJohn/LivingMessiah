@@ -3,13 +3,10 @@ namespace LivingMessiah.Services;
 
 public static class Auth0
 {
-	public const string SchemeName = "Auth0";
-	public const string CallbackPath = "/callback";
-	public const string SchemaNameSpace = "https://schemas.livingmessiah.com/roles";
+	public const string MicrosoftSchemaIdentityClaimsRole = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
 
 	public static class Configuration
 	{
-	// using auth0 instead of Auth0 which was in version 7
 		public const string Domain = "auth0:Domain";
 		public const string ClientId = "auth0:ClientId";
 		public const string ClientSecret = "auth0:ClientSecret";

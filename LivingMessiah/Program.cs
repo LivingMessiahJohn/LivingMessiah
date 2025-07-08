@@ -46,14 +46,13 @@ try
 		string.IsNullOrEmpty(builder.Configuration["SyncfusionLicense"])
 				? "IsNullOrEmpty"
 				: builder.Configuration["SyncfusionLicense"]);
-
 	*/
 	Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(builder.Configuration["SyncfusionLicense"] ?? "");
 
 	builder.Services.AddBlazoredToast();
 	builder.Services.AddBlazoredLocalStorage();
 	builder.Services.AddAuthorizationCore();
-
+	
 	/*
 	builder.Services.AddSingleton<AppState>(); 
 	==> Cannot consume scoped service 'Blazored.LocalStorage.ILocalStorageService' from singleton 'LivingMessiah.State.AppState'. 
@@ -68,30 +67,14 @@ try
 	builder.Services.AddCalendar();
 	builder.Services.AddFeastDayPlanner();
 
-	builder.Services.AddAuth0WebAppAuthentication(options => {
-		options.Domain = builder.Configuration[Domain] ?? "";
-		options.ClientId = builder.Configuration[ClientId] ?? "";
-		options.Scope = "openid profile email";
-		/*
-		options.OpenIdConnectEvents = new Microsoft.AspNetCore.Authentication.OpenIdConnect.OpenIdConnectEvents
-		{
-			OnTokenValidated = context =>
-			{
-				var identity = context.Principal?.Identity as System.Security.Claims.ClaimsIdentity;
-				if (identity != null)
-				{
-					// Map custom roles claim to standard role claim
-					var roleClaims = identity.FindAll("https://livingmessiah.auth0.com/claims/roles");
-					foreach (var rc in roleClaims)
-					{
-						identity.AddClaim(new System.Security.Claims.Claim(identity.RoleClaimType, rc.Value));
-					}
-				}
-				return System.Threading.Tasks.Task.CompletedTask;
-			}
-		};
-		*/
+	builder.Services.AddAuth0WebAppAuthentication(options =>
+	{
+		options.Domain = builder.Configuration["auth0:Domain"] ?? "";
+		options.ClientId = builder.Configuration["auth0:ClientId"] ?? "";
+		options.ClientSecret = builder.Configuration["auth0:ClientSecret"] ?? ""; 
+		options.Scope = "openid profile email roles";
 	});
+
 
 	//builder.Services.AddScoped<TokenProvider>();
 	//TokenProvider used by _Host App
