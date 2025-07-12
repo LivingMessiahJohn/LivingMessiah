@@ -1,4 +1,7 @@
-﻿@using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
+﻿@using LivingMessiah.Features.Sukkot.IndexComponents
+@using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
+
+@inject ILogger<Grid>? Logger
 
 @if (IsXs)
 {
@@ -21,11 +24,11 @@
 									 ComparisonStatus="@ComparisonStatus"
 									 UsersCurrentStatus="@UsersCurrentStatus"
 									 EmailParm="@EmailParm"
-									 RegistrationStep="@RegistrationStep">
+									 CurrentStepRecord="@CurrentStepRecord" 
+									 OnActionCompleted="ReturnedActionCompleted">
 			</GridContent>
 		</div>
 	</div>
-
 }
 else
 {
@@ -48,7 +51,8 @@ else
 									 ComparisonStatus="@ComparisonStatus"
 									 UsersCurrentStatus="@UsersCurrentStatus"
 									 EmailParm="@EmailParm"
-									 RegistrationStep="@RegistrationStep">
+									 CurrentStepRecord="@CurrentStepRecord"
+									 OnActionCompleted="ReturnedActionCompleted">
 			</GridContent>
 
 		</div>
@@ -61,5 +65,13 @@ else
 	[Parameter, EditorRequired] public bool IsXs { get; set; }
 	[Parameter, EditorRequired] public Status? UsersCurrentStatus { get; set; }
 	[Parameter, EditorRequired] public Status? ComparisonStatus { get; set; }
-	[Parameter, EditorRequired] public RegistrationStep? RegistrationStep { get; set; }
+	[Parameter, EditorRequired] public CurrentStepRecord? CurrentStepRecord { get; set; }
+	[Parameter, EditorRequired] public EventCallback<Status> OnActionCompleted { get; set; }
+
+	private void ReturnedActionCompleted(Status nextStatus)
+	{
+		Logger!.LogDebug("{Method}, nextStatus: {Status}", nameof(ReturnedActionCompleted), nextStatus);
+		OnActionCompleted.InvokeAsync(nextStatus);
+	}
+
 }

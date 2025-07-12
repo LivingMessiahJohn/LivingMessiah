@@ -6,8 +6,8 @@ using LivingMessiah.Features.Sukkot.Data;
 using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums;
 using LivingMessiah.Features.Sukkot.Constants;
 //using  LivingMessiah.Infrastructure;
-using LivingMessiah.Services;
 using LivingMessiah.Features.Sukkot.Enums;
+using LivingMessiah.SecurityRoot;
 
 namespace LivingMessiah.Features.Sukkot.Services;
 
@@ -16,10 +16,8 @@ public interface ISukkotService
 	string UserInterfaceMessage { get; set; }
 	Task<vwRegistration> Details(int id, ClaimsPrincipal user, bool showPrintInstructionMessage = false);
 	Task<vwRegistration> DeleteConfirmation(int id, ClaimsPrincipal user);
-
 	Task<int> DeleteConfirmed(int id);
 	Task<RegistrationSummary> Summary(int id, ClaimsPrincipal user);
-	Task<IndexVM> GetRegistrationStep();
 }
 
 public class SukkotService : ISukkotService
@@ -87,77 +85,6 @@ public class SukkotService : ISukkotService
 		return vm;
 	}
 
-
-	public async Task<IndexVM> GetRegistrationStep()
-	{
-		UserInterfaceMessage = "";
-		Logger.LogDebug("{Method}", nameof(GetRegistrationStep));
-
-		var vm = new IndexVM();
-		try
-		{
-			var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-			ClaimsPrincipal? user = authState.User;
-
-			if (user.Identity!.IsAuthenticated)
-			{
-				if (SvcClaims.IsVerified()) 
-				{
-					vm.UserName = await SvcClaims.GetUserName() ?? "?";
-					vm.EmailAddress = await SvcClaims.GetEmail();
-					var vw = new vwRegistrationStep();
-					vw = await db.GetByEmail(vm.EmailAddress!);
-
-					if (vw is not null)
-					{
-						//vm.HouseRulesAgreement = new HouseRulesAgreement();
-						vm.HouseRulesAgreement = new LivingMessiah.Features.Sukkot.RegistrationSteps.HouseRulesAgreement();
-						vm.HouseRulesAgreement.Id = vw.Id;
-						vm.HouseRulesAgreement.AcceptedDate = vw.HouseRulesAgreementAcceptedDate;
-						vm.HouseRulesAgreement.TimeZone = vw.HouseRulesAgreementTimeZone;
-
-						if (vw.RegistrationId is not null)
-						{
-							vm.RegistrationStep = new RegistrationStep();
-							vm.RegistrationStep.Id = (int)vw.RegistrationId;
-							vm.RegistrationStep.FirstName = vw.FirstName;
-							vm.RegistrationStep.FamilyName = vw.FamilyName;
-							vm.RegistrationStep.TotalDonation = vw.TotalDonation;
-							vm.RegistrationStep.RegistrationFeeAdjusted = vw.RegistrationFeeAdjusted;
-
-							vm.Status = Status.FromValue((int)vw.StatusId!);
-						}
-						else
-						{
-							vm.Status = Status.StartRegistration;
-						}
-					}
-					else
-					{
-						vm.Status = Status.AgreementNotSigned;
-					}
-				}
-				else
-				{
-					vm.Status = Status.EmailNotConfirmed;
-				}
-			}
-			else
-			{
-				vm.Status = Status.NotAuthenticated;
-			}
-
-		}
-		catch (Exception ex)
-		{
-			LogExceptionMessage = $"Inside {nameof(GetRegistrationStep)}, db.{nameof(db.GetByEmail)}";
-			Logger.LogError(ex, "{Method}, LogExceptionMessage: {LogExceptionMessage}", nameof(GetRegistrationStep), LogExceptionMessage);
-			UserInterfaceMessage += "An invalid operation occurred, contact your administrator";
-			throw new InvalidOperationException(UserInterfaceMessage);
-		}
-		return vm;
-	}
 
 	public async Task<vwRegistration> Details(int id, ClaimsPrincipal user, bool showPrintInstructionMessage = false)
 	{

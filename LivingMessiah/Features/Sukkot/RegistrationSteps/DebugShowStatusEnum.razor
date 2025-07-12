@@ -1,0 +1,20 @@
+﻿@using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
+@using LivingMessiah.Features.Sukkot.Constants
+
+@if (Debug.ShowStatusEnum && UsersCurrentStatus is not null)
+{
+	<div class="row">
+		<div class="col-12">
+			<div class="my-2 pt-2 float-end">
+				<p class="text-info">
+					<small> Status: @UsersCurrentStatus!.Name [<b>@UsersCurrentStatus!.Value</b>]</small>
+				</p>
+			</div>
+		</div>
+	</div>
+}
+
+
+@code {
+	[Parameter, EditorRequired] public Status? UsersCurrentStatus { get; set; }
+}

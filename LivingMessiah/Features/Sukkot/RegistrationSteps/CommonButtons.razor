@@ -1,14 +1,14 @@
 ﻿@using LivingMessiah.Features.Sukkot.Enums 
 @inject NavigationManager NavigationManager
 
-<button @onclick="@(e => ButtonClick(RegistrationStepId))"
+<button @onclick="@(e => ButtonClick(CurrentStepRecordId))"
 				class="@NavButton!.Css" title="@NavButton!.Title">
 	<i class="@NavButton.Icon"></i> @NavButton.Label
 </button>
 
 
 @code {
-	[Parameter, EditorRequired] public int? RegistrationStepId { get; set; }
+	[Parameter, EditorRequired] public int? CurrentStepRecordId { get; set; }
 	[Parameter, EditorRequired] public NavButton? NavButton  { get; set; } //
 
 	void ButtonClick(int? id)

@@ -1,4 +1,5 @@
 ﻿namespace LivingMessiah.Features.Sukkot.Constants;
+// ToDo: Namespace does not match the folder structure
 
 /*
 namespace LivingMessiah.Features.Sukkot;
@@ -33,7 +34,7 @@ public static class RegistrationClosedEmail
 	public const string Name = "Mark";
 	public const string Email = "mark@livingmessiah.com";
 }
-
+//ToDo not being used
 public static class Stripe
 {
 	public static string ItemMessage { get; set; } = $"Sukkot {Year.String} Payment";
@@ -65,12 +66,13 @@ public static class TShirts
 	public static string Href { get; set; } = "https://aboveallimages.net/shop/ols/categories/sukkot";
 	public static string Title { get; set; } = "Sukkot T-Shirts for sale";
 }
-
+// ToDo: not being used
 public static class Features
 {
 	public static bool IsTrackingPassports { get; set; } = false;
 }
 
+//ToDo not being used
 public static class PostActions
 {
 	public const string Create = "Create";
@@ -149,6 +151,11 @@ Make the check payable to <b>Living Messiah</b> and attach it to the printed out
 <br /><br />Please put the <b>registration id</b> on the check and write <b>Sukkot {Year.String} Payment</b>.  
 <br /><br />Thanks!
 ";
+}
+
+public static class Debug 
+{ 
+	public const bool ShowStatusEnum = false; // Set to true to enable debug mode
 }
 
 public static class Breadcrumbs

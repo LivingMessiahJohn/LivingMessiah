@@ -1,9 +1,11 @@
 ﻿@page "/HealthCheck/TestLogger"
-@using Microsoft.AspNetCore.Components.Authorization
-@using Page = LivingMessiah.Enums.Nav
-@using Microsoft.Extensions.Options;
-@using LivingMessiah.Settings
 @using System.Security.Claims
+@using LivingMessiah.SecurityRoot
+@using LivingMessiah.Settings
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Extensions.Options;
+@using Page = LivingMessiah.Enums.Nav
+@using static LivingMessiah.SecurityRoot.Auth0
 
 <PageHeader PageEnum="Page.HealthCheckTestLogger" />
 
@@ -12,7 +14,6 @@
 @inject IConfiguration Configuration
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-@using static LivingMessiah.Services.Auth0
 
 <AuthorizeView Roles="@Roles.Admin">
 	<Authorized>

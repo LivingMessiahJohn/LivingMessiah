@@ -1,0 +1,5 @@
+﻿
+Does Enums.Account.cs really needed?
+it only has the Login and Logout (possibly PasswordChanged)
+Maybe this needs to be part of the Security folder/ namespace ?
+

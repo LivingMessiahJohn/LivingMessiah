@@ -1,0 +1,10 @@
+﻿# LivingMessiah\Security\
+
+Rename SecurityClaimsService to ClaimsService
+
+For related context, search REFATOR
+
+After the dust is settles, rename this folder to just "Security"
+
+## LivingMessiah\Security\Components
+- See the components found in LivingMessiah\Features\Security and move (most if not all) to here

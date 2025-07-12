@@ -1,5 +1,4 @@
-﻿
-namespace LivingMessiah.Services;
+﻿namespace LivingMessiah.SecurityRoot;
 
 public static class Auth0
 {

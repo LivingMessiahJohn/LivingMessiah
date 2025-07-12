@@ -1,25 +1,24 @@
 ﻿@page "/sukkot"
 
-@using LivingMessiah.Features.Sukkot.IndexComponents
 @using LivingMessiah.Features.Sukkot.Constants
-@using LivingMessiah.Services
-
+@using LivingMessiah.Features.Sukkot.IndexComponents
+@using LivingMessiah.SecurityRoot
 @using LivingMessiah.Settings
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.Extensions.Options
+@using static LivingMessiah.SecurityRoot.Auth0
 
 @inject IOptions<SukkotSettings> SukkotSettings
 @inject ISecurityClaimsService SvcClaims
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-@using static LivingMessiah.Services.Auth0
 <AuthorizeView Roles="@Roles.SukkotMenuBar">
 	<SukkotSettingsList />
 	@* <SukkotAdminMenubar></SukkotAdminMenubar> *@
 </AuthorizeView>
 
-@* <Debug /> *@
+@* <DebugShowSukkotSettings /> *@
 
 @* 
 <AuthorizeView Roles="@Roles.SukkotMenuBar">
@@ -77,8 +76,6 @@ else
 	</div>
 
 }
-
-
 
 @code {
 

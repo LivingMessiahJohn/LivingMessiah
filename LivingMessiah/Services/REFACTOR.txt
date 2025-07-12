@@ -1,0 +1,4 @@
+﻿Goal, 
+- Delete those items no longer needed
+- move the needed files to their new homes
+- Delete this folder

@@ -63,6 +63,7 @@
     <Folder Include="Features\Feasts\Header\" />
     <Folder Include="Features\Sukkot\Services\" />
     <Folder Include="Features\Welcome\Enums\" />
+    <Folder Include="SecurityRoot\Components\" />
     <Folder Include="wwwroot\css\bootstrap\" />
     <Folder Include="wwwroot\js\" />
   </ItemGroup>
