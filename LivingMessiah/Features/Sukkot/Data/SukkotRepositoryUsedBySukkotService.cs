@@ -5,6 +5,7 @@ using DataEnumsDatabase = LivingMessiah.Data.Enums.Database;
 
 namespace LivingMessiah.Features.Sukkot.Data;
 
+// This is a dumb name to long
 public interface ISukkotRepositoryUsedBySukkotService
 {
 	string BaseSqlDump { get; }

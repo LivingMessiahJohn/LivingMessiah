@@ -1,0 +1,6 @@
+﻿
+All of the components in LivingMessiah\Features\Security\ do not have a @page directive except for PasswordChanged.razor (which has not yet been implemented).
+
+Considering making a higher level folder  LivingMessiah\Security\ and moving these components there.
+
+This folder would also include the components mentioned about under the folder LivingMessiah\Security\

@@ -1,8 +1,8 @@
-﻿@using LivingMessiah.Helpers
+﻿@using System.Security.Claims
+@using LivingMessiah.Helpers
+@using LivingMessiah.SecurityRoot
 @using Microsoft.AspNetCore.Components.Authorization
-
 @using NavEnum = LivingMessiah.Enums.Nav
-@using System.Security.Claims
 
 <a href="@NavEnum.Profile.Index" class="me-2"
 	 title="Role(s): @Roles; Status: @Status">
@@ -12,13 +12,13 @@
 @code {
 	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
 
-	private string Username = "";
-	public string? EmailAddress { get; set; }  // Email:@EmailAddress
-	public bool Authenticated { get; set; }
-	private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
-	private bool IsEmailVerified { get; set; }
-	private string? Email { get; set; }
-	public string? Roles { get; set; }
+	string Username = "";
+	string? EmailAddress { get; set; }  // Email:@EmailAddress
+	bool IsAuthenticated { get; set; }
+	IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+	bool IsEmailVerified { get; set; }
+	string? Email { get; set; }
+	string? Roles { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -36,13 +36,13 @@
 					Email = state.User.FindFirst(ClaimTypes.Email)?.Value;
 					IsEmailVerified = state.User.FindFirst("email_verified")?.Value == "true";
 
-					Authenticated = true;
+					IsAuthenticated = true;
 					_claims = state.User.Claims;
-					Roles = string.Join(", ", _claims.Where(w => w.Type == Services.Auth0.MicrosoftSchemaIdentityClaimsRole).Select(s => s.Value));
+					Roles = string.Join(", ", _claims.Where(w => w.Type == Auth0.MicrosoftSchemaIdentityClaimsRole).Select(s => s.Value));
 				}
 				else
 				{
-					Authenticated = false;
+					IsAuthenticated = false;
 				}
 
 				EmailAddress = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -58,7 +58,7 @@
 		get
 		{
 			if (Roles is null) { return false; }
-			return Authenticated && Roles!.Contains(Services.Auth0.Roles.Admin, StringComparison.InvariantCultureIgnoreCase);
+			return Authenticated && Roles!.Contains(SecurityRoot.Auth0.Roles.Admin, StringComparison.InvariantCultureIgnoreCase);
 		}
 	}
 	*/
@@ -69,14 +69,14 @@
 	: "";
 	
 	public string Status =>
-	(Authenticated ? "Authenticated" : "NOT Authenticated") + " / " +
+	(IsAuthenticated ? "Authenticated" : "NOT Authenticated") + " / " +
 	(IsEmailVerified ? "Email Verified" : "Email NOT Verified");
 
 	public string BlueCheck
 	{
 		get
 		{
-			return Authenticated
+			return IsAuthenticated
 			? "<span class='text-primary'><i class='fas fa-check'></i></span>"
 			: "<span class='text-danger'><i class='fas fa-question'></i></span>";
 		}

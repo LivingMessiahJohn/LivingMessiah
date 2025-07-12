@@ -11,7 +11,7 @@ using LivingMessiah.Settings;
 using LivingMessiah.State;
 
 using Auth0.AspNetCore.Authentication;
-using static LivingMessiah.Services.Auth0.Configuration;
+using static LivingMessiah.SecurityRoot.Auth0.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using AccountEnum = LivingMessiah.Enums.Account;

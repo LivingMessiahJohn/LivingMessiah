@@ -1,0 +1,21 @@
+﻿@using LivingMessiah.Features.Sukkot.IndexComponents
+
+@inject ILogger<Wrapper>? Logger
+
+<div class="@MediaQuery.Xs.DivClass">
+	<div class="card mt-0 mb-3">
+		<div class="card-body bg-light">
+			<VerbiageParagraph />
+			<YesNoButtons EmailParm="@EmailParm" />
+		</div>
+	</div>
+</div>
+
+<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+	<VerbiageParagraph />
+	<YesNoButtons EmailParm="@EmailParm" />
+</div>
+
+@code {
+	[Parameter, EditorRequired] public string? EmailParm { get; set; }
+}

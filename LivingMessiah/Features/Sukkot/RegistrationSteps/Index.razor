@@ -1,21 +1,25 @@
 ﻿@page "/Sukkot/RegistrationSteps"
 @page "/Sukkot/RegistrationShell"
 
-@*ToDo: can this be done in the code behind*@
-@implements IDisposable
-
+@using System.Security.Claims
+@using LivingMessiah.Features.Sukkot.Constants
+@using LivingMessiah.Features.Sukkot.Data
+@using LivingMessiah.Features.Sukkot.Domain
+@using LivingMessiah.Features.Sukkot.Enums
+@using LivingMessiah.Features.Sukkot.IndexComponents
+@using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
+@using LivingMessiah.SecurityRoot
+@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Hosting;
 @using Microsoft.Extensions.Hosting;
-@using static LivingMessiah.Services.Auth0
+@using static LivingMessiah.SecurityRoot.Auth0
 
-@using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
-@using LivingMessiah.Features.Sukkot.Constants
+@inject ILogger<Index>? Logger
+@inject IToastService? Toast
 
-@using PageHome = LivingMessiah.Enums.Nav
-@using LivingMessiah.Features.Sukkot.Enums
+@inject ISukkotRepositoryUsedBySukkotService? db
 
 <PageTitle>@Pages.RegistrationSteps.Title</PageTitle>
-
 <BreadCrumbNav Page2Index="@Pages.RegistrationSteps.Index"
 							 Page2Title="@Pages.RegistrationSteps.Title"
 							 Page2Active=" active" />
@@ -25,22 +29,13 @@
 <AuthorizeView Roles="@Roles.SukkotMenuBar">
 	<SukkotAdminMenubar></SukkotAdminMenubar>
 </AuthorizeView>
- *@
+*@
 
 <div class="pb-2 mt-4 mb-2 border-bottom">
 	<h2><i class="@Pages.RegistrationSteps.Icon"></i> @Pages.RegistrationSteps.Title</h2>
 </div>
 
-@* 
-@if (!String.IsNullOrEmpty(@AppState!.Message))
-{
-	<div class="card border-primary mb-3">
-		<div class="card-body">
-			@AppState!.Message
-		</div>
-	</div>
-}
-*@
+@* ToDo: Replace `AttemptingToGetRecord` with <LoadingComponent IsLoading="vm!.EmailAddress == null" TurnSpinnerOff=TurnSpinnerOff> </LoadingComponent> *@
 
 @if (AttemptingToGetRecord == true)
 {
@@ -49,38 +44,28 @@
 }
 else
 {
-	<h4 class="mb-3">To register for Sukkot, you must complete these steps</h4>
-
-	<div class="row">
-		<div class="col-12">
-			<div class="my-2 pt-2 float-end">
-				<p class="text-info">
-					<small> Status: @IndexVM!.Status.Name [<b>@IndexVM.Status.Value</b>]</small>
-				</p>
-			</div>
-		</div>
-	</div>
-
+	<h5 class="mb-3 text-center">To register for Sukkot, you must complete these steps</h5>
+	@* <DebugShowStatusEnum UsersCurrentStatus="vm!.Status" /> *@
 	<StepGridHeader />
 
 	@foreach (var item in Status.List.OrderBy(o => o.StepNumber).Where(w => w.UsedByUI).ToList())
 	{
-		<div class="d-block d-md-none">
-			<Grid UsersCurrentStatus="@IndexVM.Status"
+		<div class="@MediaQuery.Xs.DivClass">
+			<Grid UsersCurrentStatus="@vm.Status"
 						ComparisonStatus="@item"
-						RegistrationStep="@IndexVM.RegistrationStep"
-						EmailParm="@IndexVM.EmailAddress"
-						IsXs="true">
-			</Grid>
-		</div>
+						CurrentStepRecord="@vm.CurrentStepRecord"
+						EmailParm="@vm.EmailAddress"
+						IsXs="true"
+						OnActionCompleted="ReturnedActionCompleted" />
 
-		<div class="d-none d-md-block">
-			<Grid UsersCurrentStatus="@IndexVM.Status"
+		</div>
+		<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+			<Grid UsersCurrentStatus="@vm.Status"
 						ComparisonStatus="@item"
-						RegistrationStep="@IndexVM.RegistrationStep"
-						EmailParm="@IndexVM.EmailAddress"
-						IsXs="false">
-			</Grid>
+						CurrentStepRecord="@vm.CurrentStepRecord"
+						EmailParm="@vm.EmailAddress"
+						IsXs="false"
+						OnActionCompleted="ReturnedActionCompleted" />
 		</div>
 	}
 
@@ -90,5 +75,101 @@ else
 							 Page2Title="@Pages.RegistrationSteps.Title"
 							 Page2Active=" active" />
 
+@code {
+	//ToDo: convert over to SecurityClaimsService and remove this
+	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
 
+	IndexVM? vm { get; set; } = new IndexVM();
+
+	protected bool AttemptingToGetRecord;
+
+	protected override async Task OnInitializedAsync()
+	{
+		Logger!.LogInformation("{Method}", nameof(OnInitializedAsync));
+		AttemptingToGetRecord = true;
+
+		if (authenticationState is not null)
+		{
+			var state = await authenticationState;
+			if (state!.User.Identity is not null)
+			{
+				vm!.UserName = state.User.Identity.Name!;
+				vm!.EmailAddress = state.User.FindFirst(ClaimTypes.Email)?.Value;
+				if (state.User.Identity.IsAuthenticated)
+				{
+					if (state.User.FindFirst("email_verified")?.Value == "true")
+					{
+						vm!.Status = Status.AgreementNotSigned;
+					}
+					else
+					{
+						vm!.Status = Status.EmailNotConfirmed;
+					}
+					await ProcessRegistrationStep();
+				}
+				else
+				{
+					vm!.Status = Status.NotAuthenticated;
+				}
+			}
+			else
+			{
+				vm!.Status = Status.NotAuthenticated;
+				Toast!.ShowWarning("Identity is null");
+			}
+
+		}
+		else
+		{
+			vm!.Status = Status.NotAuthenticated;
+			Toast!.ShowWarning("authenticationState is null");
+		}
+
+		Logger!.LogInformation("{Method} exiting; CurrentStepRecord: {CurrentStepRecord}", nameof(OnInitializedAsync), vm!.CurrentStepRecord);
+		AttemptingToGetRecord = false;
+	}
+
+	private async Task ProcessRegistrationStep()
+	{
+		try
+		{
+			vwRegistrationStep? vw = await db!.GetByEmail(vm!.EmailAddress!);
+			if (vw is not null)
+			{
+				// since the vw.HRA fields are required, we can assume that if we have the fields necessary to populate IndexVM!HRARecord
+				vm!.HouseRulesAgreement = new HRARecord(vw.Id, vw.HouseRulesAgreementAcceptedDate, vw.HouseRulesAgreementTimeZone);
+
+				if (vw.RegistrationId is not null)
+				{
+					vm!.CurrentStepRecord = new CurrentStepRecord(
+						(int)vw.RegistrationId, vw.FirstName, vw.FamilyName, vw.TotalDonation, vw.RegistrationFeeAdjusted);
+					vm!.Status = Status.FromValue((int)vw.StatusId!);
+				}
+				else
+				{
+					vm!.Status = Status.StartRegistration;
+				}
+			}
+			else
+			{
+				vm!.Status = Status.AgreementNotSigned;
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(ProcessRegistrationStep));
+			Toast!.ShowError("An invalid operation occurred, contact your administrator");
+		}
+	}
+
+	private void ReturnedActionCompleted(Status nextStatus)
+	{
+		if (vm is not null)
+		{
+			vm!.Status = nextStatus;
+			Logger!.LogDebug("{Method}, nextStatus: {Status}", nameof(ReturnedActionCompleted), nextStatus);
+		}
+	}
+
+}
 

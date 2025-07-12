@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
-using static LivingMessiah.Services.Auth0;
+using static LivingMessiah.SecurityRoot.Auth0;
 
-namespace LivingMessiah.Services;
+namespace LivingMessiah.SecurityRoot;
 
 public interface ISecurityClaimsService
 {
@@ -102,26 +102,17 @@ public class SecurityClaimsService : ISecurityClaimsService
 
 	}
 
-	//ToDo: Refactor this so that it can receive an array of strings, and/or convert the foreach into a LINQ statement
-	private bool SearchRoles(IEnumerable<Claim> claims, string role1, string role2)
+	private bool SearchRoles(IEnumerable<Claim> claims, params string[] roles)
 	{
 		foreach (var claim in claims)
 		{
-			if (claim.Type == MicrosoftSchemaIdentityClaimsRole && claim.Value == role1)
+			if (claim.Type == MicrosoftSchemaIdentityClaimsRole && roles.Contains(claim.Value))
 			{
 				return true;
-			}
-			else
-			{
-				if (claim.Type == MicrosoftSchemaIdentityClaimsRole && claim.Value == role2)
-				{
-					return true;
-				}
 			}
 		}
 		return false;
 	}
-
 
 	public async Task<bool> RoleHasAdminOrSukkot()
 	{
@@ -131,9 +122,9 @@ public class SecurityClaimsService : ISecurityClaimsService
 
 	public async Task<bool> AdminOrSukkotOverride()
 	{
-		string roles = await this.GetRoles();
+		string roles = await GetRoles();
 
-		if (roles == Auth0.Roles.Admin | roles == Auth0.Roles.Sukkot)
+		if (roles == Roles.Admin | roles == Roles.Sukkot)
 		{
 			return true;
 		}

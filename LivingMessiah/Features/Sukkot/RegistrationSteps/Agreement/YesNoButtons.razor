@@ -1,10 +1,11 @@
-﻿
-@* ToDo: See AppState-Convert-from-to-LocalStorage.md *@
+﻿@using LivingMessiah.Features.Sukkot.IndexComponents
+
 @* [Inject] AppState? AppState { get; set; } *@
 
-@inject ILogger<AgreementButtons>? Logger
+@inject ILogger<YesNoButtons>? Logger
 @inject IToastService? Toast
 @inject Data.IRepository? db
+@inject NavigationManager NavigationManager
 
 <div class="row col-12 my-2">
 	<div class="mb-3">
@@ -28,8 +29,8 @@
 	void DoNotAgree_ButtonClick()
 	{
 		Logger!.LogDebug("{Method}", nameof(DoNotAgree_ButtonClick));
-		//AppState!.UpdateMessage(this, "Not agreeing to the House Rules Agreement terminates the Registration Process");
-		Toast!.ShowWarning($"Not agreeing to the House Rules Agreement terminates the Registration Process");
+		Toast!.ShowWarning("Not agreeing to the House Rules Agreement terminates the Registration Process");
+		NavigationManager!.NavigateTo($"{Nav.Sukkot.Index}", forceLoad: false);
 	}
 
 	private async Task Agree_ButtonClick()
@@ -40,16 +41,14 @@
 			var sprocTuple = await db!.InsertHouseRulesAgreement(EmailParm!, GetLocalTimeZone());
 
 			Logger!.LogDebug("{Method} id: {id}", nameof(Agree_ButtonClick), sprocTuple.Item3);
-			Toast!.ShowInfo($"Record updated for House Rules Agreement");
-			//AppState!.UpdateMessage(this, "Record updated for House Rules Agreement");
+			Toast!.ShowInfo("Record updated for House Rules Agreement");
+
 		}
-		catch (InvalidOperationException invalidOperationException)
+		catch (Exception ex)
 		{
-			//AppState!.UpdateMessage(this, invalidOperationException.Message);
-			Toast!.ShowError($"{invalidOperationException.Message}");
+			Logger!.LogError(ex, "{Method}", nameof(Agree_ButtonClick));
+			Toast!.ShowError($"{Global.ToastShowError}");
 		}
-
-
 	}
 
 	private string GetLocalTimeZone()

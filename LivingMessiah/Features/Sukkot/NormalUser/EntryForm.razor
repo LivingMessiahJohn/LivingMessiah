@@ -1,228 +1,377 @@
-﻿@using LivingMessiah.Features.Sukkot;
+﻿@using System.Security.Claims
 @using Blazored.FluentValidation
+@using Blazored.Toast.Services
+@using LivingMessiah.Features.Sukkot
+@using LivingMessiah.Features.Sukkot.Data
+@using LivingMessiah.Features.Sukkot.Enums;
+@using LivingMessiah.Features.Sukkot.IndexComponents
+@using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
+@using LivingMessiah.Features.Sukkot.Services
+@using LivingMessiah.SecurityRoot
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Authorization
 @using Syncfusion.Blazor.Calendars
+@using static LivingMessiah.SecurityRoot.Auth0
 
-<h4>@Title <span class="float-end"><sup><i>@Title2</i></sup></span></h4>
+@* To be deleted *@
+@inject IService? Service 
+@inject ISecurityClaimsService? ClaimsService
+@inject IRepository? db
+@inject ILogger<EntryForm>? Logger
+@inject IToastService? Toast
 
-<EditForm Model="@VM" OnValidSubmit="@SubmitValidForm">
-	<FluentValidationValidator @ref="_fluentValidationValidator" DisableAssemblyScanning="@true" />
-	<ValidationSummary />
+@* Hack: I'm using LoadingComponent because AddOrEditUI (a record) can't be null  *@
+<LoadingComponent IsLoading="AddOrEditUI==null" TurnSpinnerOff=TurnSpinnerOff>
 
-	@*<Administrative>*@
+	<h4>@AddOrEditUI!.Title <span class="float-end"><sup><i>@AddOrEditUI!.Title2</i></sup></span></h4>
 
-	<fieldset class="mt-3">
-		<legend class="text-primary">Contact Information</legend>
+	<EditForm Model="@VM" OnValidSubmit="@SubmitValidForm">
+		<FluentValidationValidator @ref="_fluentValidationValidator" DisableAssemblyScanning="@true" />
+		<ValidationSummary />
 
-		<div class="row">
+		<fieldset class="mt-3">
+			<legend class="text-primary">Contact Information</legend>
 
-			<div class="col-sm-4">
-				<div class="form-floating mb-3">
-					<InputText id="lastName" class="form-control" @bind-Value="VM.FamilyName" placeholder="Ben Levi" />
-					<label for="familyName" class="form-label">Last Name</label>
-					<ValidationMessage For="@(() => VM.FamilyName)" />
-				</div>
-			</div>
-
-			<div class="col-sm-4">
-				<div class="form-floating mb-3">
-					<InputText id="firstName" class="form-control" @bind-Value="VM.FirstName" placeholder="Moshe" />
-					<label for="firstName" class="form-label">First Name</label>
-					<ValidationMessage For="@(() => VM.FirstName)" />
-				</div>
-			</div>
-
-			<div class="col-sm-4">
-				<div class="form-floating mb-3">
-					<InputText id="spouseName" class="form-control" @bind-Value="VM.SpouseName" placeholder="Sousal Unit" />
-					<label for="spouseName" class="form-label">Spouses Name</label>
-					<ValidationMessage For="@(() => VM.SpouseName)" />
-				</div>
-			</div>
-
-		</div>
-
-
-		<div class="row">
-
-			<div class="col-sm-6">
-				<div class="form-floating mb-3">
-					<InputText id="otherNames" class="form-control" @bind-Value="VM.OtherNames" placeholder="other names" />
-					<label for="otherNames" class="form-label">Other Names</label>
-					<ValidationMessage For="@(() => VM.OtherNames)" />
-				</div>
-			</div>
-
-			<div class="col-sm-6">
-				<div class="form-floating mb-3">
-					<InputText id="phone" class="form-control" @bind-Value="VM.Phone" placeholder="phone (optional)" />
-					<label for="phone" class="form-label">Phone (optional)</label>
-					<ValidationMessage For="@(() => VM.Phone)" />
-				</div>
-			</div>
-
-			@*<div class="col-sm-4">
-			<div class="form-floating mb-3">
-			<label for="avatar">Avatar</label>
-			<InputText id="avatar" class="form-control" @bind-Value="VM.Avatar" placeholder="picture (optional)" />
-			<ValidationMessage For="@(() => VM.Avatar)" />
-			</div>
-			</div>*@
-
-		</div>
-	</fieldset>
-
-	<fieldset class="mt-3">
-		<legend class="text-primary">Attendance</legend>
-
-		<div class="row mt-n2">
-
-			<div class="col-12">
-				<div class="card bg-light mb-3">
-					<div class="card-body">
-						<p class="card-text">
-							To help us with planning, select what days will you be attending.  Please select <u>ALL</u> the dates, not just the beginning and ending.
-						</p>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		@if (Enums.DateRangeType.Attendance.HasSecondMonth)
-		{
-			<div class="@MediaQuery.Xs.DivClass">
-				<div class="row">
-					<div class="col-12">
-						<div class="form-floating mb-3">
-							<SfCalendar TValue="DateTime?"
-												IsMultiSelection="true" ShowTodayButton="false"
-												@bind-Values="@VM.AttendanceDateList"
-												Min="@DateRangeAttendance.Range.Min"
-												Max="@DateRangeAttendance.Range.Max">
-							</SfCalendar>
-						</div>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="col-9">
-						<div class="form-floating mb-3">
-							<SfCalendar TValue="DateTime?"
-												IsMultiSelection="true" ShowTodayButton="false"
-												@bind-Values="@VM.AttendanceDateList2ndMonth"
-												Min="@DateRangeAttendance.Range2ndMonth.Min"
-												Max="@DateRangeAttendance.Range2ndMonth.Max">
-							</SfCalendar>
-						</div>
-					</div>
-					<div class="col-3"></div>
-				</div>
-			</div>
-
-			<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
-				<div class="row">
-					<div class="col-6">
-						<div class="form-floating mb-3">
-							<SfCalendar TValue="DateTime?"
-												IsMultiSelection="true" ShowTodayButton="false"
-												@bind-Values="@VM.AttendanceDateList"
-												Min="@DateRangeAttendance.Range.Min"
-												Max="@DateRangeAttendance.Range.Max">
-							</SfCalendar>
-						</div>
-					</div>
-
-					<div class="col-6">
-						<div class="form-floating mb-3">
-							<SfCalendar TValue="DateTime?"
-												IsMultiSelection="true" ShowTodayButton="false"
-												@bind-Values="@VM.AttendanceDateList2ndMonth"
-												Min="@DateRangeAttendance.Range2ndMonth.Min"
-												Max="@DateRangeAttendance.Range2ndMonth.Max">
-							</SfCalendar>
-						</div>
-					</div>
-				</div>
-			</div>
-		}
-		else
-		{
-			<!--HasSecondMonth=false-->
 			<div class="row">
-				<div class="col-8 col-sm-7">
+
+				<div class="col-sm-4">
 					<div class="form-floating mb-3">
-						<p>Min- Max: @DateRangeAttendance.Range.Min - @DateRangeAttendance.Range.Max</p>
-						<SfCalendar TValue="DateTime?"
-											IsMultiSelection="true" ShowTodayButton="false"
-											@bind-Values="@VM.AttendanceDateList"
-											Min="@DateRangeAttendance.Range.Min"
-											Max="@DateRangeAttendance.Range.Max">
-						</SfCalendar>
+						<InputText id="lastName" class="form-control" @bind-Value="VM.FamilyName" placeholder="Ben Levi" />
+						<label for="familyName" class="form-label">Last Name</label>
+						<ValidationMessage For="@(() => VM.FamilyName)" />
 					</div>
 				</div>
-				<div class="col-4 col-sm-5">
-					<AttendanceDateList SelectedDates="@VM.AttendanceDateList" />
+
+				<div class="col-sm-4">
+					<div class="form-floating mb-3">
+						<InputText id="firstName" class="form-control" @bind-Value="VM.FirstName" placeholder="Moshe" />
+						<label for="firstName" class="form-label">First Name</label>
+						<ValidationMessage For="@(() => VM.FirstName)" />
+					</div>
+				</div>
+
+				<div class="col-sm-4">
+					<div class="form-floating mb-3">
+						<InputText id="spouseName" class="form-control" @bind-Value="VM.SpouseName" placeholder="Sousal Unit" />
+						<label for="spouseName" class="form-label">Spouses Name</label>
+						<ValidationMessage For="@(() => VM.SpouseName)" />
+					</div>
+				</div>
+
+			</div>
+
+
+			<div class="row">
+
+				<div class="col-sm-6">
+					<div class="form-floating mb-3">
+						<InputText id="otherNames" class="form-control" @bind-Value="VM.OtherNames" placeholder="other names" />
+						<label for="otherNames" class="form-label">Other Names</label>
+						<ValidationMessage For="@(() => VM.OtherNames)" />
+					</div>
+				</div>
+
+				<div class="col-sm-6">
+					<div class="form-floating mb-3">
+						<InputText id="phone" class="form-control" @bind-Value="VM.Phone" placeholder="phone (optional)" />
+						<label for="phone" class="form-label">Phone (optional)</label>
+						<ValidationMessage For="@(() => VM.Phone)" />
+					</div>
+				</div>
+
+				@*<div class="col-sm-4">
+				<div class="form-floating mb-3">
+				<label for="avatar">Avatar</label>
+				<InputText id="avatar" class="form-control" @bind-Value="VM.Avatar" placeholder="picture (optional)" />
+				<ValidationMessage For="@(() => VM.Avatar)" />
+				</div>
+				</div>*@
+
+			</div>
+		</fieldset>
+
+		<fieldset class="mt-3">
+			<legend class="text-primary">Attendance</legend>
+
+			<div class="row mt-n2">
+
+				<div class="col-12">
+					<div class="card bg-light mb-3">
+						<div class="card-body">
+							<p class="card-text">
+								To help us with planning, select what days will you be attending.  Please select <u>ALL</u> the dates, not just the beginning and ending.
+							</p>
+						</div>
+					</div>
 				</div>
 			</div>
+
+			@if (Enums.DateRangeType.Attendance.HasSecondMonth)
+			{
+				<div class="@MediaQuery.Xs.DivClass">
+					<div class="row">
+						<div class="col-12">
+							<div class="form-floating mb-3">
+								<SfCalendar TValue="DateTime?"
+													IsMultiSelection="true" ShowTodayButton="false"
+													@bind-Values="@VM.AttendanceDateList"
+													Min="@DateRangeAttendance.Range.Min"
+													Max="@DateRangeAttendance.Range.Max">
+								</SfCalendar>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-9">
+							<div class="form-floating mb-3">
+								<SfCalendar TValue="DateTime?"
+													IsMultiSelection="true" ShowTodayButton="false"
+													@bind-Values="@VM.AttendanceDateList2ndMonth"
+													Min="@DateRangeAttendance.Range2ndMonth.Min"
+													Max="@DateRangeAttendance.Range2ndMonth.Max">
+								</SfCalendar>
+							</div>
+						</div>
+						<div class="col-3"></div>
+					</div>
+				</div>
+
+				<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+					<div class="row">
+						<div class="col-6">
+							<div class="form-floating mb-3">
+								<SfCalendar TValue="DateTime?"
+													IsMultiSelection="true" ShowTodayButton="false"
+													@bind-Values="@VM.AttendanceDateList"
+													Min="@DateRangeAttendance.Range.Min"
+													Max="@DateRangeAttendance.Range.Max">
+								</SfCalendar>
+							</div>
+						</div>
+
+						<div class="col-6">
+							<div class="form-floating mb-3">
+								<SfCalendar TValue="DateTime?"
+													IsMultiSelection="true" ShowTodayButton="false"
+													@bind-Values="@VM.AttendanceDateList2ndMonth"
+													Min="@DateRangeAttendance.Range2ndMonth.Min"
+													Max="@DateRangeAttendance.Range2ndMonth.Max">
+								</SfCalendar>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+			else
+			{
+				<!--HasSecondMonth=false-->
+				<div class="row">
+					<div class="col-8 col-sm-7">
+						<div class="form-floating mb-3">
+							<p>Min-Max: @DateRangeAttendance.Range.Min.ToShortDateString() - @DateRangeAttendance.Range.Max.ToShortDateString()</p>
+							<SfCalendar TValue="DateTime?"
+												IsMultiSelection="true" ShowTodayButton="false"
+												@bind-Values="@VM.AttendanceDateList"
+												Min="@DateRangeAttendance.Range.Min"
+												Max="@DateRangeAttendance.Range.Max">
+							</SfCalendar>
+						</div>
+					</div>
+					<div class="col-4 col-sm-5">
+						<AttendanceDateList SelectedDates="@VM.AttendanceDateList" />
+					</div>
+				</div>
+			}
+
+
+		</fieldset>
+
+		<fieldset class="mt-3">
+			<legend class="text-primary">People Count</legend>
+
+			<div class="row mt-n2">
+				<div class="col-sm-4">
+
+					<div class="form-floating mb-3">
+
+						<InputNumber id="adults" class="form-control" @bind-Value="VM.Adults" placeholder="Adult Count" />
+						<label for="adults" class="form-label">Adults</label>
+						<ValidationMessage For="@(() => VM.Adults)" />
+
+					</div>
+				</div>
+
+				<div class="col-sm-4">
+					<div class="form-floating mb-3">
+						<InputNumber id="childBig" class="form-control" @bind-Value="VM.ChildBig" placeholder="Child Count Big" />
+						<label for="childBig" class="form-label">Child <sup>big</sup></label>
+						<ValidationMessage For="@(() => VM.ChildBig)" />
+					</div>
+				</div>
+
+				<div class="col-sm-4">
+					<div class="form-floating mb-3">
+						<InputNumber id="childSmall" class="form-control" @bind-Value="VM.ChildSmall" placeholder="Child Count Small" />
+						<label for="childSmall" class="form-label">Child <sup>small</sup></label>
+						<ValidationMessage For="@(() => VM.ChildSmall)" />
+					</div>
+				</div>
+
+			</div>
+		</fieldset>
+
+		<fieldset class="mt-3">
+			<legend class="text-primary">Other (optional)</legend>
+			<div class="row mt-n2">
+				<div class="col-12">
+					<div class="form-floating mb-3">
+						<InputTextArea id="notes" class="form-control" @bind-Value="VM.Notes" placeholder="Notes" />
+						<label for="notes" class="form-label"><small>Notes / Emergency Contact / Fellowship Attending</small></label>
+						<p class="mt-1">
+							Please include emergency contact.  If not attending Living Messiah, please include name of fellowship or congregation currently attending, if none list a personal reference.
+						</p>
+						<ValidationMessage For="@(() => VM.Notes)" />
+
+					</div>
+				</div>
+			</div>
+		</fieldset>
+
+		<button type="submit" class="btn btn-primary btn-lg mt-2">
+			<i class="fas fa-save"></i> @AddOrEditUI!.SubmitButtonText 
+		</button>
+
+	</EditForm>
+
+ </LoadingComponent>
+
+@code {
+	[Parameter, EditorRequired] public int? Id { get; set; }
+	[Parameter, EditorRequired] public string? Email { get; set; }
+
+	// Not required because it's only requied if it's an add and not an edit/update
+	[Parameter] public EventCallback<Status> OnActionCompleted { get; set; } //
+
+	bool TurnSpinnerOff = false;
+
+	public EntryFormVM VM { get; set; } = new EntryFormVM();
+
+	private FluentValidationValidator? _fluentValidationValidator;
+	public Enums.DateRangeType DateRangeAttendance { get; set; } = Enums.DateRangeType.Attendance;
+
+	EntryFormAddOrEditRecord? AddOrEditUI;
+
+	private int Id2;
+	protected override async Task OnParametersSetAsync ()
+	{
+		Id2 = Id ?? 0;
+		Logger!.LogInformation("{Method}, Id2: {Id2}", nameof(OnParametersSetAsync), Id2);
+
+		try
+		{
+			if (Id2 == 0) // This implies the
+			{
+				VM.EMail = Email;
+				AddOrEditUI = new EntryFormAddOrEditRecord("Add - Registration", Email!, "Save");
+			}
+			else
+			{
+				AddOrEditUI = new EntryFormAddOrEditRecord("Edit - Registration", $"{Email} - #{VM.Id}", "Update");
+				VM = await GetById(Id2);
+				Toast!.ShowInfo($"{GetNotificationMessage()}");
+			}
 		}
 
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(OnParametersSetAsync));
+			Toast!.ShowError("An invalid operation occurred, contact your administrator");
+		}
+		
+		TurnSpinnerOff = true;
+	}
 
-	</fieldset>
+	private async Task<EntryFormVM> GetById(int id)
+	{
+		Logger!.LogInformation("{Method} id: {id}", nameof(GetById), id);
 
+		EntryFormVM VM = new();
+		try
+		{
+			VM = await db!.GetById2(id);
+			string email = await ClaimsService!.GetEmail();
+			VM.Status = Status.FromValue(VM.StatusId);
+			var (week1, week2) = Helper.GetAttendanceDatesArray(VM.AttendanceBitwise);
+			VM.AttendanceDateList = week1;
+			VM.AttendanceDateList2ndMonth = week2;
+			if (await ClaimsService.IsUserAuthorized(email) == false)
+			{
+				string _warning = $"logged in user {email} lacks authority to see content of id={id} / EMail:{VM.EMail}";
+				Logger!.LogWarning("{Method}, Message: {Message}" , nameof(GetById), _warning);
+				return VM;
+			}
+			else
+			{
+				Logger!.LogDebug("{Method}, StatusId: {YearId}", nameof(GetById), VM.StatusId);
+				return VM;
+			}
+			// Footnote 1: 
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(GetById));
+			Toast!.ShowError("An invalid operation occurred, contact your administrator");
+			return VM;
+		}
 
-	<fieldset class="mt-3">
-		<legend class="text-primary">People Count</legend>
+	}
 
-		<div class="row mt-n2">
-			<div class="col-sm-4">
+	private string GetNotificationMessage() => 
+    Id2 != 0 ? $"Registration record for {Email} - #{VM.Id} received from database" : "";
 
-				<div class="form-floating mb-3">
+	protected async Task SubmitValidForm()
+	{
+		Logger!.LogDebug("{Method} Id2:{id}", nameof(SubmitValidForm), Id2);
+		if (Id2 == 0)  // Add
+		{
+			try
+			{
+				var sprocTuple = await Service!.Create(VM);
+				Logger!.LogInformation("{Method} Registration created! Id2:{id}", nameof(SubmitValidForm), Id2);
+				Toast!.ShowInfo($"Registration Added!");
 
-					<InputNumber id="adults" class="form-control" @bind-Value="VM.Adults" placeholder="Adult Count" />
-					<label for="adults" class="form-label">Adults</label>
-					<ValidationMessage For="@(() => VM.Adults)" />
+				// Send back the next step/status as the new current status i.e. IndexVM.Status = Status.Payment
+				await OnActionCompleted.InvokeAsync(Status.Payment); 
+			}
+			catch (InvalidOperationException invalidOperationException)
+			{
+				Toast!.ShowError($"{invalidOperationException.Message}");
+			}
+		}
+		else  // Edit
+		{
+			try
+			{
+				var sprocTuple = await Service!.Update(VM);
+				Logger!.LogInformation("...Registration Updated!");
+				Toast!.ShowInfo($"Registration Updated!");
+			}
 
-				</div>
-			</div>
+			catch (InvalidOperationException invalidOperationException)
+			{
+				Toast!.ShowError($"{invalidOperationException.Message}");
+			}
+		}
 
-			<div class="col-sm-4">
-				<div class="form-floating mb-3">
-					<InputNumber id="childBig" class="form-control" @bind-Value="VM.ChildBig" placeholder="Child Count Big" />
-					<label for="childBig" class="form-label">Child <sup>big</sup></label>
-					<ValidationMessage For="@(() => VM.ChildBig)" />
-				</div>
-			</div>
+	}
 
-			<div class="col-sm-4">
-				<div class="form-floating mb-3">
-					<InputNumber id="childSmall" class="form-control" @bind-Value="VM.ChildSmall" placeholder="Child Count Small" />
-					<label for="childSmall" class="form-label">Child <sup>small</sup></label>
-					<ValidationMessage For="@(() => VM.ChildSmall)" />
-				</div>
-			</div>
-
-		</div>
-	</fieldset>
-
-	<fieldset class="mt-3">
-		<legend class="text-primary">Other (optional)</legend>
-		<div class="row mt-n2">
-			<div class="col-12">
-				<div class="form-floating mb-3">
-					<InputTextArea id="notes" class="form-control" @bind-Value="VM.Notes" placeholder="Notes" />
-					<label for="notes" class="form-label"><small>Notes / Emergency Contact / Fellowship Attending</small></label>
-					<p class="mt-1">
-						Please include emergency contact.  If not attending Living Messiah, please include name of fellowship or congregation currently attending, if none list a personal reference.
-					</p>
-					<ValidationMessage For="@(() => VM.Notes)" />
-
-				</div>
-			</div>
-		</div>
-	</fieldset>
-
-	<button type="submit" class="btn btn-primary btn-lg mt-2">
-		<i class="fas fa-save"></i> @SubmitButtonText
-	</button>
-
-</EditForm>
-
+/*
+Footnote 1: ToDo: How do I want to handle this
+bool canOverride = await SvcClaims.AdminOrSukkotOverride();
+if (registrationPOCO.StatusSmartEnum == BaseStatusSmartEnum.FullyPaid & !canOverride)
+{
+	throw new RegistratationException("Can not edit registration that has been fully paid.");
+}
+*/
+}

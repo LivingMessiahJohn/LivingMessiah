@@ -14,7 +14,8 @@ public interface IRepository
 	string BaseSqlDump { get; }
 
 	// used by both ManageRegistration &  RegistrationStep
-	Task<Tuple<int, int, string>> InsertHouseRulesAgreement(string email, string timeZone);  // Also used by RegistrationSteps!AgreementButtons
+
+	Task<Tuple<int, int, string>> InsertHouseRulesAgreement(string email, string timeZone);  // FN:1
 	Task<int> DeleteHRA(int id);  // stpHRADelete
 	Task<Tuple<int, int, string>> DeleteRegistration(int id);
 
@@ -22,6 +23,7 @@ public interface IRepository
 	Task<EntryFormVM> GetById2(int id);   //ViewModel_RE_DELETE
 	Task<Tuple<int, int, string>> Create(DTO registration);
 	Task<Tuple<int, int, string>> Update(DTO registration);
+	// FN:1 Also used by RegistrationSteps/Wrapper/YesNoButtons
 }
 
 

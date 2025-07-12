@@ -1,12 +1,24 @@
 ﻿# Port Notes from .Net7 to DotNet9
 
 ## New features Added
+- [x] Home Page
+    - [x] A Welcome Component with state
+      - This is partially done, need to port this page to have interactivity on the client side.
+    - [x] Upcoming Feasts Events  `Home/UpcomingFeasts/FeastCards.razor`
+    - [x] `LunarMoonCard`
+    - [ ] `SpecialEventsCard`
+      - this is dependent on the CRUD functionality of the `SpecialEvents` to be ported, presumably to a LivingMessiahAdmin project.
+
 - [x] `Nav<SmartEnum` Replaced `Links` with the `Nav` gotten from `MHB`.
 - [x] NavBar with `More` and `Search`
     - [x] Need to try and fix 
-- [-] Parasha file upload automation
+- [ ] Parasha file upload automation
 - [x] Podcast: Added as a share Icon?
 - [x] PageHeader
+- [ ] Dynamic Shabbat-o-Meter and Parasha File Download
+    - Create a component `ShabbatMeterTeachingDownload.razor` 
+    - This component is dynamic in that it will be a simple count down of the days of the week and will change on (or near) the Shabbat. When that occurs a `Lyrics, Liturgy and Teaching` download link will appear.
+
 
 ## Ported Components
 ### Layout
@@ -15,6 +27,8 @@
 - [x] BibleQuote
 - [ ] LearnMoreModalTemplate: 
     - [ ] My approach to using needs to be rethought like into types, [see]("C:\Source\LivingeMessiahBackup\008-port-calendar-carousel\Wiki\Learn-More-Info-only-Bootstrap-Modal-no-code-behind-using-data-bs-and-fade.md") 
+- [x] Parasha
+    - [ ] Re-visit this after I create a Razor Class Library is created from MHB
 - [x] TableTemplate
 
 ## Ported Features
@@ -40,11 +54,11 @@
 - [ ] AboutUs **The content of this page needs review**
 - [ ] Articles
 - [ ] ImportantLinks
-- [ ] Parasha: Hold off until a Razor Class Library is created from MHB
 - [ ] Psalms
 - [ ] TorahTuesday: Don't know what to do with this yet.
 - [ ] UpcomingEvents
 - [ ] Pages\Account: Auth0 
+- [ ] Sukkot AppState
 
 ## Not yet ported <mark>Other Folder<mark>
 - [ ] Announcements
@@ -76,8 +90,6 @@
 - [ ] WindmillRanch:
 
 ## New features to add
-- [-] Home Page
-    - [ ] A Feature(s) Components, Next big event(s), see UpcomingEvents 
 - [-] Sitemap: Navigation Search:
     - See [Prompt](C:\Source\LivingMessiahBackup\Feature-Ideas\999-Calendar-based-on-Bootstrap-7-col-grid\999-Calendar-based-on-Bootstrap-7-col-grid.md)
 - [ ] Note, **Blazored.Typeahead** repo is "read only", need to find a replacement or write one.
@@ -86,6 +98,4 @@
 
 ## New features to explore
 See local folder C:\Source\LivingeMessiahBackup\Feature-Ideas\
-
-- Moon Phases
-- Simplier ReadOnly Calendar (maybe based on Bootstrap 7 col grid)
+- [ ] Simpler ReadOnly Calendar (maybe based on a version of Bootstrap 5.3 with 7 col grid)

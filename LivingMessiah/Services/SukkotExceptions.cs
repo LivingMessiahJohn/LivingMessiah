@@ -1,10 +1,7 @@
-﻿using System;
-
-namespace  LivingMessiah.Features.Sukkot.Services;
+﻿namespace  LivingMessiah.Features.Sukkot.Services;
 
 // public class SukkotExceptions{}
-
-
+// ToDo: I think I what to delete these
 
 public class RegistrationNotFoundException : Exception
 {

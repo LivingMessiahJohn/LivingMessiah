@@ -1,5 +1,6 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization
-@using System.Security.Claims
+﻿@using System.Security.Claims
+@using LivingMessiah.SecurityRoot
+@using Microsoft.AspNetCore.Components.Authorization
 
 @inject IToastService? Toast
 @inject ILogger<Claims>? Logger
@@ -37,17 +38,18 @@
 	</div>
 }
 
+
 @code {
 	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
 
 	int RoleCount = 0;
 	string Name => authenticationState is not null ? authenticationState.Result?.User?.Identity?.Name ?? string.Empty : string.Empty;
+	string? Email { get; set; }
 	bool IsAuthenticated => authenticationState is not null && (authenticationState.Result?.User?.Identity?.IsAuthenticated ?? false);
 	bool IsEmailVerified { get; set; }
-	private string? Email { get; set; }
 	string Roles = string.Empty;
 
-	private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+	IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
 	protected List<Claim>? ClaimList;
 	public string? ProfileImage { get; set; }
 
@@ -73,10 +75,10 @@
 							_claims = state.User.Claims;
 
 							ClaimList = _claims.ToList();
-							RoleCount = ClaimList.Where(w => w.Type == Services.Auth0.MicrosoftSchemaIdentityClaimsRole).Count();
+							RoleCount = ClaimList.Where(w => w.Type == Auth0.MicrosoftSchemaIdentityClaimsRole).Count();
 							if (RoleCount > 0)
 							{
-								Roles = string.Join(", ", ClaimList.Where(w => w.Type == Services.Auth0.MicrosoftSchemaIdentityClaimsRole).Select(s => s.Value));
+								Roles = string.Join(", ", ClaimList.Where(w => w.Type == Auth0.MicrosoftSchemaIdentityClaimsRole).Select(s => s.Value));
 							}
 							ProfileImage = _claims.FirstOrDefault(c => c.Type == "picture")?.Value;
 						}
