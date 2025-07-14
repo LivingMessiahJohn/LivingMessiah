@@ -57,7 +57,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 
 		return await WithConnectionAsync(async connection =>
 		{
-			Logger.LogDebug($"Inside {nameof(Repository)}!{nameof(InsertHouseRulesAgreement)}; About to execute sql:{Sql}");
+			Logger!.LogDebug("{Method} Sql: {Sql}", nameof(InsertHouseRulesAgreement), Sql);
 			var affectedRows = await connection.ExecuteAsync(sql: Sql, param: Parms, commandType: CommandType.StoredProcedure);
 			SprocReturnValue = base.Parms.Get<int>("ReturnValue");
 			int? x = Parms.Get<int?>("NewId");
@@ -67,19 +67,19 @@ public class Repository : BaseRepositoryAsync, IRepository
 				if (SprocReturnValue == 2601) // Unique Index Violation
 				{
 					ReturnMsg = $"Database call did not insert a new HRA record because it caused a Unique Index Violation; email: {email}; ";
-					Logger.LogWarning($"...ReturnMsg: {ReturnMsg}; {Environment.NewLine} {Sql}");
+					Logger!.LogWarning("{Method} ReturnMsg: {ReturnMsg}", nameof(InsertHouseRulesAgreement), ReturnMsg);
 				}
 				else
 				{
 					ReturnMsg = $"Database call failed; email: {email ?? "NULL!!"}; SprocReturnValue: {SprocReturnValue}";
-					Logger.LogWarning($"...ReturnMsg: {ReturnMsg}; {Environment.NewLine} {Sql}");
+					Logger!.LogWarning("{Method} ReturnMsg: {ReturnMsg}", nameof(InsertHouseRulesAgreement), ReturnMsg);
 				}
 			}
 			else
 			{
 				NewId = int.TryParse(x.ToString(), out NewId) ? NewId : 0;
 				ReturnMsg = $"House Rules Agreement created for {email}; NewId={NewId}";
-				Logger.LogDebug($"...Return NewId:{NewId}");
+				Logger!.LogDebug("{Method} {NewId}", nameof(InsertHouseRulesAgreement), NewId);
 			}
 
 			return new Tuple<int, int, string>(NewId, SprocReturnValue, ReturnMsg);
@@ -93,6 +93,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 		Parms = new DynamicParameters(new { Id = id });
 		return await WithConnectionAsync(async connection =>
 		{
+			Logger!.LogDebug("{Method} {Sql} {Id}", nameof(DeleteHRA), id, Sql);
 			var affectedRows = await connection.ExecuteAsync(sql: Sql, param: Parms, commandType: CommandType.StoredProcedure);
 			return affectedRows;
 		});
@@ -111,7 +112,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 
 		return await WithConnectionAsync(async connection =>
 		{
-			Logger!.LogDebug("{Method} RegistrationId:{id}, Sql: {Sql} ", nameof(DeleteRegistration), id, Sql);
+			Logger!.LogDebug("{Method} {id}, {Sql} ", nameof(DeleteRegistration), id, Sql);
 			RowsAffected = await connection.ExecuteAsync(sql: Sql, param: Parms, commandType: CommandType.StoredProcedure);
 			SprocReturnValue = Parms.Get<int>("ReturnValue");
 
@@ -120,12 +121,12 @@ public class Repository : BaseRepositoryAsync, IRepository
 				if (SprocReturnValue == 51000) // Can not have donation rows when deleting registration
 				{
 					ReturnMsg = $"Database call did not delete the registration record because it has donation rows; RegistrationId: {id}; Manually delete the donation row(s) then delete the registration.";
-					Logger.LogWarning($"...ReturnMsg: {ReturnMsg}; {Environment.NewLine} {Sql}");
+					Logger!.LogWarning("{Method} {ReturnMsg}", nameof(DeleteRegistration), ReturnMsg);
 				}
 				else
 				{
 					ReturnMsg = $"Database call failed to delete RegistrationId: {id}; SprocReturnValue: {SprocReturnValue}";
-					Logger.LogWarning($"...ReturnMsg: {ReturnMsg}; {Environment.NewLine} {Sql}");
+					Logger!.LogError("{Method} {ReturnMsg}", nameof(DeleteRegistration), ReturnMsg);
 				}
 			}
 			else
@@ -139,7 +140,6 @@ public class Repository : BaseRepositoryAsync, IRepository
 	}
 
 	#endregion
-
 
 
 	#region Registration used by Service
@@ -158,6 +158,7 @@ FROM Sukkot.Registration
 WHERE Id = @Id";
 		return await WithConnectionAsync(async connection =>
 		{
+			Logger!.LogDebug("{Method} {Sql} {id} ", nameof(GetById2), Sql, id);
 			var rows = await connection.QueryAsync<EntryFormVM>(sql: Sql, param: Parms);  //ViewModel_RE_DELETE
 			return rows.SingleOrDefault()!;
 		});
@@ -194,7 +195,7 @@ WHERE Id = @Id";
 		// Can't remove `Tuple<...>` with `(...)`, see C:\Source\LivingMessiahWiki\Tuples\Removing-Tuple-Conflicts-with-BaseRepositoryAsync.md
 		return await WithConnectionAsync(async connection =>
 		{
-			Logger.LogDebug($"Inside {nameof(Repository)}!{nameof(Create)}, {nameof(registration.EMail)}:{registration.EMail}; a about to execute SPROC: {Sql}");
+			Logger!.LogDebug("{Method} {Sql} {EMail}", nameof(Create), Sql, registration.EMail);
 			var affectedRows = await connection.ExecuteAsync(sql: Sql, param: Parms, commandType: CommandType.StoredProcedure);
 			SprocReturnValue = Parms.Get<int>("ReturnValue");
 			int? x = Parms.Get<int?>("NewId");
@@ -203,19 +204,19 @@ WHERE Id = @Id";
 				if (SprocReturnValue == 2601) // Unique Index Violation
 				{
 					ReturnMsg = $"Database call did not insert a new record because it caused a Unique Index Violation; registration.EMail: {@registration.EMail}; ";
-					Logger.LogWarning($"...ReturnMsg: {ReturnMsg}; {Environment.NewLine} {Sql}");
+					Logger!.LogWarning("{Method} {ReturnMsg}", nameof(Create), ReturnMsg);
 				}
 				else
 				{
 					ReturnMsg = $"Database call failed; registration.EMail: {@registration.EMail}; SprocReturnValue: {SprocReturnValue}";
-					Logger.LogWarning($"...ReturnMsg: {ReturnMsg}; {Environment.NewLine} {Sql}");
+					Logger!.LogWarning("{Method} {ReturnMsg}", nameof(Create), ReturnMsg);
 				}
 			}
 			else
 			{
 				NewId = int.TryParse(x.ToString(), out NewId) ? NewId : 0;
 				ReturnMsg = $"Registration created for {registration.FamilyName}/{registration.EMail}; NewId={NewId}";
-				Logger.LogDebug($"...Return NewId:{NewId}");
+				Logger!.LogDebug("{Method} {NewId}", nameof(Create), NewId);
 			}
 
 			return new Tuple<int, int, string>(NewId, SprocReturnValue, ReturnMsg);
@@ -254,7 +255,7 @@ WHERE Id = @Id";
 		// Can't remove `Tuple<...>` with `(...)`, see C:\Source\LivingMessiahWiki\Tuples\Removing-Tuple-Conflicts-with-BaseRepositoryAsync.md
 		return await WithConnectionAsync(async connection =>
 		{
-			Logger.LogDebug($"Inside {nameof(Repository)}!{nameof(Update)}, {nameof(registration.Id)}:{registration.Id}; about to execute SPROC: {Sql}");
+			Logger!.LogDebug("{Method} {Sql} {Id}", nameof(Update), Sql, registration.Id);
 			RowsAffected = await connection.ExecuteAsync(sql: Sql, param: Parms, commandType: CommandType.StoredProcedure);
 			SprocReturnValue = Parms.Get<int>("ReturnValue");
 
@@ -263,12 +264,12 @@ WHERE Id = @Id";
 				if (SprocReturnValue == 2601) // Unique Index Violation
 				{
 					ReturnMsg = $"Database call did not update the record because it caused a Unique Index Violation; registration.EMail: {@registration.EMail}; ";
-					Logger.LogWarning($"...ReturnMsg: {ReturnMsg}; {Environment.NewLine} {Sql}");
+					Logger!.LogWarning("{Method} {ReturnMsg}", nameof(Update), ReturnMsg);
 				}
 				else
 				{
 					ReturnMsg = $"Database call failed; {nameof(registration.Id)}:{registration.Id}, {nameof(registration.EMail)}:{registration.EMail}; SprocReturnValue: {SprocReturnValue}";
-					Logger.LogWarning($"...ReturnMsg: {ReturnMsg}; {Environment.NewLine} {Sql}");
+					Logger!.LogWarning("{Method} {ReturnMsg}", nameof(Update), ReturnMsg);
 				}
 			}
 			else

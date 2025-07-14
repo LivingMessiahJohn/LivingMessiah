@@ -61,7 +61,7 @@
 
 @if (ComparisonStatus == Status.AgreementNotSigned && ComparisonStatus == UsersCurrentStatus)
 {
-	<Wrapper EmailParm="@EmailParm" />
+	<Wrapper EmailParm="@EmailParm" OnActionCompleted="ReturnedActionCompleted" />
 }
 
 @*Step 4 *@
