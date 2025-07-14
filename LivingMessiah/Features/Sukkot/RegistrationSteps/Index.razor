@@ -131,6 +131,7 @@ else
 
 	private async Task ProcessRegistrationStep()
 	{
+		Logger!.LogInformation("{Method}", nameof(ProcessRegistrationStep));
 		try
 		{
 			vwRegistrationStep? vw = await db!.GetByEmail(vm!.EmailAddress!);
@@ -154,6 +155,7 @@ else
 			{
 				vm!.Status = Status.AgreementNotSigned;
 			}
+			Logger!.LogInformation("{Method} {Status}", nameof(ProcessRegistrationStep), vm.Status);
 		}
 		catch (Exception ex)
 		{
@@ -162,12 +164,23 @@ else
 		}
 	}
 
-	private void ReturnedActionCompleted(Status nextStatus)
+	private async Task ReturnedActionCompleted(Status nextStatus)
 	{
-		if (vm is not null)
+		Logger!.LogDebug("{Method}, {Status}", nameof(ReturnedActionCompleted), nextStatus);
+
+		// For some reason, I have to be more drastic and call ProcessRegistrationStep if Status is Payment
+		if (nextStatus == Status.Payment)
 		{
-			vm!.Status = nextStatus;
-			Logger!.LogDebug("{Method}, nextStatus: {Status}", nameof(ReturnedActionCompleted), nextStatus);
+			await ProcessRegistrationStep();
+		}
+
+		// else I can change update the Status
+		else
+		{
+			if (vm is not null)
+			{
+				vm!.Status = nextStatus;
+			}
 		}
 	}
 

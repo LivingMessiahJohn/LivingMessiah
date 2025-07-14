@@ -1,4 +1,5 @@
 ﻿@using LivingMessiah.Features.Sukkot.IndexComponents
+@using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
 
 @* [Inject] AppState? AppState { get; set; } *@
 
@@ -25,6 +26,7 @@
 
 @code {
 	[Parameter, EditorRequired] public string? EmailParm { get; set; }
+	[Parameter, EditorRequired] public EventCallback<Status> OnActionCompleted { get; set; } //
 
 	void DoNotAgree_ButtonClick()
 	{
@@ -35,14 +37,12 @@
 
 	private async Task Agree_ButtonClick()
 	{
-		Logger!.LogDebug("{Method}", nameof(Agree_ButtonClick));
 		try
 		{
 			var sprocTuple = await db!.InsertHouseRulesAgreement(EmailParm!, GetLocalTimeZone());
-
 			Logger!.LogDebug("{Method} id: {id}", nameof(Agree_ButtonClick), sprocTuple.Item3);
 			Toast!.ShowInfo("Record updated for House Rules Agreement");
-
+			await OnActionCompleted.InvokeAsync(Status.StartRegistration);
 		}
 		catch (Exception ex)
 		{

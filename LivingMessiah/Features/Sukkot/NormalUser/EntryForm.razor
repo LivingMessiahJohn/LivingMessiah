@@ -250,7 +250,7 @@
 	[Parameter, EditorRequired] public int? Id { get; set; }
 	[Parameter, EditorRequired] public string? Email { get; set; }
 
-	// Not required because it's only requied if it's an add and not an edit/update
+	// Not required because it's only required if it's an add and not an edit/update
 	[Parameter] public EventCallback<Status> OnActionCompleted { get; set; } //
 
 	bool TurnSpinnerOff = false;
