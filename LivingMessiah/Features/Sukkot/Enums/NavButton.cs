@@ -8,13 +8,12 @@ public abstract class NavButton : SmartEnum<NavButton>
 	#region Id's
 	private static class Id
 	{
-		internal const int Details = 1;
-		internal const int DetailsPrint = 2;
-		internal const int DeleteConfirmation = 3;
-		internal const int Donation = 4;
-		internal const int RegistrationSteps = 5;
-		internal const int RegistrationStepsBack = 6;
-		internal const int Add = 7;
+		internal const int Print = 1;
+		internal const int DeleteConfirmation = 2;
+		internal const int Donation = 3;
+		internal const int RegistrationSteps = 4;
+		internal const int RegistrationStepsBack = 5;
+		internal const int Add = 6;
 
 	}
 	#endregion
@@ -22,8 +21,7 @@ public abstract class NavButton : SmartEnum<NavButton>
 	private NavButton(string name, int value) : base(name, value) { } // Constructor
 
 	#region  Declared Public Instances
-	public static readonly NavButton Details = new DetailsSE();
-	public static readonly NavButton DetailsPrint = new DetailsPrintSE();
+	public static readonly NavButton Print = new PrintSE();
 	public static readonly NavButton DeleteConfirmation = new DeleteConfirmationSE();
 	public static readonly NavButton Donation = new DonationSE();
 	public static readonly NavButton RegistrationSteps = new RegistrationStepsSE();
@@ -42,25 +40,14 @@ public abstract class NavButton : SmartEnum<NavButton>
 
 	#region Private Instantiation
 
-	private sealed class DetailsSE : NavButton
+	private sealed class PrintSE: NavButton
 	{
-		public DetailsSE() : base($"{nameof(Id.Details)}", Id.Details) { }
-		public override string Label => "View";
-		public override string Title => "Registration View";
-		public override string Icon => "fas fa-info";
-		public override string Css => "btn btn-outline-info";
-		public override string Route => Pages.Details.Index; // Link.Details.Index;
-		public override string RouteSuffix => "/false";
-	}
-
-	private sealed class DetailsPrintSE: NavButton
-	{
-		public DetailsPrintSE() : base($"{nameof(Id.DetailsPrint)}", Id.DetailsPrint) { }
+		public PrintSE() : base($"{nameof(Id.Print)}", Id.Print) { }
 		public override string Label => "Print";
 		public override string Title => "Registration Print";
 		public override string Icon => "fas fa-print";
 		public override string Css => "btn btn-outline-info";
-		public override string Route => Pages.Details.Index; // Link.Details.Index;
+		public override string Route => Pages.Print.Index; 
 		public override string RouteSuffix => "/true";
 	}
 

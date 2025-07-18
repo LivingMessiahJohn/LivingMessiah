@@ -4,7 +4,7 @@
 @using LivingMessiah.Features.Sukkot
 @using LivingMessiah.Features.Sukkot.Data
 @using LivingMessiah.Features.Sukkot.Enums;
-@using LivingMessiah.Features.Sukkot.IndexComponents
+@using LivingMessiah.Features.Sukkot.LandingPage
 @using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
 @using LivingMessiah.Features.Sukkot.Services
 @using LivingMessiah.SecurityRoot
@@ -166,20 +166,28 @@
 			else
 			{
 				<!--HasSecondMonth=false-->
-				<div class="row">
-					<div class="col-8 col-sm-7">
-						<div class="form-floating mb-3">
-							<p>Min-Max: @DateRangeAttendance.Range.Min.ToShortDateString() - @DateRangeAttendance.Range.Max.ToShortDateString()</p>
-							<SfCalendar TValue="DateTime?"
-												IsMultiSelection="true" ShowTodayButton="false"
-												@bind-Values="@VM.AttendanceDateList"
-												Min="@DateRangeAttendance.Range.Min"
-												Max="@DateRangeAttendance.Range.Max">
-							</SfCalendar>
-						</div>
+				<p class="text-center">Date Range: @DateRangeAttendance.Range.Min.ToShortDateString() - @DateRangeAttendance.Range.Max.ToShortDateString()</p>
+				<div class="@MediaQuery.Xs.DivClass">
+					<div class="d-flex justify-content-center">
+						<SfCalendar TValue="DateTime?"
+											IsMultiSelection="true" ShowTodayButton="false"
+											@bind-Values="@VM.AttendanceDateList"
+											Min="@DateRangeAttendance.Range.Min"
+											Max="@DateRangeAttendance.Range.Max">
+						</SfCalendar>
 					</div>
-					<div class="col-4 col-sm-5">
-						<AttendanceDateList SelectedDates="@VM.AttendanceDateList" />
+				</div>
+				<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+					<div class="d-flex justify-content-center">
+						<SfCalendar TValue="DateTime?"
+											IsMultiSelection="true" ShowTodayButton="false"
+											@bind-Values="@VM.AttendanceDateList"
+											Min="@DateRangeAttendance.Range.Min"
+											Max="@DateRangeAttendance.Range.Max">
+						</SfCalendar>
+						<div class="mx-3">
+							<AttendanceDateList SelectedDates="@VM.AttendanceDateList" />
+						</div>
 					</div>
 				</div>
 			}
@@ -263,10 +271,10 @@
 	EntryFormAddOrEditRecord? AddOrEditUI;
 
 	private int Id2;
-	protected override async Task OnParametersSetAsync ()
+	protected override async Task OnInitializedAsync ()
 	{
 		Id2 = Id ?? 0;
-		Logger!.LogInformation("{Method}, Id2: {Id2}", nameof(OnParametersSetAsync), Id2);
+		Logger!.LogInformation("{Method}, Id2: {Id2}", nameof(OnInitializedAsync), Id2);
 
 		try
 		{
@@ -279,13 +287,13 @@
 			{
 				AddOrEditUI = new EntryFormAddOrEditRecord("Edit - Registration", $"{Email} - #{VM.Id}", "Update");
 				VM = await GetById(Id2);
-				Toast!.ShowInfo($"{GetNotificationMessage()}");
+				//Toast!.ShowInfo($"{GetNotificationMessage()}");
 			}
 		}
 
 		catch (Exception ex)
 		{
-			Logger!.LogError(ex, "{Method}", nameof(OnParametersSetAsync));
+			Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
 			Toast!.ShowError("An invalid operation occurred, contact your administrator");
 		}
 		
@@ -327,8 +335,8 @@
 
 	}
 
-	private string GetNotificationMessage() => 
-    Id2 != 0 ? $"Registration record for {Email} - #{VM.Id} received from database" : "";
+	//private string GetNotificationMessage() => 
+  //  Id2 != 0 ? $"Registration record for {Email} - #{VM.Id} received from database" : "";
 
 	protected async Task SubmitValidForm()
 	{

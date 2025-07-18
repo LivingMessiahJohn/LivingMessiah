@@ -11,7 +11,7 @@ using LivingMessiah.Settings;
 using LivingMessiah.State;
 
 using Auth0.AspNetCore.Authentication;
-using static LivingMessiah.SecurityRoot.Auth0.Configuration;
+using static LivingMessiah.SecurityRoot.Auth0;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using AccountEnum = LivingMessiah.Enums.Account;
@@ -51,12 +51,16 @@ try
 
 	builder.Services.AddBlazoredToast();
 	builder.Services.AddBlazoredLocalStorage();
-	builder.Services.AddAuthorizationCore();
-	
+
 	/*
 	builder.Services.AddSingleton<AppState>(); 
 	==> Cannot consume scoped service 'Blazored.LocalStorage.ILocalStorageService' from singleton 'LivingMessiah.State.AppState'. 
 	 */
+	
+	builder.Services.AddAuthorizationBuilder()
+			.AddPolicy(Policy.Name, policy =>
+				policy.RequireClaim(Policy.Claim, "true"));
+
 	builder.Services.AddScoped<AppState>(); // Scoped is more common for Blazor Server apps	
 
 	builder.Services.AddApplicationInsightsTelemetry();
@@ -69,9 +73,9 @@ try
 
 	builder.Services.AddAuth0WebAppAuthentication(options =>
 	{
-		options.Domain = builder.Configuration["auth0:Domain"] ?? "";
-		options.ClientId = builder.Configuration["auth0:ClientId"] ?? "";
-		options.ClientSecret = builder.Configuration["auth0:ClientSecret"] ?? ""; 
+		options.Domain = builder.Configuration[Configuration.Domain] ?? "";
+		options.ClientId = builder.Configuration[Configuration.ClientId] ?? "";
+		options.ClientSecret = builder.Configuration[Configuration.ClientSecret] ?? ""; 
 		options.Scope = "openid profile email roles";
 	});
 

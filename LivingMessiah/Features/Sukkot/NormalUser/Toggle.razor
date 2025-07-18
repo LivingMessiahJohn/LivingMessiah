@@ -1,18 +1,18 @@
-﻿@using LivingMessiah.Features.Sukkot.IndexComponents
+﻿@using LivingMessiah.Features.Sukkot.LandingPage
 
 <div class="row mb-3">
 	<div class="col-12">
 		@if (IsCollapsed)
 		{
 			<button @onclick="@(e => ToggleButtonClick(IsCollapsed))"
-						class="btn-primary btn-sm float-end">
+						class="btn btn-primary btn-sm float-end">
 				Form Details <i class='fas fa-chevron-down'></i>
 			</button>
 		}
 		else
 		{
 			<button @onclick="@(e => ToggleButtonClick(IsCollapsed))"
-						class="btn-primary btn-sm float-end">
+						class="btn btn-primary btn-sm float-end">
 				Hide <i class='fas fa-chevron-up'></i>
 			</button>
 		}

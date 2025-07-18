@@ -1,8 +1,8 @@
 ﻿namespace LivingMessiah.Features.Sukkot.RegistrationSteps;
 
 public record CurrentStepRecord(int Id
-, string? FirstName
-, string? FamilyName = ""
+, string? FirstName  // Not used
+, string? FamilyName = "" // Not used
 , decimal TotalDonation = 0
 , decimal RegistrationFeeAdjusted = 0);
 

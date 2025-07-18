@@ -6,14 +6,16 @@
 @using LivingMessiah.Features.Sukkot.Data
 @using LivingMessiah.Features.Sukkot.Domain
 @using LivingMessiah.Features.Sukkot.Enums
-@using LivingMessiah.Features.Sukkot.IndexComponents
+@using LivingMessiah.Features.Sukkot.LandingPage
 @using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
 @using LivingMessiah.SecurityRoot
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Hosting;
 @using Microsoft.Extensions.Hosting;
 @using static LivingMessiah.SecurityRoot.Auth0
+@using GlobalNav = LivingMessiah.Enums.Nav;
 
+@inject NavigationManager NavigationManager
 @inject ILogger<Index>? Logger
 @inject IToastService? Toast
 
@@ -35,17 +37,10 @@
 	<h2><i class="@Pages.RegistrationSteps.Icon"></i> @Pages.RegistrationSteps.Title</h2>
 </div>
 
-@* ToDo: Replace `AttemptingToGetRecord` with <LoadingComponent IsLoading="vm!.EmailAddress == null" TurnSpinnerOff=TurnSpinnerOff> </LoadingComponent> *@
+<LoadingComponent IsLoading="vw == null" TurnSpinnerOff=TurnSpinnerOff>
 
-@if (AttemptingToGetRecord == true)
-{
-	<div class="spinner-border"></div>
-	<span style="display: inline-block; vertical-align: super">Loading...</span>
-}
-else
-{
 	<h5 class="mb-3 text-center">To register for Sukkot, you must complete these steps</h5>
-	@* <DebugShowStatusEnum UsersCurrentStatus="vm!.Status" /> *@
+	 <DebugShowStatusEnum UsersCurrentStatus="vm!.Status" /> 
 	<StepGridHeader />
 
 	@foreach (var item in Status.List.OrderBy(o => o.StepNumber).Where(w => w.UsedByUI).ToList())
@@ -69,75 +64,48 @@ else
 		</div>
 	}
 
-}
-
-<BreadCrumbNav Page2Index="@Pages.RegistrationSteps.Index"
-							 Page2Title="@Pages.RegistrationSteps.Title"
-							 Page2Active=" active" />
+</LoadingComponent>
 
 @code {
-	//ToDo: convert over to SecurityClaimsService and remove this
 	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+	string? Email; // => authenticationState is not null ? authenticationState.Result?.User?.Identity?.Name ?? string.Empty : string.Empty;
 
+	protected bool TurnSpinnerOff = false;
+	protected vwRegistrationStep? vw;
 	IndexVM? vm { get; set; } = new IndexVM();
-
-	protected bool AttemptingToGetRecord;
 
 	protected override async Task OnInitializedAsync()
 	{
-		Logger!.LogInformation("{Method}", nameof(OnInitializedAsync));
-		AttemptingToGetRecord = true;
-
+		Logger!.LogDebug("{Method}", nameof(OnInitializedAsync));
 		if (authenticationState is not null)
 		{
 			var state = await authenticationState;
 			if (state!.User.Identity is not null)
 			{
-				vm!.UserName = state.User.Identity.Name!;
-				vm!.EmailAddress = state.User.FindFirst(ClaimTypes.Email)?.Value;
-				if (state.User.Identity.IsAuthenticated)
-				{
-					if (state.User.FindFirst("email_verified")?.Value == "true")
-					{
-						vm!.Status = Status.AgreementNotSigned;
-					}
-					else
-					{
-						vm!.Status = Status.EmailNotConfirmed;
-					}
-					await ProcessRegistrationStep();
-				}
-				else
-				{
-					vm!.Status = Status.NotAuthenticated;
-				}
+				Email = state.User.FindFirst(ClaimTypes.Email)?.Value;
 			}
-			else
-			{
-				vm!.Status = Status.NotAuthenticated;
-				Toast!.ShowWarning("Identity is null");
-			}
-
 		}
-		else
+
+		if (String.IsNullOrEmpty(Email))
 		{
-			vm!.Status = Status.NotAuthenticated;
-			Toast!.ShowWarning("authenticationState is null");
+			Logger!.LogDebug("{Method} Email is null or Empty", nameof(ProcessRegistrationStep));
+			//Toast!.ShowWarning("Not Authorize | Email is null or empty"); toast no worky when navigating to another page
+			NavigationManager!.NavigateTo($"{GlobalNav.Sukkot.Index}");
 		}
 
-		Logger!.LogInformation("{Method} exiting; CurrentStepRecord: {CurrentStepRecord}", nameof(OnInitializedAsync), vm!.CurrentStepRecord);
-		AttemptingToGetRecord = false;
+		vm!.EmailAddress = Email;
+		await ProcessRegistrationStep();
 	}
 
 	private async Task ProcessRegistrationStep()
 	{
-		Logger!.LogInformation("{Method}", nameof(ProcessRegistrationStep));
+		Logger!.LogDebug("{Method}", nameof(ProcessRegistrationStep));
+		//await Task.Delay(20); 
 		try
 		{
-			vwRegistrationStep? vw = await db!.GetByEmail(vm!.EmailAddress!);
+			vw = await db!.GetByEmail(vm!.EmailAddress!);
 			if (vw is not null)
 			{
-				// since the vw.HRA fields are required, we can assume that if we have the fields necessary to populate IndexVM!HRARecord
 				vm!.HouseRulesAgreement = new HRARecord(vw.Id, vw.HouseRulesAgreementAcceptedDate, vw.HouseRulesAgreementTimeZone);
 
 				if (vw.RegistrationId is not null)
@@ -155,12 +123,17 @@ else
 			{
 				vm!.Status = Status.AgreementNotSigned;
 			}
+
 			Logger!.LogInformation("{Method} {Status}", nameof(ProcessRegistrationStep), vm.Status);
 		}
 		catch (Exception ex)
 		{
 			Logger!.LogError(ex, "{Method}", nameof(ProcessRegistrationStep));
 			Toast!.ShowError("An invalid operation occurred, contact your administrator");
+		}
+		finally
+		{
+			TurnSpinnerOff = true;
 		}
 	}
 

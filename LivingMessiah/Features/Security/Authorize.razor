@@ -1,15 +1,17 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 
-<div class="d-flex p-1 mb-1 justify-content-end bg-secondary-subtle">
-	<AuthorizeView>
-		<Authorized>
-			<ProfileAnchor/>
-			<LogoutButton />
-		</Authorized>
-		<NotAuthorized>
-			<LoginButton />
-		</NotAuthorized>
-	</AuthorizeView>
+<div class="d-print-none">
+	<div class="d-flex p-1 mb-1 justify-content-end bg-secondary-subtle">
+		<AuthorizeView>
+			<Authorized>
+				<ProfileAnchor />
+				<LogoutButton />
+			</Authorized>
+			<NotAuthorized>
+				<LoginButton />
+			</NotAuthorized>
+		</AuthorizeView>
+	</div>
 </div>
 
 @code {
