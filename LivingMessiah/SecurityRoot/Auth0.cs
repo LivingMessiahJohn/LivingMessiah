@@ -11,6 +11,13 @@ public static class Auth0
 		public const string ClientSecret = "auth0:ClientSecret";
 	}
 
+	public static class Policy
+	{
+		public const string Name = "EmailVerified";
+		public const string Claim = "email_verified";
+	}
+
+
 	/*
 	public static class Tokens
 	{

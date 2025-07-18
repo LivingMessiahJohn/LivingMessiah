@@ -1,0 +1,136 @@
+﻿@page "/Sukkot/Print/{Id:int}/{showPrintInstructionMessage:bool}"
+@* used to be Sukkot/Details, should I add another page directive? *@
+
+@using LivingMessiah.Features.Sukkot.Enums
+@using LivingMessiah.Features.Sukkot.Data
+@using LivingMessiah.Features.Sukkot.Domain
+@using LivingMessiah.SecurityRoot
+@using GlobalNav = LivingMessiah.Enums.Nav;
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject NavigationManager NavigationManager
+@inject ILogger<Index>? Logger
+@inject IToastService? Toast
+
+@inject ISukkotRepositoryUsedBySukkotService? db
+
+<PageTitle>@NavButton.Print.Title</PageTitle>
+
+<Toolbar />
+
+<AuthorizeView Policy="EmailVerified">
+	<Authorized>
+		<LoadingComponent IsLoading="vwRegistration == null" TurnSpinnerOff=TurnSpinnerOff>
+
+			@if (IsAuthorized)
+			{
+				<Details vwRegistration="@vwRegistration" />
+			}
+			else
+			{
+				<p class="fs-3 bg-danger text-center text-white mt-5 mx-5">NOT Authorized to view content</p>
+			}
+		</LoadingComponent>
+	</Authorized>
+</AuthorizeView>
+
+@code {
+	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+	[Parameter, EditorRequired] public int Id { get; set; }
+	[Parameter] public bool showPrintInstructionMessage { get; set; } = true;
+
+	protected bool TurnSpinnerOff = false;
+	protected bool IsAuthorized = false;
+
+	public vwRegistration? vwRegistration { get; set; }
+
+	private void DoToastLog(string message)
+	{
+		Logger!.LogWarning("{Method} {Message}", nameof(DoToastLog), message);
+		Toast!.ShowWarning(message);
+	}
+
+	private void DoPassed(bool securityOverride)
+	{
+		IsAuthorized = true;
+		var tuple = Helper.GetAttendanceDatesArray(vwRegistration!.AttendanceBitwise);
+		vwRegistration.AttendanceDateList = tuple.week1;
+		vwRegistration.AttendanceDateList2ndMonth = tuple.week2!;
+	}
+
+	private string[] OverrideRoles = new[] { Auth0.Roles.Sukkot, Auth0.Roles.Admin };
+
+	protected override async Task OnInitializedAsync()
+	{
+		Logger!.LogDebug("{Method} {Id}", nameof(OnInitializedAsync), Id);
+		try
+		{
+			string? email = await GetEmail();
+			if (String.IsNullOrEmpty(email))
+			{
+				DoToastLog("Email is empty");
+			}
+			else
+			{
+				vwRegistration = await db!.ById(Id);
+
+				if (vwRegistration is not null)
+				{
+					var (passed, errorMsg, securityOverride) = await DoAuthentication(email!, vwRegistration!.EMail!, OverrideRoles);
+
+					if (passed) 
+					{	
+						DoPassed(securityOverride);	
+					}
+					else
+					{
+						DoToastLog($"Failed DoAuthentication | {errorMsg}");
+					}
+				}
+				else
+				{
+					DoToastLog("Registration Not Found");
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+			Toast!.ShowError("An invalid operation occurred, contact your administrator");
+		}
+		finally
+		{
+			TurnSpinnerOff = true;
+		}
+	}
+
+	private async Task<string?> GetEmail()
+	{
+		if (authenticationState is null) return string.Empty;
+
+		var state = await authenticationState;
+		if (state!.User.Identity is null) return string.Empty;
+
+		return state.User.FindFirst(ClaimTypes.Email)?.Value;
+	}
+
+	private async Task<(bool Passed, string ErrorMsg, bool SecurityOverride)> DoAuthentication(string email, string vwEmail, string[] roles)
+	{
+		if (authenticationState is null) { return (false, "Authentication state is null.", false); }
+
+		var state = await authenticationState;
+		if (state!.User.Identity is null) { return (false, "User identity is null.", false); }
+
+		if (email == vwEmail) { return (true, string.Empty, false); }
+
+		string[] _roles = state.User.Claims
+		.Where(c => c.Type == Auth0.MicrosoftSchemaIdentityClaimsRole)
+		.Select(c => c.Value)
+		.ToArray();
+
+		return _roles.Any() ? (true, string.Empty, true) : (false, "Security override also failed", false);
+	}
+
+}

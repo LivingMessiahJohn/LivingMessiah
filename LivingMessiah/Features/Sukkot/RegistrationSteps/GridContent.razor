@@ -1,61 +1,10 @@
-﻿@using LivingMessiah.Features.Sukkot.IndexComponents
+﻿@using LivingMessiah.Features.Sukkot.LandingPage
 @using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
 @using LivingMessiah.Features.Sukkot.NormalUser
 @using LivingMessiah.Features.Sukkot.Enums
 @using LivingMessiah.Features.Sukkot.RegistrationSteps.Agreement
 
 @inject ILogger<GridContent>? Logger
-
-@*Step 1*@
-@if (ComparisonStatus == Status.NotAuthenticated && ComparisonStatus == UsersCurrentStatus)
-{
-
-	if (IsXs)
-	{
-		<div class="card mt-0 mb-3">
-			<div class="card-body bg-light">
-				<p class="lead">
-					To begin registration, you need to be logged in with a Living Messiah confirmed account.
-					Click <LoginRedirectButton ReturnUrl="@Pages.RegistrationSteps.Index" />
-					to login with your existing Living Messiah account or, if you do not have one, you can create one.
-				</p>
-				<HelpGuideTogleButton />
-			</div>
-		</div>
-	}
-	else
-	{
-		<p class="lead">
-			To begin registration, you need to be logged in with a Living Messiah confirmed account.
-			Click <LoginRedirectButton ReturnUrl="@Pages.RegistrationSteps.Index" />
-			to login with your existing Living Messiah account or, if you do not have one, you can create one.
-		</p>
-		<HelpGuideTogleButton />
-	}
-}
-
-@*Step 2*@
-@if (ComparisonStatus == Status.EmailNotConfirmed && ComparisonStatus == UsersCurrentStatus)
-{
-	if (IsXs)
-	{
-		<div class="card mt-0 mb-3">
-			<div class="card-body bg-light">
-				<p class="lead">
-					You are logged in but the this email has <span class="text-warning"><u>NOT</u></span> been confirmed.
-				</p>
-				<CheckSpamFolderTogleButton />
-			</div>
-		</div>
-	}
-	else
-	{
-		<p class="lead">
-			You are logged in but the this email has <span class="text-warning"><u>NOT</u></span> been confirmed.
-		</p>
-		<CheckSpamFolderTogleButton />
-	}
-}
 
 @*Step 3*@
 

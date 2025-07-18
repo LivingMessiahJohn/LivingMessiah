@@ -1,0 +1,47 @@
+﻿@using LivingMessiah.Features.Sukkot.Constants
+
+<div class="card-body text-center mb-1">
+	<button @onclick="@(e => ToggleButtonClick(IsCollapsed))"
+					class="btn btn-primary btn-sm" type="button">
+		Registration Walk Through Guide <i class='@Chevron'></i>
+	</button>
+</div>
+
+
+@if (!IsCollapsed)
+{
+	<div class="card border-dark mt-1  mx-3">
+		<div class="card-body bg-body-secondary ">
+			<p class="fs-5">
+				Sign Up for an account or use one previously created.
+				<ol class="lead">
+					<li>Verify the account (an email with a link will be sent to you)</li>
+					<li>Once that is done, you will be returned to this page so you can continue with the Registration.</li>
+					<li>
+						<b>Note</b>, close the browser that you used to sign up for you Living Messiah account before you log back in.
+						The cache needs to be cleared otherwise it won't recognize the verification process.
+					</li>
+				</ol>
+			</p>
+
+			<p class="fs-5">
+				For assistance, you can print out this
+				<a href="@LivingMessiah.Features.Sukkot.Constants.Blobs.UrlPDF(PDFs.RegistrationWalkThrough)"
+					 class="btn btn-primary btn-sm" target="_blank">
+					<i class="fas fa-file-pdf"></i> PDF
+				</a> or leave it open in another window.
+			</p>
+		</div>
+	</div>
+
+}
+
+@code {
+	public bool IsCollapsed { get; set; } = true;
+	public string Chevron { get; set; } = "fas fa-chevron-down";
+	protected void ToggleButtonClick(bool isCollapsed)
+	{
+		IsCollapsed = !isCollapsed;
+		Chevron = IsCollapsed ? "fas fa-chevron-down" : "fas fa-chevron-up";
+	}
+}

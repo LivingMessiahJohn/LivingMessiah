@@ -1,0 +1,76 @@
+﻿@page "/sukkot"
+
+@using LivingMessiah.Features.Sukkot.Constants
+@using LivingMessiah.Features.Sukkot.LandingPage
+@using LivingMessiah.SecurityRoot
+@using LivingMessiah.Settings
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Extensions.Options
+@using static LivingMessiah.SecurityRoot.Auth0
+
+@inject IOptions<SukkotSettings> SukkotSettings
+@inject ISecurityClaimsService SvcClaims
+
+@* NOT BEING USED *@
+
+<AuthorizeView Roles="@Roles.SukkotMenuBar">
+	<SukkotSettingsList />
+	@* <SukkotAdminMenubar></SukkotAdminMenubar> *@
+</AuthorizeView>
+
+@* <DebugShowSukkotSettings /> *@
+
+@* 
+<AuthorizeView Roles="@Roles.SukkotMenuBar">
+	<NotAuthorized>
+		<div class="alert alert-danger" role="alert">
+			You are not authorized to view SukkotSettingsList
+		</div>	
+	</NotAuthorized>
+</AuthorizeView>
+ *@
+
+<PageHeader PageEnum="Nav.Sukkot" />
+
+@* <BreadCrumbNav Page1Active="" /> *@
+
+@if (SukkotSettings.Value.SukkotIsOpen)
+{
+	@if (!SukkotSettings.Value.IsRegistrationClosed)
+	{
+		<div class="card border border-warning border-4 bg-warning-subtle mt-4 mb-4">
+			<AuthorizeView Policy="EmailVerified">
+				<Authorized>
+					<div class="card-body  text-center"><h3>Hello, @context.User.Identity?.Name!</h3></div>
+					<StartRegistrationButton IsAuthenticatedAndVerified=true />
+				</Authorized>
+				<NotAuthorized>
+					<StartRegistrationButton IsAuthenticatedAndVerified=false />
+					<LoggingInInstructions />
+						<HelpGuideTogleButton />
+				</NotAuthorized>
+			</AuthorizeView>
+		</div>
+
+		@* <PaymentInfo /> *@
+		<div class="@MediaQuery.XsOrSm.DivClass"><Header IsXsOrSm=true /></div>
+		<div class="@MediaQuery.MdOrLgOrXl.DivClass"><Header IsXsOrSm=false /></div>
+		<CalendarWeek />
+		<Location />
+		<Documents />
+		<SukkotTShirt></SukkotTShirt>
+	}
+
+	@if (SukkotSettings.Value.IsRegistrationClosed)
+	{
+		<RegistrationClosed />
+	}
+}
+else
+{
+	<RegistrationNotReady />
+}
+
+@code {
+
+}

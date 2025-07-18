@@ -3,6 +3,22 @@
 @using Microsoft.Extensions.Options
 @using LivingMessiah.Features.Sukkot.Domain
 
+@* 
+Note: Currently this page is being used, 
+but in future Sukkot where calculating the cost is more complicated and needs to itemized, then this component would be useful 
+
+ToDo: The style of the containing page for this component has changed and that needs to be reflected here.
+*@
+
+
+@* 		
+		<ul class="">
+			<li>Registration Cost: <span class="float-end">@vwRegistration!.RegistrationFeeAdjusted</span></li>
+			<li>Total: <span class="float-end"><b>@vwRegistration!.RegistrationFeeAdjusted</b></span></li>
+		</ul>
+ *@
+
+
 @* @inject IOptions<SukkotSettings> SukkotSettings *@
 
 <div class="row">
@@ -19,6 +35,7 @@
 	</div>
 
 </div>
+
 
 @code {
 	[Parameter] public vwRegistration? vwRegistration { get; set; }

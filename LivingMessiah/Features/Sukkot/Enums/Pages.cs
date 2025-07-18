@@ -7,8 +7,8 @@ public abstract class Pages : SmartEnum<Pages>
 	#region Id's
 	private static class Id
 	{
-		internal const int Details = 1;
-		internal const int RegistrationSteps = 2;
+		internal const int RegistrationSteps = 1;
+		internal const int Print = 2;
 
 		//Stripe
 		internal const int Payment = 3;
@@ -30,8 +30,8 @@ public abstract class Pages : SmartEnum<Pages>
 	#endregion
 
 	#region  Declared Public Instances
-	public static readonly Pages Details = new DetailsSE();
 	public static readonly Pages RegistrationSteps = new RegistrationStepsSE();
+	public static readonly Pages Print = new PrintSE();
 	public static readonly Pages Payment = new PaymentSE();
 	public static readonly Pages CancelRegistration = new CancelRegistrationSE();
 	public static readonly Pages ConfirmRegistration = new ConfirmRegistrationSE();
@@ -57,13 +57,6 @@ public abstract class Pages : SmartEnum<Pages>
 	#endregion
 
 	#region Private Instantiation
-	private sealed class DetailsSE : Pages
-	{
-		public DetailsSE() : base($"{nameof(Id.Details)}", Id.Details) { }
-		public override string Index => "/Sukkot/Details";
-		public override string Title => "Sukkot Details";
-		public override string Icon => "";
-	}
 
 	private sealed class RegistrationStepsSE : Pages
 	{
@@ -74,6 +67,14 @@ public abstract class Pages : SmartEnum<Pages>
 		/*
 		See LivingMessiah.Features.Sukkot.Constants!Breadcrumbs.[Start][BackTo]
 		 */
+	}
+
+	private sealed class PrintSE : Pages
+	{
+		public PrintSE() : base($"{nameof(Id.Print)}", Id.Print) { }
+		public override string Index => "/Sukkot/Print"; // used to be /Sukkot/Details
+		public override string Title => "Sukkot Print"; // or Sukkot Print Friendly
+		public override string Icon => "";
 	}
 
 	private sealed class PaymentSE : Pages

@@ -173,17 +173,5 @@ public abstract class Office : SmartEnum<Office>
 
 	#endregion
 
-	/*
-	public string Dump
-	{
-		get
-		{
-			string s = "";
-			s += $" {(this.CanTransitionTo(NotAuthenticated) ? NotAuthenticated.Name : "__")  }";
-			return s;
-
-		}
-	}
-	*/
 }
 

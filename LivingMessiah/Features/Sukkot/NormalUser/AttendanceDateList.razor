@@ -2,7 +2,7 @@
 
 <div class="mt-3">
 	<ul style="list-style-type:none; padding-inline-start: 0px">
-		@foreach (var item in AttendanceDate.List.OrderBy(o => o.Value).ToList())
+		@foreach (var item in AttendanceDate.List.Where(w => w.Value != AttendanceDate.None).OrderBy(o => o.Value).ToList())
 		{
 		<li class="font-monospace @GetCSS(item.Date)">@item.Title</li>
 		}
