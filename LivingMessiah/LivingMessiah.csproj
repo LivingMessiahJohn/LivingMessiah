@@ -10,12 +10,20 @@
   <ItemGroup>
     <Compile Remove="Features\Calendar\ManageKeyDates\**" />
     <Compile Remove="Features\Calendar\ManageParashaCalendar\**" />
+    <Compile Remove="Features\Sukkot\RegistrationSteps\Footer\**" />
+    <Compile Remove="Features\Sukkot\Services\**" />
     <Content Remove="Features\Calendar\ManageKeyDates\**" />
     <Content Remove="Features\Calendar\ManageParashaCalendar\**" />
+    <Content Remove="Features\Sukkot\RegistrationSteps\Footer\**" />
+    <Content Remove="Features\Sukkot\Services\**" />
     <EmbeddedResource Remove="Features\Calendar\ManageKeyDates\**" />
     <EmbeddedResource Remove="Features\Calendar\ManageParashaCalendar\**" />
+    <EmbeddedResource Remove="Features\Sukkot\RegistrationSteps\Footer\**" />
+    <EmbeddedResource Remove="Features\Sukkot\Services\**" />
     <None Remove="Features\Calendar\ManageKeyDates\**" />
     <None Remove="Features\Calendar\ManageParashaCalendar\**" />
+    <None Remove="Features\Sukkot\RegistrationSteps\Footer\**" />
+    <None Remove="Features\Sukkot\Services\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,8 +69,6 @@
 
   <ItemGroup>
     <Folder Include="Features\Feasts\Header\" />
-    <Folder Include="Features\Sukkot\RegistrationSteps\Footer\" />
-    <Folder Include="Features\Sukkot\Services\" />
     <Folder Include="Features\Sukkot\LandingPage\BeginRegistrationCard\" />
     <Folder Include="Features\Welcome\Enums\" />
     <Folder Include="SecurityRoot\Components\" />
