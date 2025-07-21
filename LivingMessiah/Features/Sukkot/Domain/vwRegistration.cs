@@ -36,8 +36,9 @@ public class vwRegistration
 	[DisplayName("Attendance Total")]
 	public int AttendanceTotal { get; set; }
 
+	//ToDo: Refactor this and replace with Steps
 	public int StatusId { get; set; }
-	public string StatusName
+	public string? StatusName
 	{
 		get
 		{

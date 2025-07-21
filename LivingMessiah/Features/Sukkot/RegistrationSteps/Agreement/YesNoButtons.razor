@@ -26,7 +26,7 @@
 
 @code {
 	[Parameter, EditorRequired] public string? EmailParm { get; set; }
-	[Parameter, EditorRequired] public EventCallback<Status> OnActionCompleted { get; set; } //
+	[Parameter, EditorRequired] public EventCallback<Step> OnActionCompleted { get; set; } //
 
 	void DoNotAgree_ButtonClick()
 	{
@@ -42,7 +42,7 @@
 			var sprocTuple = await db!.InsertHouseRulesAgreement(EmailParm!, GetLocalTimeZone());
 			Logger!.LogDebug("{Method} id: {id}", nameof(Agree_ButtonClick), sprocTuple.Item3);
 			Toast!.ShowInfo("Record updated for House Rules Agreement");
-			await OnActionCompleted.InvokeAsync(Status.StartRegistration);
+			await OnActionCompleted.InvokeAsync(Step.Registration);
 		}
 		catch (Exception ex)
 		{

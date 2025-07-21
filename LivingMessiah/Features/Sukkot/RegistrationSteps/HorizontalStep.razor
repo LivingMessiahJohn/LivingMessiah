@@ -1,0 +1,32 @@
+﻿@using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
+
+@* @inject ILogger<HorizontalStep>? Logger *@
+
+<div class="card h-100 d-flex flex-column @GetBorder()">
+
+	<div class="card-header fs-2 text-center @StepConstants.HeaderText @EnumStep!.CardHeaderCSS">
+		<b>@EnumStep!.Value</b> <i class="@GetIcon(EnumStep!.Value)"></i>
+	</div>
+
+	@if (IsXs)
+	{
+		<div class="card-body text-center @EnumStep!.CardBodyCSS flex-fill"><i class="@EnumStep!.Icon fa-fw fa-2x"></i> </div>
+	}
+	else
+	{
+		<div class="card-body text-center @EnumStep!.CardBodyCSS flex-fill">@EnumStep!.Heading</div>
+	}
+</div>
+
+@code {
+
+	[Parameter, EditorRequired] public Step? EnumStep { get; set; }
+	[Parameter, EditorRequired] public Step CurrentStep { get; set; } //Step? CurrentStep { get; set; }
+	[Parameter, EditorRequired] public bool IsXs { get; set; }
+
+	private string GetIcon(int stepId) =>
+		EnumStep < CurrentStep!.Value ? "far fa-check-square text-dark" : "far fa-square text-black-50";
+
+	private string GetBorder() =>
+		EnumStep == CurrentStep!.Value ? StepConstants.Border : "";
+}

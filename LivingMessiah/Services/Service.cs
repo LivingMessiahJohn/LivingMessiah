@@ -46,7 +46,7 @@ public class Service : IService
 		{
 			VM = await db.GetById2(id);
 			string email = await SvcClaims.GetEmail();
-			VM.Status = Status.FromValue(VM.StatusId);
+			VM.Step = Step.FromValue(VM.StepId);
 
 			var (week1, week2) = Helper.GetAttendanceDatesArray(VM.AttendanceBitwise);
 			VM.AttendanceDateList = week1;
@@ -60,7 +60,7 @@ public class Service : IService
 			}
 			else
 			{
-				//Logger!.LogDebug("{Method}, StatusId: {YearId}", nameof(GetById), VM.StatusId);
+				//Logger!.LogDebug("{Method}, {StepId}", nameof(GetById), VM.StepId);
 				return VM;
 			}
 			// Footnote 1: 
@@ -79,7 +79,7 @@ public class Service : IService
 		Logger!.LogDebug("{Method}", nameof(Create));
 		try
 		{
-			vm.Status = Status.Payment;
+			vm.Step = Step.Payment;
 			vm.AttendanceBitwise = Helper.GetDaysBitwise(vm.AttendanceDateList!, vm.AttendanceDateList2ndMonth!, DateRangeType.Attendance);
 
 			var sprocTuple = await db.Create(DTO_From_VM_To_DB(vm));
@@ -104,7 +104,7 @@ public class Service : IService
 	{
 		const string MessageUpdate = $"Inside {nameof(Service)}!{nameof(Update)}; calling {nameof(db.Update)}";
 		Logger.LogInformation(MessageUpdate);
-		//Logger!.LogDebug("{Method}, StatusId: {StatusId}", nameof(Update), vm.StatusId);
+		Logger!.LogDebug("{Method}, {StepId}", nameof(Update), vm.StepId);
 		try
 		{
 			var sprocTuple = await db.Update(DTO_From_VM_To_DB(vm));
@@ -140,7 +140,7 @@ public class Service : IService
 			Adults = vm.Adults,
 			ChildBig = vm.ChildBig,
 			ChildSmall = vm.ChildSmall,
-			StatusId = vm.Status!.Value,
+			StatusId = vm.Step!.Value, // ToDo Convert to StepId
 			AttendanceBitwise = Helper.GetDaysBitwise(vm.AttendanceDateList!, vm.AttendanceDateList2ndMonth!, DateRangeType.Attendance),
 			LmmDonation = vm.LmmDonation,
 			Avatar = vm.Avatar,

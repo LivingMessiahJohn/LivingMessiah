@@ -47,7 +47,7 @@ public class SukkotRepositoryUsedBySukkotService : BaseRepositoryAsync, ISukkotR
 --DECLARE @EMail varchar(100) = 'info@test.com'
 SELECT Id, EMail
 , TimeZone AS HouseRulesAgreementTimeZone, AcceptedDate AS HouseRulesAgreementAcceptedDate
-, RegistrationId, FirstName, FamilyName, StatusId
+, RegistrationId, FirstName, FamilyName, StepId
 , TotalDonation, RegistrationFeeAdjusted
 FROM Sukkot.vwRegistrationStep 
 WHERE EMail = @EMail
@@ -76,7 +76,7 @@ WHERE EMail = @EMail
 		base.Parms = new DynamicParameters(new { id = id });  // This should be { Id = id })
 		base.Sql = $@"
 --DECLARE @id int=2
-SELECT Id, EMail, FamilyName, Adults, ChildBig, ChildSmall, StatusId
+SELECT Id, EMail, FamilyName, Adults, ChildBig, ChildSmall, StatusId AS StepId
 , AttendanceBitwise, RegistrationFeeAdjusted, TotalDonation
 FROM Sukkot.tvfRegistrationSummary(@id)
 ";

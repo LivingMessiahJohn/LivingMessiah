@@ -1,59 +1,68 @@
 ﻿@using LivingMessiah.Features.Sukkot.Constants
 @using LivingMessiah.Features.Sukkot.Enums
 
-<div class="card mt-0 mb-3">
-	<div class="card-body bg-light">
-		
-		@*              RemainderAndTotal(RegistrationStep!.RemainingCost, RegistrationStep.TotalDonation)) *@
-		@((MarkupString)RemainderAndTotal(CurrentStepHelper.RemainingCost(CurrentStepRecord!.RegistrationFeeAdjusted, CurrentStepRecord!.TotalDonation), CurrentStepRecord.TotalDonation))
+@if (CurrentStepRecord is not null)
+{
 
-		<p class="lead">
-			Three Payment Options
-			<ol class="lead">
-				<li>
-					<b>Preferred Option</b>.  Pay with <u>Debit or Credit Card</u>.  Click the
-					<CommonButtons CurrentStepRecordId="CurrentStepRecord.Id"
-												 NavButton="NavButton.Donation">
-					</CommonButtons>
-					button and follow the instructions.
-					<br />See the
-
-					<a href="@LivingMessiah.Features.Sukkot.Constants.Blobs.UrlPDF(PDFs.StripeWalkThrough)"
-						 target="_blank">
-						<i class="fas fa-file-pdf"></i> <u>Stripe walk through</u>
-					</a> if you need more details.
-					Note, a <em>Stripe</em> &reg; account is <u>not</u> necessary, Living Messiah just uses them to process financial transactions.
-					<br /><em>Or</em>...<br />
-				</li>
-				<li>
-					Pay via <u>Zelle</u>.  Click
-					<CommonButtons CurrentStepRecordId="CurrentStepRecord.Id"
-												 NavButton="NavButton.Print">
-					</CommonButtons> and follow the instructions.
-				</li>
-				<li>
-					Pay via <u>Check</u>.  Click
-					<CommonButtons CurrentStepRecordId="CurrentStepRecord.Id"
-												 NavButton="NavButton.Print">
-					</CommonButtons>  and follow the instructions.
-				</li>
-			</ol>
-		</p>
-
+	<div class="@MediaQuery.Xs.DivClass">
+		<p class='text-center fs-5 mb-0'>Remainder: <b>@GetRemainder()</b></p>
+		<p class='text-center fs-5 mb-3'>Previous donation(s): <b>@GetTotalDonations()</b></p>
 	</div>
-</div>
+
+	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+		<div class="d-flex justify-content-around fs-5 mb-3">
+			<span class=''>Remainder: <b>@GetRemainder()</b></span>
+			<span class=''>Previous donation(s): <b>@GetTotalDonations()</b></span>
+		</div>
+	</div>
+
+	<p class="lead">
+		Three Payment Options
+		<ol class="lead">
+			<li>
+				<b>Preferred Option</b>.  Pay with <u>Debit or Credit Card</u>.  Click the
+				<CommonButtons CurrentStepRecordId="CurrentStepRecord.Id" NavButton="NavButton.Donation" />
+				button and follow the instructions.
+				<br />See the
+
+				<a href="@LivingMessiah.Features.Sukkot.Constants.Blobs.UrlPDF(PDFs.StripeWalkThrough)"
+					 target="_blank">
+					<i class="fas fa-file-pdf"></i> <u>Stripe walk through</u>
+				</a> if you need more details.
+				Note, a <em>Stripe</em> &reg; account is <u>not</u> necessary, Living Messiah just uses them to process financial transactions.
+				<br /><em>Or</em>...<br />
+			</li>
+			<li>
+				Pay via <u>Zelle</u>.  Click
+				<CommonButtons CurrentStepRecordId="CurrentStepRecord.Id" NavButton="NavButton.Print" />
+				and follow the instructions.
+			</li>
+			<li>
+				Pay via <u>Check</u>.  Click
+				<CommonButtons CurrentStepRecordId="CurrentStepRecord.Id" NavButton="NavButton.Print" />
+				and follow the instructions.
+			</li>
+		</ol>
+	</p>
+}
+else
+{
+	<p> CurrentStepRecord </p>
+}
 
 
 @code {
 	[Parameter, EditorRequired] public CurrentStepRecord? CurrentStepRecord { get; set; }
 
-	public static MarkupString RemainderAndTotal(decimal remainingCost, decimal totalDonation)
+	private string GetRemainder()
 	{
-		string remainingCostToString = remainingCost.ToString("C0");
-		string totalDonationToString = totalDonation.ToString("C0");
-		return totalDonation == 0 && remainingCost == 00 ?
-				(MarkupString)(string.Empty) :
-				(MarkupString)$"<p class='lead'>Remainder: <b>{remainingCostToString}</b>; Previous donation(s): <b>{totalDonationToString}</b></p>";
+		return CurrentStepHelper.RemainingCost(CurrentStepRecord!.RegistrationFeeAdjusted, CurrentStepRecord!.TotalDonation).ToString("C0");
 	}
+
+	private string GetTotalDonations()
+	{
+		return CurrentStepRecord!.TotalDonation.ToString("C0");
+	}
+
 }
 

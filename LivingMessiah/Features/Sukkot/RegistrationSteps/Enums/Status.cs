@@ -2,6 +2,7 @@
 
 namespace LivingMessiah.Features.Sukkot.RegistrationSteps.Enums;
 
+//ToDo: this can be deleted after removing reference from Sukkot\Domain\vwRegistration.cs
 public abstract class Status : SmartEnum<Status>
 {
 	#region Id's
@@ -26,13 +27,10 @@ public abstract class Status : SmartEnum<Status>
 
 	#region Extra Fields
 
-	public abstract int StepNumber { get; }
-	public abstract bool UsedInDbOnly { get; }
 	public abstract string Heading { get; }
 	public abstract string Text { get; }
 	public abstract string Icon { get; }
 	public abstract bool UsedByUI { get; }
-	public abstract bool DisplayAsCompleted(Status status);
 	public abstract bool DisplayRegistrationToggleButton { get; }
 
 	#endregion
@@ -42,46 +40,30 @@ public abstract class Status : SmartEnum<Status>
 	private sealed class AgreementNotSignedSE : Status
 	{
 		public AgreementNotSignedSE() : base($"{nameof(Id.AgreementNotSigned)}", Id.AgreementNotSigned) { }
-		public override int StepNumber => 1;
-		public override bool UsedInDbOnly => false;
 		public override string Heading => "Sign Agreement";
 		public override string Text => "Sign Agreement";
 		public override string Icon => "fas fa-check";
 		public override bool UsedByUI => true;
-		public override bool DisplayAsCompleted(Status status) => false;
 		public override bool DisplayRegistrationToggleButton => false;
 	}
 
 	private sealed class StartRegistrationSE : Status
 	{
 		public StartRegistrationSE() : base($"{nameof(Id.StartRegistration)}", Id.StartRegistration) { }
-		public override int StepNumber => 2;
-		public override bool UsedInDbOnly => true;
 		public override string Heading => "Registration Form";
 		public override string Text => "Start Registration";
 		public override string Icon => "fas fa-check";
 		public override bool UsedByUI => true;
-		public override bool DisplayAsCompleted(Status status)
-		{
-			return status == Status.AgreementNotSigned;
-		}
 		public override bool DisplayRegistrationToggleButton => false;
 	}
 
 	private sealed class PaymentSE : Status
 	{
 		public PaymentSE() : base($"{nameof(Id.Payment)}", Id.Payment) { }
-		public override int StepNumber => 3;
-		public override bool UsedInDbOnly => true;
 		public override string Heading => "Payment";
 		public override string Text => "Payment";
 		public override string Icon => "fas fa-check";  //fas fa-star-half
 		public override bool UsedByUI => true;
-		public override bool DisplayAsCompleted(Status status)
-		{
-			return status == Status.AgreementNotSigned ||
-						 status == Status.StartRegistration;
-		}
 		public override bool DisplayRegistrationToggleButton => true;
 
 	}
@@ -89,39 +71,14 @@ public abstract class Status : SmartEnum<Status>
 	private sealed class CompleteSE : Status
 	{
 		public CompleteSE() : base($"{nameof(Id.Complete)}", Id.Complete) { }
-		public override int StepNumber => 4; 
-		public override bool UsedInDbOnly => true;
 		public override string Heading => "Registration Complete";
 		public override string Text => "Registered";
 		public override string Icon => "fas fa-check";
 		public override bool UsedByUI => true;
-		public override bool DisplayAsCompleted(Status status)
-		{
-			return status == Status.AgreementNotSigned ||
-						 status == Status.StartRegistration ||
-						 status == Status.Payment ||
-						 status == Status.Complete;
-		}
 		public override bool DisplayRegistrationToggleButton => true;
 
 	}
 	#endregion
-
-	public string Dump
-	{
-		get
-		{
-			string s = "";
-			s += $" {(this.DisplayAsCompleted(AgreementNotSigned) ? AgreementNotSigned.Name : "__")  }";
-			s += $" {(this.DisplayAsCompleted(StartRegistration) ? StartRegistration.Name : "__")  }";
-			s += $" {(this.DisplayAsCompleted(Payment) ? Payment.Name : "__")  }";
-			s += $" {(this.DisplayAsCompleted(Complete) ? Complete.Name : "__")  }";
-
-			return s;
-
-		}
-	}
-
 }
 
 
