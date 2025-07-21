@@ -14,8 +14,8 @@ public class EntryFormVM
 	public int ChildBig { get; set; }
 	public int ChildSmall { get; set; }
 
-	public int StatusId { get; set; } // The ManageRegistration!EntryForm needs this
-	public RegistrationSteps.Enums.Status? Status { get; set; }
+	public int StepId { get; set; } // The ManageRegistration!EntryForm needs this
+	public RegistrationSteps.Enums.Step? Step { get; set; }
 
 	public int AttendanceBitwise { get; set; } // does the VM need this?
 	public DateTime[]? AttendanceDateList { get; set; }

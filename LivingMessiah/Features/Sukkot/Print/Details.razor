@@ -15,7 +15,15 @@
 
 	<div class="d-flex justify-content-around">
 		<div><b>EMail / Phone</b>: @vwRegistration!.EMail / @Phone2</div>
-		<div><b>Status</b>: @vwRegistration!.StatusName</div>
+
+		@if (vwRegistration.StatusId != 0)
+		{
+			<div><b>Status</b>: @vwRegistration.StatusName?? "StatusName: null"</div>
+		}
+		else
+		{
+			<div><b>Status</b>: StatusId==0</div>
+		}
 	</div>
 
 </div>

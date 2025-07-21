@@ -151,7 +151,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 --DECLARE @id int=4
 SELECT TOP 1 
 Id, FamilyName, FirstName, SpouseName, OtherNames, EMail, Phone, Adults, ChildBig, ChildSmall
-, StatusId
+, StatusId AS StepId
 , AttendanceBitwise, LmmDonation, Notes
 --, Avatar
 FROM Sukkot.Registration 
@@ -178,7 +178,7 @@ WHERE Id = @Id";
 			registration.Adults,
 			registration.ChildBig,
 			registration.ChildSmall,
-			registration.StatusId,
+			registration.StatusId, // ToDo Convert to StepId
 			registration.AttendanceBitwise,
 			LmmDonation = 0,
 			registration.Avatar,
@@ -240,7 +240,7 @@ WHERE Id = @Id";
 			registration.ChildBig,
 			registration.ChildSmall,
 			registration.AttendanceBitwise,
-			registration.StatusId,
+			registration.StatusId, // ToDo Convert to StepId
 			registration.LmmDonation,
 			Notes = LivingMessiah.Data.Helper.Scrub(registration.Notes),
 			registration.Avatar

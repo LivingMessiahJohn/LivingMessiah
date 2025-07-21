@@ -61,6 +61,7 @@
 
   <ItemGroup>
     <Folder Include="Features\Feasts\Header\" />
+    <Folder Include="Features\Sukkot\RegistrationSteps\Footer\" />
     <Folder Include="Features\Sukkot\Services\" />
     <Folder Include="Features\Sukkot\LandingPage\BeginRegistrationCard\" />
     <Folder Include="Features\Welcome\Enums\" />

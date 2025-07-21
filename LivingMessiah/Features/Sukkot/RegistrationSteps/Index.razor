@@ -15,17 +15,14 @@
 @using static LivingMessiah.SecurityRoot.Auth0
 @using GlobalNav = LivingMessiah.Enums.Nav;
 
+@using LivingMessiah.Features.Sukkot.RegistrationSteps.Agreement
+@using LivingMessiah.Features.Sukkot.NormalUser
+
 @inject NavigationManager NavigationManager
 @inject ILogger<Index>? Logger
 @inject IToastService? Toast
 
 @inject ISukkotRepositoryUsedBySukkotService? db
-
-<PageTitle>@Pages.RegistrationSteps.Title</PageTitle>
-<BreadCrumbNav Page2Index="@Pages.RegistrationSteps.Index"
-							 Page2Title="@Pages.RegistrationSteps.Title"
-							 Page2Active=" active" />
-
 
 @* 
 <AuthorizeView Roles="@Roles.SukkotMenuBar">
@@ -33,35 +30,92 @@
 </AuthorizeView>
 *@
 
-<div class="pb-2 mt-4 mb-2 border-bottom">
-	<h2><i class="@Pages.RegistrationSteps.Icon"></i> @Pages.RegistrationSteps.Title</h2>
-</div>
+<PageTop />
+
+@if (CurrentStep is not null)
+{
+	<HeaderRow CurrentStep="CurrentStep" />
+
+	<p class="text-center fs-5 mb-0 @StepConstants.Border @CurrentStep.CardBodyCSS">
+		<b>Step:</b> @CurrentStep.Value
+		<i class="@CurrentStep).Icon"></i>
+		@CurrentStep.Heading
+	</p>
+}
+
+@if (CurrentStep == Step.SignAgreement)
+{
+	<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
+		<div class="card-body @CurrentStep!.CardBodyCSS">
+			<Wrapper EmailParm="@Email" OnActionCompleted="ReturnedActionCompleted" />
+		</div>
+	</div>
+}
 
 <LoadingComponent IsLoading="vw == null" TurnSpinnerOff=TurnSpinnerOff>
 
-	<h5 class="mb-3 text-center">To register for Sukkot, you must complete these steps</h5>
-	 <DebugShowStatusEnum UsersCurrentStatus="vm!.Status" /> 
-	<StepGridHeader />
+	@* <DebugShowStepEnum UsersCurrentStep="vm!.Step" /> *@
 
-	@foreach (var item in Status.List.OrderBy(o => o.StepNumber).Where(w => w.UsedByUI).ToList())
+	<StepSkeleton CurrentStep="Step.FromValue(vm.Step!.Value)">
+
+		<RegistrationFormRF>
+			@if (@vm.Step == Step.Registration)
+			{
+				<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
+					<div class="card-body @CurrentStep!.CardBodyCSS">
+						<EntryForm Email="@Email" Id="null"
+											 OnActionCompleted="ReturnedActionCompleted" />
+					</div>
+				</div>
+
+				@if (vm.Step!.EnableRegistrationToggleButton && vm.CurrentStepRecord is not null)
+				{
+					<Toggle Email="@Email" Id="@vm.CurrentStepRecord!.Id" />
+				}
+			}
+		</RegistrationFormRF>
+
+		<PaymentRF>
+			@if (@vm.Step == Step.Payment && vm.CurrentStepRecord is not null)
+			{
+				<div class="@MediaQuery.Xs.DivClass">
+					<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
+						<div class="card-body">
+							<PartlyPaidParagraph CurrentStepRecord="vm.CurrentStepRecord" />
+						</div>
+					</div>
+				</div>
+				<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+					<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
+						<div class="card-body">
+							<PartlyPaidParagraph CurrentStepRecord="vm.CurrentStepRecord" />
+						</div>
+					</div>
+				</div>
+			}
+		</PaymentRF>
+
+		<CompleteRF>
+			@if (@vm.Step == Step.Complete)
+			{
+				<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
+					<div class="card-body">
+						<CompleteParagraph CurrentStepRecordId="@vm.CurrentStepRecord!.Id" />
+					</div>
+				</div>
+			}
+		</CompleteRF>
+
+	</StepSkeleton>
+
+	@* "Footer" *@
+	@if (vm.CurrentStepRecord is not null)
 	{
-		<div class="@MediaQuery.Xs.DivClass">
-			<Grid UsersCurrentStatus="@vm.Status"
-						ComparisonStatus="@item"
-						CurrentStepRecord="@vm.CurrentStepRecord"
-						EmailParm="@vm.EmailAddress"
-						IsXs="true"
-						OnActionCompleted="ReturnedActionCompleted" />
-
-		</div>
-		<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
-			<Grid UsersCurrentStatus="@vm.Status"
-						ComparisonStatus="@item"
-						CurrentStepRecord="@vm.CurrentStepRecord"
-						EmailParm="@vm.EmailAddress"
-						IsXs="false"
-						OnActionCompleted="ReturnedActionCompleted" />
-		</div>
+		<Toggle Email="@Email" Id="vm.CurrentStepRecord.Id" />
+	}
+	else
+	{
+		<Toggle Email="@Email" Id="null" />
 	}
 
 </LoadingComponent>
@@ -69,6 +123,8 @@
 @code {
 	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
 	string? Email; // => authenticationState is not null ? authenticationState.Result?.User?.Identity?.Name ?? string.Empty : string.Empty;
+
+	protected Step? CurrentStep;
 
 	protected bool TurnSpinnerOff = false;
 	protected vwRegistrationStep? vw;
@@ -88,7 +144,7 @@
 
 		if (String.IsNullOrEmpty(Email))
 		{
-			Logger!.LogDebug("{Method} Email is null or Empty", nameof(ProcessRegistrationStep));
+			Logger!.LogDebug("{Method} Email is null or Empty", nameof(OnInitializedAsync));
 			//Toast!.ShowWarning("Not Authorize | Email is null or empty"); toast no worky when navigating to another page
 			NavigationManager!.NavigateTo($"{GlobalNav.Sukkot.Index}");
 		}
@@ -100,7 +156,7 @@
 	private async Task ProcessRegistrationStep()
 	{
 		Logger!.LogDebug("{Method}", nameof(ProcessRegistrationStep));
-		//await Task.Delay(20); 
+		//await Task.Delay(20);
 		try
 		{
 			vw = await db!.GetByEmail(vm!.EmailAddress!);
@@ -112,19 +168,22 @@
 				{
 					vm!.CurrentStepRecord = new CurrentStepRecord(
 						(int)vw.RegistrationId, vw.FirstName, vw.FamilyName, vw.TotalDonation, vw.RegistrationFeeAdjusted);
-					vm!.Status = Status.FromValue((int)vw.StatusId!);
+					vm!.Step = Step.FromValue((int)vw.StepId!);
+					CurrentStep = vm!.Step;
 				}
 				else
 				{
-					vm!.Status = Status.StartRegistration;
+					vm!.Step = Step.Registration;
+					CurrentStep = Step.FromValue(vm.Step!.Value);
 				}
 			}
 			else
 			{
-				vm!.Status = Status.AgreementNotSigned;
+				vm!.Step = Step.SignAgreement;
+				CurrentStep = Step.FromValue(vm.Step!.Value);
 			}
 
-			Logger!.LogInformation("{Method} {Status}", nameof(ProcessRegistrationStep), vm.Status);
+			Logger!.LogInformation("{Method} {Status} {Step}", nameof(ProcessRegistrationStep), vm.Step, CurrentStep);
 		}
 		catch (Exception ex)
 		{
@@ -137,24 +196,11 @@
 		}
 	}
 
-	private async Task ReturnedActionCompleted(Status nextStatus)
+	private async Task ReturnedActionCompleted(Step nextStep)
 	{
-		Logger!.LogDebug("{Method}, {Status}", nameof(ReturnedActionCompleted), nextStatus);
-
-		// For some reason, I have to be more drastic and call ProcessRegistrationStep if Status is Payment
-		if (nextStatus == Status.Payment)
-		{
-			await ProcessRegistrationStep();
-		}
-
-		// else I can change update the Status
-		else
-		{
-			if (vm is not null)
-			{
-				vm!.Status = nextStatus;
-			}
-		}
+		Logger!.LogDebug("{Method}, {Step}", nameof(ReturnedActionCompleted), nextStep);
+		CurrentStep = nextStep;
+		await ProcessRegistrationStep();
 	}
 
 }

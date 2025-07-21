@@ -259,7 +259,8 @@
 	[Parameter, EditorRequired] public string? Email { get; set; }
 
 	// Not required because it's only required if it's an add and not an edit/update
-	[Parameter] public EventCallback<Status> OnActionCompleted { get; set; } //
+	[Parameter] public EventCallback<Step> OnActionCompleted { get; set; } //
+	[Parameter] public EventCallback OnUpdateCompleted { get; set; }
 
 	bool TurnSpinnerOff = false;
 
@@ -309,7 +310,7 @@
 		{
 			VM = await db!.GetById2(id);
 			string email = await ClaimsService!.GetEmail();
-			VM.Status = Status.FromValue(VM.StatusId);
+			VM.Step = Step.FromValue(VM.StepId);
 			var (week1, week2) = Helper.GetAttendanceDatesArray(VM.AttendanceBitwise);
 			VM.AttendanceDateList = week1;
 			VM.AttendanceDateList2ndMonth = week2;
@@ -321,7 +322,7 @@
 			}
 			else
 			{
-				Logger!.LogDebug("{Method}, StatusId: {YearId}", nameof(GetById), VM.StatusId);
+				Logger!.LogDebug("{Method}, StepId: {YearId}", nameof(GetById), VM.StepId);
 				return VM;
 			}
 			// Footnote 1: 
@@ -335,9 +336,6 @@
 
 	}
 
-	//private string GetNotificationMessage() => 
-  //  Id2 != 0 ? $"Registration record for {Email} - #{VM.Id} received from database" : "";
-
 	protected async Task SubmitValidForm()
 	{
 		Logger!.LogDebug("{Method} Id2:{id}", nameof(SubmitValidForm), Id2);
@@ -350,7 +348,7 @@
 				Toast!.ShowInfo($"Registration Added!");
 
 				// Send back the next step/status as the new current status i.e. IndexVM.Status = Status.Payment
-				await OnActionCompleted.InvokeAsync(Status.Payment); 
+				await OnActionCompleted.InvokeAsync(Step.Payment); 
 			}
 			catch (InvalidOperationException invalidOperationException)
 			{
@@ -362,8 +360,14 @@
 			try
 			{
 				var sprocTuple = await Service!.Update(VM);
-				Logger!.LogInformation("...Registration Updated!");
+				Logger!.LogInformation("{Method} {Toast}", nameof(SubmitValidForm), "Registration Updated!");
+
 				Toast!.ShowInfo($"Registration Updated!");
+
+				Logger!.LogDebug("{Method} {Command}"
+					, nameof(SubmitValidForm), "UpdateCompleted EventCallback");
+				
+					await OnUpdateCompleted.InvokeAsync();
 			}
 
 			catch (InvalidOperationException invalidOperationException)

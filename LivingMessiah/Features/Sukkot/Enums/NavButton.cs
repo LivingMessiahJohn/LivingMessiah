@@ -46,7 +46,7 @@ public abstract class NavButton : SmartEnum<NavButton>
 		public override string Label => "Print";
 		public override string Title => "Registration Print";
 		public override string Icon => "fas fa-print";
-		public override string Css => "btn btn-outline-info";
+		public override string Css => "btn btn-outline-primary btn-sm";
 		public override string Route => Pages.Print.Index; 
 		public override string RouteSuffix => "/true";
 	}
@@ -68,7 +68,7 @@ public abstract class NavButton : SmartEnum<NavButton>
 		public override string Label => "Donation";
 		public override string Title => Pages.Payment.Title; // Link.Stripe.Payment.Title;   
 		public override string Icon => Pages.Payment.Icon; // Links.Donate.Icon; 
-		public override string Css => "btn btn-warning";  // btn-sm
+		public override string Css => "btn btn-outline-primary btn-sm";  // btn-sm
 		public override string Route => Pages.Payment.Index; // Link.Stripe.Payment.Index;  
 		public override string RouteSuffix => "";
 	}

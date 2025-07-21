@@ -13,7 +13,7 @@ public record DTO
 	public int ChildBig { get; set; }
 	public int ChildSmall { get; set; }
 
-	public int StatusId { get; set; }
+	public int StatusId { get; set; } // ToDo Convert to StepId
 
 	public int AttendanceBitwise { get; set; }
 
