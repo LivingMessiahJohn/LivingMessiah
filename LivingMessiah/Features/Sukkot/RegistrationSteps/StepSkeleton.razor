@@ -1,0 +1,30 @@
+﻿@using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
+
+@* @inject ILogger<StepSkeleton>? Logger *@
+
+@switch (CurrentStep)
+{
+	case var item when item == Step.Registration:
+		@RegistrationFormRF
+		break;
+
+	case var item when item == Step.Payment:
+		@PaymentRF
+		break;
+
+	case var item when item == Step.Complete:
+		@CompleteRF
+		break;
+
+	default:
+		<p>Unknown Step type.</p>
+		break;
+}
+
+@code {
+	[Parameter, EditorRequired] public Step? CurrentStep { get; set; }
+	[Parameter, EditorRequired] public RenderFragment? RegistrationFormRF { get; set; }
+	[Parameter, EditorRequired] public RenderFragment? PaymentRF { get; set; }
+	[Parameter, EditorRequired] public RenderFragment? CompleteRF { get; set; }
+
+}

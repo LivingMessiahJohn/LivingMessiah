@@ -1,4 +1,5 @@
 ﻿namespace LivingMessiah.Features.Sukkot.Constants;
+
 // ToDo: Namespace does not match the folder structure
 
 /*
@@ -8,7 +9,6 @@ using static LivingMessiah.Features.Sukkot.Constants.Blobs;
 - see Features\Sukkot\Documents.razor
 */
 
-//public static class Constants
 public static class AttendanceDateRange
 {
 	public static DateTime Start { get; set; } = DateTime.Parse("2025-10-05");
@@ -165,6 +165,7 @@ public static class Breadcrumbs
 		public const string Text = "Begin Registration";
 		public const string Icon = "fas fa-caret-right";
 	}
+
 	public static class BackTo
 	{
 		public const string Text = "Registration Steps";
