@@ -1,4 +1,4 @@
-﻿@inherits BasePaymentSummary
+﻿@using LivingMessiah.Features.Sukkot.Domain
 
 <div class="row">
 	<div class="col-12">
@@ -56,3 +56,7 @@
 		@RegistrationSummary.TotalCost.ToString("C0") - @RegistrationSummary.TotalDonation.ToString("C0") <small>(Cost - Donation)</small>
 	</div>
 </div>
+
+@code {
+	[Parameter] public RegistrationSummary? RegistrationSummary { get; set; }
+}
