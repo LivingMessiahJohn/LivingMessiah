@@ -1,11 +1,10 @@
 ﻿using Dapper;
 using System.Data;
-
-using LivingMessiah.Features.Sukkot.Services; // needed for DTO.cs
 using LivingMessiah.Features.Sukkot.NormalUser;
 
 using LivingMessiah.Data;
 using DataEnumsDatabase = LivingMessiah.Data.Enums.Database;
+using LivingMessiah.Features.Sukkot.Domain;
 
 namespace LivingMessiah.Features.Sukkot.Data;
 
@@ -19,11 +18,14 @@ public interface IRepository
 	Task<int> DeleteHRA(int id);  // stpHRADelete
 	Task<Tuple<int, int, string>> DeleteRegistration(int id);
 
-	// Used by Sukkot\Services\Service
+	Task<vwRegistration> ById(int id);
+	Task<vwRegistrationStep> GetByEmail(string email);
 	Task<EntryFormVM> GetById2(int id);   //ViewModel_RE_DELETE
 	Task<Tuple<int, int, string>> Create(DTO registration);
 	Task<Tuple<int, int, string>> Update(DTO registration);
 	// FN:1 Also used by RegistrationSteps/Wrapper/YesNoButtons
+	Task<RegistrationSummary> GetRegistrationSummary(int id);
+
 }
 
 
@@ -143,6 +145,37 @@ public class Repository : BaseRepositoryAsync, IRepository
 
 
 	#region Registration used by Service
+
+	public async Task<vwRegistration> ById(int id)
+	{
+		base.Parms = new DynamicParameters(new { Id = id });
+		base.Sql = $@"SELECT TOP 1 * FROM Sukkot.vwRegistration WHERE Id = @id";
+		return await WithConnectionAsync(async connection =>
+		{
+			var rows = await connection.QueryAsync<vwRegistration>(sql: base.Sql, param: base.Parms);
+			return rows.SingleOrDefault()!;
+		});
+	}
+
+	public async Task<vwRegistrationStep> GetByEmail(string email)
+	{
+		base.Logger.LogDebug("{Method}, email: {email}", nameof(GetByEmail), email);
+		base.Parms = new DynamicParameters(new { EMail = email });
+		base.Sql = $@"
+--DECLARE @EMail varchar(100) = 'info@test.com'
+SELECT Id, EMail
+, TimeZone AS HouseRulesAgreementTimeZone, AcceptedDate AS HouseRulesAgreementAcceptedDate
+, RegistrationId, FirstName, FamilyName, StepId
+, TotalDonation, RegistrationFeeAdjusted
+FROM Sukkot.vwRegistrationStep 
+WHERE EMail = @EMail
+";
+		return await WithConnectionAsync(async connection =>
+		{
+			var rows = await connection.QueryAsync<vwRegistrationStep>(sql: base.Sql, param: base.Parms);
+			return rows.SingleOrDefault()!;
+		});
+	}
 
 	public async Task<EntryFormVM> GetById2(int id)  //ViewModel_RE_DELETE
 	{
@@ -281,8 +314,25 @@ WHERE Id = @Id";
 		});
 	}
 
-
 	#endregion
+
+
+
+	public async Task<RegistrationSummary> GetRegistrationSummary(int id)
+	{
+		base.Parms = new DynamicParameters(new { id = id });  // This should be { Id = id })
+		base.Sql = $@"
+--DECLARE @id int=2
+SELECT Id, EMail, FamilyName, Adults, ChildBig, ChildSmall, StatusId AS StepId
+, AttendanceBitwise, RegistrationFeeAdjusted, TotalDonation
+FROM Sukkot.tvfRegistrationSummary(@id)
+";
+		return await WithConnectionAsync(async connection =>
+		{
+			var rows = await connection.QueryAsync<RegistrationSummary>(base.Sql, base.Parms);
+			return rows.SingleOrDefault()!;
+		});
+	}
 
 
 }

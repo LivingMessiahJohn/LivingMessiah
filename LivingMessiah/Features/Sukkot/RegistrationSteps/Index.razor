@@ -1,19 +1,15 @@
 ﻿@page "/Sukkot/RegistrationSteps"
 @page "/Sukkot/RegistrationShell"
 
-@using System.Security.Claims
 @using LivingMessiah.Features.Sukkot.Constants
-@using LivingMessiah.Features.Sukkot.Data
-@using LivingMessiah.Features.Sukkot.Domain
 @using LivingMessiah.Features.Sukkot.Enums
 @using LivingMessiah.Features.Sukkot.LandingPage
 @using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
+
+@using System.Security.Claims
 @using LivingMessiah.SecurityRoot
+
 @using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Hosting;
-@using Microsoft.Extensions.Hosting;
-@using static LivingMessiah.SecurityRoot.Auth0
-@using GlobalNav = LivingMessiah.Enums.Nav;
 
 @using LivingMessiah.Features.Sukkot.RegistrationSteps.Agreement
 @using LivingMessiah.Features.Sukkot.NormalUser
@@ -21,8 +17,7 @@
 @inject NavigationManager NavigationManager
 @inject ILogger<Index>? Logger
 @inject IToastService? Toast
-
-@inject ISukkotRepositoryUsedBySukkotService? db
+@inject Data.IRepository? db
 
 @* 
 <AuthorizeView Roles="@Roles.SukkotMenuBar">
@@ -36,7 +31,7 @@
 {
 	<HeaderRow CurrentStep="CurrentStep" />
 
-	<p class="text-center fs-5 mb-0 @StepConstants.Border @CurrentStep.CardBodyCSS">
+	<p class="text-center fs-5 py-2 mb-0 @StepConstants.Border @CurrentStep.CardBodyCSS">
 		<b>Step:</b> @CurrentStep.Value
 		<i class="@CurrentStep).Icon"></i>
 		@CurrentStep.Heading
@@ -127,7 +122,7 @@
 	protected Step? CurrentStep;
 
 	protected bool TurnSpinnerOff = false;
-	protected vwRegistrationStep? vw;
+	protected Domain.vwRegistrationStep? vw;
 	IndexVM? vm { get; set; } = new IndexVM();
 
 	protected override async Task OnInitializedAsync()
@@ -146,7 +141,7 @@
 		{
 			Logger!.LogDebug("{Method} Email is null or Empty", nameof(OnInitializedAsync));
 			//Toast!.ShowWarning("Not Authorize | Email is null or empty"); toast no worky when navigating to another page
-			NavigationManager!.NavigateTo($"{GlobalNav.Sukkot.Index}");
+			NavigationManager!.NavigateTo($"{Nav.Sukkot.Index}");
 		}
 
 		vm!.EmailAddress = Email;

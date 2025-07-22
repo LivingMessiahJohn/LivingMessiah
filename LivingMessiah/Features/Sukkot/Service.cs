@@ -4,8 +4,7 @@ using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums;
 using LivingMessiah.Features.Sukkot.NormalUser;
 using LivingMessiah.SecurityRoot;
 
-
-namespace  LivingMessiah.Features.Sukkot.Services;
+namespace  LivingMessiah.Features.Sukkot;
 
 public interface IService
 {
@@ -151,12 +150,3 @@ public class Service : IService
 
 }
 
-
-/*
-Footnote: ToDo: How do I want to handle this
-bool canOverride = await SvcClaims.AdminOrSukkotOverride();
-if (registrationPOCO.StatusSmartEnum == BaseStatusSmartEnum.FullyPaid & !canOverride)
-{
-	throw new RegistratationException("Can not edit registration that has been fully paid.");
-}
-*/

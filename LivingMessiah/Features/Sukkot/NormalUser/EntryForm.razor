@@ -6,7 +6,6 @@
 @using LivingMessiah.Features.Sukkot.Enums;
 @using LivingMessiah.Features.Sukkot.LandingPage
 @using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
-@using LivingMessiah.Features.Sukkot.Services
 @using LivingMessiah.SecurityRoot
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Authorization
@@ -378,12 +377,5 @@
 
 	}
 
-/*
-Footnote 1: ToDo: How do I want to handle this
-bool canOverride = await SvcClaims.AdminOrSukkotOverride();
-if (registrationPOCO.StatusSmartEnum == BaseStatusSmartEnum.FullyPaid & !canOverride)
-{
-	throw new RegistratationException("Can not edit registration that has been fully paid.");
-}
-*/
+
 }

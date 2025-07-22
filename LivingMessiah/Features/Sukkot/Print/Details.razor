@@ -1,7 +1,8 @@
-﻿@using LivingMessiah.Features.Sukkot.Constants
+﻿
+@using LivingMessiah.Features.Sukkot.Constants
 @using LivingMessiah.Features.Sukkot.Domain
 @using LivingMessiah.Features.Sukkot.Enums;
-
+@using RegStepEnum =  LivingMessiah.Features.Sukkot.RegistrationSteps.Enums;
 
 <h4 class="my-4 text-center border-bottom border-dark-subtle border-4">@Other.PrintTitle</h4>
 
@@ -14,16 +15,10 @@
 	</div>
 
 	<div class="d-flex justify-content-around">
-		<div><b>EMail / Phone</b>: @vwRegistration!.EMail / @Phone2</div>
+		<div><b>EMail / Phone</b>: @vwRegistration!.EMail @Phone2</div>
 
-		@if (vwRegistration.StatusId != 0)
-		{
-			<div><b>Status</b>: @vwRegistration.StatusName?? "StatusName: null"</div>
-		}
-		else
-		{
-			<div><b>Status</b>: StatusId==0</div>
-		}
+		<div class=" @RegStepEnum.Step.FromValue(vwRegistration.StepId).CardBodyCSS"><b>Step</b>: @vwRegistration.StepName</div>
+
 	</div>
 
 </div>
@@ -108,6 +103,6 @@
 
 	protected override void OnParametersSet()
 	{
-		Phone2 = !String.IsNullOrEmpty(@vwRegistration!.Phone) ? $"Phone: {@vwRegistration!.Phone}, " : "";
+		Phone2 = !String.IsNullOrEmpty(@vwRegistration!.Phone) ? $" / Phone: {@vwRegistration!.Phone} " : "";
 	}
 }

@@ -1,4 +1,4 @@
-﻿namespace LivingMessiah.Features.Sukkot.Services;
+﻿namespace LivingMessiah.Features.Sukkot;
 
 public record DTO
 {
