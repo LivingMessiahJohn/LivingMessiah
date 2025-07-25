@@ -40,6 +40,7 @@
 
 
 @code {
+	//ToDo: port to SecurityHelper
 	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
 
 	int RoleCount = 0;
@@ -71,7 +72,7 @@
 						if (state.User.Identity.IsAuthenticated)
 						{
 							Email = state.User.FindFirst(ClaimTypes.Email)?.Value;
-							IsEmailVerified = state.User.FindFirst("email_verified")?.Value == "true";
+							IsEmailVerified = state.User.FindFirst(Auth0.Policy.Claim)?.Value == "true";
 							_claims = state.User.Claims;
 
 							ClaimList = _claims.ToList();

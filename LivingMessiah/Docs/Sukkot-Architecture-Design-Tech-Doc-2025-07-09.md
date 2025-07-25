@@ -50,7 +50,6 @@ I need to document how this process is currently working and see in the `Registr
 |----------------------|-------------|
 | Auth0                | constants            |
 | DTO                  | Sukkot stuff
-| SecurityClaimsService| replace with `[CascadingParameter] private Task<AuthenticationState>?` ???            |
 | Service              | see below   |
 | SukkotExceptions     | see below   |
 | SukkotService        | see below   |

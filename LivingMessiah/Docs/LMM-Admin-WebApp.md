@@ -2,7 +2,7 @@
 
 In my infinite wisdom, I have decided to port "Admin" related processing out from the main app.
 
-- Project Name: `LMMAdmin`
+- Project Name: **`LMMAdmin`**
 - Project Type: .Net 9 Blazor Web App SSR with Authorization
 - Custom Domain: I could use the [org](https://livingmessiah.org/) to host the new design.
 
@@ -94,7 +94,6 @@ Task<FormVM?> GetEventById(int id);
 Task<List<FormVM>> GetCurrentEvents();
 ```
 
-
 ## Shavuot
 Shavuot: Most of this can be found in the new calendar design I want to develop
 
@@ -103,6 +102,7 @@ Shavuot: Most of this can be found in the new calendar design I want to develop
 
 ## SukkotAdmin
 This will be a big lift 
+- Leverage <mark>**`RegistrationSteps.rcl`**</mark> so I could mask my self as a user and create their registration for them.
 
 ### Other
 Not sure if this is needed until and if I go back to keeping track of the weekly videos.

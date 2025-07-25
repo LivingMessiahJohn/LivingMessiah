@@ -26,8 +26,7 @@ public class SecurityHelper : ISecurityHelper
 	{
 		var authenticationState = await _authenticationStateProvider.GetAuthenticationStateAsync();
 
-		if (authenticationState?.User?.Identity is null || !authenticationState.User.Identity.IsAuthenticated)
-			return null;
+		if (authenticationState?.User?.Identity is null || !authenticationState.User.Identity.IsAuthenticated)	return null;
 
 		return authenticationState.User.FindFirst(ClaimTypes.Email)?.Value;
 	}
@@ -36,7 +35,6 @@ public class SecurityHelper : ISecurityHelper
 	{
 		var authenticationState = await _authenticationStateProvider.GetAuthenticationStateAsync();
 		if (authenticationState is null) { return (false, "Authentication state is null.", false); }
-
 		if (authenticationState?.User?.Identity is null) { return (false, "User identity is null.", false); }
 
 		if (email == vwEmail) { return (true, string.Empty, false); }

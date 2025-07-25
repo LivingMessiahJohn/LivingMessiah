@@ -14,7 +14,7 @@
 
 <Toolbar />
 
-<AuthorizeView Policy="EmailVerified">
+<AuthorizeView Policy=@Auth0.Policy.Name>
 	<Authorized>
 		<LoadingComponent IsLoading="vwRegistration == null" TurnSpinnerOff=TurnSpinnerOff>
 
@@ -35,7 +35,6 @@
 </AuthorizeView>
 
 @code {
-	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
 	[Parameter, EditorRequired] public int Id { get; set; }
 	[Parameter] public bool showPrintInstructionMessage { get; set; } = true;
 

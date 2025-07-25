@@ -17,8 +17,6 @@ public static class ServiceCollectionExtensions
 	{
 		services
 			.AddTransient<ISecurityHelper, SecurityHelper>()
-			.AddTransient<ISecurityClaimsService, SecurityClaimsService>()
-			.AddTransient<IService, Service>()       
 			.AddTransient<SukkotData.IRepository, SukkotData.Repository>()
 			.AddTransient<IValidator<Features.Sukkot.NormalUser.EntryFormVM>, Features.Sukkot.NormalUser.EntryFormVMValidator>();
 

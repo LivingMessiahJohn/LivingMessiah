@@ -12,7 +12,7 @@
 
 <PageTop />
 
-<AuthorizeView Policy="EmailVerified">
+<AuthorizeView Policy=@Auth0.Policy.Name>
 	<Authorized>
 		<LoadingComponent IsLoading="rs == null" TurnSpinnerOff=TurnSpinnerOff>
 			@if (IsAuthorized)

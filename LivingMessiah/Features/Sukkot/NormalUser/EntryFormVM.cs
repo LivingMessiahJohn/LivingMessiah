@@ -1,6 +1,5 @@
 ﻿namespace LivingMessiah.Features.Sukkot.NormalUser;
 
-// copied from Sukkot.ViewModel_RE_DELETE
 public class EntryFormVM
 {
 	public int Id { get; set; }

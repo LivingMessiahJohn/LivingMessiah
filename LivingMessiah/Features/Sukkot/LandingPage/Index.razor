@@ -9,26 +9,9 @@
 @using static LivingMessiah.SecurityRoot.Auth0
 
 @inject IOptions<SukkotSettings> SukkotSettings
-@inject ISecurityClaimsService SvcClaims
-
-@* NOT BEING USED *@
-
-<AuthorizeView Roles="@Roles.SukkotMenuBar">
-	<SukkotSettingsList />
-	@* <SukkotAdminMenubar></SukkotAdminMenubar> *@
-</AuthorizeView>
+@inject ISecurityHelper? SecurityHelper
 
 @* <DebugShowSukkotSettings /> *@
-
-@* 
-<AuthorizeView Roles="@Roles.SukkotMenuBar">
-	<NotAuthorized>
-		<div class="alert alert-danger" role="alert">
-			You are not authorized to view SukkotSettingsList
-		</div>	
-	</NotAuthorized>
-</AuthorizeView>
- *@
 
 <PageHeader PageEnum="Nav.Sukkot" />
 
@@ -37,7 +20,7 @@
 	@if (!SukkotSettings.Value.IsRegistrationClosed)
 	{
 		<div class="card border border-warning border-4 bg-warning-subtle mt-4 mb-4">
-			<AuthorizeView Policy="EmailVerified">
+			<AuthorizeView Policy=@Auth0.Policy.Name>
 				<Authorized>
 					<div class="card-body  text-center"><h3>Hello, @context.User.Identity?.Name!</h3></div>
 					<StartRegistrationButton IsAuthenticatedAndVerified=true />
