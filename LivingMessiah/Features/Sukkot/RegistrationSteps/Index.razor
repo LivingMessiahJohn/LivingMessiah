@@ -1,157 +1,145 @@
 ﻿@page "/Sukkot/RegistrationSteps"
 @page "/Sukkot/RegistrationShell"
 
-@using LivingMessiah.Features.Sukkot.Constants
-@using LivingMessiah.Features.Sukkot.Enums
-@using LivingMessiah.Features.Sukkot.LandingPage
+@using Microsoft.AspNetCore.Components.Authorization
+@using LivingMessiah.Features.Sukkot.NormalUser
 @using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
-
-@using System.Security.Claims
+@using LivingMessiah.Features.Sukkot.RegistrationSteps.NotAuthorized
+@using LivingMessiah.Features.Sukkot.RegistrationSteps.Agreement
 @using LivingMessiah.SecurityRoot
 
-@using Microsoft.AspNetCore.Components.Authorization
-
-@using LivingMessiah.Features.Sukkot.RegistrationSteps.Agreement
-@using LivingMessiah.Features.Sukkot.NormalUser
-
-@inject NavigationManager NavigationManager
+@inject ISecurityHelper? SecurityHelper
 @inject ILogger<Index>? Logger
 @inject IToastService? Toast
 @inject Data.IRepository? db
 
-@* 
-<AuthorizeView Roles="@Roles.SukkotMenuBar">
-	<SukkotAdminMenubar></SukkotAdminMenubar>
+<PageTop TextColor="@GetTextColor()" />
+
+<AuthorizeView Policy=@Auth0.Policy.Name>
+	<Authorized>
+
+		@if (CurrentStep is not null)
+		{
+			<HeaderRow CurrentStep="CurrentStep" />
+
+			<p class="text-center fs-5 py-2 mb-0 @StepConstants.Border @CurrentStep.CardBodyCSS">
+				<b>Step:</b> @CurrentStep.Value
+				<i class="@CurrentStep).Icon"></i>
+				@CurrentStep.Heading
+			</p>
+		}
+
+		@if (CurrentStep == Step.SignAgreement)
+		{
+			<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
+				<div class="card-body @CurrentStep!.CardBodyCSS">
+					<HRAWrapper EmailParm="@Email" OnActionCompleted="ReturnedActionCompleted" />
+				</div>
+			</div>
+		}
+
+		<LoadingComponent IsLoading="vw == null" TurnSpinnerOff=TurnSpinnerOff>
+
+			@* <DebugShowStepEnum UsersCurrentStep="vm!.Step" /> *@
+
+			<StepSkeleton CurrentStep="Step.FromValue(vm!.Step!.Value)">
+
+				<RegistrationFormRF>
+					@if (@vm.Step == Step.Registration)
+					{
+						<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
+							<div class="card-body @CurrentStep!.CardBodyCSS">
+								<EntryForm Email="@Email" Id="null"
+													 OnActionCompleted="ReturnedActionCompleted" />
+							</div>
+						</div>
+
+						@if (vm.Step!.EnableRegistrationToggleButton && vm.CurrentStepRecord is not null)
+						{
+							<Toggle Email="@Email" Id="@vm.CurrentStepRecord!.Id" />
+						}
+					}
+				</RegistrationFormRF>
+
+				<PaymentRF>
+					@if (@vm.Step == Step.Payment && vm.CurrentStepRecord is not null)
+					{
+						<div class="@MediaQuery.Xs.DivClass">
+							<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
+								<div class="card-body">
+									<PartlyPaidParagraph CurrentStepRecord="vm.CurrentStepRecord" />
+								</div>
+							</div>
+						</div>
+						<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+							<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
+								<div class="card-body">
+									<PartlyPaidParagraph CurrentStepRecord="vm.CurrentStepRecord" />
+								</div>
+							</div>
+						</div>
+					}
+				</PaymentRF>
+
+				<CompleteRF>
+					@if (@vm.Step == Step.Complete)
+					{
+						<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
+							<div class="card-body">
+								<CompleteParagraph CurrentStepRecordId="@vm.CurrentStepRecord!.Id" />
+							</div>
+						</div>
+					}
+				</CompleteRF>
+
+			</StepSkeleton>
+
+			@* "Footer" *@
+			@if (vm.CurrentStepRecord is not null)
+			{
+				<Toggle Email="@Email" Id="vm.CurrentStepRecord.Id" />
+			}
+			else
+			{
+				<Toggle Email="@Email" Id="null" />
+			}
+
+	</LoadingComponent>
+
+	</Authorized>
+	<NotAuthorized>
+		<NoEmailOrNotVerified Email="@Email" />
+	</NotAuthorized>
 </AuthorizeView>
-*@
-
-<PageTop />
-
-@if (CurrentStep is not null)
-{
-	<HeaderRow CurrentStep="CurrentStep" />
-
-	<p class="text-center fs-5 py-2 mb-0 @StepConstants.Border @CurrentStep.CardBodyCSS">
-		<b>Step:</b> @CurrentStep.Value
-		<i class="@CurrentStep).Icon"></i>
-		@CurrentStep.Heading
-	</p>
-}
-
-@if (CurrentStep == Step.SignAgreement)
-{
-	<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
-		<div class="card-body @CurrentStep!.CardBodyCSS">
-			<Wrapper EmailParm="@Email" OnActionCompleted="ReturnedActionCompleted" />
-		</div>
-	</div>
-}
-
-<LoadingComponent IsLoading="vw == null" TurnSpinnerOff=TurnSpinnerOff>
-
-	@* <DebugShowStepEnum UsersCurrentStep="vm!.Step" /> *@
-
-	<StepSkeleton CurrentStep="Step.FromValue(vm.Step!.Value)">
-
-		<RegistrationFormRF>
-			@if (@vm.Step == Step.Registration)
-			{
-				<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
-					<div class="card-body @CurrentStep!.CardBodyCSS">
-						<EntryForm Email="@Email" Id="null"
-											 OnActionCompleted="ReturnedActionCompleted" />
-					</div>
-				</div>
-
-				@if (vm.Step!.EnableRegistrationToggleButton && vm.CurrentStepRecord is not null)
-				{
-					<Toggle Email="@Email" Id="@vm.CurrentStepRecord!.Id" />
-				}
-			}
-		</RegistrationFormRF>
-
-		<PaymentRF>
-			@if (@vm.Step == Step.Payment && vm.CurrentStepRecord is not null)
-			{
-				<div class="@MediaQuery.Xs.DivClass">
-					<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
-						<div class="card-body">
-							<PartlyPaidParagraph CurrentStepRecord="vm.CurrentStepRecord" />
-						</div>
-					</div>
-				</div>
-				<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
-					<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
-						<div class="card-body">
-							<PartlyPaidParagraph CurrentStepRecord="vm.CurrentStepRecord" />
-						</div>
-					</div>
-				</div>
-			}
-		</PaymentRF>
-
-		<CompleteRF>
-			@if (@vm.Step == Step.Complete)
-			{
-				<div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
-					<div class="card-body">
-						<CompleteParagraph CurrentStepRecordId="@vm.CurrentStepRecord!.Id" />
-					</div>
-				</div>
-			}
-		</CompleteRF>
-
-	</StepSkeleton>
-
-	@* "Footer" *@
-	@if (vm.CurrentStepRecord is not null)
-	{
-		<Toggle Email="@Email" Id="vm.CurrentStepRecord.Id" />
-	}
-	else
-	{
-		<Toggle Email="@Email" Id="null" />
-	}
-
-</LoadingComponent>
 
 @code {
-	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
-	string? Email; // => authenticationState is not null ? authenticationState.Result?.User?.Identity?.Name ?? string.Empty : string.Empty;
 
 	protected Step? CurrentStep;
 
 	protected bool TurnSpinnerOff = false;
+	string? Email;
 	protected Domain.vwRegistrationStep? vw;
 	IndexVM? vm { get; set; } = new IndexVM();
 
 	protected override async Task OnInitializedAsync()
 	{
 		Logger!.LogDebug("{Method}", nameof(OnInitializedAsync));
-		if (authenticationState is not null)
-		{
-			var state = await authenticationState;
-			if (state!.User.Identity is not null)
-			{
-				Email = state.User.FindFirst(ClaimTypes.Email)?.Value;
-			}
-		}
+		Email = await SecurityHelper!.GetEmail();
 
 		if (String.IsNullOrEmpty(Email))
 		{
 			Logger!.LogDebug("{Method} Email is null or Empty", nameof(OnInitializedAsync));
-			//Toast!.ShowWarning("Not Authorize | Email is null or empty"); toast no worky when navigating to another page
-			NavigationManager!.NavigateTo($"{Nav.Sukkot.Index}");
 		}
-
-		vm!.EmailAddress = Email;
-		await ProcessRegistrationStep();
+		else
+		{
+			vm!.EmailAddress = Email;
+			await ProcessRegistrationStep();
+		}
 	}
 
 	private async Task ProcessRegistrationStep()
 	{
 		Logger!.LogDebug("{Method}", nameof(ProcessRegistrationStep));
-		//await Task.Delay(20);
 		try
 		{
 			vw = await db!.GetByEmail(vm!.EmailAddress!);
@@ -196,6 +184,12 @@
 		Logger!.LogDebug("{Method}, {Step}", nameof(ReturnedActionCompleted), nextStep);
 		CurrentStep = nextStep;
 		await ProcessRegistrationStep();
+	}
+
+	private string @GetTextColor()
+	{
+		// ToDo: this doesn't work if there is an Email, but it has not been verified.
+		return !String.IsNullOrEmpty(Email) ? " text-black" : " text-black-50";
 	}
 
 }

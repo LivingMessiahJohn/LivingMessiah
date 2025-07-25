@@ -225,7 +225,6 @@ WHERE Id = @Id";
 		int SprocReturnValue = 0;
 		string ReturnMsg = "";
 
-		// Can't remove `Tuple<...>` with `(...)`, see C:\Source\LivingMessiahWiki\Tuples\Removing-Tuple-Conflicts-with-BaseRepositoryAsync.md
 		return await WithConnectionAsync(async connection =>
 		{
 			Logger!.LogDebug("{Method} {Sql} {EMail}", nameof(Create), Sql, registration.EMail);
@@ -317,7 +316,6 @@ WHERE Id = @Id";
 	#endregion
 
 
-
 	public async Task<RegistrationSummary> GetRegistrationSummary(int id)
 	{
 		base.Parms = new DynamicParameters(new { id = id });  // This should be { Id = id })
@@ -334,12 +332,4 @@ FROM Sukkot.tvfRegistrationSummary(@id)
 		});
 	}
 
-
 }
-
-/*
-# Footnotes
-
-FN1. Can't remove `Tuple<...>` with `(...)`, see C:\Source\LivingMessiahWiki\Tuples\Removing-Tuple-Conflicts-with-BaseRepositoryAsync.md
-
-*/

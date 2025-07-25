@@ -1,0 +1,21 @@
+﻿@using LivingMessiah.Features.Sukkot.Enums
+
+	<div class="card border-danger my-5 border border-3">
+		<div class="card-header fs-2 bg-danger text-center text-white">Not Authorized</div>
+		<div class="card-body fs-3 text-center">
+			@if (String.IsNullOrEmpty(Email))
+			{
+				<div class="">user not logged in</div> <br />
+				<LoginRedirectButton ReturnUrl="@NavButton.RegistrationSteps.Route" />
+			}
+			else
+			{
+				<div class="">user logged in, but email <mark>@Email</mark> <b>has not been verified</b></div> <br />
+				<CheckSpamFolderTogleButton />
+			}
+		</div>
+	</div>
+
+@code {
+	[Parameter, EditorRequired] public string? Email { get; set; }
+}

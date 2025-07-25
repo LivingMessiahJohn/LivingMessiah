@@ -34,8 +34,7 @@
 				if (state.User.Identity.IsAuthenticated)
 				{
 					Email = state.User.FindFirst(ClaimTypes.Email)?.Value;
-					IsEmailVerified = state.User.FindFirst("email_verified")?.Value == "true";
-
+					IsEmailVerified = state.User.FindFirst(Auth0.Policy.Claim)?.Value == "true";
 					IsAuthenticated = true;
 					_claims = state.User.Claims;
 					Roles = string.Join(", ", _claims.Where(w => w.Type == Auth0.MicrosoftSchemaIdentityClaimsRole).Select(s => s.Value));

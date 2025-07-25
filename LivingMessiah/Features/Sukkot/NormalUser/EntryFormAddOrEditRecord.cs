@@ -1,4 +1,4 @@
 ﻿namespace LivingMessiah.Features.Sukkot.NormalUser;
 
-public record EntryFormAddOrEditRecord(string Title, string Title2, string SubmitButtonText);
+public record EntryFormAddOrEditRecord(bool IsAdd, string Title, string Title2, string SubmitButtonText);
 
