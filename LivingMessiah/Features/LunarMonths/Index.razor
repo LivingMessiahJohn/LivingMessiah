@@ -4,10 +4,14 @@
 @using LivingMessiah.Helpers
 @using LunarMonthType = LivingMessiah.Features.Calendar.Enums.LunarMonth
 @using Microsoft.Extensions.Logging
-@using Service = LivingMessiah.Features.FeastDayPlanner;
+@using Service = LivingMessiah.Features.FeastDayPlanner
+@using System.Text.Json
+@using LivingMessiah.Features.LunarMonths
 
+@inject IToastService? Toast
 @inject ILogger<Index>? Logger
 @inject Service.Data.IService? svc
+@inject HttpClient Http
 
 <PageHeader PageEnum="LivingMessiah.Enums.Nav.LunarMonth" />
 
@@ -20,17 +24,67 @@
 
 <FooterVerses />
 
+@* <LunarCarousel DaysOld="@(VM?.DaysOld ?? 0)" /> *@
+
+<div class="card border-primary-subtle border-2">
+	<div class="card-header text-center text-bg-primary"><h3>Moon Info</h3></div>
+
+	<div class="card-footer"></div>
+</div>
+
+@if (_usnoRecord is not null)
+{
+	<div class="card-body fs-4">
+		<ul>
+			<li>Moonrise: @_usnoRecord.Moonrise</li>
+			<li>Moonset: @_usnoRecord.Moonset</li>
+			<li>Moon Phase: @_usnoRecord.MoonPhase} ({fracIllum})</li>
+			<li>Azimuth at @AzimuthTime: @AzimuthDegree degrees</li>
+		</ul>
+	</div>
+}
+
+@if (MoonInfoResult?.Data != null)
+{
+	<div class="alert alert-info mt-2">
+		<b>Moonrise:</b> @MoonInfoResult.Data.Moonrise <br />
+		<b>Moonset:</b> @MoonInfoResult.Data.Moonset <br />
+		<b>Azimuth:</b> @MoonInfoResult.Data.Azimuth
+	</div>
+}
+
 @code {
 	public LunarMonthType? CurrentFilter { get; set; }
 	protected LivingMessiah.Features.LunarMonths.ProgressBarVM? VM = new();
+	private string? MoonPhaseInfo;
+	private MoonInfoResponse? MoonInfoResult;
 
-	protected override void OnInitialized()
+	protected UsnoRecord? _usnoRecord = null;
+	protected string AzimuthTime = string.Empty;
+	protected string AzimuthDegree = string.Empty;
+
+	protected override async Task OnInitializedAsync()
 	{
 		base.OnInitialized();
 		//Logger!.LogDebug("{Method}", nameof(OnInitialized));
 
 		GetDefaultLunarMonthType();
 		VM = svc!.GetHeaderServiceModelLunarMonth(CurrentFilter!);
+
+		/*
+		TimeZoneInfo arizonaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Phoenix");
+		DateTime arizonaNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, arizonaTimeZone);
+		string ymd = arizonaNow.ToString("yyyy-MM-dd");
+		string coordsPhx = "33.45,-112.07";   //string coordsTuc = "32.22,-110.93";
+		string offsetHours = arizonaTimeZone.BaseUtcOffset.Hours.ToString();
+		var (usnoRecord, errorMsg, azimuthTime, azimuthDegree) = await GetMoonInfo(ymd, offsetHours, coordsPhx);
+		if (!String.IsNullOrEmpty(errorMsg))
+		{
+			_usnoRecord = usnoRecord;
+			AzimuthTime = azimuthTime;
+			AzimuthDegree = azimuthDegree;
+		}
+		*/
 	}
 
 	private void GetDefaultLunarMonthType()
@@ -62,4 +116,98 @@
 		Logger!.LogDebug("{Method}, filter: {filter}", nameof(ReturnedFilter), filter);
 		CurrentFilter = filter;
 	}
+
+	//var (passed, errorMsg, securityOverride) = await SecurityHelper!.DoAuthentication(Email!, rs.EMail ?? "");
+	//DateTime dateTime
+
+	private async Task<(UsnoRecord? Response, string AzimuthTime, string AzimuthDegree, string ErrorMsg)> GetMoonInfo(string ymd, string offsetHours, string coordinates)
+	{
+		string moonDataUrl = $"https://aa.usno.navy.mil/api/rstt/oneday?date={ymd}&coords={coordinates}&tz={offsetHours}&dst=false";
+
+		string moonTime = "05:51"; // ToDo: can this be dynamic?
+		//str azimuthUrl = $"https://aa.usno.navy.mil/api/celnav/altaz?date={ymd}&coords={coordinates},-112.07&tz={offsetHours}&dst=false&body=moon&time={moonTime}";
+		string azimuthUrl = $"https://aa.usno.navy.mil/api/rstt/oneday?date={ymd}&coords={coordinates}&tz={offsetHours}&dst=false";
+		//string azimuthUrl = $"https://aa.usno.navy.mil/api/rstt/oneday?date={ymd}&coords=40.7128,-74.0060&tz={offsetHours}&dst=false";
+		//                      https://aa.usno.navy.mil/api/rstt/oneday?date=2025-07-26&coords=33.45,-112.0&tz=-7
+		Logger!.LogInformation("{Method} {MoonDataUrl} {AzimuthUrl} {MoonTime}", nameof(GetMoonInfo), moonDataUrl, azimuthUrl, moonTime);
+
+		string errorMsg = string.Empty;
+		//private static readonly HttpClient client = new HttpClient();
+
+		try
+		{
+			// Fetch moonrise and moonset
+			//var moonDataResponse = await client.GetStringAsync(moonDataUrl);
+			var moonDataResponse = await Http.GetStringAsync(moonDataUrl);
+
+			var moonData = JsonDocument.Parse(moonDataResponse);
+
+			// Extract moonrise, moonset, and phase
+			//string moonRiseTime = root.properties.data.moondata.FirstOrDefault(m => m.phen == "Rise")?.time;
+
+			string moonrise = moonData.RootElement.GetProperty("moonrise").GetString() ?? "N/A";
+			string moonset = moonData.RootElement.GetProperty("moonset").GetString() ?? "N/A";
+			string moonPhase = moonData.RootElement.GetProperty("moon_phase").GetString() ?? "N/A";
+			string fracIllum = moonData.RootElement.GetProperty("fracillum").GetString() ?? "N/A";
+			_usnoRecord = new UsnoRecord(moonrise, moonset, moonPhase, fracIllum);
+
+			// Fetch azimuth
+			//var azimuthResponse = await client.GetStringAsync(azimuthUrl);
+			/*
+			var azimuthResponse = await Http.GetStringAsync(azimuthUrl);
+			var azimuthData = JsonDocument.Parse(azimuthResponse);
+			string azimuth = azimuthData.RootElement.GetProperty("data")[0].GetProperty("azimuth").GetString() ?? "N/A";
+			*/
+
+		}
+		catch (HttpRequestException e)
+		{
+			errorMsg = $"Error fetching data: {e.Message}";
+			Logger!.LogError("{Method} ErrorMsg: {ErrorMsg}", nameof(GetMoonInfo), errorMsg);
+		}
+
+		catch (JsonException e)
+		{
+			errorMsg = $"Error  parsing JSON: {e.Message}";
+			Logger!.LogError("{Method} ErrorMsg: {ErrorMsg}", nameof(GetMoonInfo), errorMsg);
+			//Logger!.LogError(ex, "{Method}", nameof(GetMoonInfo));
+		}
+
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(GetMoonInfo));
+			Toast!.ShowError($"{Global.ToastShowError} {nameof(Index)}!{nameof(GetMoonInfo)}");
+		}
+
+		return (_usnoRecord, AzimuthTime, AzimuthDegree, errorMsg);
+	}
+
+	/*
+	<button class="btn btn-primary mt-3" @onclick="GetMoonInfo">Get Moon Info</button>
+	private async Task GetMoonInfo()
+	{
+		// Example: Replace with actual USNO API endpoint and parameters
+		//             https://aa.usno.navy.mil/api/rstt/oneday?date=2025-07-25&coords=33.45,-112.07&tz=-7&dst=false
+		var apiUrl = $"https://aa.usno.navy.mil/api/moon/data?date={DateTime.Now:yyyy-MM-dd}&place=Phoenix,AZ";
+		try
+		{
+			var response = await Http.GetAsync(apiUrl);
+			if (response.IsSuccessStatusCode)
+			{
+				var json = await response.Content.ReadAsStringAsync();
+				MoonInfoResult = JsonSerializer.Deserialize<MoonInfoResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+			}
+			else
+			{
+				MoonInfoResult = new MoonInfoResponse { Status = "API call failed" };
+				Toast!.ShowWarning("API call failed");
+			}
+		}
+		catch (Exception ex)
+		{
+			MoonInfoResult = new MoonInfoResponse { Status = $"Error: {ex.Message}" };
+			Toast!.ShowError($"{Global.ToastShowError} {nameof(Index)}!{nameof(GetMoonInfo)}");
+		}
+	}
+	*/
 }

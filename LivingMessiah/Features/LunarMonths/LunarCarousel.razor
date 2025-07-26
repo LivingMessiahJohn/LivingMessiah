@@ -1,0 +1,21 @@
+@using Syncfusion.Blazor.Navigations
+@inject IWebHostEnvironment Env
+
+@code {
+    // List of moon phase image filenames (assumes images are named 00.jpg, 01.jpg, ..., 29.jpg)
+    private List<string> MoonImages = Enumerable.Range(0, 30)
+        .Select(i => $"/images/moons/{i:D2}.jpg").ToList();
+
+    // SelectedIndex logic: Use DaysOld from ProgressBarVM (passed as a parameter)
+    [Parameter] public int DaysOld { get; set; }
+    private int SelectedIndex => DaysOld >= 0 && DaysOld < MoonImages.Count ? DaysOld : 0;
+}
+
+<SfCarousel SelectedIndex="@SelectedIndex" CssClass="moon-carousel">
+    @foreach (var img in MoonImages)
+    {
+        <CarouselItem>
+            <img src="@img" alt="Moon phase @img" style="width:100%;height:auto;" />
+        </CarouselItem>
+    }
+</SfCarousel>
