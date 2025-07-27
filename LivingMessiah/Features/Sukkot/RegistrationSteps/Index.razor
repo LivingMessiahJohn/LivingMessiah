@@ -123,7 +123,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		Logger!.LogDebug("{Method}", nameof(OnInitializedAsync));
+		//Logger!.LogDebug("{Method}", nameof(OnInitializedAsync));
 		Email = await SecurityHelper!.GetEmail();
 
 		if (String.IsNullOrEmpty(Email))
@@ -139,7 +139,7 @@
 
 	private async Task ProcessRegistrationStep()
 	{
-		Logger!.LogDebug("{Method}", nameof(ProcessRegistrationStep));
+		//Logger!.LogDebug("{Method}", nameof(ProcessRegistrationStep));
 		try
 		{
 			vw = await db!.GetByEmail(vm!.EmailAddress!);
@@ -181,7 +181,7 @@
 
 	private async Task ReturnedActionCompleted(Step nextStep)
 	{
-		Logger!.LogDebug("{Method}, {Step}", nameof(ReturnedActionCompleted), nextStep);
+		//Logger!.LogDebug("{Method}, {Step}", nameof(ReturnedActionCompleted), nextStep);
 		CurrentStep = nextStep;
 		await ProcessRegistrationStep();
 	}

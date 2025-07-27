@@ -1,0 +1,66 @@
+﻿@using LivingMessiah.Settings
+@using Microsoft.Extensions.Options
+
+@inject IConfiguration Configuration
+@inject ILogger<StripeCard>? Logger
+
+<div class="card border-primary">
+	<div class="card-header text-center text-primary fs-5">We look forward to seeing you during Sukkot, it is going to be awesome!</div>
+
+	<div class="row g-0">
+
+		<div class="col-md-6 col-lg-8">
+			<div class="card-body">
+				<p class="card-text">
+					We are currently using <b>Stripe Payment Links</b> for processing Living Messiah Ministry Sukkot donations.
+				</p>
+				<p class="card-text">
+					The table above is to help you in determining the amount.
+				</p>
+				<h4 class="card-title mt-2"><span class="badge bg-secondary text-white">Instructions</span></h4>
+				<p class="card-text">
+					1. By our calculations, the remaining amount is <b>@RemainingCostFormated </b>.
+					If you need to enter a different, amount click the <small><u>Change amount</u></small>
+				</p>
+				<p class="card-text">
+					2. By clicking the <span class="badge bg-primary"><b>Donation</b></span> button
+					, you will be redirected to a <b>second tab</b> on your browser so that you can complete the process.
+				</p>
+				<p class="card-text">
+					<img src="/Images/second-tab.jpg" class="img-fluid" alt="second tab created by Stripe" />
+				</p>
+				<p class="card-text">
+					3. Fill out the normal credit card / debit card processing and submit the form.
+				</p>
+
+			</div>
+		</div>
+
+		<div class="col-md-6 col-lg-4">
+			<div class="card-body text-center">
+				<stripe-buy-button buy-button-id="@StripeBuyButtonId"
+													 publishable-key="@StripePublishableKey">
+				</stripe-buy-button>
+
+			</div>
+		</div>
+
+	</div>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public string RemainingCostFormated { get; set; }
+	private string? StripeBuyButtonId;
+	private string? StripePublishableKey;
+
+	protected override void OnInitialized()
+	{
+		StripeBuyButtonId = Configuration["SukkotSettings:StripeBuyButtonId"];
+		StripePublishableKey = Configuration["SukkotSettings:StripePublishableKey"];
+
+
+		Logger!.LogWarning("{Method}, StripePublishableKey Length: {StripePublishableKey}"
+		 , nameof(OnInitialized), StripePublishableKey == null ? "null" : StripePublishableKey.Length.ToString());
+		//StripePublishableKey!.Substring(0,13)
+	}
+}
