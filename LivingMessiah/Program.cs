@@ -2,8 +2,6 @@ using Serilog;
 using Syncfusion.Blazor;
 using Blazored.Toast;
 using Blazored.LocalStorage;
-
-using LivingMessiah;
 using LivingMessiah.Components;
 using LivingMessiah.Features.Calendar;
 using LivingMessiah.Features.FeastDayPlanner.Data;
@@ -14,7 +12,10 @@ using Auth0.AspNetCore.Authentication;
 using static LivingMessiah.SecurityRoot.Auth0;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Stripe;
+using System.Text.Json;
 using AccountEnum = LivingMessiah.Enums.Account;
+using LivingMessiah.Features.Sukkot.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,7 +57,7 @@ try
 	builder.Services.AddSingleton<AppState>(); 
 	==> Cannot consume scoped service 'Blazored.LocalStorage.ILocalStorageService' from singleton 'LivingMessiah.State.AppState'. 
 	 */
-	
+
 	builder.Services.AddAuthorizationBuilder()
 			.AddPolicy(Policy.Name, policy =>
 				policy.RequireClaim(Policy.Claim, "true"));
@@ -67,7 +68,7 @@ try
 
 
 	//Services
-	builder.Services.AddDataStores();
+	builder.Services.AddSukkotData();
 	builder.Services.AddCalendar();
 	builder.Services.AddFeastDayPlanner();
 
@@ -75,10 +76,9 @@ try
 	{
 		options.Domain = builder.Configuration[Configuration.Domain] ?? "";
 		options.ClientId = builder.Configuration[Configuration.ClientId] ?? "";
-		options.ClientSecret = builder.Configuration[Configuration.ClientSecret] ?? ""; 
+		options.ClientSecret = builder.Configuration[Configuration.ClientSecret] ?? "";
 		options.Scope = "openid profile email roles";
 	});
-
 
 	//builder.Services.AddScoped<TokenProvider>();
 	//TokenProvider used by _Host App
@@ -90,6 +90,13 @@ try
 			.AddInteractiveServerComponents();
 
 	builder.Services.AddSyncfusionBlazor();
+
+	/*
+		ToDo: delete this AI generated code as this logic is done in IReo
+		Add services(including your DbContext for Sukkot.Donation)
+			builder.Services.AddDbContext<YourDbContext>(options =>
+				options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+	 */
 
 	var app = builder.Build();
 	app.MapDefaultEndpoints();
@@ -131,6 +138,45 @@ try
 	app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();
 
+	// Stripe webhook endpoint
+	//app.MapPost("/api/stripe/webhook", async (HttpRequest request, YourDbContext dbContext, ILogger<Program> logger) =>
+	//{
+	//	var json = await new StreamReader(request.Body).ReadToEndAsync();
+	//	var stripeSignature = request.Headers["Stripe-Signature"];
+	//	var webhookSecret = builder.Configuration["Stripe:WebhookSecret"];
+
+	//	Event stripeEvent;
+	//	try
+	//	{
+	//		stripeEvent = EventUtility.ConstructEvent(json, stripeSignature, webhookSecret);
+	//	}
+	//	catch (Exception ex)
+	//	{
+	//		logger.LogError(ex, "Stripe webhook signature verification failed.");
+	//		return Results.BadRequest();
+	//	}
+
+	//	if (stripeEvent.Type == Events.PaymentIntentSucceeded)
+	//	{
+	//		//var (rowsAffected, sprocReturnValue, returnMsg) = await db!.Update(DTO_From_VM_To_DB(VM!));
+	//		//Logger!.LogInformation("{Method}; Registration updated!", nameof(SubmitValidForm));
+	//		var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+	//		// Map paymentIntent fields to your Sukkot.Donation entity
+	//		var donation = new Donation
+	//		{
+	//			Amount = paymentIntent.AmountReceived / 100m, // Stripe uses cents
+	//			StripePaymentIntentId = paymentIntent.Id,
+	//			DonorEmail = paymentIntent.ReceiptEmail,
+	//			Date = DateTime.UtcNow
+	//			// Add other fields as needed
+	//		};
+	//		dbContext.Donations.Add(donation);
+	//		await dbContext.SaveChangesAsync();
+	//	}
+
+	//	return Results.Ok();
+	//});
+
 	app.Run();
 
 	Log.Information("{Class}, Stopped cleanly", nameof(Program));
@@ -145,3 +191,4 @@ finally
 {
 	Log.CloseAndFlush();
 }
+
