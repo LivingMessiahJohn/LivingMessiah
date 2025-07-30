@@ -4,7 +4,7 @@
 
 <div class="card h-100 d-flex flex-column @GetBorder()">
 
-	<div class="card-header fs-2 text-center @StepConstants.HeaderText @EnumStep!.CardHeaderCSS">
+	<div class="card-header @FontSize text-center @StepConstants.HeaderText @EnumStep!.CardHeaderCSS">
 		<b>@EnumStep!.Value</b> <i class="@GetIcon(EnumStep!.Value)"></i>
 	</div>
 
@@ -24,9 +24,12 @@
 	[Parameter, EditorRequired] public Step CurrentStep { get; set; } //Step? CurrentStep { get; set; }
 	[Parameter, EditorRequired] public bool IsXs { get; set; }
 
+	protected string FontSize => $"{(IsXs ? " fs-4" : " fs-2")}";
+
 	private string GetIcon(int stepId) =>
 		EnumStep < CurrentStep!.Value ? "far fa-check-square text-dark" : "far fa-square text-black-50";
 
 	private string GetBorder() =>
 		EnumStep == CurrentStep!.Value ? StepConstants.Border : "";
+
 }

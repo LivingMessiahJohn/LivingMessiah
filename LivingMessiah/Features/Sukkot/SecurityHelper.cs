@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
+using LivingMessiah.SecurityRoot;
 
-namespace LivingMessiah.SecurityRoot;
+namespace LivingMessiah.Features.Sukkot;
 
 public interface ISecurityHelper
 {
@@ -40,7 +41,7 @@ public class SecurityHelper : ISecurityHelper
 		if (email == vwEmail) { return (true, string.Empty, false); }
 
 		string[] _roles = authenticationState.User.Claims
-		.Where(c => c.Type == Auth0.MicrosoftSchemaIdentityClaimsRole)
+		.Where(c => c.Type == LivingMessiah.SecurityRoot.Auth0.MicrosoftSchemaIdentityClaimsRole)
 		.Select(c => c.Value)
 		.ToArray();
 
