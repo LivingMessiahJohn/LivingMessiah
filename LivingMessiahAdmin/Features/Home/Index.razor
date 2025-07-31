@@ -1,28 +1,72 @@
 ﻿@page "/"
 
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@* @attribute [Authorize]  Grok suggested but had to comment out *@ 
+@using Microsoft.AspNetCore.Components.Web
+@using LivingMessiahAdmin.Enums
+@using Page = LivingMessiahAdmin.Enums.Nav
 
-<h1>Welcome, @userName!</h1>
-<p>This page is protected and only accessible to authenticated users.</p>
+@inject NavigationManager NavigationManager
+
+<PageHeader PageEnum="Page.Home" />
+
+<div class="h5">
+
+	<div class="d-flex justify-content-between">
+		<ul class="fa-ul">
+			<li class="fs-4">
+				<span class="badge rounded-pill bg-info text-dark">Regular</span>
+			</li>
+			@foreach (var item in Nav.List.ToList()
+				.Where(w => w.IsPartOfList(PageListType.SitemapPage) && !w.IsPartOfList(PageListType.HealthCheck))
+				.OrderBy(o => o.Name))
+			{
+				<li class="py-1">
+					<span class="fa-li"><i class="@item.Icon"></i></span>
+					<a @onclick="@(e => ButtonClicked(item))"
+						 title="@item.Title" class="@item.TextColor text-decoration-underline">
+						@item.Title
+					</a>
+					@if (item.Disabled)
+					{
+						<text>&nbsp;</text>
+
+						<span class="text-black-50"><i class="fas fa-ban"></i></span>
+					}
+				</li>
+			}
+		</ul>
+
+		<ul class="fa-ul">
+			<li class="fs-4">
+				<span class="badge rounded-pill bg-warning text-dark">Health Check</span>
+			</li>
+
+			@foreach (var item in Nav.List.ToList()
+				.Where(w => w.IsPartOfList(PageListType.SitemapPage) && w.IsPartOfList(PageListType.HealthCheck))
+				.OrderBy(o => o.Name))
+			{
+				<li class="py-1">
+					<span class="fa-li"><i class="@item.Icon"></i></span>
+					<a @onclick="@(e => ButtonClicked(item))"
+						 title="@item.Title" class="@item.TextColor text-decoration-underline">
+						@item.Title
+					</a>
+					@if (item.Disabled)
+					{
+						<text>&nbsp;</text>
+
+						<span class="text-black-50"><i class="fas fa-ban"></i></span>
+					}
+				</li>
+			}
+		</ul>
+	</div>
+</div>
+
+<Dashboard />
 
 @code {
-	private string? userName;
-
-	protected override async Task OnInitializedAsync()
+	private void ButtonClicked(Nav nav)
 	{
-		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		var user = authState.User;
-
-		if (user.Identity != null && user.Identity.IsAuthenticated)
-		{
-			userName = user.Identity.Name;
-		}
-		else
-		{
-			userName = "Guest";
-		}
+		NavigationManager!.NavigateTo(nav.Index);
 	}
 }

@@ -43,7 +43,7 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int Parasha = 15;  // PageParasha.Archive
 		internal const int Welcome = 16;
 		internal const int Liturgy = 17; 
-		internal const int UpcomingEvents = 18;
+		internal const int UpcomingEvents = 18; // ToDo: replace with SpecialEvents
 		internal const int WindmillRanch = 19;
 		internal const int TorahTuesday = 20;
 		internal const int IndepthStudy = 21;
@@ -369,6 +369,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false;
 	}
 
+	// ToDo Delete
 	private sealed class UpcomingEventsSE : Nav
 	{
 		public UpcomingEventsSE() : base($"{nameof(Id.UpcomingEvents)}", Id.UpcomingEvents) { }

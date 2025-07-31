@@ -118,6 +118,7 @@ try
 
 	app.MapStaticAssets(); // new for .Net 9; 
 
+	#region Auth0 login/logout MapEndpoints
 	app.MapGet(AccountEnum.Login.Index, async (HttpContext httpContext, string returnUrl = "/") =>
 	{
 		var authenticationProperties = new LoginAuthenticationPropertiesBuilder()
@@ -134,6 +135,7 @@ try
 		await httpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
 		await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 	});
+#endregion
 
 	app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();

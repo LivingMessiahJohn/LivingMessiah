@@ -1,0 +1,29 @@
+﻿@using LivingMessiahAdmin.State
+
+@inject AppState? AppState
+@inject ILogger<CascadingAppState>? Logger
+
+<CascadingValue Value="this">
+	@ChildContent
+</CascadingValue>
+
+@code {
+
+	[Parameter] public RenderFragment? ChildContent { get; set; }
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			try
+			{
+				await AppState!.Initialize();
+			}
+			catch (Exception ex)
+			{
+				Logger!.LogError(ex, "{Class}!{Method}", nameof(CascadingAppState), nameof(OnAfterRenderAsync));
+			}
+
+		}
+	}
+}

@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using LivingMessiahAdmin.SecurityRoot
+<h3>Dashboard</h3>
+
+<AuthorizeView Roles="@Auth0.Roles.Admin">
+	<Authorized>
+		<div class="card">
+			<div class="card-header">AuthorizeView Component</div>
+
+			<div class="card-body">
+				<h5 class="card-title">asp-authorize test</h5>
+				<p class="card-text">If you're logged in with <code>Admin</code> Role, you can see this section.</p>
+			</div>
+		</div>
+	</Authorized>
+	<NotAuthorized>
+		<div class="card border-warning">
+			<div class="card-header">Not Authorized</div>
+			<div class="card-body">
+				<LoginRedirectButton />	
+			</div>
+		</div>
+	</NotAuthorized>
+
+</AuthorizeView>
+
+
+@code {
+
+}
