@@ -1,61 +1,128 @@
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.Identity.Web;
+using Serilog;
+//using Syncfusion.Blazor;
+using Blazored.Toast;
+using Blazored.LocalStorage;
 using LivingMessiahAdmin.Components;
-using Microsoft.AspNetCore.Authentication; // Added later per IntelliSense suggestions
+//using LivingMessiahAdmin.Features.Calendar;
+//using LivingMessiahAdmin.Features.FeastDayPlanner.Data;
+using LivingMessiahAdmin.Settings;
+using LivingMessiahAdmin.State;
+
+using Auth0.AspNetCore.Authentication;
+using static LivingMessiahAdmin.SecurityRoot.Auth0;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
+//using Stripe;
+//using System.Text.Json;
+using AccountEnum = LivingMessiahAdmin.Enums.Account;
+using LivingMessiahAdmin.Features.Sukkot.Data;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
+string appSettingJson =
+	Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development
+	? appSettingJson = "appsettings.Development.json"
+	: "appsettings.Production.json";
+
+var configuration = new ConfigurationBuilder()
+	.AddJsonFile(appSettingJson)
+	.Build();
+
 builder.Services.AddRazorComponents()
 		.AddInteractiveServerComponents();
 
-// Add Microsoft Entra ID authentication
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-		.AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+Log.Logger = new LoggerConfiguration()
+	.ReadFrom.Configuration(configuration)
+	.CreateLogger();
 
-builder.Services.AddAuthorization(options =>
+Log.Warning("{Class}, {Environment}, AppSettingJsonFile: {AppSettingJsonFile}; "
+			, nameof(Program), Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), appSettingJson);
+
+try
 {
-	options.AddPolicy("RequireAuthenticatedUser", policy =>
-			policy.RequireAuthenticatedUser());
-});
+	builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(configuration));
+	
+	builder.Services.AddBlazoredToast();
+	builder.Services.AddBlazoredLocalStorage();
 
-var app = builder.Build();
+	builder.Services.AddAuthorizationBuilder()
+		.AddPolicy(Policy.Name, policy =>
+			policy.RequireClaim(Policy.Claim, "true"));
 
-app.MapDefaultEndpoints();
+	builder.Services.AddScoped<AppState>(); // Scoped is more common for Blazor Server apps	
+																					
+	//Services
+	builder.Services.AddSukkotData();
+	//builder.Services.AddCalendar();
+	//builder.Services.AddFeastDayPlanner();
 
-if (!app.Environment.IsDevelopment())
+	//builder.Services.AddApplicationInsightsTelemetry();
+
+	builder.Services.AddAuth0WebAppAuthentication(options =>
+	{
+		options.Domain = builder.Configuration[Configuration.Domain] ?? "";
+		options.ClientId = builder.Configuration[Configuration.ClientId] ?? "";
+		options.ClientSecret = builder.Configuration[Configuration.ClientSecret] ?? "";
+		options.Scope = "openid profile email roles";
+	});
+
+	var app = builder.Build();
+	app.MapDefaultEndpoints();
+
+	if (!app.Environment.IsDevelopment())
+	{
+		app.UseExceptionHandler("/Error", createScopeForErrors: true);
+		app.UseHsts();
+	}
+	else
+	{
+		app.UseDeveloperExceptionPage();
+	}
+
+	app.UseSerilogRequestLogging();
+	app.UseStatusCodePagesWithReExecute("/Error"); // Suggested by Grok
+	app.UseHttpsRedirection();
+	app.UseAntiforgery();
+	app.MapStaticAssets();
+
+	#region Auth0 login/logout MapEndpoints
+	app.MapGet(AccountEnum.Login.Index, async (HttpContext httpContext, string returnUrl = "/") =>
+	{
+		var authenticationProperties = new LoginAuthenticationPropertiesBuilder()
+						.WithRedirectUri(returnUrl)
+						.Build();
+		await httpContext.ChallengeAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
+	});
+
+	app.MapGet(AccountEnum.Logout.Index, async (HttpContext httpContext) =>
+	{
+		var authenticationProperties = new LogoutAuthenticationPropertiesBuilder()
+						.WithRedirectUri("/")
+						.Build();
+		await httpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
+		await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+	});
+	#endregion
+
+	app.MapRazorComponents<App>()
+			.AddInteractiveServerRenderMode();
+
+	app.Run();
+
+	Log.Information("{Class}, Stopped cleanly", nameof(Program));
+	return 0;
+}
+catch (Exception ex)
 {
-	app.UseExceptionHandler("/Error", createScopeForErrors: true);
-	app.UseHsts();
+	Log.Fatal(ex, "{Class}, An unhandled exception occurred during bootstrapping", nameof(Program));
+	return 1;
+}
+finally
+{
+	Log.CloseAndFlush();
 }
 
-app.UseStatusCodePagesWithReExecute("/Error"); // Suggested by Grok
-app.UseHttpsRedirection();
-app.UseAntiforgery();
-app.MapStaticAssets();
-
-// Add authentication and authorization middleware
-app.UseAuthentication();
-app.UseAuthorization();
-
-// Map authentication endpoints for sign-in and sign-out
-app.MapGet("/auth/signin", async (HttpContext context) =>
-{
-	if (!context.User.Identity!.IsAuthenticated)
-	{
-		await context.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties { RedirectUri = "/" });
-	}
-	return Results.Redirect("/");
-});
-
-app.MapPost("/auth/signout", async (HttpContext context) =>
-{
-	await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties { RedirectUri = "/" });
-	return Results.Redirect("/");
-});
-
-app.MapRazorComponents<App>()
-		.AddInteractiveServerRenderMode();
-
-app.Run();
