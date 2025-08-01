@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 //using System.Text.Json;
 using AccountEnum = LivingMessiahAdmin.Enums.Account;
 using LivingMessiahAdmin.Features.Sukkot.Data;
+using LivingMessiahAdmin.Features.Database;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,8 +55,9 @@ try
 			policy.RequireClaim(Policy.Claim, "true"));
 
 	builder.Services.AddScoped<AppState>(); // Scoped is more common for Blazor Server apps	
-																					
+
 	//Services
+	builder.Services.AddDatabase();
 	builder.Services.AddSukkotData();
 	//builder.Services.AddCalendar();
 	//builder.Services.AddFeastDayPlanner();

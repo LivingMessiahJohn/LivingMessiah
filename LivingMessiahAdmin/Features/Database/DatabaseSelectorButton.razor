@@ -1,0 +1,30 @@
+﻿@using DataEnumsDatabase = LivingMessiahAdmin.Data.Enums.Database
+
+@inject ILogger<DatabaseSelectorButton>? Logger
+
+<div class="d-flex justify-content-end mb-3">
+		@foreach (var item in DataEnumsDatabase.List)
+		{
+			<button @onclick="@(e => OnButtonClicked(item))"
+							title="Filter by @item.Title"
+						class="btn btn-outline-secondary btn-sm me-2 @ActiveFilter(item)">
+				@item.Title &nbsp;<i class="fas fa-chevron-circle-right"></i>
+			</button>
+		}
+</div>
+
+@code {
+	[Parameter, EditorRequired] public Data.Enums.Database? CurrentDatabase { get; set; }
+	[Parameter] public EventCallback<Data.Enums.Database> OnDatabaseSelected { get; set; }
+
+	private void OnButtonClicked(Data.Enums.Database database)
+	{
+		Logger!.LogDebug("{Method}, {Database}", nameof(OnButtonClicked), database.Name);
+		OnDatabaseSelected.InvokeAsync(database); // why doesn't this have to be async?
+	}
+
+	public string ActiveFilter(Data.Enums.Database filter)
+	{
+		return filter == CurrentDatabase ? "active" : "";
+	}
+}
