@@ -41,6 +41,13 @@
 		{
 			var sprocTuple = await db!.InsertHouseRulesAgreement(EmailParm!, GetLocalTimeZone());
 			Logger!.LogDebug("{Method} id: {id}", nameof(Agree_ButtonClick), sprocTuple.Item3);
+			
+			/*
+			ToDo: convert to named Tuples
+			var (newId, sprocReturnValue, returnMsg) = await db!.InsertHouseRulesAgreement(EmailParm!, GetLocalTimeZone());
+			Logger!.LogDebug("{Method} id: {id}", nameof(Agree_ButtonClick), newId);
+			*/
+
 			Toast!.ShowInfo("Record updated for House Rules Agreement");
 			await OnActionCompleted.InvokeAsync(Step.Registration);
 		}

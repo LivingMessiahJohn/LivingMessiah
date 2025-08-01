@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace LivingMessiahAdmin.Data;
 
@@ -27,6 +28,17 @@ public abstract class BaseRepositoryAsync
 	protected async Task<T> WithConnectionAsync<T>(Func<IDbConnection, Task<T>> getData)
 	{
 		string connectionString = config[ConnectionStringsKey]!;
+
+		var match = Regex.Match(connectionString, @"Server\s*=\s*([^;]+)", RegexOptions.IgnoreCase);
+		if (match.Success)
+		{
+			ServerId = match.Groups[1].Value;
+		}
+		else
+		{
+			ServerId = "N/A i.e. Test";
+		}
+
 		string errMsg = "";
 
 		try
@@ -75,7 +87,7 @@ public abstract class BaseRepositoryAsync
 
 	public string? Sql { get; set; }
 	public DynamicParameters? Parms { get; set; }  // using Dapper; Note, only place dependent on Dapper
-
+	private string? ServerId { get; set; }
 
 	public string? SqlDump
 	{
@@ -89,6 +101,11 @@ public abstract class BaseRepositoryAsync
 			}
 			return s;
 		}
+	}
+
+	public string GetServerId()
+	{
+		return ServerId!;
 	}
 
 }
