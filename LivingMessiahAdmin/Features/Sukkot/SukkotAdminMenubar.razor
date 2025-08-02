@@ -1,0 +1,50 @@
+﻿@* @using static LivingMessiahAdmin.Links.Sukkot *@
+@* @using LivingMessiahAdmin.Features.Sukkot.Constants; *@
+@using LivingMessiahAdmin.Settings
+@using Microsoft.Extensions.Options
+@inject IOptions<SukkotSettings> SukkotSettings
+
+@{
+	string classActive = ""; // "active"
+	//<ol class="breadcrumb mx-auto justify-content-center">
+}
+
+<div class="d-print-none mt-3">
+	<ol class="breadcrumb mx-n3 mt-n3">
+
+		<li class="@classActive">
+			<a class="badge bg-dark" href="@Constants.ManageRegistration.Index">
+				<i class="@Constants.ManageRegistration.Icon">
+				</i>&nbsp;@Constants.ManageRegistration.IconText
+			</a>&nbsp;&nbsp;
+		</li>
+
+		<li class="@classActive">
+			<a class="badge bg-info" href="@Constants.ManageNotes.Index">
+				<i class="@Constants.ManageNotes.Icon">
+				</i>&nbsp;@Constants.ManageNotes.IconText
+			</a>&nbsp;&nbsp;
+		</li>
+
+
+		<li class="@classActive">
+			<a class="badge bg-warning" href="@Constants.AttendanceAllFeastDays">
+				<i class="fas fa-chart-line"></i>&nbsp;Attend
+			</a>&nbsp;&nbsp;
+		</li>
+
+		<li class="@classActive">
+			<a class="badge bg-success" href="@Constants.Donations.Grid">
+				<i class="fas fa-dollar-sign"></i>&nbsp;Donate
+			</a>&nbsp;&nbsp;
+		</li>
+
+		<li class="@classActive">
+			<a class="badge bg-secondary" href="@Constants.LegalAgreementVerbiage.Index">
+				<i class="@Constants.LegalAgreementVerbiage.Icon"></i>&nbsp;@Constants.LegalAgreementVerbiage.Title
+			</a>
+		</li>
+
+	</ol>
+
+</div>

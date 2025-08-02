@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LivingMessiah.ServiceDefaults\LivingMessiah.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\LivingMessiah\LivingMessiah.csproj" />
   </ItemGroup>
 
   <ItemGroup>

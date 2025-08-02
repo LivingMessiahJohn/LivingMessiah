@@ -1,0 +1,97 @@
+﻿@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.MasterDetail
+@using CrudEnums = LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud
+@using RegStatusEnums = LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
+@* @using HRA_State = LivingMessiahAdmin.Features.Sukkot.ManageRegistration.HRA *@
+@using ParentState = LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Index
+
+@inject ILogger<ActionButtonGroup>? Logger
+
+@* @if (StatusId == RegStatusEnums.Status.StartRegistration.Value) *@
+
+@if (StatusId == RegStatusEnums.Step.Registration.Value)
+{
+	@foreach (var item in LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud.List
+					.OrderBy(o => o.Sort)
+					.Where(w => w.IsStartRegistration == true))
+	{
+		<CrudButtons OnCrudActionSelected="@ReturnedCrud"
+								 ParmCrud="CrudEnums.FromValue(item)"
+								 Id="@IdHra"
+								 FullName="@FullName"
+								 DonationRowCount="@DonationRowCount"
+								 EMail="@EMail" />
+	}
+}
+else
+{
+	@foreach (var item in CrudEnums.List
+							.OrderBy(o => o.Sort)
+							.Where(w => w.IsStartRegistration == false))
+	{
+		<CrudButtons OnCrudActionSelected="@ReturnedCrud"
+								 ParmCrud="CrudEnums.FromValue(item)"
+								 Id="@Id"
+								 FullName="@FullName"
+								 DonationRowCount="@DonationRowCount"
+								 EMail="@EMail" />
+	}
+}
+
+@code {
+	[Parameter] public string? EMail { get; set; }
+	[Parameter] public int Id { get; set; }
+	[Parameter] public int IdHra { get; set; }
+	[Parameter] public string? FullName { get; set; }
+	[Parameter] public int DonationRowCount { get; set; }
+	[Parameter, EditorRequired] public int StatusId { get; set; }
+
+	[Parameter] public EventCallback<CrudAndIdArgs> OnCrudActionSelected { get; set; }
+
+	private async Task ReturnedCrud(CrudAndIdArgs args)
+	{
+		Logger!.LogDebug("{Method}, {Crud}", nameof(ReturnedCrud), args.Crud.Name);
+
+		switch (args.Crud.Name)
+		{
+			case nameof(CrudEnums.AddRegistration):
+				await OnCrudActionSelected.InvokeAsync(args);
+				break;
+
+			case nameof(CrudEnums.Edit):
+				await OnCrudActionSelected.InvokeAsync(args);
+				break;
+
+			case nameof(CrudEnums.Display):
+				await OnCrudActionSelected.InvokeAsync(args);
+				break;
+
+			case nameof(CrudEnums.DeleteRegistration):
+				break;
+
+			case nameof(CrudEnums.DeleteHRA):
+				await OnCrudActionSelected.InvokeAsync(args);
+				break;
+
+			case nameof(CrudEnums.Donation):
+				await OnCrudActionSelected.InvokeAsync(args);
+				break;
+
+			default:
+				Logger!.LogWarning("{Method}, {Crud}", nameof(ReturnedCrud), "Crud Name unknown!!!");
+				break;
+		}
+	}
+
+	//[CascadingParameter] IModalService Modal { get; set; } = default!;
+
+	/*
+		private async Task<bool> IsModalConfirmed(string title, string label, string value)
+	{
+		var parameters = new ModalParameters { { nameof(ConfirmDeleteModal.Message), $"{title} for {label}: {value}" } };
+		var modal = Modal.Show<ConfirmDeleteModal>("Confirmation Required", parameters);
+		var result = await modal.Result;
+		return result.Confirmed;
+	}
+	 */
+
+}

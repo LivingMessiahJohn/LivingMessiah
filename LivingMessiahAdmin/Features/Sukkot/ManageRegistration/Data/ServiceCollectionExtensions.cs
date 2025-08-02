@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace LivingMessiahAdmin.Features.Sukkot.Data;
+namespace LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Data;
 
 public static class ServiceCollectionExtensions
 {

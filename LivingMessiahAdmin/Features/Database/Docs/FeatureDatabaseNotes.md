@@ -2,7 +2,7 @@
 
 Some noteworthy things about this bit of code found in Features/Admin/Database
 
-1. Project LivingMessiahAdmin connects to two database (see LivingMessiah.Web.Data.Enums.Database)
+1. Project LivingMessiahAdmin connects to two database (see LivingMessiahAdmin.Data.Enums.Database)
 2. This requires two distinct repositories code that is are exactly the same except for the constructors which bases in different [DatabaseName] values
 3. Managing State: I'm not using Fluxor but I'm using the `EventCallback`
 

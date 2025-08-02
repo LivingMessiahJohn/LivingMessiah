@@ -16,9 +16,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 //using Stripe;
 //using System.Text.Json;
 using AccountEnum = LivingMessiahAdmin.Enums.Account;
-using LivingMessiahAdmin.Features.Sukkot.Data;
 using LivingMessiahAdmin.Features.Database;
-
+using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,4 +1,4 @@
-﻿namespace LivingMessiah.Data;
+﻿namespace LivingMessiahAdmin.Data;
 
 public static class Helper
 {

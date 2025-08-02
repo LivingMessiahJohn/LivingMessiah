@@ -1,0 +1,68 @@
+﻿@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Donations
+@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Donations.Data
+@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Donations.Domain
+@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Donations.Enums
+@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums
+
+@inject ILogger<Filter>? Logger
+@inject IToastService? Toast
+@inject IDonationRepository? db
+
+@foreach (var item in DonationStatusFilter.List.OrderBy(o => o.Value))
+{
+	<a @onclick="@(() => OnClickFilter(item))" title="Filter by @item.ButtonName"
+	 class="btn btn-outline-primary btn-sm @ActiveFilter(item)">
+		@item.ButtonName &nbsp;<i class="fas fa-chevron-circle-right"></i>
+	</a>
+}
+
+@code {
+
+	public IEnumerable<DonationReport>? DonationReportList { get; set; }
+	public DonationStatusFilter CurrentFilter { get; set; } = DonationStatusFilter.FullList;
+
+	protected async void OnClickFilter(DonationStatusFilter newFilter)
+	{
+		CurrentFilter = newFilter;
+		Logger!.LogDebug($"Inside {nameof(OnClickFilter)}; {newFilter.Name} is now the current filter");
+		await GetDataWithParms(newFilter);
+	}
+
+	private async Task GetDataWithParms(DonationStatusFilter filter)
+	{
+		RegistrationSort sortAndDirection = RegistrationSort.ByFirstName;
+		string sort = sortAndDirection.SqlTableColumnName + sortAndDirection.Order;
+
+		string message = $"Inside {nameof(Filter)}!{nameof(GetDataWithParms)}; smartEnumFilter.Name:{filter.Name}; sort:{sort}";
+		Logger!.LogDebug(message);
+		try
+		{
+			DonationReportList = await db!.GetDonationReport(filter, sort);
+			if (DonationReportList == null)
+			{
+				Toast!.ShowWarning("DonationReportList NOT FOUND");
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, $"...Error reading database");
+			Toast!.ShowError("Error reading database");
+
+		}
+		StateHasChanged();  // https://stackoverflow.com/questions/56436577/blazor-form-submit-needs-two-clicks-to-refresh-view
+	}
+
+	public string ActiveFilter(DonationStatusFilter filter)
+	{
+		if (filter == CurrentFilter)
+		{
+			//Logger.LogDebug($"Inside {nameof(ActiveFilter)}; {filter.Name} now active");
+			return "active";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+}

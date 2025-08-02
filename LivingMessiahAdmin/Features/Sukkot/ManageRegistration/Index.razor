@@ -1,0 +1,130 @@
+﻿@page "/Sukkot"
+
+@* FWIW, in ver. 7, the page directive was  Sukkot/ManageRegistration, Sukkot/SuperUser, SukkotAdmin *@
+
+@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.MasterDetail
+@using LivingMessiahAdmin.Features.Sukkot.MasterDetail
+@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Registrant
+@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.HRA
+@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Detail
+@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Donations
+@* @using CrudEnums = LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud *@
+
+@using Page = LivingMessiahAdmin.Enums.Nav
+
+<PageHeader PageEnum="Page.Sukkot" />
+
+@* ToDo: use <AuthorizeView>  *@
+
+<!-- ToDo: can this be moved to <PageHeader ??? -->
+<SukkotAdminMenubar />
+
+<div class="@MediaQuery.XsOrSm.DivClass">
+	<Header IsXsOrSm="true" />
+</div>
+
+<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+	<Header IsXsOrSm="false" />
+</div>
+
+@if (VisibleComponent == Enums.VisibleComponent.MasterList)
+{
+	<MasterList OnCrudActionSelected="ReturnedCrudActionSelected" />
+}
+else
+{
+	<ShowMasterIndexButton OnShowListSelected="ReturnedShowList" />
+	<DetailPageHeader />
+
+	@if (VisibleComponent == Enums.VisibleComponent.AddEditForm)
+	{
+		<RegistrantForm />
+	}
+	else
+	{
+		@if (VisibleComponent == Enums.VisibleComponent.HRA_Form)
+		{
+			<HRAForm />
+		}
+		else
+		{
+			@if (VisibleComponent == Enums.VisibleComponent.DonationForm)
+			{
+				@* State!.Value.PageHeaderVM!.Id *@
+				<DonationsIndex RegistrationId="@Id" />
+			}
+			else
+			{
+				@* FN: 1 *@
+				<div class="card border-primary my-3 p-2">
+					<Report />
+				</div>
+			}
+		}
+	}
+}
+
+@* <Toaster /> *@
+
+
+@code {
+	[Parameter, EditorRequired] public Enums.VisibleComponent? VisibleComponent { get; set; }
+
+	int Id { get; set; } = 0;	
+
+	protected override void OnInitialized()
+	{
+		if (VisibleComponent is null)
+		{
+			VisibleComponent = Enums.VisibleComponent.MasterList;
+		}
+	}
+
+	private void ReturnedShowList()
+	{
+		VisibleComponent = Enums.VisibleComponent.MasterList;
+	}
+
+	void ReturnedCrudActionSelected(CrudAndIdArgs args)
+	{
+		if (args.Crud == LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud.Display)
+		{
+			VisibleComponent = Enums.VisibleComponent.DisplayCard;
+		}
+		else
+		{
+			if (args.Crud == LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud.Edit)
+			{
+				VisibleComponent = Enums.VisibleComponent.AddEditForm;
+			}
+			else
+			{
+				if (args.Crud == LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud.Donation)
+				{
+					VisibleComponent = Enums.VisibleComponent.DonationForm;
+				}
+			}
+		}
+
+		//OnCrudActionSelected.InvokeAsync(args);
+		/*
+		VisibleComponent = args.Crud switch
+		{
+			CrudEnums.AddRegistration => Enums.VisibleComponent.AddEditForm,
+			CrudEnums.Edit => Enums.VisibleComponent.AddEditForm,
+			CrudEnums.Display => Enums.VisibleComponent.DisplayCard,
+			CrudEnums.HRA => Enums.VisibleComponent.HRA_Form,
+			CrudEnums.Donation => Enums.VisibleComponent.DonationForm,
+			_ => VisibleComponent
+		};	
+		*/
+	}
+}
+
+@*
+# FootNotes
+## FN: 1
+- ToDo: look at how the showPrintInstructionMessage is being used
+	- Details Pages\Sukkot\Details\Index.razor
+	-	page "/Sukkot/Details/{Id:int}/{showPrintInstructionMessage:bool}"
+*@
