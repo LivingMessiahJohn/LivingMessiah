@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dd613fc2-7f7d-4729-ba0b-e7f56d3f8add</UserSecretsId>
     <BaseOutputPath>/publish/LivingMessiahAdmin</BaseOutputPath>
-		<PublishDir>bin/Release/net9.0/publish/</PublishDir>
+		<PublishDir>./publish</PublishDir>
   </PropertyGroup>
 
   <ItemGroup>
