@@ -1,0 +1,94 @@
+﻿@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.MasterDetail
+@using RegStatusEnums = LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
+
+@foreach (var item in RegistrationList!)
+{
+	<div class="card text-dark bg-light mb-3">
+		<div class="card-header">
+
+			@if (item.StatusId != RegStatusEnums.Step.Registration.Value)
+			{
+				<div class="row  @item.FullNameOrNAColor">
+					<div class="col-3 text-end"><b>Name</b>: </div>
+					<div class="col-9 text-start">@item.FullNameOrNA</div>
+				</div>
+			}
+
+			<div class="row">
+				<div class="col-3 text-end"><b>Email</b>: </div>
+				<div class="col-9 text-start"> @item.EMail</div>
+			</div>
+
+			<div class="row">
+				<div class="col-3 text-end"><b>Status</b>: </div>
+				<div class="col-9 text-start"> @item.StatusName</div>
+			</div>
+
+		</div>
+
+		@if (!String.IsNullOrEmpty(item.AdminNotes))
+		{
+			<div class="card-body bg-warning">
+				<div class="row">
+					<div class="col-3 text-end"><b>Admin Notes</b>: </div>
+					<div class="col-9 text-start">@item.AdminNotes</div>
+				</div>
+			</div>
+		}
+
+
+
+		<div class="card-body">
+
+			@if (!String.IsNullOrEmpty(item.Notes))
+			{
+				<div class="row">
+					<div class="col-3 text-end"><b>Notes</b>: </div>
+					<div class="col-9 text-start">@item.Notes</div>
+				</div>
+			}
+
+			@if (item.DidNotAttend)
+			{
+				<div class="row">
+					<div class="col-3 text-end"><b>Did Not Attend</b>: </div>
+					<div class="col-9 text-start">@item.NoShow</div>
+				</div>
+			}
+
+			@if (item.StatusId != RegStatusEnums.Step.Registration.Value)
+			{
+				<div class="row">
+					<div class="col-3 text-end"><b>Donations</b>: </div>
+					<div class="col-9 text-start"><span class="@item.TotalDonationBadgeCSS">@item.TotalDonationNoCents</span></div>
+				</div>
+			}
+
+		</div>
+
+		<div class="card-footer">
+
+			<div class="d-grid gap-1 d-flex justify-content-end">
+				<ActionButtonGroup IdHra="@item.IdHra"
+													 Id="@item.Id"
+													 EMail="@item.EMail"
+													 FullName="@item.FullName"
+													 DonationRowCount="@item.DonationRowCount"
+													 StatusId="@item.StatusId"
+													 OnCrudActionSelected="ReturnedCrudActionSelected" />
+			</div>
+		</div>
+
+	</div>
+}
+
+
+@code {
+	[Parameter, EditorRequired] public List<ManageRegistrationQuery>? RegistrationList { get; set; }
+	[Parameter] public EventCallback<CrudAndIdArgs> OnCrudActionSelected { get; set; }
+
+	void ReturnedCrudActionSelected(CrudAndIdArgs args)
+	{
+		OnCrudActionSelected.InvokeAsync(args);
+	}
+}

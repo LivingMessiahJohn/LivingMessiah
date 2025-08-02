@@ -28,10 +28,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 		get { return SqlDump!; }
 	}
 
-	public string BaseServerId
-	{
-		get { return GetServerId(); }
-	}
+	public string BaseServerId => GetServerId();
 
 	public async Task<int> LogErrorTest()
 	{
