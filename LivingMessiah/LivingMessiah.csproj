@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>2b72e9a9-d6be-40dc-92d6-1f93b18c8df5</UserSecretsId>
-    <BaseOutputPath>/publish/LivingMessiah</BaseOutputPath>
+    <BaseOutputPath></BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
