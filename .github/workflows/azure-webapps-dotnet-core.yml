@@ -55,34 +55,51 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      - name: Publish LivingMessiah
+        run: dotnet publish LivingMessiah/LivingMessiah.csproj -c Release -o ${{ github.workspace }}/publish/LivingMessiah
 
-      - name: Upload artifact for deployment job
+      - name: Publish LivingMessiahAdmin
+        run: dotnet publish LivingMessiahAdmin/LivingMessiahAdmin.csproj -c Release -o ${{ github.workspace }}/publish/LivingMessiahAdmin
+
+      - name: Upload LivingMessiah artifact
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: LivingMessiah
+          path: ${{ github.workspace }}/publish/LivingMessiah
+
+      - name: Upload LivingMessiahAdmin artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: LivingMessiahAdmin
+          path: ${{ github.workspace }}/publish/LivingMessiahAdmin
 
   deploy:
-    permissions:
-      contents: none
     runs-on: ubuntu-latest
     needs: build
     environment:
       name: 'Development'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from build job
+      - name: Download LivingMessiah artifact
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
+          name: LivingMessiah
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
+      - name: Download LivingMessiahAdmin artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: LivingMessiahAdmin
+
+      - name: Deploy LivingMessiah
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          app-name: '<LivingMessiah>' # Replace with your actual Azure Web App name for LivingMessiah
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} # Create a secret for this app's publish profile
+          package: LivingMessiah
+
+      - name: Deploy LivingMessiahAdmin
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: '<LivingMessiahAdmin>' # Replace with your actual Azure Web App name for LivingMessiahAdmin
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_ADMIN }} # Create a secret for this app's publish profile
+          package: LivingMessiahAdmin
