@@ -93,13 +93,13 @@ jobs:
       - name: Deploy LivingMessiah
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'LivingMessiah' # Replace with your actual Azure Web App name for LivingMessiah
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} # Create a secret for this app's publish profile
-          package: LivingMessiah
+          app-name: 'LivingMessiah'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./LivingMessiah
 
       - name: Deploy LivingMessiahAdmin
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'LivingMessiahAdmin' # Replace with your actual Azure Web App name for LivingMessiahAdmin
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_ADMIN }} # Create a secret for this app's publish profile
-          package: LivingMessiahAdmin
+          app-name: 'LivingMessiahAdmin'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_ADMIN }}
+          package: ./LivingMessiahAdmin
