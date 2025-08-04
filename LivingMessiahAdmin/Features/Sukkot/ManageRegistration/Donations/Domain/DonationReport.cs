@@ -1,5 +1,4 @@
-﻿//using LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums;
-using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums;
+﻿using LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums; //Ref. was from LivingMessiah
 using System.ComponentModel.DataAnnotations;
 
 namespace LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Donations.Domain;

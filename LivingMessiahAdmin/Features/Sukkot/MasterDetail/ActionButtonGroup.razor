@@ -1,6 +1,7 @@
-﻿@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.MasterDetail
-@using CrudEnums = LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud
-@using RegStatusEnums = LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
+﻿@using CrudEnums = LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud
+@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.MasterDetail
+@using LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums
+@using RegStatusEnums = LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums  //Ref. was from LivingMessiah
 @* @using HRA_State = LivingMessiahAdmin.Features.Sukkot.ManageRegistration.HRA *@
 @using ParentState = LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Index
 
@@ -8,7 +9,7 @@
 
 @* @if (StatusId == RegStatusEnums.Status.StartRegistration.Value) *@
 
-@if (StatusId == RegStatusEnums.Step.Registration.Value)
+@if (StatusId == Step.Registration.Value)
 {
 	@foreach (var item in LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud.List
 					.OrderBy(o => o.Sort)

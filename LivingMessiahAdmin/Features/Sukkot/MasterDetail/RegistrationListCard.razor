@@ -1,12 +1,15 @@
 ﻿@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.MasterDetail
-@using RegStatusEnums = LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
+@using LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums
+
+@* Ref. was from LivingMessiah *@
+@using RegStatusEnums = LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums
 
 @foreach (var item in RegistrationList!)
 {
 	<div class="card text-dark bg-light mb-3">
 		<div class="card-header">
 
-			@if (item.StatusId != RegStatusEnums.Step.Registration.Value)
+			@if (item.StatusId != Step.Registration.Value)
 			{
 				<div class="row  @item.FullNameOrNAColor">
 					<div class="col-3 text-end"><b>Name</b>: </div>
@@ -56,7 +59,7 @@
 				</div>
 			}
 
-			@if (item.StatusId != RegStatusEnums.Step.Registration.Value)
+			@if (item.StatusId != Step.Registration.Value)
 			{
 				<div class="row">
 					<div class="col-3 text-end"><b>Donations</b>: </div>

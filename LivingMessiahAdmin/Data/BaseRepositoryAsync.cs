@@ -97,7 +97,7 @@ public abstract class BaseRepositoryAsync
 			s = Sql ?? "SQL IS NULL";
 			if (Parms != null)
 			{
-				/* See Notes in LivingMessiah.Data!BaseRepositoryAsync*/
+				/* See Notes in LivingMessiahAdmin.Data!BaseRepositoryAsync*/
 			}
 			return s;
 		}

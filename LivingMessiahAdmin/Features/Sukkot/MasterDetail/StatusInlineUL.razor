@@ -1,10 +1,10 @@
-﻿@using RegStatusEnums = LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
+﻿@using LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums @* Ref. was from LivingMessiah *@
 
 <p class="mt-4 mb-0 text-black-50">Steps...</p>
 
 <ul class="list-inline">
-	@foreach (var item in RegStatusEnums.Step.List
-		.Where(w => w.Value > RegStatusEnums.Step.SignAgreement)
+	@foreach (var item in Step.List
+		.Where(w => w.Value > Step.SignAgreement)
 	.OrderBy(o => o.Value).ToList())
 	{
 		<li class="list-inline-item"><small>@item.Value: @item.Text</small></li>

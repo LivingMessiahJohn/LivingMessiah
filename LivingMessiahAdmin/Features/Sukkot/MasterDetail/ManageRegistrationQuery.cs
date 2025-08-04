@@ -1,6 +1,5 @@
 ﻿using LivingMessiahAdmin.Helpers;
-//using LivingMessiahAdmin.Features.Sukkot.Constants;
-using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums;
+using LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums;  //Ref. was from LivingMessiah
 using System;
 
 namespace LivingMessiahAdmin.Features.Sukkot.ManageRegistration.MasterDetail;

@@ -1,12 +1,13 @@
 ﻿using Dapper;
 using System.Data;
 
-using LivingMessiah.Features.Sukkot.Enums;
 using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.MasterDetail;
 
-using SukkotEnumsHelper = LivingMessiah.Features.Sukkot.Enums.Helper;
+using SukkotEnumsHelper = LivingMessiahAdmin.Features.Sukkot.Enums.Helper; //Ref. was from LivingMessiah
 using DataEnumsDatabase = LivingMessiahAdmin.Data.Enums.Database;
 using LivingMessiahAdmin.Data;
+
+using LivingMessiahAdmin.Features.Sukkot.Enums;  //Ref. was from LivingMessiah
 
 namespace LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Data;
 
