@@ -61,6 +61,21 @@ jobs:
       - name: Publish LivingMessiahAdmin
         run: dotnet publish LivingMessiahAdmin/LivingMessiahAdmin.csproj -c Release -o ${{ github.workspace }}/publish/LivingMessiahAdmin
 
+      - name: Debug - List all files and directories
+        run: |
+          echo "=== Current directory ==="
+          pwd
+          echo "=== Contents of root ==="
+          ls -la
+          echo "=== Looking for publish directory ==="
+          find . -name "publish" -type d
+          echo "=== Contents of workspace ==="
+          ls -la ${{ github.workspace }}
+          echo "=== Looking for any LivingMessiah directories ==="
+          find . -name "*LivingMessiah*" -type d
+          echo "=== All files and directories (recursive) ==="
+          find . -type f -name "*.dll" | head -20
+
       - name: Upload LivingMessiah artifact
         uses: actions/upload-artifact@v4
         with:
@@ -101,11 +116,11 @@ jobs:
         with:
           app-name: 'LivingMessiah'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./publish/LivingMessiah
+          package: '${{ github.workspace }}/publish/LivingMessiah'
 
       - name: Deploy LivingMessiahAdmin
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'LivingMessiahAdmin'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_ADMIN }}
-          package: ./publish/LivingMessiahAdmin
+          package: '${{ github.workspace }}/publish/LivingMessiahAdmin'
