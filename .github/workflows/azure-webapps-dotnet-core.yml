@@ -99,28 +99,30 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: LivingMessiah
+          path: ./deploy-livingmessiah
 
-      - name: Download LivingMessiahAdmin artifact
+      - name: Download LivingMessiahAdmin artifact  
         uses: actions/download-artifact@v4
         with:
           name: LivingMessiahAdmin
+          path: ./deploy-livingmessiahadmin
 
       - name: List files for debugging
         run: |
           ls -la
-          ls -la ./LivingMessiah
-          ls -la ./LivingMessiahAdmin
+          ls -la ./deploy-livingmessiah
+          ls -la ./deploy-livingmessiahadmin
 
-      - name: Deploy LivingMessiah
+      - name: Deploy LivingMessiah to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'LivingMessiah'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: '${{ github.workspace }}/publish/LivingMessiah'
+          package: './deploy-livingmessiah'
 
-      - name: Deploy LivingMessiahAdmin
+      - name: Deploy LivingMessiahAdmin to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'LivingMessiahAdmin'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_ADMIN }}
-          package: '${{ github.workspace }}/publish/LivingMessiahAdmin'
+          package: './deploy-livingmessiahadmin'
