@@ -140,6 +140,7 @@ try
 	app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();
 
+	#region Endpoints
 	// Stripe webhook endpoint
 	//app.MapPost("/api/stripe/webhook", async (HttpRequest request, YourDbContext dbContext, ILogger<Program> logger) =>
 	//{
@@ -178,6 +179,7 @@ try
 
 	//	return Results.Ok();
 	//});
+	#endregion
 
 	app.Run();
 
