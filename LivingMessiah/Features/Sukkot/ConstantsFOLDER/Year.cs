@@ -1,0 +1,7 @@
+﻿namespace LivingMessiah.Features.Sukkot.ConstantsFOLDER;
+
+public static class Year
+{
+	public const int Int = 2025;
+	public const string String = "2025";
+}

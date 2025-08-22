@@ -1,49 +1,35 @@
-﻿@using static LivingMessiah.Features.Sukkot.Constants.Blobs
+﻿@* @using static LivingMessiah.Features.Sukkot.Constants.Blobs *@
 
 <div class="card border border-warning border-4 bg-warning-subtle mt-4 ">
-	<h2 class=" py-2 text-center text-black"><b>Document Packet</b> <i class="fas fa-file-pdf"></i> </h2>
+  <h2 class=" py-2 text-center text-black"><b>Document Packet</b> <i class="fas fa-file-pdf"></i> </h2>
 
-	<div class="card-body text-center">
+  <div class="card-body text-center">
 
-		<ul class="list-group h3">
-			<li class="list-group-item bg-warning-subtle">
-				<a href="@UrlPDF(LivingMessiah.Features.Sukkot.Constants.PDFs.LiabilityWaiver)"
-					 target="_blank">
-					Liability Waiver
-				</a>
-			</li>
+    <ul class="list-group h3">
+      @foreach (var document in DocumentList)
+      {
+        <li class="list-group-item bg-warning-subtle">
+          <a href="@ConstantsFOLDER.Documents.Url(document.FileName)"
+             target="_blank">
+            @document.Name
+          </a>
+        </li>
+      }
+    </ul>
 
-			<li class="list-group-item bg-warning-subtle">
-				<a href="@UrlPDF(LivingMessiah.Features.Sukkot.Constants.PDFs.HouseRules)"
-					 target="_blank">
-					Sukkot 2025 House Rules
-				</a>
-			</li>
-
-			<li class="list-group-item bg-warning-subtle">
-				<a href="@UrlPDF(LivingMessiah.Features.Sukkot.Constants.PDFs.Schedule)"
-					 target="_blank">
-					Schedule
-				</a>
-			</li>
-
-			<li class="list-group-item bg-warning-subtle">
-				<a href="@UrlPDF(LivingMessiah.Features.Sukkot.Constants.PDFs.WindmillRanchSurroundingArea)"
-					 target="_blank">
-					Windmill Ranch Surrounding Area
-				</a>
-			</li>
-			@*	
-			<li class="list-group-item">
-				<a href="@UrlPDF(LivingMessiah.Features.Sukkot.Constants.PDFs.WindmillRanchSupplementalRules)"
-						target="_blank">
-					<i class="fas fa-file-pdf"></i> Windmill Ranch Supplemental Rules
-				</a>
-			</li>
-			*@
-		</ul>
-
-	</div>
+  </div>
 
 </div>
+
+@code {
+  private List<DocumentLink> DocumentList = new()
+    {
+      new("Liability Waiver", ConstantsFOLDER.Documents.PDFs.LiabilityWaiver),
+      new("Sukkot 2025 House Rules", ConstantsFOLDER.Documents.PDFs.HouseRules),
+      new("Schedule", ConstantsFOLDER.Documents.PDFs.Schedule),
+      new("Windmill Ranch Surrounding Area", ConstantsFOLDER.Documents.PDFs.WindmillRanchSurroundingArea)
+    };
+
+  private record DocumentLink(string Name, string FileName);
+}
 

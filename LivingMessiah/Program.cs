@@ -12,8 +12,13 @@ using Auth0.AspNetCore.Authentication;
 using static LivingMessiah.SecurityRoot.Auth0;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+
 using Stripe;
-using System.Text.Json;
+using LivingMessiah.Enums;
+//using OneTimeEndpoints = LivingMessiah.Features.OneTime.Endpoints;
+using SukkotEndpointsCheckoutSession = LivingMessiah.Features.Sukkot.Endpoints.CheckoutSession;
+using SukkotEndpointsWebhook = LivingMessiah.Features.Sukkot.Endpoints.Webhook;
+
 using AccountEnum = LivingMessiah.Enums.Account;
 using LivingMessiah.Features.Sukkot.Data;
 
@@ -40,6 +45,7 @@ Log.Warning("{Class}, {Environment}, AppSettingJsonFile: {AppSettingJsonFile}; "
 try
 {
 	builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(configuration));
+	//LivingMessiah.Helpers.LogHelper.DumpSectionConfiguration(builder.Configuration.GetSection("Stripe"), "Stripe");
 
 	/*
 	Log.Warning("{Class}, SyncfusionLicense: {SyncfusionLicense}",
@@ -68,6 +74,7 @@ try
 
 
 	//Services
+	//builder.Services.AddOneTimeData(); ToDo: add
 	builder.Services.AddSukkotData();
 	builder.Services.AddCalendar();
 	builder.Services.AddFeastDayPlanner();
@@ -83,20 +90,25 @@ try
 	//builder.Services.AddScoped<TokenProvider>();
 	//TokenProvider used by _Host App
 
-	builder.Services.Configure<AppSettings>(options => configuration.GetSection("AppSettings").Bind(options));
-	builder.Services.Configure<SukkotSettings>(options => configuration.GetSection("SukkotSettings").Bind(options));
+	builder.Services.Configure<AppSettings>(options => configuration.GetSection(nameof(AppSettings)).Bind(options));
+	//LivingMessiah.Helpers.LogHelper.DumpSectionConfiguration(builder.Configuration.GetSection("AppSettings"), "AppSettings");
+	builder.Services.Configure<SukkotSettings>(options => configuration.GetSection(nameof(SukkotSettings)).Bind(options));
+	builder.Services.Configure<SukkotStripeSettings>(options => configuration.GetSection(nameof(SukkotStripeSettings)).Bind(options));
 
 	builder.Services.AddRazorComponents()
 			.AddInteractiveServerComponents();
 
 	builder.Services.AddSyncfusionBlazor();
 
+	builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
 	/*
-		ToDo: delete this AI generated code as this logic is done in IReo
-		Add services(including your DbContext for Sukkot.Donation)
-			builder.Services.AddDbContext<YourDbContext>(options =>
-				options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-	 */
+	 ToDo: this doesn't work but the code after it does.
+	 var sukkotStripeSettings = configuration.GetSection(nameof(SukkotStripeSettings)).Get<SukkotStripeSettings>();
+	 StripeConfiguration.ApiKey = sukkotStripeSettings?.ApiKey ?? "";
+  */
+	var stripeApiKey = builder.Configuration["Stripe:ApiKey"];
+	StripeConfiguration.ApiKey = stripeApiKey;
 
 	var app = builder.Build();
 	app.MapDefaultEndpoints();
@@ -135,50 +147,19 @@ try
 		await httpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
 		await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 	});
-#endregion
+	#endregion
 
 	app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();
 
-	#region Endpoints
-	// Stripe webhook endpoint
-	//app.MapPost("/api/stripe/webhook", async (HttpRequest request, YourDbContext dbContext, ILogger<Program> logger) =>
-	//{
-	//	var json = await new StreamReader(request.Body).ReadToEndAsync();
-	//	var stripeSignature = request.Headers["Stripe-Signature"];
-	//	var webhookSecret = builder.Configuration["Stripe:WebhookSecret"];
+	#region Stripe Endpoints
+	AppSettings? appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
+	//OneTimeEndpoints.CheckoutSession(app, Donation.OneTime.SessionUrl, appSettings!.Domain!);
+	//OneTimeEndpoints.OneTimeDonationInsertWebhook(app, Donation.OneTime.Url);
 
-	//	Event stripeEvent;
-	//	try
-	//	{
-	//		stripeEvent = EventUtility.ConstructEvent(json, stripeSignature, webhookSecret);
-	//	}
-	//	catch (Exception ex)
-	//	{
-	//		logger.LogError(ex, "Stripe webhook signature verification failed.");
-	//		return Results.BadRequest();
-	//	}
+	SukkotEndpointsCheckoutSession.Configure(app, Donation.SukkotRegistration.SessionUrl, appSettings!.Domain!);
+	SukkotEndpointsWebhook.Configure(app, Donation.SukkotRegistration.WebhookUrl);
 
-	//	if (stripeEvent.Type == Events.PaymentIntentSucceeded)
-	//	{
-	//		//var (rowsAffected, sprocReturnValue, returnMsg) = await db!.Update(DTO_From_VM_To_DB(VM!));
-	//		//Logger!.LogInformation("{Method}; Registration updated!", nameof(SubmitValidForm));
-	//		var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-	//		// Map paymentIntent fields to your Sukkot.Donation entity
-	//		var donation = new Donation
-	//		{
-	//			Amount = paymentIntent.AmountReceived / 100m, // Stripe uses cents
-	//			StripePaymentIntentId = paymentIntent.Id,
-	//			DonorEmail = paymentIntent.ReceiptEmail,
-	//			Date = DateTime.UtcNow
-	//			// Add other fields as needed
-	//		};
-	//		dbContext.Donations.Add(donation);
-	//		await dbContext.SaveChangesAsync();
-	//	}
-
-	//	return Results.Ok();
-	//});
 	#endregion
 
 	app.Run();
@@ -195,4 +176,3 @@ finally
 {
 	Log.CloseAndFlush();
 }
-

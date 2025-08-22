@@ -62,8 +62,8 @@ public abstract class Step : SmartEnum<Step>
 	private sealed class PaymentSE : Step
 	{
 		public PaymentSE() : base($"{nameof(Id.Payment)}", Id.Payment) { }
-		public override string Heading => "Payment";
-		public override string Text => "Make Payment";
+		public override string Heading => "Donation";   // Payment
+		public override string Text => "Make Donation"; // Make Payment
 		public override string Icon => "fas fa-dollar-sign";   
 		public override string CardHeaderCSS => "bg-danger-subtle";
 		public override string CardBodyCSS => "bg-danger-subtle";

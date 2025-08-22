@@ -26,11 +26,9 @@ public interface IRepository
 	// FN:1 Also used by RegistrationSteps/Wrapper/YesNoButtons
 	Task<RegistrationSummary> GetRegistrationSummary(int id);
 
-	Task<Tuple<int, int, string>> InsertRegistrationDonation(Donation donation);
-
+	Task<int> DonationInsert(DonationRecord donation);
 
 }
-
 
 public class Repository : BaseRepositoryAsync, IRepository
 {
@@ -335,10 +333,10 @@ FROM Sukkot.tvfRegistrationSummary(@id)
 		});
 	}
 
-	public async Task<Tuple<int, int, string>> InsertRegistrationDonation(Donation donation)
+	public async Task<int> DonationInsert(DonationRecord donation)
 	{
-		base.Sql = "Sukkot.stpDonationInsert ";
-		base.Parms = new DynamicParameters(new
+		Sql = "Sukkot.stpDonationInsert ";
+		Parms = new DynamicParameters(new
 		{
 			donation.RegistrationId,
 			donation.Amount,
@@ -350,42 +348,27 @@ FROM Sukkot.tvfRegistrationSummary(@id)
 		});
 
 		Parms.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
-		Parms.Add("@ReturnValue", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
 
-		int NewId = 0;
-		int SprocReturnValue = 0;
-		string ReturnMsg = "";
-
-		Logger!.LogDebug("{Method} {Sql} {Id}", nameof(InsertRegistrationDonation), Sql, donation.RegistrationId);
+		base.Logger.LogDebug("{Method}, {Sql}", nameof(DonationInsert), Sql);
 
 		return await WithConnectionAsync(async connection =>
 		{
-			var affectedrows = await connection.ExecuteAsync(sql: base.Sql, param: base.Parms, commandType: CommandType.StoredProcedure);
-			SprocReturnValue = Parms.Get<int>("ReturnValue");
-			int? x = base.Parms.Get<int?>("NewId");
+			var affectedrows = await connection.ExecuteAsync(sql: Sql, param: Parms, commandType: CommandType.StoredProcedure);
+			int? x = Parms.Get<int?>("NewId");
 			if (x == null)
 			{
-				if (SprocReturnValue == 2601) // Unique Index Violation
-				{
-					ReturnMsg = $"Database call did not insert a new donation record because it caused a Unique Index Violation; donation.RegistrationId: {donation.RegistrationId}; ";
-					Logger!.LogDebug("{Method} {Message}", nameof(InsertRegistrationDonation), ReturnMsg);
-				}
-				else
-				{
-					ReturnMsg = $"Database call failed for donation insert; donation.RegistrationId: {donation.RegistrationId}; SprocReturnValue: {SprocReturnValue}";
-					Logger!.LogDebug("{Method} {Message}", nameof(InsertRegistrationDonation), ReturnMsg);
-				}
-
+				base.Logger.LogWarning("{Method}, {Message}", nameof(DonationInsert),
+					$"NewId is null; returning as 0; Check dbo.ErrorLog for FK_Donation_Registration conflict Error; donation.RegistrationId: {donation.RegistrationId}");
+				return 0;
 			}
 			else
 			{
 				int NewId = int.TryParse(x.ToString(), out NewId) ? NewId : 0;
-				ReturnMsg = $"Donation created for {donation.RegistrationId}; NewId={NewId}";
-				Logger!.LogInformation("{Method} {Message}", nameof(InsertRegistrationDonation), ReturnMsg);
+				base.Logger.LogDebug("{Method}, {Message}", nameof(DonationInsert), $"Returning id: {NewId}");
+				return NewId;
 			}
-
-			return new Tuple<int, int, string>(NewId, SprocReturnValue, ReturnMsg);
 		});
 	}
+
 
 }
