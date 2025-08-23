@@ -22,10 +22,11 @@ public abstract class NavButton : SmartEnum<NavButton>
 
 	#region  Declared Public Instances
 	public static readonly NavButton Print = new PrintSE();
-	public static readonly NavButton DeleteConfirmation = new DeleteConfirmationSE();
 	public static readonly NavButton Donation = new DonationSE();
 	public static readonly NavButton RegistrationSteps = new RegistrationStepsSE();
 	public static readonly NavButton RegistrationStepsBack = new RegistrationStepsBackSE();
+	//public static readonly NavButton DeleteConfirmation = new DeleteConfirmationSE(); // ToDo: Not implemented yet
+
 	// SE=SmartEnum
 	#endregion
 
@@ -51,6 +52,7 @@ public abstract class NavButton : SmartEnum<NavButton>
 		public override string RouteSuffix => "/true";
 	}
 
+	/*
 	private sealed class DeleteConfirmationSE : NavButton
 	{
 		public DeleteConfirmationSE() : base($"{nameof(Id.DeleteConfirmation)}", Id.DeleteConfirmation) { }
@@ -61,7 +63,7 @@ public abstract class NavButton : SmartEnum<NavButton>
 		public override string Route => Pages.DeleteConfirmation.Index; // Link.DeleteConfirmation;
 		public override string RouteSuffix => "";
 	}
-
+	*/
 	private sealed class DonationSE : NavButton
 	{
 		public DonationSE() : base($"{nameof(Id.Donation)}", Id.Donation) { }

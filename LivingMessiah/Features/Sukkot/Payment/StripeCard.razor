@@ -1,7 +1,6 @@
-﻿@using LivingMessiah.Settings
-@using Microsoft.Extensions.Options
+﻿@using Microsoft.Extensions.Options
+@using LivingMessiah.Features.Sukkot.ConstantsFOLDER
 
-@inject IConfiguration Configuration
 @inject ILogger<StripeCard>? Logger
 
 <div class="card border-primary">
@@ -37,30 +36,30 @@
 		</div>
 
 		<div class="col-md-6 col-lg-4">
-			<div class="card-body text-center">
-				<stripe-buy-button buy-button-id="@StripeBuyButtonId"
-													 publishable-key="@StripePublishableKey">
-				</stripe-buy-button>
-
+			<div class="card body">
+				<form method="post" action="@Donation.SukkotRegistration.SessionUrl" @formname="sukkot-registration-checkout-form">
+					<AntiforgeryToken />
+					<input type="hidden" name="@FormFields.RegistrationId" value="@RegistrationId" />
+					<input type="hidden" name="@FormFields.Email" value="@Email" />
+					<input type="hidden" name="@FormFields.Amount" value="@Amount" />
+					<div class="card-footer bg-dark-subtle text-end">
+						<button type="submit" class="btn btn-primary">Registration Donation</button>
+					</div>
+				</form>
 			</div>
 		</div>
 
-	</div>
-</div>
+	</div> <!-- row -->
+</div> <!-- card -->
 
 @code {
+	[Parameter, EditorRequired] public int RegistrationId { get; set; }
+	[Parameter, EditorRequired] public string Email { get; set; }
+	[Parameter, EditorRequired] public string Amount { get; set; }
 	[Parameter, EditorRequired] public string RemainingCostFormated { get; set; }
-	private string? StripeBuyButtonId;
-	private string? StripePublishableKey;
 
-	protected override void OnInitialized()
-	{
-		StripeBuyButtonId = Configuration["SukkotSettings:StripeBuyButtonId"];
-		StripePublishableKey = Configuration["SukkotSettings:StripePublishableKey"];
-
-
-		Logger!.LogWarning("{Method}, StripePublishableKey Length: {StripePublishableKey}"
-		 , nameof(OnInitialized), StripePublishableKey == null ? "null" : StripePublishableKey.Length.ToString());
-		//StripePublishableKey!.Substring(0,13)
-	}
+	// protected override void OnInitialized()
+	// {
+	// 	Logger!.LogDebug("{Method}, " , nameof(OnInitialized));
+	// }
 }

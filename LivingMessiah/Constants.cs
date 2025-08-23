@@ -1,13 +1,5 @@
 ﻿namespace LivingMessiah;
 
-public static class Emoji
-{
-	public const string NotYetImplemented = $"Not yet implemented {Sad}";
-	public const string Happy = @"ʘ‿ʘ";
-	public const string Sad = @"(◡︵◡)";
-	public const string Shrug = @"¯\_(ツ)_/¯";
-}
-
 public static class Global
 {
 	public const string ToastShowError = "An invalid operation occurred, contact your administrator";
@@ -18,6 +10,7 @@ public static class Utc
 	public const int ArizonaUtcMinus7 = -7;
 }
 
+// ToDo: replace with DateFormatVer2
 public static class DateFormat
 {
 	public const string ddd_mm_dd = "ddd, MM/dd";  //ddd, MM/dd/yyyy
@@ -195,13 +188,11 @@ public static class Emails
 	{
 		public static string Email() { return "donations@livingmessiah.com"; }
 	}
-
 	public static class Info
 	{
 		public static string Email() { return "info@livingmessiah.com"; }
 		public static string Subject = "?Subject=Questions";
 	}
-
 }
 
 public static class SocialMedia
