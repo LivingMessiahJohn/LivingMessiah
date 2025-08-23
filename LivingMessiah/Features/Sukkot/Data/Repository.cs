@@ -164,10 +164,9 @@ public class Repository : BaseRepositoryAsync, IRepository
 		base.Parms = new DynamicParameters(new { EMail = email });
 		base.Sql = $@"
 --DECLARE @EMail varchar(100) = 'info@test.com'
-SELECT Id, EMail
+SELECT Id, EMail, Adults
 , TimeZone AS HouseRulesAgreementTimeZone, AcceptedDate AS HouseRulesAgreementAcceptedDate
 , RegistrationId, FirstName, FamilyName, StepId
-, TotalDonation, RegistrationFeeAdjusted
 FROM Sukkot.vwRegistrationStep 
 WHERE EMail = @EMail
 ";

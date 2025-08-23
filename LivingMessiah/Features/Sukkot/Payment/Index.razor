@@ -20,10 +20,7 @@
         <PaymentSummary RegistrationSummary="@rs" />
         @if(!IsFullyPaid)
         {
-          <StripeCard Amount="@Amount"
-                      Email="@Email"
-                      RegistrationId="rs!.Id"
-                      RemainingCostFormated="RemainingCostFormated" />
+          @* ToDo: Maybe redirect to user to the Registration Steps *@          
         }
         else
         {

@@ -17,7 +17,27 @@ public static class Webhook
 			var Logger = loggerFactory.CreateLogger(nameof(Configure));
 			var json = await new StreamReader(context.Request.Body).ReadToEndAsync();
 
-			Logger.LogDebug("{Method}, {Message}", nameof(Configure), webhookUrl);
+			#region Hack
+			//Logger.LogDebug("{Method}, {Message}", nameof(Configure), webhookUrl);
+
+			string secret = config["Stripe:WebhookSecret"] ?? string.Empty;
+			if (!string.IsNullOrEmpty(secret))
+			{
+				if (secret.Length >= 10)
+				{
+					secret = secret.Substring(0, 10);
+				}
+				else
+				{
+					secret = "Length less than 10"; ;
+				}
+			}
+			else
+			{
+				secret = "IsNullOrEmpty";
+			}
+			Logger.LogWarning("{Method}, {Message}, {Secret}", nameof(Configure), webhookUrl, secret);
+			#endregion
 
 			try
 			{
