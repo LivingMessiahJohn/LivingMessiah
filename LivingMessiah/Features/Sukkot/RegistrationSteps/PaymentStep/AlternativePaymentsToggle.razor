@@ -1,0 +1,48 @@
+﻿
+
+<div class="d-flex justify-content-end mt-2">
+  @if (IsCollapsed)
+  {
+    <button @onclick="@(e => ToggleButtonClick(IsCollapsed))"
+            class="btn btn-outline-primary btn-sm ms-1">
+      Alternative Donation Options <i class='fas fa-chevron-down'></i>
+    </button>
+  }
+  else
+  {
+    <button @onclick="@(e => ToggleButtonClick(IsCollapsed))"
+            class="btn btn-outline-primary btn-sm ms-1">
+      Hide <i class='fas fa-chevron-up'></i>
+    </button>
+  }
+
+</div>
+
+@if (!IsCollapsed)
+{
+  <div class="card mt-1 mb-3">
+    <div class="card-body bg-light">
+      <ol class="list-group list-group-numbered fs-6">
+
+        <li class="list-group-item list-group-item-secondary">
+          Pay via <u>Zelle</u>. Send donations via Zelle Pay via Donations@LivingMessiah.com
+        </li>
+        <li class="list-group-item list-group-item-secondary">
+          Pay via <u>Check</u>. Click	<PrintButton Id="Id" />and follow the instructions.
+        </li>
+      </ol>
+
+    </div>
+  </div>
+}
+
+@code {
+  [Parameter, EditorRequired] public int Id { get; set; }
+
+  public bool IsCollapsed { get; set; } = true;
+  protected void ToggleButtonClick(bool isCollapsed)
+  {
+    IsCollapsed = !isCollapsed;
+  }
+
+}

@@ -1,0 +1,40 @@
+﻿@using Microsoft.Extensions.Options
+@using LivingMessiah.Features.Sukkot.ConstantsFOLDER
+
+@inject ILogger<StripeCard>? Logger
+
+<form method="post" action="@Donation.SukkotRegistration.SessionUrl" @formname="sukkot-registration-checkout-form">
+  <AntiforgeryToken />
+  @if(Adults > 1)
+  {
+    <input type="hidden" name="@FormFields.Amount" value="@MoreThanOneAdultInCents" />
+  }
+  else
+  {
+    <input type="hidden" name="@FormFields.Amount" value="@OneAdultInCents" />
+  }
+  <input type="hidden" name="@FormFields.RegistrationId" value="@RegistrationId" />
+  <input type="hidden" name="@FormFields.Email" value="@Email" />
+  <div class="card-body text-center">
+    <button type="submit" class="btn btn-success btn-lg">
+      <i class="fab fa-cc-stripe"></i> 
+      Stripe Processing
+      <i class="fas fa-chevron-circle-right"> </i>
+    </button>
+    <p class="mt-0"><small>Amount @(Adults > 1 ? "$100.00" : "$50.00")</small></p>
+  </div>
+</form>
+
+@code {
+  [Parameter, EditorRequired] public int Adults { get; set; }
+  [Parameter, EditorRequired] public int RegistrationId { get; set; }
+  [Parameter, EditorRequired] public string Email { get; set; }
+
+  private string OneAdultInCents = "5000";
+  private string MoreThanOneAdultInCents = "10000";
+
+  // protected override void OnInitialized()
+  // {
+  // 	Logger!.LogDebug("{Method}, " , nameof(OnInitialized));
+  // }
+}
