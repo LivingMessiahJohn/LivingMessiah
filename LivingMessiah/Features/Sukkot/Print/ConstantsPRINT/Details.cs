@@ -1,8 +1,8 @@
-﻿using SukkotConstants = LivingMessiah.Features.Sukkot.ConstantsFOLDER;
+﻿using LivingMessiah.Features.Sukkot.Constants;
 
 namespace LivingMessiah.Features.Sukkot.Print.ConstantsPRINT;
 
 public static class Details
 {
-	public const string Title = $"Living Messiah Sukkot Registration {SukkotConstants.Year.String}";
+	public const string Title = $"Living Messiah Sukkot Registration {Year.String}";
 }

@@ -37,7 +37,8 @@
 		Logger!.LogDebug(message);
 		try
 		{
-			DonationReportList = await db!.GetDonationReport(filter, sort);
+			// ToDo: Delete
+			// DonationReportList = await db!.GetDonationReport(filter, sort);
 			if (DonationReportList == null)
 			{
 				Toast!.ShowWarning("DonationReportList NOT FOUND");

@@ -2,6 +2,7 @@
 @* used to be Sukkot/Details, should I add another page directive? *@
 
 @using LivingMessiah.Features.Sukkot.Enums
+@using LivingMessiah.Features.Sukkot.Enums.Helpers
 @using LivingMessiah.SecurityRoot
 @using Microsoft.AspNetCore.Components.Authorization
 
@@ -98,7 +99,7 @@
 	private void DoPassed()
 	{
 		IsAuthorized = true;
-		(DateTime[]? week1, DateTime[]? week2) = Helper.GetAttendanceDatesArray(vwRegistration!.AttendanceBitwise);
+		(DateTime[]? week1, DateTime[]? week2) = EntryFormHelper.GetAttendanceDatesArray(vwRegistration!.AttendanceBitwise);
 		vwRegistration.AttendanceDateList = week1;
 		vwRegistration.AttendanceDateList2ndMonth = week2!;
 	}

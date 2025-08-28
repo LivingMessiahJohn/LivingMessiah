@@ -1,4 +1,4 @@
-﻿namespace LivingMessiah.Features.Sukkot.RegistrationSteps.Enums;
+﻿namespace LivingMessiah.Features.Sukkot.Enums;
 
 public class StepConstants
 {

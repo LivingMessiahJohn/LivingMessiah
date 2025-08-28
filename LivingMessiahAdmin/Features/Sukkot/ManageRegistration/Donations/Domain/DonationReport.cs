@@ -19,9 +19,6 @@ public class DonationReport
 	[DataType(DataType.Currency)]
 	public decimal TotalDonation { get; set; }
 
-	[DataType(DataType.Currency)]
-	public decimal AmountDue { get; set; }
-
 	public string FullyPaidIcon
 	{
 		get
