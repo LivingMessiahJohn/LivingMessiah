@@ -1,4 +1,4 @@
-﻿using LivingMessiah.Features.Sukkot.ConstantsFOLDER;
+﻿using LivingMessiah.Features.Sukkot.Constants;
 
 namespace LivingMessiah.Features.Sukkot.LandingPage.ConstantsFOLDER;
 

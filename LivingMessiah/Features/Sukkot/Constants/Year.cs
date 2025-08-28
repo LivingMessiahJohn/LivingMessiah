@@ -1,4 +1,4 @@
-﻿namespace LivingMessiah.Features.Sukkot.ConstantsFOLDER;
+﻿namespace LivingMessiah.Features.Sukkot.Constants;
 
 public static class Year
 {

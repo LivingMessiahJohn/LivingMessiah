@@ -1,10 +1,10 @@
-﻿namespace LivingMessiah.Features.Sukkot.Enums;
+﻿namespace LivingMessiah.Features.Sukkot.Enums.Helpers;
 
-public class Helper
+public class EntryFormHelper
 {
 	public static (DateTime[]? week1, DateTime[]? week2) GetAttendanceDatesArray(int attendanceBitwise)
 	{
-		if (!Enums.DateRangeType.Attendance.HasSecondMonth)
+		if (!DateRangeType.Attendance.HasSecondMonth)
 		{
 #pragma warning disable CS0252 // Possible unintended reference comparison; left hand side needs cast
 			if (AttendanceDate.FromValue(attendanceBitwise) == AttendanceDate.None)

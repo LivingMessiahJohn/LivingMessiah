@@ -1,6 +1,6 @@
 ﻿using Ardalis.SmartEnum;
 
-namespace LivingMessiah.Features.Sukkot.RegistrationSteps.Enums;
+namespace LivingMessiah.Features.Sukkot.Enums;
 
 public abstract class Step : SmartEnum<Step>
 {

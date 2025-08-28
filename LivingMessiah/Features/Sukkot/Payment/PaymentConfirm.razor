@@ -6,7 +6,12 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using LivingMessiah.SecurityRoot
 
+@inject ISecurityHelper? SecurityHelper
 @inject NavigationManager NavigationManager
+@inject ILogger<PaymentConfirm>? Logger
+@inject IToastService? Toast
+@inject Data.IRepository? db
+
 
 <PageTitle>@Page.ConfirmRegistration.Title</PageTitle>
 
@@ -41,10 +46,10 @@ ToDo:
           <div class="@MediaQuery.XsOrSm.DivClass">
             <div class="d-flex justify-content-between mt-4">
               <ReturnToIntroButton Title="" />
-              <button @onclick="@(e => ButtonPrintClick(Id))"
+              <button @onclick="@(e => ButtonPrintClick(IdNullable))"
                       class="btn btn-outline-primary btn-lg"
                       title="Registration Print"
-                      disabled="@(!Id.HasValue)">
+                      disabled="@(!IdNullable.HasValue)">
                 <i class="fas fa-print"></i> Print
               </button>
             </div>
@@ -53,10 +58,10 @@ ToDo:
           <div class="@MediaQuery.MdOrLgOrXl.DivClass">
             <div class="d-flex justify-content-between mt-4">
               <ReturnToIntroButton />
-              <button @onclick="@(e => ButtonPrintClick(Id))"
+              <button @onclick="@(e => ButtonPrintClick(IdNullable))"
                       class="btn btn-outline-primary btn-lg"
                       title="Registration Print"
-                      disabled="@(!Id.HasValue)">
+                      disabled="@(!IdNullable.HasValue)">
                 <i class="fas fa-print"></i> Print Registration
               </button>
             </div>
@@ -79,20 +84,45 @@ ToDo:
 
 @code {
 
-  protected int? Id; // = 69;
+  protected int? IdNullable;
+  protected int Id;
+  string? Email;
 
-  protected override void OnInitialized()
+  protected override async Task OnInitializedAsync()
   {
+    Email = await SecurityHelper!.GetEmail();
 
+    if (String.IsNullOrEmpty(Email))
+    {
+      Logger!.LogDebug("{Method} Email is null or Empty", nameof(OnInitializedAsync));
+    }
+    else
+    {
+      try
+      {
+        IdNullable = await db!.GetRegistrationIdByEmail(Email);
+        if (IdNullable.HasValue)
+        {
+          Id = IdNullable.Value;
+          Logger!.LogInformation("{Method} {Id}", nameof(OnInitializedAsync), Id);
+        }
+        else
+        {
+          Toast!.ShowWarning("Registration not found");
+        } 
+      }
+      catch (Exception ex)
+      {
+        Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+        Toast!.ShowError("An invalid operation occurred, contact your administrator");
+      }
+    }
   }
-
-
   void ButtonPrintClick(int? id)
   {
     if (id is not null)
     {
       NavigationManager!.NavigateTo($"{Enums.Pages.Print.Index}/{id}/true");
     }
-    // else should never happen
   }
 }

@@ -1,9 +1,9 @@
 ﻿@page "/Sukkot/RegistrationSteps"
 @page "/Sukkot/RegistrationShell"
 
+@using LivingMessiah.Features.Sukkot.Enums
 @using LivingMessiah.Features.Sukkot.NormalUser
 @using LivingMessiah.Features.Sukkot.RegistrationSteps.Agreement
-@using LivingMessiah.Features.Sukkot.RegistrationSteps.Enums
 @using LivingMessiah.Features.Sukkot.RegistrationSteps.NotAuthorized
 @using LivingMessiah.Features.Sukkot.RegistrationSteps.PaymentStep
 @using LivingMessiah.SecurityRoot
@@ -65,17 +65,17 @@
         <PaymentRF>
           @if (@vm.Step == Step.Payment && vm.CurrentStepRecord is not null)
           {
-
             <div class="card my-2 @CurrentStep!.CardBodyCSS">
               <div class="card-body">
-                <p class="card-text text-center">
+                <p class="fs-5 text-center">
                   We are currently using <b>Stripe Payment Links</b> for processing Living Messiah Ministry Sukkot donations.
                   <br /><br />
                   Click the <span class="text-success">button</span> below to proceed to the payment page.
                 </p>
               </div>
               <div class="card-body">
-                <StripeCard Adults="@vm.Adults"
+                @* @vm.FeeEnumValue needs to be CurrentFeeNumValue and it needs to be updated when the EditForm is Updated *@
+                <StripeCard RegistrationFee="@RegistrationFee.FromValue(@vm.FeeEnumValue)"
                             Email="@vm.EmailAddress"
                             RegistrationId="@vm!.CurrentStepRecord.Id" />
               </div>
@@ -123,8 +123,6 @@
 
 @code {
 
-
-
   protected Step? CurrentStep;
 
   protected bool TurnSpinnerOff = false;
@@ -162,7 +160,8 @@
         {
           vm!.CurrentStepRecord = new CurrentStepRecord((int)vw.RegistrationId, vw.FirstName, vw.FamilyName);
           vm!.Step = Step.FromValue((int)vw.StepId!);
-          vm.Adults = vw.Adults ?? 0;  
+          vm.Adults = vw.Adults ?? 0; // this can't be null if there is a RegistrationId
+          vm.FeeEnumValue = (int)vw.FeeEnumValue!; // this can't be null if there is a RegistrationId  
           CurrentStep = vm!.Step;
         }
         else

@@ -24,7 +24,7 @@ public class EntryFormVMValidator : AbstractValidator<EntryFormVM>
 
 		RuleFor(p => p.Adults)
 				.NotNull().WithMessage("You must enter the number of adults")
-				.GreaterThanOrEqualTo(1).WithMessage("Number of adults must be greater than 1")
+				.GreaterThanOrEqualTo(1).WithMessage("Number of adults must be 1 or greater")
 				.LessThan(20).WithMessage("Number of adults cannot be greater than 20");
 	}
 }

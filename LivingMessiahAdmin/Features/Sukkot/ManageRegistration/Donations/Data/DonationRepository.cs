@@ -13,7 +13,6 @@ public interface IDonationRepository
 	string BaseSqlDump { get; }
 	string BaseServerId { get; }
 	Task<int> InsertRegistrationDonation(Donation donation);
-	Task<List<DonationReport>> GetDonationReport(DonationStatusFilter filter, string sortAndOrder);
 	Task<List<DonationDetail>> GetDonationDetails(int registrationId);
 	Task<List<DonationDetail>> GetDonationDetailsAll();
 	Task<DonationDetail> GetDonationDetail(int id);
@@ -131,28 +130,6 @@ WHERE Id=@Id
 		{
 			var count = await connection.ExecuteAsync(sql: Sql, param: Parms);
 			return count;
-		});
-	}
-
-	public async Task<List<DonationReport>> GetDonationReport(DonationStatusFilter filter, string sortAndOrder)
-	{
-		Parms = new DynamicParameters(new { DonationStatus = filter.Value });
-		//base.Parms = new DynamicParameters(new { SortAndOrder = sortAndOrder });
-
-		Sql = $@"
-SELECT Id, EMail, FamilyName, FirstName, StatusId, StatusDescr, RegistrationFeeAdjusted
-, TotalDonation, AmountDue
-FROM Sukkot.tvfDonationReport(@DonationStatus)
-ORDER BY {sortAndOrder}
-";
-
-		//base.Logger.LogDebug($"Inside {nameof(DonationRepository)}!{nameof(GetDonationReport)}, filter.Name/filter.Value: {filter.Name}/{filter.Value}");
-		//base.Logger.LogDebug($"Inside {nameof(DonationRepository)}!{nameof(GetDonationReport)}, Sql: {Sql}");
-
-		return await WithConnectionAsync(async connection =>
-		{
-			var rows = await connection.QueryAsync<DonationReport>(Sql, Parms);
-			return rows.ToList();
 		});
 	}
 

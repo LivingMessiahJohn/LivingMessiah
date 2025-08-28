@@ -16,7 +16,7 @@ public interface IRepository
 
 	Task<Tuple<int, int, string>> InsertHouseRulesAgreement(string email, string timeZone);  // FN:1
 	Task<int> DeleteHRA(int id);  // stpHRADelete
-	Task<Tuple<int, int, string>> DeleteRegistration(int id);
+	Task<Tuple<int, int, string>> DeleteRegistration(int id); // Not used
 
 	Task<vwRegistration> ById(int id);
 	Task<vwRegistrationStep> GetByEmail(string email);
@@ -26,8 +26,8 @@ public interface IRepository
 	// FN:1 Also used by RegistrationSteps/Wrapper/YesNoButtons
 	Task<RegistrationSummary> GetRegistrationSummary(int id);
 
-	Task<int> DonationInsert(DonationRecord donation);
-
+	Task<Tuple<int, string>> DonationInsert(DonationRecord donation);
+	Task<int?> GetRegistrationIdByEmail(string email);
 }
 
 public class Repository : BaseRepositoryAsync, IRepository
@@ -80,7 +80,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 			}
 			else
 			{
-				NewId = int.TryParse(x.ToString(), out NewId) ? NewId : 0;
+				NewId = int.TryParse(x.ToString(), out var tempId) ? tempId : 0;
 				ReturnMsg = $"House Rules Agreement created for {email}; NewId={NewId}";
 				Logger!.LogDebug("{Method} {NewId}", nameof(InsertHouseRulesAgreement), NewId);
 			}
@@ -164,7 +164,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 		base.Parms = new DynamicParameters(new { EMail = email });
 		base.Sql = $@"
 --DECLARE @EMail varchar(100) = 'info@test.com'
-SELECT Id, EMail, Adults
+SELECT Id, EMail, Adults, FeeEnumValue
 , TimeZone AS HouseRulesAgreementTimeZone, AcceptedDate AS HouseRulesAgreementAcceptedDate
 , RegistrationId, FirstName, FamilyName, StepId
 FROM Sukkot.vwRegistrationStep 
@@ -177,15 +177,33 @@ WHERE EMail = @EMail
 		});
 	}
 
+
+	public async Task<int?> GetRegistrationIdByEmail(string email)
+	{
+		base.Logger.LogDebug("{Method}, email: {email}", nameof(GetRegistrationIdByEmail), email);
+		base.Parms = new DynamicParameters(new { EMail = email });
+		base.Sql = $@"
+--DECLARE @EMail varchar(100) = 'info@test.com'
+SELECT Id 
+FROM Sukkot.Registration
+WHERE EMail = @EMail
+";
+		return await WithConnectionAsync(async connection =>
+		{
+			var rows = await connection.QueryAsync<int>(sql: base.Sql, param: base.Parms);
+			return rows.SingleOrDefault()!;
+		});
+	}
+
 	public async Task<EntryFormVM> GetById2(int id)  //ViewModel_RE_DELETE
 	{
 		Parms = new DynamicParameters(new { Id = id });
 		Sql = $@"
 --DECLARE @id int=4
 SELECT TOP 1 
-Id, FamilyName, FirstName, SpouseName, OtherNames, EMail, Phone, Adults, ChildBig, ChildSmall
+Id, FamilyName, FirstName, SpouseName, OtherNames, EMail, Phone, Adults, ChildBig, ChildSmall, FeeEnumValue
 , StatusId AS StepId
-, AttendanceBitwise, LmmDonation, Notes
+, AttendanceBitwise, Notes
 --, Avatar
 FROM Sukkot.Registration 
 WHERE Id = @Id";
@@ -211,9 +229,9 @@ WHERE Id = @Id";
 			registration.Adults,
 			registration.ChildBig,
 			registration.ChildSmall,
+			registration.FeeEnumValue,
 			registration.StatusId, // ToDo Convert to StepId
 			registration.AttendanceBitwise,
-			LmmDonation = 0,
 			registration.Avatar,
 			registration.Notes,
 		});
@@ -271,9 +289,9 @@ WHERE Id = @Id";
 			registration.Adults,
 			registration.ChildBig,
 			registration.ChildSmall,
+			registration.FeeEnumValue,
 			registration.AttendanceBitwise,
 			registration.StatusId, // ToDo Convert to StepId
-			registration.LmmDonation,
 			Notes = LivingMessiah.Data.Helper.Scrub(registration.Notes),
 			registration.Avatar
 		});
@@ -318,12 +336,12 @@ WHERE Id = @Id";
 
 	public async Task<RegistrationSummary> GetRegistrationSummary(int id)
 	{
-		base.Parms = new DynamicParameters(new { id = id });  // This should be { Id = id })
+		base.Parms = new DynamicParameters(new { Id = id }); 
 		base.Sql = $@"
 --DECLARE @id int=2
 SELECT Id, EMail, FamilyName, Adults, ChildBig, ChildSmall, StatusId AS StepId
 , AttendanceBitwise, RegistrationFeeAdjusted, TotalDonation
-FROM Sukkot.tvfRegistrationSummary(@id)
+FROM Sukkot.tvfRegistrationSummary(@Id)
 ";
 		return await WithConnectionAsync(async connection =>
 		{
@@ -332,8 +350,21 @@ FROM Sukkot.tvfRegistrationSummary(@id)
 		});
 	}
 
-	public async Task<int> DonationInsert(DonationRecord donation)
+	public async Task<Tuple<int, string>> DonationInsert(DonationRecord donation)
 	{
+		int NewId = 0;
+		string ErrorMsg = "";
+
+		Logger.LogDebug("{Method}, {RegistrationId}, Calling: {Sql}", nameof(DonationInsert), donation.RegistrationId, nameof(GetDonationRowCountByRegistrationId));
+		int rowCount = await	GetDonationRowCountByRegistrationId(donation.RegistrationId);
+
+		if (rowCount > 0)
+		{
+			ErrorMsg = $"Donation already exists for registrationId {donation.RegistrationId}; returning 0";
+			Logger.LogWarning("{Method}, {Message}", nameof(DonationInsert), ErrorMsg);
+			return new Tuple<int, string>(NewId, ErrorMsg); 
+		}
+
 		Sql = "Sukkot.stpDonationInsert ";
 		Parms = new DynamicParameters(new
 		{
@@ -348,7 +379,7 @@ FROM Sukkot.tvfRegistrationSummary(@id)
 
 		Parms.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-		base.Logger.LogDebug("{Method}, {Sql}", nameof(DonationInsert), Sql);
+		//Logger.LogDebug("{Method}, {RegistrationId}, {Sql}", nameof(DonationInsert), donation.RegistrationId, Sql);
 
 		return await WithConnectionAsync(async connection =>
 		{
@@ -356,18 +387,28 @@ FROM Sukkot.tvfRegistrationSummary(@id)
 			int? x = Parms.Get<int?>("NewId");
 			if (x == null)
 			{
-				base.Logger.LogWarning("{Method}, {Message}", nameof(DonationInsert),
-					$"NewId is null; returning as 0; Check dbo.ErrorLog for FK_Donation_Registration conflict Error; donation.RegistrationId: {donation.RegistrationId}");
-				return 0;
+				ErrorMsg = $"NewId is null; returning as 0; Check dbo.ErrorLog for FK_Donation_Registration conflict Error; donation.RegistrationId: {donation.RegistrationId}";
+				Logger.LogWarning("{Method}, {Message}", nameof(DonationInsert), ErrorMsg);
 			}
 			else
 			{
-				int NewId = int.TryParse(x.ToString(), out NewId) ? NewId : 0;
-				base.Logger.LogDebug("{Method}, {Message}", nameof(DonationInsert), $"Returning id: {NewId}");
-				return NewId;
+				NewId = int.TryParse(x.ToString(), out NewId) ? NewId : 0;
+				Logger.LogDebug("{Method}, {Message}", nameof(DonationInsert), $"Returning NewId: {NewId}");
 			}
+
+			return new Tuple<int, string>(NewId, ErrorMsg);
 		});
 	}
 
+	private async Task<int> GetDonationRowCountByRegistrationId(int registrationId)
+	{
+		base.Parms = new DynamicParameters(new { RegistrationId = registrationId });
+		base.Sql = $@"SELECT COUNT(Id) AS Rows FROM Sukkot.Donation WHERE RegistrationId = @RegistrationId";
+		return await WithConnectionAsync(async connection =>
+		{
+			var rows = await connection.QueryAsync<int>(sql: base.Sql, param: base.Parms);
+			return rows.SingleOrDefault()!;
+		});
+	}
 
 }

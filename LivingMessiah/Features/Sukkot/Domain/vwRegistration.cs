@@ -1,4 +1,6 @@
 ﻿
+using LivingMessiah.Features.Sukkot.Enums;
+
 namespace LivingMessiah.Features.Sukkot.Domain;
 
 public class vwRegistration
@@ -15,10 +17,9 @@ public class vwRegistration
 	public int ChildSmall { get; set; }
 	public int AttendanceTotal { get; set; }
 	public int StepId { get; set; }
-	public string? StepName => RegistrationSteps.Enums.Step.FromValue(StepId).Name;
-	public int StepValue => RegistrationSteps.Enums.Step.FromValue(StepId);
-	public decimal RegistrationFeeAdjusted { get; set; }
-	public decimal LmmDonation { get; set; }
+	public string? StepName => Step.FromValue(StepId).Name;
+	public int StepValue => Step.FromValue(StepId);
+	public decimal RegistrationFeeAdjusted { get; set; } // Deprecate, used only by 
 	public string? Notes { get; set; }
 	public int AttendanceBitwise { get; set; }
 	public DateTime[]? AttendanceDateList { get; set; }

@@ -18,9 +18,12 @@ using LivingMessiah.Enums;
 //using OneTimeEndpoints = LivingMessiah.Features.OneTime.Endpoints;
 using SukkotEndpointsCheckoutSession = LivingMessiah.Features.Sukkot.Endpoints.CheckoutSession;
 using SukkotEndpointsWebhook = LivingMessiah.Features.Sukkot.Endpoints.Webhook;
+using LivingMessiah.Features.Sukkot.Settings;
 
 using AccountEnum = LivingMessiah.Enums.Account;
 using LivingMessiah.Features.Sukkot.Data;
+using LivingMessiah.Features.Sukkot.Endpoints;
+using LivingMessiah.Features.Sukkot.Endpoints.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,8 +95,8 @@ try
 
 	builder.Services.Configure<AppSettings>(options => configuration.GetSection(nameof(AppSettings)).Bind(options));
 	//LivingMessiah.Helpers.LogHelper.DumpSectionConfiguration(builder.Configuration.GetSection("AppSettings"), "AppSettings");
+	builder.Services.Configure<StripeSettings>(options => configuration.GetSection(nameof(StripeSettings)).Bind(options));
 	builder.Services.Configure<SukkotSettings>(options => configuration.GetSection(nameof(SukkotSettings)).Bind(options));
-	builder.Services.Configure<SukkotStripeSettings>(options => configuration.GetSection(nameof(SukkotStripeSettings)).Bind(options));
 
 	builder.Services.AddRazorComponents()
 			.AddInteractiveServerComponents();
@@ -104,10 +107,11 @@ try
 
 	/*
 	 ToDo: this doesn't work but the code after it does.
-	 var sukkotStripeSettings = configuration.GetSection(nameof(SukkotStripeSettings)).Get<SukkotStripeSettings>();
+	 var sukkotStripeSettings = configuration.GetSection(nameof(Settings)).Get<Settings>();
 	 StripeConfiguration.ApiKey = sukkotStripeSettings?.ApiKey ?? "";
   */
-	var stripeApiKey = builder.Configuration["Stripe:ApiKey"];
+	
+	 var stripeApiKey = builder.Configuration[StripeConstants.ApiKey];
 	StripeConfiguration.ApiKey = stripeApiKey;
 
 	var app = builder.Build();
@@ -157,8 +161,8 @@ try
 	//OneTimeEndpoints.CheckoutSession(app, Donation.OneTime.SessionUrl, appSettings!.Domain!);
 	//OneTimeEndpoints.OneTimeDonationInsertWebhook(app, Donation.OneTime.Url);
 
-	SukkotEndpointsCheckoutSession.Configure(app, Donation.SukkotRegistration.SessionUrl, appSettings!.Domain!);
-	SukkotEndpointsWebhook.Configure(app, Donation.SukkotRegistration.WebhookUrl);
+	SukkotEndpointsCheckoutSession.CheckoutSessionConfig(app, Donation.SukkotRegistration.SessionUrl, appSettings!.Domain!);
+	SukkotEndpointsWebhook.WebhookConfig(app, Donation.SukkotRegistration.WebhookUrl);
 
 	#endregion
 

@@ -1,4 +1,4 @@
-﻿namespace LivingMessiah.Settings;
+﻿namespace LivingMessiah.Features.Sukkot.Settings;
 
 public class SukkotSettings
 {

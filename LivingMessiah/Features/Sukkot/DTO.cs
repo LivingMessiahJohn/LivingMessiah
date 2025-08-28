@@ -9,9 +9,11 @@ public record DTO
 	public string? OtherNames { get; set; }
 	public string? EMail { get; set; }
 	public string? Phone { get; set; }
+
 	public int Adults { get; set; }
 	public int ChildBig { get; set; }
 	public int ChildSmall { get; set; }
+	public int FeeEnumValue { get; set; } 
 
 	public int StatusId { get; set; } // ToDo Convert to StepId
 
@@ -19,6 +21,4 @@ public record DTO
 
 	public string? Notes { get; set; }
 	public string? Avatar { get; set; }
-	public decimal LmmDonation { get; set; }
-
 }
