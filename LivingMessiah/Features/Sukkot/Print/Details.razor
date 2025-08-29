@@ -1,102 +1,129 @@
-﻿
-@using LivingMessiah.Features.Sukkot.Domain
+﻿@using LivingMessiah.Features.Sukkot.Data
 @using LivingMessiah.Features.Sukkot.Enums;
 
 <h4 class="my-4 text-center border-bottom border-dark-subtle border-4">@ConstantsPRINT.Details.Title</h4>
 
 <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
 
-	<div class="d-flex justify-content-around">
-		<div><b>Name</b>: @vwRegistration!.FullName(false); <i>@vwRegistration!.OtherNames</i></div>
+  <div class="d-flex justify-content-around">
+    <div><b>Name</b>: @RegistrationQuery!.FullName(false); <i>@RegistrationQuery!.OtherNames</i></div>
 
-		<div><b>Registration#</b>: @vwRegistration!.Id</div>
-	</div>
+    <div><b>Registration#</b>: @RegistrationQuery!.Id</div>
+  </div>
 
-	<div class="d-flex justify-content-around">
-		<div><b>EMail / Phone</b>: @vwRegistration!.EMail @Phone2</div>
+  <div class="d-flex justify-content-around">
+    <div><b>EMail / Phone</b>: @RegistrationQuery!.EMail @Phone2</div>
 
-		<div class=" @Step.FromValue(vwRegistration.StepId).CardBodyCSS"><b>Step</b>: @vwRegistration.StepName</div>
+    <div class=" @Step.FromValue(RegistrationQuery.StepId).CardBodyCSS"><b>Step</b>: @RegistrationQuery.StepName</div>
 
-	</div>
+  </div>
 
 </div>
 
 @* House Rules Agreement *@
 <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
-	<div class="d-flex justify-content-center">
-		<b>House Rules Agreement</b>:
-		Agreed on @vwRegistration!.HouseRulesAgreementDate
-	</div>
+  <div class="d-flex justify-content-center">
+    <b>House Rules Agreement</b>:
+    Agreed on @RegistrationQuery!.HouseRulesAgreementDate
+  </div>
 </div>
 
 
 @* Attendance *@
 
 <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
-	<div class="d-flex justify-content-center">
-		<b>Attendance</b>:&nbsp;
-		<ul class="list-inline">
-			<li class="list-inline-item">Adults: <span class="">@vwRegistration!.Adults</span></li>
-			<li class="list-inline-item">Child (Big):<span class="">@vwRegistration!.ChildBig</span></li>
-			<li class="list-inline-item">Child (Small):<span class="">@vwRegistration!.ChildSmall</span></li>
-		</ul>
-	</div>
+  <div class="d-flex justify-content-center">
+    <b>Attendance</b>:&nbsp;
+    <ul class="list-inline">
+      <li class="list-inline-item">Adults: <span class="">@RegistrationQuery!.Adults</span></li>
+      <li class="list-inline-item">Child (Big):<span class="">@RegistrationQuery!.ChildBig</span></li>
+      <li class="list-inline-item">Child (Small):<span class="">@RegistrationQuery!.ChildSmall</span></li>
+    </ul>
+  </div>
 
-	<div class="@MediaQuery.Xs.DivClass">
-		<div class="d-flex justify-content-center mb-4">
-			<AttendanceDateCalendar IsXs="true"
-															AttendanceDateList="vwRegistration!.AttendanceDateList"
-															AttendanceDateList2ndMonth="vwRegistration!.AttendanceDateList2ndMonth">
-			</AttendanceDateCalendar>
-		</div>
-	</div>
+  <div class="@MediaQuery.Xs.DivClass">
+    <div class="d-flex justify-content-center mb-4">
+      <AttendanceDateCalendar IsXs="true"
+                              AttendanceDateList="RegistrationQuery!.AttendanceDateList"
+                              AttendanceDateList2ndMonth="RegistrationQuery!.AttendanceDateList2ndMonth">
+      </AttendanceDateCalendar>
+    </div>
+  </div>
 
 
-	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
-		<div class="d-flex justify-content-center mb-4">
-			<AttendanceDateCalendar IsXs="false"
-															AttendanceDateList="vwRegistration!.AttendanceDateList"
-															AttendanceDateList2ndMonth="vwRegistration!.AttendanceDateList2ndMonth">
-			</AttendanceDateCalendar>
-		</div>
-	</div>
+  <div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+    <div class="d-flex justify-content-center mb-4">
+      <AttendanceDateCalendar IsXs="false"
+                              AttendanceDateList="RegistrationQuery!.AttendanceDateList"
+                              AttendanceDateList2ndMonth="RegistrationQuery!.AttendanceDateList2ndMonth">
+      </AttendanceDateCalendar>
+    </div>
+  </div>
 
 </div>
 
 @* Cost *@
 <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
-	<div class="d-flex justify-content-center mb-2">
-		<span class="p-1"><b>Cost</b>:&nbsp;</span>
-		<span class="p-1 bg-danger-subtle text-black">@vwRegistration!.RegistrationFeeAdjusted.ToString("C0")</span>
-	</div>
+  <div class="d-flex justify-content-center mb-2">
+    <span class="p-1"><b>Registration Fee</b>:&nbsp;</span>
+    <span class="p-1 bg-warning-subtle text-black">
+      @Fee
+    </span>
+  </div>
 </div>
 
-@* Notes *@
-@if (!String.IsNullOrEmpty(vwRegistration!.Notes))
+@* Donation *@
+@if (RegistrationQuery.DonationQuery is not null)
 {
-	<div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
-		<div class="d-flex justify-content-center">
-			<b>Notes</b>: @vwRegistration!.Notes
-		</div>
-	</div>
+  <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+    <div class="d-flex justify-content-center mb-2">
+      <span class="p-1"><b>Paid Amount</b>:&nbsp;</span>
+      <span class="p-1 bg-warning-subtle text-black">@(RegistrationQuery.DonationQuery!.Amount.ToString("C2"))</span>
+    </div>
+    <div class="d-flex justify-content-center mb-2">
+      <span class="p-1"><b>Reference</b>:&nbsp;</span>
+      <span class="p-1 text-black"><small>@(RegistrationQuery.DonationQuery!.ReferenceId)</small></span>
+    </div>
+    <div class="d-flex justify-content-center mb-2">
+      <span class="p-1"><b>Date</b>:&nbsp;</span>
+      <span class="p-1 text-black">@(RegistrationQuery.DonationQuery!.CreateDate)</span>
+    </div>
+  </div>
+}
+
+@* Notes *@
+@if (!String.IsNullOrEmpty(RegistrationQuery!.Notes))
+{
+  <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+    <div class="d-flex justify-content-center">
+      <b>Notes</b>: @RegistrationQuery!.Notes
+    </div>
+  </div>
 }
 
 @* Address (print only) *@
 <div class="d-none d-print-block">
-	<div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
-		<div class="d-flex justify-content-center">
-			<Address OnOneLine="true" UseLabel="true" />
-		</div>
-	</div>
+  <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+    <div class="d-flex justify-content-center">
+      <Address OnOneLine="true" UseLabel="true" />
+    </div>
+  </div>
 </div>
 
 @code {
-	[Parameter, EditorRequired] public vwRegistration? vwRegistration { get; set; }
+  [Parameter, EditorRequired] public RegistrationQuery? RegistrationQuery { get; set; }
 
-	string Phone2 = string.Empty;
+  string Phone2 = string.Empty;
+  string Fee = "___";
 
-	protected override void OnParametersSet()
-	{
-		Phone2 = !String.IsNullOrEmpty(@vwRegistration!.Phone) ? $" / Phone: {@vwRegistration!.Phone} " : "";
-	}
+  protected override void OnParametersSet()
+  {
+    Phone2 = !String.IsNullOrEmpty(RegistrationQuery!.Phone) ? $" / Phone: {RegistrationQuery!.Phone} " : "";
+
+    if (RegistrationFee.TryFromValue(RegistrationQuery.FeeEnumValue, out var registrationFee))
+    {
+      Fee = registrationFee!.CurrencyFormat; 
+    }
+
+  }
 }

@@ -26,8 +26,17 @@
 
 	protected string FontSize => $"{(IsXs ? " fs-4" : " fs-2")}";
 
-	private string GetIcon(int stepId) =>
-		EnumStep < CurrentStep!.Value ? "far fa-check-square text-dark" : "far fa-square text-black-50";
+	private string GetIcon(int stepId)
+	{
+		if (EnumStep < CurrentStep!.Value)
+		{
+			return "far fa-check-square text-dark";
+		}
+		else
+		{
+			return "far fa-square text-black-50";
+		}
+	}
 
 	private string GetBorder() =>
 		EnumStep == CurrentStep!.Value ? StepConstants.Border : "";

@@ -17,11 +17,11 @@
 
 <AuthorizeView Policy=@Auth0.Policy.Name>
 	<Authorized>
-		<LoadingComponent IsLoading="vwRegistration == null" TurnSpinnerOff=TurnSpinnerOff>
+		<LoadingComponent IsLoading="RegistrationQuery == null" TurnSpinnerOff=TurnSpinnerOff>
 
 			@if (IsAuthorized)
 			{
-				<Details vwRegistration="@vwRegistration" />
+				<Details RegistrationQuery="@RegistrationQuery" />
 			}
 			else
 			{
@@ -43,7 +43,7 @@
 	string? Email;
 	protected bool IsAuthorized = false;
 
-	public Domain.vwRegistration? vwRegistration { get; set; }
+	public Data.RegistrationQuery? RegistrationQuery { get; set; }
 	private string[] OverrideRoles = new[] { Auth0.Roles.Sukkot, Auth0.Roles.Admin };
 
 	protected override async Task OnInitializedAsync()
@@ -58,11 +58,11 @@
 			}
 			else
 			{
-				vwRegistration = await db!.ById(Id);
+				RegistrationQuery = await db!.ById(Id);
 
-				if (vwRegistration is not null)
+				if (RegistrationQuery is not null)
 				{
-					var (passed, errorMsg, securityOverride) = await SecurityHelper!.DoAuthentication(Email!, vwRegistration.EMail ?? "");
+					var (passed, errorMsg, securityOverride) = await SecurityHelper!.DoAuthentication(Email!, RegistrationQuery.EMail ?? "");
 
 					if (passed)
 					{
@@ -99,9 +99,9 @@
 	private void DoPassed()
 	{
 		IsAuthorized = true;
-		(DateTime[]? week1, DateTime[]? week2) = EntryFormHelper.GetAttendanceDatesArray(vwRegistration!.AttendanceBitwise);
-		vwRegistration.AttendanceDateList = week1;
-		vwRegistration.AttendanceDateList2ndMonth = week2!;
+		(DateTime[]? week1, DateTime[]? week2) = EntryFormHelper.GetAttendanceDatesArray(RegistrationQuery!.AttendanceBitwise);
+		RegistrationQuery.AttendanceDateList = week1;
+		RegistrationQuery.AttendanceDateList2ndMonth = week2!;
 	}
 
 }
