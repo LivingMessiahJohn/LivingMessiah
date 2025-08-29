@@ -187,14 +187,18 @@
     </fieldset>
 
     <fieldset class="mt-3">
-      <legend class="text-primary">People Count</legend>
+      <legend class="text-primary">People Count <small class="text-black-50">Step: @(CurrentStep?.Name ?? "???")</small></legend>
 
       <div class="row mt-n2">
         <div class="col-sm-4">
 
           <div class="form-floating mb-3">
 
-            <InputNumber id="adults" class="form-control" @bind-Value="VM.Adults" placeholder="Adult Count" />
+            <InputNumber id="adults"
+                         class="form-control"
+                         @bind-Value="VM.Adults"
+                         placeholder="Adult Count"
+                         disabled="@(CurrentStep?.Value == Step.Complete.Value)" />
             <label for="adults" class="form-label">Adults</label>
             <ValidationMessage For="@(() => VM.Adults)" />
 
@@ -248,8 +252,9 @@
 @code {
   [Parameter, EditorRequired] public int? Id { get; set; }
   [Parameter, EditorRequired] public string? Email { get; set; }
-  [Parameter] public EventCallback<Step> OnActionCompleted { get; set; } //
-  [Parameter] public EventCallback OnUpdateCompleted { get; set; }
+  [Parameter, EditorRequired] public Step? CurrentStep { get; set; }
+  [Parameter] public EventCallback<StepAndRegFee> OnAddCompleted { get; set; }
+  [Parameter] public EventCallback<int> OnUpdateCompleted { get; set; }
 
   bool TurnSpinnerOff = false;
 
@@ -277,7 +282,7 @@
       }
       else
       {
-        AddOrEditState = new EntryFormAddOrEditRecord(IsAdd: false, "Edit - Registration", $"{Email} - #{VM!.Id}", "Update");
+        AddOrEditState = new EntryFormAddOrEditRecord(IsAdd: false, "Edit - Registration", $"{Email}", "Update");
         VM = await GetById(Id2);
       }
     }
@@ -316,7 +321,6 @@
 
   protected async Task SubmitValidForm()
   {
-
     Logger!.LogDebug("{Method}, Action: {Action} Id2:{id}", nameof(SubmitValidForm), Id2 == 0 ? "Add" : "Update", Id2);
     try
     {
@@ -336,7 +340,7 @@
         {
           Logger!.LogInformation("{Method} Registration created! Id2:{id}", nameof(SubmitValidForm), Id2);
           Toast!.ShowInfo($"Registration Added!");
-          await OnActionCompleted.InvokeAsync(Step.Payment);
+          await OnAddCompleted.InvokeAsync(new StepAndRegFee(Step.Payment, RegistrationFeeHelper.AdultsToRegistrationFee(VM.Adults)));
         }
       }
       else
@@ -344,7 +348,7 @@
         var (rowsAffected, sprocReturnValue, returnMsg) = await db!.Update(DTO_From_VM_To_DB(VM!));
         Logger!.LogInformation("{Method}; Registration updated!", nameof(SubmitValidForm));
         Toast!.ShowInfo($"Registration updated!");
-        await OnUpdateCompleted.InvokeAsync();
+        await OnUpdateCompleted.InvokeAsync(VM!.Adults);
       }
     }
     catch (Exception ex)
@@ -376,5 +380,5 @@
     };
     return poco;
   }
-
+  
 }

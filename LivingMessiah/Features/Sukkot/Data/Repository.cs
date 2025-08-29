@@ -18,7 +18,7 @@ public interface IRepository
 	Task<int> DeleteHRA(int id);  // stpHRADelete
 	Task<Tuple<int, int, string>> DeleteRegistration(int id); // Not used
 
-	Task<vwRegistration> ById(int id);
+	Task<RegistrationQuery> ById(int id);
 	Task<vwRegistrationStep> GetByEmail(string email);
 	Task<EntryFormVM> GetById2(int id);   //ViewModel_RE_DELETE
 	Task<Tuple<int, int, string>> Create(DTO registration);
@@ -147,16 +147,44 @@ public class Repository : BaseRepositoryAsync, IRepository
 
 	#region Registration used by Service
 
-	public async Task<vwRegistration> ById(int id)
+	// Called only by Sukkot\Print\Index.razor
+	public async Task<RegistrationQuery> ById(int id)
 	{
 		base.Parms = new DynamicParameters(new { Id = id });
-		base.Sql = $@"SELECT TOP 1 * FROM Sukkot.vwRegistration WHERE Id = @id";
+		base.Sql = @"
+SELECT
+    Id,
+    FamilyName, FirstName, SpouseName,  OtherNames,
+    EMail, Phone,
+    Adults, ChildBig, ChildSmall,
+    FeeEnumValue,
+    StepId,
+    Notes,
+    AttendanceBitwise,
+    HouseRulesAgreementDate
+FROM Sukkot.vwRegistration
+WHERE Id = @Id
+";
 		return await WithConnectionAsync(async connection =>
 		{
-			var rows = await connection.QueryAsync<vwRegistration>(sql: base.Sql, param: base.Parms);
-			return rows.SingleOrDefault()!;
+			var registration = (await connection.QueryAsync<RegistrationQuery>(sql: base.Sql, param: base.Parms)).SingleOrDefault();
+
+			if (registration != null)
+			{
+				// Query for DonationQuery
+				var donationSql = @"
+SELECT Amount, ReferenceId, CreateDate
+FROM Sukkot.Donation
+WHERE RegistrationId = @Id
+";
+				var donation = (await connection.QueryAsync<DonationQuery>(donationSql, base.Parms)).SingleOrDefault();
+				registration.DonationQuery = donation;
+			}
+
+			return registration!;
 		});
 	}
+
 
 	public async Task<vwRegistrationStep> GetByEmail(string email)
 	{

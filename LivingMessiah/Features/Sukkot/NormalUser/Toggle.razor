@@ -53,7 +53,7 @@
 	<div class="card mt-1 mb-3">
 		<div class="card-body bg-light">
 			@* This can only occurs if during Update/Edit *@
-			<EntryForm Email="@Email" Id="@Id" OnUpdateCompleted="ReturnUpdateCompleted" />
+			<EntryForm Email="@Email" Id="@Id" CurrentStep=CurrentStep OnUpdateCompleted="ReturnUpdateCompleted" />
 		</div>
 	</div>
 }
@@ -61,6 +61,7 @@
 @code {
 	[Parameter, EditorRequired] public int? Id { get; set; }
 	[Parameter, EditorRequired] public string? Email { get; set; }
+	[Parameter, EditorRequired] public Step? CurrentStep { get; set; }
 
 	public bool IsCollapsed { get; set; } = true;
 	protected void ToggleButtonClick(bool isCollapsed)

@@ -1,6 +1,6 @@
 ﻿
 
-<div class="d-flex justify-content-end mt-2">
+<div class="d-flex justify-content-center">
   @if (IsCollapsed)
   {
     <button @onclick="@(e => ToggleButtonClick(IsCollapsed))"
@@ -15,8 +15,8 @@
       Hide <i class='fas fa-chevron-up'></i>
     </button>
   }
-
 </div>
+
 
 @if (!IsCollapsed)
 {
