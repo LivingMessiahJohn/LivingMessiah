@@ -1,5 +1,5 @@
 ﻿using Ardalis.SmartEnum;
-using LivingMessiah.Features.Sukkot.Constants;
+using LivingMessiah.Features.Sukkot.Enums.Constants;
 
 namespace LivingMessiah.Features.Sukkot.Enums;
 
@@ -25,7 +25,11 @@ public abstract class NavButton : SmartEnum<NavButton>
 	public static readonly NavButton Donation = new DonationSE();
 	public static readonly NavButton RegistrationSteps = new RegistrationStepsSE();
 	public static readonly NavButton RegistrationStepsBack = new RegistrationStepsBackSE();
-	//public static readonly NavButton DeleteConfirmation = new DeleteConfirmationSE(); // ToDo: Not implemented yet
+
+	/*
+	ToDo: See C:\Source\LivingeMessiahBackup\999-Delete-Registration\Notes.md
+	public static readonly NavButton DeleteConfirmation = new DeleteConfirmationSE(); 
+	*/
 
 	// SE=SmartEnum
 	#endregion
@@ -60,7 +64,7 @@ public abstract class NavButton : SmartEnum<NavButton>
 		public override string Title => "Delete";
 		public override string Icon => "fas fa-times";
 		public override string Css => "btn btn-outline-danger";
-		public override string Route => Pages.DeleteConfirmation.Index; // Link.DeleteConfirmation;
+		public override string Route => Pages.DeleteConfirmation.Index; 
 		public override string RouteSuffix => "";
 	}
 	*/
@@ -68,36 +72,35 @@ public abstract class NavButton : SmartEnum<NavButton>
 	{
 		public DonationSE() : base($"{nameof(Id.Donation)}", Id.Donation) { }
 		public override string Label => "Donation";
-		public override string Title => Pages.Payment.Title; // Link.Stripe.Payment.Title;   
-		public override string Icon => Pages.Payment.Icon; // Links.Donate.Icon; 
-		public override string Css => "btn btn-outline-primary btn-sm";  // btn-sm
-		public override string Route => Pages.Payment.Index; // Link.Stripe.Payment.Index;  
+		public override string Title => Pages.Payment.Title; 
+		public override string Icon => Pages.Payment.Icon; 
+		public override string Css => "btn btn-outline-primary btn-sm";  
+		public override string Route => Pages.Payment.Index; 
 		public override string RouteSuffix => "";
 	}
 
-	//Todo: Incorporate these two or delete them
+	//ToDo: Incorporate these. The routes are the same.
 	private sealed class RegistrationStepsSE : NavButton
 	{
 		public RegistrationStepsSE() : base($"{nameof(Id.RegistrationSteps)}", Id.RegistrationSteps) { }
-		public override string Label => Breadcrumbs.Start.Text; // Link.RegistrationSteps.StartButtonText;
-		public override string Title => Breadcrumbs.Start.Text; // Link.RegistrationSteps.StartButtonText;
-		public override string Icon => Breadcrumbs.Start.Icon; // Link.RegistrationSteps.StartButtonIcon;
+		public override string Label => Breadcrumbs.Start.Text; 
+		public override string Title => Breadcrumbs.Start.Text; 
+		public override string Icon => Breadcrumbs.Start.Icon; 
 		public override string Css => "btn btn-success btn-lg";  
-		public override string Route => Pages.RegistrationSteps.Index; // Link.RegistrationSteps.Index;
+		public override string Route => Pages.RegistrationSteps.Index; 
 		public override string RouteSuffix => "";
 	}
 
 	private sealed class RegistrationStepsBackSE : NavButton
 	{
 		public RegistrationStepsBackSE() : base($"{nameof(Id.RegistrationSteps)}", Id.RegistrationSteps) { }
-		public override string Label => Breadcrumbs.BackTo.Text; // Link.RegistrationSteps.BackToButtonText;
-		public override string Title => Breadcrumbs.BackTo.Text; // Link.RegistrationSteps.BackToButtonText;
-		public override string Icon => Pages.RegistrationSteps.Icon; // Link.RegistrationSteps.BackToButtonIcon;
+		public override string Label => Breadcrumbs.BackTo.Text; 
+		public override string Title => Breadcrumbs.BackTo.Text; 
+		public override string Icon => Pages.RegistrationSteps.Icon; 
 		public override string Css => "btn btn-success btn-lg";  
-		public override string Route => Pages.RegistrationSteps.Index; // Link.RegistrationSteps.Index;
+		public override string Route => Pages.RegistrationSteps.Index; 
 		public override string RouteSuffix => "";
 	}
-
 	#endregion
-
 }
+// Ignore Spelling: Css 

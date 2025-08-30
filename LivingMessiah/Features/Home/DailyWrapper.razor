@@ -1,36 +1,45 @@
 ﻿@using LunarMonthEnum = LivingMessiah.Features.Calendar.Enums.LunarMonth
 @using LivingMessiah.Helpers
 
+@inject ILogger<DailyWrapper>? Logger
+
 <div class="@MediaQuery.Xs.DivClass">
-	<ShabbatMeter/>
-	<LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" DaysOld="DaysOld" />
+  <ShabbatMeter />
+  <LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" DaysOld="DaysOld" />
 </div>
 
 <div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
-	<div class="d-flex justify-content-evenly">
-		<ShabbatMeter />
-		<LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" DaysOld="DaysOld" />
-	</div>
+  <div class="d-flex justify-content-evenly">
+    <ShabbatMeter />
+    <LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" DaysOld="DaysOld" />
+  </div>
 </div>
 
 @code {
-	LunarMonthEnum? LunarMonth = null;
-	int DaysToGo = 0;
-	int DaysOld = 0;
+  LunarMonthEnum? LunarMonth = null;
+  int DaysToGo = 0;
+  int DaysOld = 0;
 
-	protected override void OnInitialized()
-	{
-		DateTime dateTimeWithoutTime = DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(0).AddHours(Utc.ArizonaUtcMinus7));
+  protected override void OnInitialized()
+  {
+    DateTime dateTimeWithoutTime = DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(0).AddHours(Utc.ArizonaUtcMinus7));
 
-		LunarMonth = LunarMonthEnum.List
-			.Where(w => w.Date >= dateTimeWithoutTime)
-			.FirstOrDefault();
-		if (LunarMonth != null)
-		{
-			DaysToGo = (LunarMonth.Date - dateTimeWithoutTime).Days;
-			DaysOld = 30 - (LunarMonth.Date - dateTimeWithoutTime).Days;
-		}
+    LunarMonth = LunarMonthEnum.List
+      .Where(w => w.Date >= dateTimeWithoutTime)
+      .OrderBy(o => o.Date) 
+      .FirstOrDefault();
+    if (LunarMonth != null)
+    {
+      DaysToGo = (LunarMonth.Date - dateTimeWithoutTime).Days;
+      DaysOld = 30 - (LunarMonth.Date - dateTimeWithoutTime).Days;
+    }
 
-	}
+    if (LunarMonth is not null)
+    {
+      Logger!.LogDebug("{Method}, {Message}, {DayCalc}", nameof(OnInitialized)
+          , $"{LunarMonth!.Name} {LunarMonth!.Date.ToShortDateString()}", $"ToGo: {DaysToGo}, Old: {DaysOld}");
+    }
+
+  }
 
 }

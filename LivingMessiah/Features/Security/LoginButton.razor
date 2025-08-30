@@ -5,9 +5,9 @@
 @inject ILogger<LoginButton>? Logger
 
 <button type="button"
-				class="btn btn-xs btn-outline-info float-end text-black-50 me-2"
+				class="btn btn-xs btn-outline-info float-end text-black me-2"
 				@onclick="ButtonClick">
-		<u>@AccountEnum.Login.Title</u> <i class="@AccountEnum.Login.Icon"></i>
+	<b><u>@AccountEnum.Login.Title</u></b> <i class="@AccountEnum.Login.Icon"></i>
 </button>
 
 @code {

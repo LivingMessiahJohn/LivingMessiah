@@ -1,4 +1,4 @@
-﻿namespace LivingMessiah.Features.Sukkot.LandingPage.ConstantsFOLDER;
+﻿namespace LivingMessiah.Features.Sukkot.LandingPage.Constants;
 
 public static class Documents
 {

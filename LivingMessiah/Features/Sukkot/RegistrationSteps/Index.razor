@@ -55,12 +55,6 @@
                            OnAddCompleted="ReturnedRegistrationAddCompleted" />
               </div>
             </div>
-
-            @* ToDo: Why is this here? *@
-            @if (vm.Step!.RegistrationExists && CurrentRegistrationId != 0)
-            {
-              <Toggle Email="@Email" Id="CurrentRegistrationId" CurrentStep="CurrentStep" />
-            }
           }
         </RegistrationFormRF>
 

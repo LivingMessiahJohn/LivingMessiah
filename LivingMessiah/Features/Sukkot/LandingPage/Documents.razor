@@ -9,7 +9,7 @@
       @foreach (var document in DocumentList)
       {
         <li class="list-group-item bg-warning-subtle">
-          <a href="@ConstantsFOLDER.Documents.Url(document.FileName)"
+          <a href="@Constants.Documents.Url(document.FileName)"
              target="_blank">
             @document.Name
           </a>
@@ -24,10 +24,10 @@
 @code {
   private List<DocumentLink> DocumentList = new()
     {
-      new("Liability Waiver", ConstantsFOLDER.Documents.PDFs.LiabilityWaiver),
-      new("Sukkot 2025 House Rules", ConstantsFOLDER.Documents.PDFs.HouseRules),
-      new("Schedule", ConstantsFOLDER.Documents.PDFs.Schedule),
-      new("Windmill Ranch Surrounding Area", ConstantsFOLDER.Documents.PDFs.WindmillRanchSurroundingArea)
+      new("Liability Waiver", Constants.Documents.PDFs.LiabilityWaiver),
+      new("Sukkot 2025 House Rules", Constants.Documents.PDFs.HouseRules),
+      new("Schedule", Constants.Documents.PDFs.Schedule),
+      new("Windmill Ranch Surrounding Area", Constants.Documents.PDFs.WindmillRanchSurroundingArea)
     };
 
   private record DocumentLink(string Name, string FileName);

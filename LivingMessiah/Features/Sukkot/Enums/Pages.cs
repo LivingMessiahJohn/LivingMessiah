@@ -38,15 +38,13 @@ public abstract class Pages : SmartEnum<Pages>
 
 	#region Private Instantiation
 
+	/* See LivingMessiah.Features.Sukkot.Constants!Breadcrumbs.[Start][BackTo] */
 	private sealed class RegistrationStepsSE : Pages
 	{
 		public RegistrationStepsSE() : base($"{nameof(Id.RegistrationSteps)}", Id.RegistrationSteps) { }
 		public override string Index => "/Sukkot/RegistrationSteps";
 		public override string Title => "Registration Steps";
 		public override string Icon => "fas fa-campground";
-		/*
-		See LivingMessiah.Features.Sukkot.Constants!Breadcrumbs.[Start][BackTo]
-		 */
 	}
 
 	private sealed class PrintSE : Pages
@@ -91,8 +89,6 @@ public abstract class Pages : SmartEnum<Pages>
 		public override string Icon => "";
 	}
 	*/
-
 	#endregion
 
 }
-
