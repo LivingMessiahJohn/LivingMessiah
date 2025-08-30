@@ -1,6 +1,6 @@
 ﻿using LivingMessiah.Features.Sukkot.Constants;
 
-namespace LivingMessiah.Features.Sukkot.Print.ConstantsPRINT;
+namespace LivingMessiah.Features.Sukkot.Print.Constants;
 
 public static class Details
 {

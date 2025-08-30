@@ -1,4 +1,4 @@
-﻿@using LivingMessiah.Features.Sukkot.Constants
+﻿@using LivingMessiah.Features.Sukkot.LandingPage.Constants
 
 <div class="card-body text-center mb-1">
 	<button @onclick="@(e => ToggleButtonClick(IsCollapsed))"
@@ -26,7 +26,7 @@
 
 			<p class="fs-5">
 				For assistance, you can print out this
-				<a href="@LivingMessiah.Features.Sukkot.Constants.Blobs.UrlPDF(PDFs.RegistrationWalkThrough)"
+				<a href="@Blob.UrlPDF(PDFs.RegistrationWalkThrough)"
 					 class="btn btn-primary btn-sm" target="_blank">
 					<i class="fas fa-file-pdf"></i> PDF
 				</a> or leave it open in another window.

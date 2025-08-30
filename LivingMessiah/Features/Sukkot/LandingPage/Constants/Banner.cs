@@ -1,6 +1,6 @@
 ﻿using LivingMessiah.Features.Sukkot.Constants;
 
-namespace LivingMessiah.Features.Sukkot.LandingPage.ConstantsFOLDER;
+namespace LivingMessiah.Features.Sukkot.LandingPage.Constants;
 
 public static class Banner
 {

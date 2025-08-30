@@ -21,7 +21,7 @@
 else
 {
 	<div class="card " style="max-width: 400px;">
-		<img src='@ImageFile' class="" alt="moon made of cheese">
+		<img src='/images/moons/moon-not-found.jpg' class="" alt="moon made of cheese">
 		<div class="card-img-overlay">
 			<div class="d-flex justify-content-between">
 				<h3 class="text-warning"><i>???</i></h3>
@@ -30,11 +30,12 @@ else
 	</div>
 }
 
+
 @code {
 	[Parameter, EditorRequired] public LunarMonthEnum? LunarMonth { get; set; }
 	[Parameter, EditorRequired] public int DaysToGo { get; set; }
 	[Parameter, EditorRequired] public int DaysOld { get; set; }
 
 	private string DaysToGoText => DaysToGo == 0 ? "New Moon" : $"{DaysToGo} days";
-	private string ImageFile => LunarMonth is not null ? $"/images/moons/{DaysOld.ToString("D2")}.jpg" : "/images/moons/moon-not-found.jpg";
+	private string ImageFile => LunarMonth is not null ? $"/images/moons/{Math.Abs(DaysOld).ToString("D2")}.jpg" : "/images/moons/moon-not-found.jpg";
 }

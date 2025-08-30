@@ -2,9 +2,9 @@
 @if(IsXsOrSm)
 {
 	<div class="card border border-warning border-4 bg-warning-subtle ">
-		<h3 class=" py-2 text-center text-black"><b>@ConstantsFOLDER.Header.Title</b></h3>
-		<img src="@ConstantsFOLDER.Header.UrlEvents(ConstantsFOLDER.Banner.Img)"
-					alt="@ConstantsFOLDER.Header.UrlEvents(ConstantsFOLDER.Banner.ImgAlt)" 
+		<h3 class=" py-2 text-center text-black"><b>@Constants.Header.Title</b></h3>
+		<img src="@Constants.Header.UrlEvents(Constants.Banner.Img)"
+					alt="@Constants.Header.UrlEvents(Constants.Banner.ImgAlt)" 
 					class="@CardImg img-fluid rounded" />
 
 		<HeaderBody IsXsOrSm="IsXsOrSm" />
@@ -13,12 +13,12 @@
 else
 {
 	<div class="card border border-warning border-4 bg-warning-subtle ">
-		<h2 class=" py-2 text-center text-black"><b>@ConstantsFOLDER.Header.Title</b></h2>
+		<h2 class=" py-2 text-center text-black"><b>@Constants.Header.Title</b></h2>
 		<div class="row g-0">
 			<div class="col-7 text-center">
 
-				<img src="@ConstantsFOLDER.Header.UrlEvents(ConstantsFOLDER.Banner.Img)"
-						 alt="@ConstantsFOLDER.Header.UrlEvents(ConstantsFOLDER.Banner.ImgAlt)" class="img-fluid rounded" />
+				<img src="@Constants.Header.UrlEvents(Constants.Banner.Img)"
+						 alt="@Constants.Header.UrlEvents(Constants.Banner.ImgAlt)" class="img-fluid rounded" />
 			</div>
 			<div class="col-5">
 				<HeaderBody IsXsOrSm="IsXsOrSm" />

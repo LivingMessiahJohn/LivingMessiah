@@ -1,15 +1,15 @@
-﻿
+﻿@using LivingMessiah.Features.Sukkot.Enums.Constants
+
 @* @inject ILogger<StartRegistrationButton>? Logger *@
 @inject NavigationManager NavigationManager
 
 <div class="card-body text-center">
 	<button @onclick="ButtonClicked" type="button"
 					class="btn btn-lg btn @(IsAuthenticatedAndVerified ? "btn-success" : " btn-outline-secondary disabled")">
-		@Constants.Breadcrumbs.Start.Text
-		<i class="@Constants.Breadcrumbs.Start.Icon"></i>
+		@Breadcrumbs.Start.Text
+		<i class="@Breadcrumbs.Start.Icon"></i>
 	</button>
 </div>
-
 
 @code {
 	[Parameter, EditorRequired] public bool IsAuthenticatedAndVerified { get; set; }

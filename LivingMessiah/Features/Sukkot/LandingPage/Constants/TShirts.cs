@@ -1,4 +1,4 @@
-﻿namespace LivingMessiah.Features.Sukkot.LandingPage.ConstantsFOLDER;
+﻿namespace LivingMessiah.Features.Sukkot.LandingPage.Constants;
 
 public static class TShirts
 {
@@ -10,7 +10,7 @@ public static class TShirts
 	{
 		get
 		{
-			return Blobs.UrlRoot("sukkot-2024-tee-shirts.jpg");
+			return Blob.UrlRoot("sukkot-2024-tee-shirts.jpg");
 		}
 	}
 	public static string Href { get; set; } = "https://aboveallimages.net/shop/ols/categories/sukkot";

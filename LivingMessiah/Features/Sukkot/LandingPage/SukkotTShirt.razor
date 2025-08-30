@@ -4,18 +4,18 @@
 
 	<div class="card-body">
 
-		@if (ConstantsFOLDER.TShirts.IsAvailableForSale)
+		@if (Constants.TShirts.IsAvailableForSale)
 		{
-			<h5>@ConstantsFOLDER.TShirts.ForSaleMessage</h5>
-			<a href="@ConstantsFOLDER.TShirts.Href" target="_blank">
-				<img src="@ConstantsFOLDER.TShirts.ImgSrc"
-						 alt="@ConstantsFOLDER.TShirts.Title" class="img-fluid rounded" />
+			<h5>@Constants.TShirts.ForSaleMessage</h5>
+			<a href="@Constants.TShirts.Href" target="_blank">
+				<img src="@Constants.TShirts.ImgSrc"
+						 alt="@Constants.TShirts.Title" class="img-fluid rounded" />
 			</a>
 			@* <i class="fas fa-external-link-alt"></i> *@
 		}
 		else
 		{
-			<h2 class="text-center">@ConstantsFOLDER.TShirts.ComingSoonMessage</h2>
+			<h2 class="text-center">@Constants.TShirts.ComingSoonMessage</h2>
 		}
 
 	</div>
