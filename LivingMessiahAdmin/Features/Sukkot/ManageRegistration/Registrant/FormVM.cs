@@ -1,4 +1,5 @@
-﻿using LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums;  //Ref. was from LivingMessiah
+﻿
+using LivingMessiahAdmin.Features.Sukkot.Enums;
 
 namespace LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Registrant;
 

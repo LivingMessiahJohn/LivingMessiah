@@ -1,4 +1,4 @@
-﻿namespace LivingMessiahAdmin.Features.Sukkot.ManageRegistration.MasterDetail;
+﻿namespace LivingMessiahAdmin.Features.Sukkot.MasterDetail;
 
 public struct CrudAndIdArgs
 {

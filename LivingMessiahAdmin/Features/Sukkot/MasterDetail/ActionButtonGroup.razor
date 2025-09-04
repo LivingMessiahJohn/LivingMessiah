@@ -1,9 +1,8 @@
-﻿@using CrudEnums = LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud
-@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.MasterDetail
-@using LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums
-@using RegStatusEnums = LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums  //Ref. was from LivingMessiah
+﻿@using LivingMessiahAdmin.Features.Sukkot.Enums
+@using LivingMessiahAdmin.Features.Sukkot.MasterDetail.Enums
+@using RegStatusEnums = LivingMessiahAdmin.Features.Sukkot.Enums
+ 
 @* @using HRA_State = LivingMessiahAdmin.Features.Sukkot.ManageRegistration.HRA *@
-@using ParentState = LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Index
 
 @inject ILogger<ActionButtonGroup>? Logger
 
@@ -11,12 +10,12 @@
 
 @if (StatusId == Step.Registration.Value)
 {
-	@foreach (var item in LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud.List
+	@foreach (var item in Crud.List
 					.OrderBy(o => o.Sort)
 					.Where(w => w.IsStartRegistration == true))
 	{
 		<CrudButtons OnCrudActionSelected="@ReturnedCrud"
-								 ParmCrud="CrudEnums.FromValue(item)"
+								 ParmCrud="Crud.FromValue(item)"
 								 Id="@IdHra"
 								 FullName="@FullName"
 								 DonationRowCount="@DonationRowCount"
@@ -25,12 +24,12 @@
 }
 else
 {
-	@foreach (var item in CrudEnums.List
+	@foreach (var item in Crud.List
 							.OrderBy(o => o.Sort)
 							.Where(w => w.IsStartRegistration == false))
 	{
 		<CrudButtons OnCrudActionSelected="@ReturnedCrud"
-								 ParmCrud="CrudEnums.FromValue(item)"
+								 ParmCrud="Crud.FromValue(item)"
 								 Id="@Id"
 								 FullName="@FullName"
 								 DonationRowCount="@DonationRowCount"
@@ -54,26 +53,26 @@ else
 
 		switch (args.Crud.Name)
 		{
-			case nameof(CrudEnums.AddRegistration):
+			case nameof(Crud.AddRegistration):
 				await OnCrudActionSelected.InvokeAsync(args);
 				break;
 
-			case nameof(CrudEnums.Edit):
+			case nameof(Crud.Edit):
 				await OnCrudActionSelected.InvokeAsync(args);
 				break;
 
-			case nameof(CrudEnums.Display):
+			case nameof(Crud.Display):
 				await OnCrudActionSelected.InvokeAsync(args);
 				break;
 
-			case nameof(CrudEnums.DeleteRegistration):
+			case nameof(Crud.DeleteRegistration):
 				break;
 
-			case nameof(CrudEnums.DeleteHRA):
+			case nameof(Crud.DeleteHRA):
 				await OnCrudActionSelected.InvokeAsync(args);
 				break;
 
-			case nameof(CrudEnums.Donation):
+			case nameof(Crud.Donation):
 				await OnCrudActionSelected.InvokeAsync(args);
 				break;
 

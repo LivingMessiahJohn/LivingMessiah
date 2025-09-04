@@ -1,4 +1,5 @@
 ﻿using Ardalis.SmartEnum;
+//using ConstantsPages = LivingMessiahAdmin.Features.Sukkot.Enums.DateRange;
 
 namespace LivingMessiahAdmin.Features.Sukkot.Enums; //Copied from LivingMessiah
 
@@ -35,7 +36,7 @@ public abstract class DateRangeType : SmartEnum<DateRangeType>
 	{
 		public AttendanceSE() : base($"{nameof(Id.Attendance)}", Id.Attendance) { }
 		public override string Title => "Attendance Date";
-		public override DateRange Range => new DateRange(Constants.AttendanceDateRange.Start, Constants.AttendanceDateRange.Finish);
+		public override DateRange Range => new DateRange(Constants.DateRange.Attendance.Start, Constants.DateRange.Attendance.Finish);
 		public override DateRange? Range2ndMonth => null;
 		public override bool HasSecondMonth => false;
 	}
@@ -44,7 +45,7 @@ public abstract class DateRangeType : SmartEnum<DateRangeType>
 	{
 		public LodgingSE() : base($"{nameof(Id.Lodging)}", Id.Lodging) { }
 		public override string Title => "Lodging Date";
-		public override DateRange Range => new DateRange(Constants.LodgingDateRange.Start, Constants.LodgingDateRange.Finish);
+		public override DateRange Range => new DateRange(Constants.DateRange.Lodging.Start, Constants.DateRange.Lodging.Finish);
 		public override DateRange? Range2ndMonth => null;
 		public override bool HasSecondMonth => false;
 		/*

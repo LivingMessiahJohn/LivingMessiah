@@ -5,7 +5,7 @@
 ToDo: remove stripe-buy-button, use Features\Sukkot\Payment\StripeCard.razor as a pattern
 *@
 
-@inject ILogger<StripeCard>? Logger
+@* @inject ILogger<StripeCard>? Logger *@
 @inject IConfiguration Configuration
 
 <div class="card">
@@ -31,9 +31,8 @@ ToDo: remove stripe-buy-button, use Features\Sukkot\Payment\StripeCard.razor as 
 		StripeBuyButtonId = Configuration["DonationSettings:StripeBuyButtonId"];
 		StripePublishableKey = Configuration["DonationSettings:StripePublishableKey"];
 
-
-		Logger!.LogWarning("{Method}, StripePublishableKey Length: {StripePublishableKey}"
-		 , nameof(OnInitialized), StripePublishableKey == null ? "null" : StripePublishableKey.Length.ToString());
+		//Logger!.LogWarning("{Method}, StripePublishableKey Length: {StripePublishableKey}"
+		// , nameof(OnInitialized), StripePublishableKey == null ? "null" : StripePublishableKey.Length.ToString());
 		//StripePublishableKey!.Substring(0,13)
 	}
 

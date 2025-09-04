@@ -1,8 +1,8 @@
 ﻿using LivingMessiahAdmin.Helpers;
-using LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums;  //Ref. was from LivingMessiah
-using System;
 
-namespace LivingMessiahAdmin.Features.Sukkot.ManageRegistration.MasterDetail;
+using LivingMessiahAdmin.Features.Sukkot.Enums;
+
+namespace LivingMessiahAdmin.Features.Sukkot.MasterDetail;
 
 public class ManageRegistrationQuery
 {
@@ -22,7 +22,7 @@ public class ManageRegistrationQuery
 	{
 		get
 		{
-			return StatusId == Step.Registration.Value ? "bg-secondary text-center text-white" : "";
+			return StatusId == Step.Registration.Value ? "bg-secondary-subtle text-center text-black" : "";
 		}
 	}
 
@@ -32,7 +32,7 @@ public class ManageRegistrationQuery
 	{
 		get
 		{
-			return $"{Step.FromValue(StatusId).Value}. {Step.FromValue(StatusId).Text}";
+			return $"{Step.FromValue(StatusId).Value}. {Step.FromValue(StatusId).Heading}"; // .Text
 		}
 	}
 
@@ -77,13 +77,13 @@ public class ManageRegistrationQuery
 		{
 			if (StatusId == Step.Registration.Value)
 			{
-				return "bg-secondary text-center text-white";
+				return "bg-secondary-subtle text-center text-black";
 			}
 			else
 			{
 				if (GetRegistrationFee() == TotalDonation)
 				{
-					return "bg-success text-center text-white";
+					return "bg-success-subtle text-center text-black";
 				}
 				else
 				{
@@ -93,7 +93,7 @@ public class ManageRegistrationQuery
 					}
 					else
 					{
-						return "bg-danger text-end text-white";
+						return "bg-danger-subtle text-end text-black";
 					}
 				}
 			}
@@ -136,7 +136,7 @@ public class ManageRegistrationQuery
 	{
 		get
 		{
-			return String.IsNullOrEmpty(AdminNotes) == true ? "" : AdminNotes!.Truncate(25);
+			return string.IsNullOrEmpty(AdminNotes) == true ? "" : AdminNotes!.Truncate(25);
 		}
 	}
 

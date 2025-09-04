@@ -1,4 +1,5 @@
-﻿using LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums; //Ref. was from LivingMessiah
+﻿
+using LivingMessiahAdmin.Features.Sukkot.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Donations.Domain;
@@ -23,7 +24,6 @@ public class DonationReport
 	{
 		get
 		{
-			//return Status.FromValue(StatusId) == Status.Complete ? "X" : "";
 			return Step.FromValue(StatusId) == Step.Complete ? "X" : "";
 		}
 	}
