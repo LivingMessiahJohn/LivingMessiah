@@ -7,7 +7,7 @@ public static class Constants
 		public const string Icon = "fas fa-retweet";
 		public const string Text = " Re-populate";
 		public const string Color = "text-danger";
-		public const string ButtonColor = "btn btn-outline-warning";  //text-warning btn-sm  float-end
+		public const string ButtonColor = "btn btn-outline-warning btn-sm";  //text-warning btn-sm  float-end
 	}
 
 	public static class SaveButton
@@ -28,7 +28,7 @@ public static class Constants
 		{
 			public const string Icon = "fas fa-signature";
 			public const string Text = "Show HRA Form";
-			public const string ButtonColor = "btn btn-outline-danger";
+			public const string ButtonColor = "btn btn-outline-danger btn-sm";
 		}
 
 		public static class PageHeader

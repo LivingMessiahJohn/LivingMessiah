@@ -2,12 +2,12 @@
 
 @* FWIW, in ver. 7, the page directive was  Sukkot/ManageRegistration, Sukkot/SuperUser, SukkotAdmin *@
 
-@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.MasterDetail
-@using LivingMessiahAdmin.Features.Sukkot.MasterDetail
-@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Registrant
-@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.HRA
 @using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Detail
 @using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Donations
+@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.HRA
+@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Registrant
+@using LivingMessiahAdmin.Features.Sukkot.MasterDetail
+@using LivingMessiahAdmin.Features.Sukkot.MasterDetail.Enums
 @* @using CrudEnums = LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud *@
 
 @using Page = LivingMessiahAdmin.Enums.Nav
@@ -19,14 +19,14 @@
 <!-- ToDo: can this be moved to <PageHeader ??? -->
 <SukkotAdminMenubar />
 
-<div class="@MediaQuery.XsOrSm.DivClass">
+@* <div class="@MediaQuery.XsOrSm.DivClass">
 	<Header IsXsOrSm="true" />
 </div>
 
 <div class="@MediaQuery.MdOrLgOrXl.DivClass">
 	<Header IsXsOrSm="false" />
 </div>
-
+ *@
 @if (VisibleComponent == Enums.VisibleComponent.MasterList)
 {
 	<MasterList OnCrudActionSelected="ReturnedCrudActionSelected" />
@@ -34,7 +34,7 @@
 else
 {
 	<ShowMasterIndexButton OnShowListSelected="ReturnedShowList" />
-	<DetailPageHeader />
+	<DetailPageHeader DetailPageHeaderVM="DetailPageHeaderVM" />
 
 	@if (VisibleComponent == Enums.VisibleComponent.AddEditForm)
 	{
@@ -57,7 +57,7 @@ else
 			{
 				@* FN: 1 *@
 				<div class="card border-primary my-3 p-2">
-					<Report />
+					<Report RegistrationId="Id" />
 				</div>
 			}
 		}
@@ -68,9 +68,11 @@ else
 
 
 @code {
+	// ToDo: why is this a Parameter ???
 	[Parameter, EditorRequired] public Enums.VisibleComponent? VisibleComponent { get; set; }
 
-	int Id { get; set; } = 0;	
+	int Id { get; set; } = 0;
+	DetailPageHeaderVM? DetailPageHeaderVM;
 
 	protected override void OnInitialized()
 	{
@@ -87,19 +89,22 @@ else
 
 	void ReturnedCrudActionSelected(CrudAndIdArgs args)
 	{
-		if (args.Crud == LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud.Display)
+		if (args.Crud == Crud.Display)
 		{
+			Id = args.Id;
 			VisibleComponent = Enums.VisibleComponent.DisplayCard;
+			DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
 		}
 		else
 		{
-			if (args.Crud == LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud.Edit)
+			if (args.Crud == Crud.Edit)
 			{
 				VisibleComponent = Enums.VisibleComponent.AddEditForm;
+				DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
 			}
 			else
 			{
-				if (args.Crud == LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums.Crud.Donation)
+				if (args.Crud == Crud.Donation)
 				{
 					VisibleComponent = Enums.VisibleComponent.DonationForm;
 				}

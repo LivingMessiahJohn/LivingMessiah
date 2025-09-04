@@ -1,13 +1,12 @@
-﻿@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Enums;
-@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.MasterDetail
-@using RegStatusEnums = LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums  //Ref. was from LivingMessiah
+﻿@using LivingMessiahAdmin.Features.Sukkot.MasterDetail
+@using LivingMessiahAdmin.Features.Sukkot.MasterDetail.Enums
 
 @if (ParmCrud == Crud.Donation)
 {
 	<button @onclick="@OnButtonClicked" title="@Title"
-				type="button" class="@ParmCrud.ButtonColor btn-sm position-relative">
+					type="button" class="@ParmCrud.ButtonColor btn-sm position-relative me-2">
 		<i class="@ParmCrud!.Icon"></i>
-		@ParmCrud.Text
+		@* @ParmCrud.Text *@
 		<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
 			@DonationRowCount
 			<span class="visually-hidden">Donation Row Count</span>
@@ -19,17 +18,17 @@ else
 	@if (ParmCrud == Crud.DeleteRegistration && DonationRowCount != 0)
 	{
 		<button title="@Title"
-				type="button" disabled class="@ParmCrud.ButtonColor btn-sm">
+				type="button" disabled class="@ParmCrud.ButtonColor btn-sm me-2">
 			<i class="fas fa-hand-paper"></i>
-			Cant Delete
+			@* Cant Delete *@
 		</button>
 	}
 	else
 	{
 		<button @onclick="@OnButtonClicked" title="@Title"
-				type="button" class="@ParmCrud!.ButtonColor btn-sm">
+						type="button" class="@ParmCrud!.ButtonColor btn-sm me-2">
 			<i class="@ParmCrud!.Icon"></i>
-			@ParmCrud!.Text
+			@* @ParmCrud!.Text *@
 		</button>
 	}
 

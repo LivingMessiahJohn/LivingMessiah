@@ -1,25 +1,11 @@
 ﻿
-@if (vm is not null)
+@if (DetailPageHeaderVM is not null)
 {
 	<legend class="text-primary bg-light mb-0 p-2">
-		<b>@vm!.Label:</b> @vm!.Value
+		<b>@DetailPageHeaderVM!.Label:</b> @DetailPageHeaderVM!.Value
 	</legend>
 }
 
 @code {
-	protected DetailPageHeaderVM? vm; // = new();
-
-	protected override void OnInitialized()
-	{
-		vm = new DetailPageHeaderVM("Name", "Test");
-		/*
-		When Crud.AddRegistration                  : "Email", args.EMail
-		When Crud.Donation, Crud.Display, Crud.Edit: "Name", args.FullName
-		*/
-		//VM = new DetailPageHeaderVM { Label = action.Label, Value = action.Value };
-	}
-	protected override void OnParametersSet()
-	{
-
-	}
+	[Parameter, EditorRequired] public DetailPageHeaderVM? DetailPageHeaderVM { get; set; }
 }

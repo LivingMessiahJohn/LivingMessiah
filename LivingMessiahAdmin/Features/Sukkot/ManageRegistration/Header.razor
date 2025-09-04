@@ -1,4 +1,5 @@
-﻿@using Page = LivingMessiahAdmin.Features.Sukkot.Constants.ManageRegistration
+﻿
+@using Page = LivingMessiahAdmin.Features.Sukkot.Constants.Pages.ManageRegistration
 
 @* 
 	@inject IState<IndexState>? State 
@@ -6,47 +7,49 @@
 *@
 
 <div class="pb-1 mt-4 mb-2">
-	<div class="pb-1 mt-4 mb-1">
-		@if (IsXsOrSm)
-		{
-			<h4>
-				@* <i class="@Page.Icon"></i> @Page.Title *@
-				<span class="@VM!.Color float-end">
-					<i class="@VM!.Icon"></i>
-					@VM!.Title
-				</span>
-			</h4>
-		}
-		else
-		{
-			<h1>
-				@* <i class="@Page.Icon"></i> @Page.Title *@
-				<span class="@VM!.Color float-end">
-					<i class="@VM!.Icon"></i>
-					@VM!.Title
-				</span>
-			</h1>
+  <div class="pb-1 mt-4 mb-1">
+    @if (IsXsOrSm)
+    {
+      <h4>
+        @* <i class="@Page.Icon"></i> @Page.Title *@
+        <span class="@VM!.Color  @dir">
+          <i class="@VM!.Icon"></i>
+          @VM!.Title
+        </span>
+      </h4>
+    }
+    else
+    {
+      <h1>
+         @* <i class="@Page.Icon"></i> @Page.Title  *@
+        <span class="@VM!.Color @dir">
+          <i class="@VM!.Icon"></i>
+          @VM!.Title
+        </span>
+      </h1>
 
-		}
-	</div>
+    }
+  </div>
 </div>
 
 
 @code {
 
-	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
-	//[Parameter, EditorRequired] public PageHeaderVM VM { get; set; }
+  [Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
+  //[Parameter, EditorRequired] public PageHeaderVM VM { get; set; }
 
-	protected PageHeaderVM? VM;
-	protected override void OnInitialized()
-	{
-		// Constants!GetPageHeaderForIndexVM()
-		VM = new PageHeaderVM
-		{
-			Title = "Index",
-			Icon = "fas fa-list",
-			Color = "text-primary",
-			Id=0
-		};	
-	}
+  string dir = ""; //float-end
+
+  protected PageHeaderVM? VM;
+  protected override void OnInitialized()
+  {
+    // Constants!GetPageHeaderForIndexVM()
+    VM = new PageHeaderVM
+    {
+      Title = "Index",
+      Icon = "fas fa-list",
+      Color = "text-primary",
+      Id = 0
+    };
+  }
 }

@@ -1,13 +1,160 @@
-﻿<h3>Report</h3>
+﻿@using LivingMessiahAdmin.Features.Sukkot.Enums
+@using LivingMessiahAdmin.Features.Sukkot.Enums.Helpers
+@using RootConstants = LivingMessiahAdmin.Features.Sukkot.Constants.CurrentYear
+
 
 @inject ILogger<Report>? Logger
 @inject IToastService? Toast
+@inject Data.IRepository? db
 
-@* [Inject] private IState<RegistrantState>? State { get; set; } *@
+<h3 class="my-4 text-center border-bottom border-dark-subtle border-4">
+  Living Messiah Sukkot Registration @RootConstants.Title
+</h3>
 
-<p>ToDo: Add Detail Report which looks just like the one in LivingMessiah web app</p>
+<LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
+
+  <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+
+    <div class="d-flex justify-content-around">
+      <div><b>Name</b>: @data!.FullName(false); <i>@data!.OtherNames</i></div>
+
+      <div><b>Registration#</b>: @data!.Id</div>
+    </div>
+
+    <div class="d-flex justify-content-around">
+      <div><b>EMail / Phone</b>: @data!.EMail @Phone2</div>
+
+      <div class=" @Step.FromValue(data.StepId).CardBodyCSS"><b>Step</b>: @data.StepName</div>
+
+    </div>
+
+  </div>
+
+  @* House Rules Agreement *@
+  <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+    <div class="d-flex justify-content-center">
+      <b>House Rules Agreement</b>:
+      Agreed on @data!.HouseRulesAgreementDate
+    </div>
+  </div>
+
+
+  @* Attendance *@
+
+  <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+    <div class="d-flex justify-content-center">
+      <b>Attendance</b>:&nbsp;
+      <ul class="list-inline">
+        <li class="list-inline-item">Adults: <span class="">@data!.Adults</span></li>
+        <li class="list-inline-item">Child (Big):<span class="">@data!.ChildBig</span></li>
+        <li class="list-inline-item">Child (Small):<span class="">@data!.ChildSmall</span></li>
+      </ul>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <div class="mx-3">
+        AttendanceBitwise: @data.AttendanceBitwise; Count: @(data.AttendanceDateList?.Count() ?? 0)
+        <AttendanceDateList SelectedDates="@data.AttendanceDateList" />
+      </div>
+    </div>
+
+    <div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+      <div class="d-flex justify-content-center mb-4">
+      </div>
+    </div>
+
+  </div>
+
+  @* Cost *@
+  <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+    <div class="d-flex justify-content-center mb-2">
+      <span class="p-1"><b>Registration Fee</b>:&nbsp;</span>
+      <span class="p-1 bg-warning-subtle text-black">
+        @Fee
+      </span>
+    </div>
+  </div>
+
+  @* Donation *@
+  @if (data.DonationQuery is not null)
+  {
+    <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+      <div class="d-flex justify-content-center mb-2">
+        <span class="p-1"><b>Paid Amount</b>:&nbsp;</span>
+        <span class="p-1 bg-warning-subtle text-black">@(data.DonationQuery!.Amount.ToString("C2"))</span>
+      </div>
+      <div class="d-flex justify-content-center mb-2">
+        <span class="p-1"><b>Reference</b>:&nbsp;</span>
+        <span class="p-1 text-black"><small>@(data.DonationQuery!.ReferenceId)</small></span>
+      </div>
+      <div class="d-flex justify-content-center mb-2">
+        <span class="p-1"><b>Date</b>:&nbsp;</span>
+        <span class="p-1 text-black">@(data.DonationQuery!.CreateDate)</span>
+      </div>
+    </div>
+  }
+
+  @* Notes *@
+  @if (!String.IsNullOrEmpty(data!.Notes))
+  {
+    <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+      <div class="d-flex justify-content-center">
+        <b>Notes</b>: @data!.Notes
+      </div>
+    </div>
+  }
+
+  @* Address (print only) *@
+  <div class="d-none d-print-block">
+    <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+      <div class="d-flex justify-content-center">
+        <Address OnOneLine="true" UseLabel="true" />
+      </div>
+    </div>
+  </div>
+</LoadingComponent>
 
 
 @code {
-	//DetailAndDonationsHierarchicalQuery? ReportVM => State!.Value.ReportVM;
+  [Parameter, EditorRequired] public int RegistrationId { get; set; }
+
+  protected RegistrationQuery? data { get; set; }
+
+  protected bool TurnSpinnerOff = false;
+  string Phone2 = string.Empty;
+  string Fee = "___";
+
+  protected override async Task OnParametersSetAsync()
+  {
+    try
+    {
+      Logger!.LogDebug("{Method} {Id}", nameof(OnParametersSetAsync), RegistrationId);
+      data = await db!.ById(RegistrationId);
+      if (data is not null) { ProcessDataFount(); }
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(OnParametersSetAsync));
+      Toast!.ShowError("An invalid operation occurred, contact your administrator");
+    }
+    finally
+    {
+      TurnSpinnerOff = true;
+    }
+  }
+
+  private void ProcessDataFount()
+  {
+    Phone2 = !String.IsNullOrEmpty(data!.Phone) ? $" / Phone: {data!.Phone} " : "";
+
+    if (RegistrationFee.TryFromValue(data.FeeEnumValue, out var registrationFee))
+    {
+      Fee = registrationFee!.CurrencyFormat;
+    }
+
+    (DateTime[]? week1, DateTime[]? week2) = EntryFormHelper.GetAttendanceDatesArray(data!.AttendanceBitwise);
+    data.AttendanceDateList = week1;
+    data.AttendanceDateList2ndMonth = week2!;
+  }
+
 }

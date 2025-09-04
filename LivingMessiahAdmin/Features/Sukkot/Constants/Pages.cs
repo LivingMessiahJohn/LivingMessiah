@@ -1,6 +1,6 @@
-﻿namespace LivingMessiahAdmin.Features.Sukkot;
+﻿namespace LivingMessiahAdmin.Features.Sukkot.Constants;
 
-public class Constants
+public static class Pages
 {
 	public static class ManageRegistration
 	{
@@ -34,4 +34,5 @@ public class Constants
 		public const string Title = "Legal Agreement Verbiage";
 		public const string Icon = "fas fa-balance-scale";  // "fas fa-handshake" "far fa-handshake"
 	}
+
 }

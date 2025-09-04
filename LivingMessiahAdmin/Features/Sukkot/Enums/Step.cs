@@ -1,6 +1,6 @@
 ﻿using Ardalis.SmartEnum;
 
-namespace LivingMessiahAdmin.Features.Sukkot.RegistrationSteps.Enums;
+namespace LivingMessiahAdmin.Features.Sukkot.Enums;
 
 public abstract class Step : SmartEnum<Step>
 {
@@ -31,7 +31,7 @@ public abstract class Step : SmartEnum<Step>
 	public abstract string Icon { get; }
 	public abstract string CardHeaderCSS { get; }
 	public abstract string CardBodyCSS { get; }
-	public abstract bool EnableRegistrationToggleButton { get; }
+	public abstract bool RegistrationExists { get; }
 
 	#endregion
 
@@ -45,7 +45,7 @@ public abstract class Step : SmartEnum<Step>
 		public override string Icon => "far fa-handshake"; 
 		public override string CardHeaderCSS => "bg-success-subtle";  
 		public override string CardBodyCSS => "bg-success-subtle";
-		public override bool EnableRegistrationToggleButton => false;
+		public override bool RegistrationExists => false;
 	}
 
 	private sealed class RegistrationSE : Step
@@ -56,18 +56,18 @@ public abstract class Step : SmartEnum<Step>
 		public override string Icon => "far fa-keyboard";
 		public override string CardHeaderCSS => "bg-warning-subtle";
 		public override string CardBodyCSS => "bg-warning-subtle";
-		public override bool EnableRegistrationToggleButton => false;
+		public override bool RegistrationExists => false;
 	}
 
 	private sealed class PaymentSE : Step
 	{
 		public PaymentSE() : base($"{nameof(Id.Payment)}", Id.Payment) { }
-		public override string Heading => "Payment";
-		public override string Text => "Make Payment";
+		public override string Heading => "Donation";   // Payment
+		public override string Text => "Make Donation"; // Make Payment
 		public override string Icon => "fas fa-dollar-sign";   
 		public override string CardHeaderCSS => "bg-danger-subtle";
 		public override string CardBodyCSS => "bg-danger-subtle";
-		public override bool EnableRegistrationToggleButton => true;
+		public override bool RegistrationExists => true;
 	}
 
 	private sealed class CompleteSE : Step
@@ -78,7 +78,7 @@ public abstract class Step : SmartEnum<Step>
 		public override string Icon => "fas fa-flag-checkered"; 
 		public override string CardHeaderCSS => "bg-info-subtle";
 		public override string CardBodyCSS => "bg-info-subtle";
-		public override bool EnableRegistrationToggleButton => true;
+		public override bool RegistrationExists => true;
 	}
 	#endregion
 
