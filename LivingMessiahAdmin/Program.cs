@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using AccountEnum = LivingMessiahAdmin.Enums.Account;
 using LivingMessiahAdmin.Features.Database;
 using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Data;
+using LivingMessiahAdmin.Features.Sukkot.Notes.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +59,7 @@ try
 	//Services
 	builder.Services.AddDatabase();
 	builder.Services.AddSukkotData();
+	builder.Services.AddManageNotes();
 	//builder.Services.AddCalendar();
 	//builder.Services.AddFeastDayPlanner();
 

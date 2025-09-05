@@ -1,12 +1,114 @@
 ﻿@page "/Sukkot/Notes"
 
 @using Page = LivingMessiahAdmin.Enums.Nav
-<PageHeader PageEnum="Page.SukkotNotes" />
 
-<div class="alert alert-warning text-center" role="alert">
-	<b>Note:</b> This page has not yet been ported over from an older version
+@inject ILogger<Index>? Logger
+@inject IToastService? Toast
+@inject Data.IRepository? db
+
+
+@* 
+<AuthorizeView Roles="@Roles.AdminOrSukkot">
+	<Authorized>
+	</Authorized>
+	<NotAuthorized>
+	</NotAuthorized>
+</AuthorizeView>
+*@
+
+<div class="d-print-none">
+  <a class="btn btn-sm btn-default float-end" href="javascript:window.print()">
+    <span class="fa fa-print"></span> Print
+  </a>
 </div>
 
+@* 
+  ToDo: can I use this? 
+    <PageHeader PageEnum="Page.SukkotNotes" /> 
+  ToDo: if so, can I incorporate the print button and push it to the right?
+*@
+<div class="pb-2 mt-4 mb-2 border-bottom">
+  <h3> <span class="text-warning"><i class="fa fa-sticky-note"></i></span> @Page.SukkotNotes.Title</h3>
+</div>
+
+<LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
+  @if (ShowDetail)
+  {
+    <DetailsCard SelectedNote="CurrentNote" OnCommandDetailClosed="ReturnedCommandDetailClose" />
+  }
+  else
+  {
+    @* @if (data is not null)  {  } *@
+    <div class="row">
+      <div class="col-sm-6">
+        <Typeahead SelectedNote="CurrentNote"
+                   OnNotesQuerySelected="ReturnedNotesQuery"
+                   data="data" />
+      </div>
+      <div class="col-sm-6">
+        <FilterButtons Filter="Filter" OnFilterSelected="ReturnedFilter" />
+      </div>
+    </div>
+
+    <ListCard Filter="Filter" data="data" />
+  }
+</LoadingComponent>
+
 @code {
+
+  List<NotesQuery>? data = new List<NotesQuery>();
+
+  protected bool TurnSpinnerOff = false;
+  protected override async Task OnInitializedAsync()
+  {
+    try
+    {
+      //Logger!.LogDebug("{Method}, Filter: {Message}", nameof(OnInitializedAsync), CurrentFilter?.Name);
+      await Task.Delay(500); // To allow the spinner to show  
+      // ToDo: Note, Filter is always going to be All, because we are in OnInitializedAsync
+      data = await db!.GetAdminOrUserNotes(Filter!);
+      if (data is null)
+      {
+        Logger!.LogDebug("{Method} {Message}", nameof(OnInitializedAsync), "data is null");
+        Toast!.ShowInfo("No notes to display");
+      }
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+      Toast!.ShowError("An invalid operation occurred, contact your administrator");
+    }
+    finally
+    {
+      TurnSpinnerOff = true;
+    }
+  }
+
+
+  private bool ShowDetail = false;
+  protected NotesQuery? CurrentNote { get; set; }
+  // Called by Typeahead
+  void ReturnedNotesQuery(NotesQuery notesQuery)
+  {
+    ShowDetail = true;
+    CurrentNote = notesQuery;
+    /*
+    Logger!.LogDebug("{Method}, {Message}"
+    , nameof(ReturnedNotesQuery)
+    , $"{notesQuery?.FirstName} {notesQuery?.FamilyName}, Id: {notesQuery?.Id}; ShowDetail: {ShowDetail}");
+    */
+  }
+
+  private Enums.Filter? Filter = Enums.Filter.All;
+  void ReturnedFilter(Enums.Filter filter)
+  {
+    Filter = filter;
+  }
+
+  void ReturnedCommandDetailClose()
+  {
+    CurrentNote = null;
+    ShowDetail = false;
+  }
 
 }

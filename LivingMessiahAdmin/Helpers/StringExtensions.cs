@@ -46,4 +46,21 @@ public static class StringExtensions
 		if (string.IsNullOrEmpty(value)) return value;
 		return value.Length <= maxLength ? value : value.Substring(0, maxLength);
 	}
+
+	public static string PhoneNumber(this string value)
+	{
+		if (string.IsNullOrEmpty(value)) return string.Empty;
+		value = new System.Text.RegularExpressions.Regex(@"\D")
+				.Replace(value, string.Empty);
+		value = value.TrimStart('1');
+		if (value.Length == 7)
+			return Convert.ToInt64(value).ToString("###-####");
+		if (value.Length == 10)
+			return Convert.ToInt64(value).ToString("###-###-####");
+		if (value.Length > 10)
+			return Convert.ToInt64(value)
+					.ToString("###-###-#### " + new String('#', (value.Length - 10)));
+		return value;
+	}
+
 }

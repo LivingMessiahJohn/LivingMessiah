@@ -1,0 +1,27 @@
+﻿@using Microsoft.Extensions.Logging;
+
+ <div class="d-print-none mb-2">
+	<div class="container d-flex justify-content-end mt-2">
+
+		@foreach (var item in Enums.Filter.List.OrderBy(o => o.Value))
+		{
+			<button @onclick="@(() => OnButtonClicked(item))"
+							class="btn @item.CssTextColor btn-sm @ActiveFilter(item)">
+				@item.Name &nbsp;<i class="fas fa-chevron-circle-right"></i>
+			</button>
+		}
+
+	</div>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public required Enums.Filter? Filter { get; set; }
+	[Parameter] public EventCallback<Enums.Filter> OnFilterSelected { get; set; }
+
+	public string ActiveFilter(Enums.Filter filter) => filter == Filter ? "active" : "";
+	
+	private void OnButtonClicked(Enums.Filter filter)
+	{
+		OnFilterSelected.InvokeAsync(filter); 
+	}
+}

@@ -1,0 +1,55 @@
+﻿@using System.Linq
+
+@inject ILogger<Typeahead>? Logger
+
+<div class="d-print-none">
+
+	<BlazoredTypeahead SearchMethod="SearchNotes"
+										 TValue="NotesQuery"
+										 TItem="NotesQuery"
+										 Value="CurrentNote"
+										 ValueChanged="SelectedResultChanged"
+										 ValueExpression="@(() => CurrentNote)"
+										 EnableDropDown="true"
+										 MaximumSuggestions="100"
+										 MinimumLength="2"
+										 placeholder="Search first name...">
+		<SelectedTemplate Context="contextNotes">
+			@contextNotes!.FirstName @contextNotes!.FamilyName [@contextNotes.Id]
+		</SelectedTemplate>
+		<HelpTemplate>Please enter at least 2 characters to perform a search on the first name</HelpTemplate>
+		<ResultTemplate Context="contextNotes">
+			@contextNotes.FirstName @contextNotes.FamilyName [@contextNotes.Id]
+		</ResultTemplate>
+	</BlazoredTypeahead>
+
+</div>
+
+@code {
+	[Parameter, EditorRequired] public List<NotesQuery>? data { get; set; }
+	[Parameter, EditorRequired] public required NotesQuery? SelectedNote { get; set; }
+	[Parameter] public EventCallback<NotesQuery> OnNotesQuerySelected { get; set; }
+
+	protected NotesQuery? CurrentNote { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		CurrentNote = SelectedNote;
+	}
+
+	private async Task<IEnumerable<NotesQuery>> SearchNotes(string searchText)
+	{
+		return await Task.FromResult(data!
+		  .Where(x => x.FirstName!.ToLower().Contains(searchText.ToLower()))
+			.OrderBy(o => o.FirstName));
+	}
+
+	private void SelectedResultChanged(NotesQuery selectedNote)
+	{
+		Logger!.LogDebug("{Method}, {Message}"
+			, nameof(SelectedResultChanged)
+			, $"{selectedNote?.FirstName} {selectedNote?.FamilyName}, Id: {selectedNote?.Id}");
+		OnNotesQuerySelected.InvokeAsync(selectedNote);
+	}
+}
+
