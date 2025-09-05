@@ -1,0 +1,102 @@
+﻿
+<div class="row">
+	<div class="col-12">
+		<p class="text-black-50 float-end mt-1 mb-3">
+			<small>
+				All Rows: <b>@data!.Count()</b>;
+				Filtered Rows: <b>@filteredRows</b>
+			</small>
+		</p>
+	</div>
+</div>
+
+@foreach (var item in dataFilter!)
+{
+	<div class="card text-dark bg-light mb-3">
+
+		<div class="card-header">
+
+			<div class="container d-flex justify-content-between">
+				<p><b>@item.FirstName @item.FamilyName</b></p>
+				<p>
+					<a href="tel:@item.Phone" title="@item.PhoneNumber">@item.PhoneNumber</a>&nbsp;<i class="fa fa-phone"></i>
+				</p>
+				<p>
+					<a href="mailto:@item.EMail" title="@item.EMail">@item.EMail</a>&nbsp;<i class="far fa-envelope"></i>
+				</p>
+			</div>
+
+		</div>
+
+
+		@if (Filter == Enums.Filter.All)
+		{
+			<div class="row">
+				<div class="col-sm-6">
+
+					@if (!String.IsNullOrEmpty(item.AdminNotes))
+					{
+						<div class="card-body @Enums.Filter.Admin.CssBgColor">
+							<p class="card-text">@item.AdminNotes </p>
+						</div>
+					}
+				</div>
+				<div class="col-sm-6">
+					@if (!String.IsNullOrEmpty(item.UserNotes))
+					{
+						<div class="card-body @Enums.Filter.User.CssBgColor">
+							<p class="card-text">@item.UserNotes </p>
+						</div>
+					}
+				</div>
+			</div>
+		}
+		else
+		{
+			@if (!String.IsNullOrEmpty(item.AdminNotes))
+			{
+				<div class="card-body @Enums.Filter.Admin.CssBgColor">
+					<p class="card-text ms-5">@item.AdminNotes </p>
+				</div>
+			}
+
+			@if (!String.IsNullOrEmpty(item.UserNotes))
+			{
+				<div class="card-body @Enums.Filter.User.CssBgColor">
+					<p class="card-text ms-5">@item.UserNotes </p>
+				</div>
+			}
+		}
+	</div>
+}
+
+
+@code {
+	[Parameter, EditorRequired] public required Enums.Filter? Filter { get; set; }
+	[Parameter, EditorRequired] public List<NotesQuery>? data { get; set; }
+
+	private int filteredRows = 0;	
+
+	List<NotesQuery>? dataFilter = new List<NotesQuery>();
+	protected override void OnParametersSet()
+	{
+		switch (Filter!.Name)
+		{
+			case nameof(Enums.Filter.All):
+				dataFilter = data;
+        filteredRows = data!.Count();	
+				break;
+
+			case nameof(Enums.Filter.Admin):
+        dataFilter = data!.Where(w => w.HasAdminNotes).OrderBy(o => o.FirstName).ToList();
+        filteredRows = dataFilter.Count();		
+				break;
+
+			case nameof(Enums.Filter.User):
+        dataFilter = data!.Where(w => w.HasUserNotes).OrderBy(o => o.FirstName).ToList();
+				filteredRows = dataFilter.Count();
+				break;
+		}
+	}
+}
+
