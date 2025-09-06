@@ -1,12 +1,14 @@
-﻿namespace LivingMessiahAdmin.Features.Sukkot.Notes.Data;
+﻿using FluentValidation;
+
+namespace LivingMessiahAdmin.Features.Sukkot.Notes.Data;
 
 public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddManageNotes(this IServiceCollection services)
 	{
 		services
-			.AddSingleton<IRepository, Repository>();
-		
+			.AddTransient<IRepository, Repository>()
+			.AddTransient<IValidator<EditFormVM>, EditFormVMValidator>();
 		return services;
 	}
 }
