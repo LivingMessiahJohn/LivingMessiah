@@ -6,7 +6,6 @@
 @inject IToastService? Toast
 @inject Data.IRepository? db
 
-
 @* 
 <AuthorizeView Roles="@Roles.AdminOrSukkot">
 	<Authorized>
@@ -15,6 +14,8 @@
 	</NotAuthorized>
 </AuthorizeView>
 *@
+
+<SukkotAdminMenubar />
 
 <div class="d-print-none">
   <a class="btn btn-sm btn-default float-end" href="javascript:window.print()">
@@ -76,7 +77,7 @@
     catch (Exception ex)
     {
       Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
-      Toast!.ShowError("An invalid operation occurred, contact your administrator");
+      Toast!.ShowError($"{Global.ToastShowError}");
     }
     finally
     {

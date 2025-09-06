@@ -17,10 +17,13 @@ public static class Pages
 		public const string IconText = "Notes";
 		public const string Icon = "far fa-sticky-note";
 	}
-
-	public const string AttendanceAllFeastDays = "/Sukkot/AttendanceAllFeastDays";
-	public const string AttendanceChart = "/Sukkot/AttendanceChart";
-
+	
+	
+	public static class Reports
+	{
+		public const string AttendanceAllFeastDays = "/Sukkot/AttendanceAllFeastDays";
+		//public const string AttendanceChart = "/Sukkot/AttendanceChart";
+	}
 	public static class Donations
 	{
 		public const string Grid = "/Sukkot/DonationsGrid";

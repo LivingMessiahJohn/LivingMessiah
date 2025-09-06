@@ -46,7 +46,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 	public async Task<List<ManageRegistrationQuery>> GetAll()
 	{
 		Sql = $@"
-SELECT Id, EMail, FullName, StatusId, Phone, Notes, AdminNotes, Adults, DidNotAttend
+SELECT Id, EMail, FullName, StatusId, Phone, Notes, AdminNotes, Adults, Children, DidNotAttend
 , TotalDonation, DonationRowCount
 , IdHra
 FROM Sukkot.vwManageRegistration

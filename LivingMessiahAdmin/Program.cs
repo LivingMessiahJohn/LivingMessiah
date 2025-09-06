@@ -19,6 +19,7 @@ using AccountEnum = LivingMessiahAdmin.Enums.Account;
 using LivingMessiahAdmin.Features.Database;
 using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Data;
 using LivingMessiahAdmin.Features.Sukkot.Notes.Data;
+using LivingMessiahAdmin.Features.Sukkot.Reports.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +61,7 @@ try
 	builder.Services.AddDatabase();
 	builder.Services.AddSukkotData();
 	builder.Services.AddManageNotes();
+	builder.Services.AddReports();
 	//builder.Services.AddCalendar();
 	//builder.Services.AddFeastDayPlanner();
 

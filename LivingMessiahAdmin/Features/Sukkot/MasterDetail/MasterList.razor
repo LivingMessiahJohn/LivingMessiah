@@ -4,56 +4,60 @@
 @inject IRepository? db;
 @inject IToastService? Toast
 
-<DetailTopButtonGroup />
+<div class="d-print-none">
+  <a class="btn btn-sm btn-default float-end" href="javascript:window.print()">
+    <span class="fa fa-print"></span> Print
+  </a>
+</div>
 
 <LoadingComponent IsLoading="RegistrationList == null" TurnSpinnerOff=TurnSpinnerOff>
-	<div class="@MediaQuery.XsOrSm.DivClass">
-		<RegistrationListCard RegistrationList="RegistrationList"
-													OnCrudActionSelected="ReturnedCrudActionSelected" />
-	</div>
-	<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-		<RegistrationListTable RegistrationList="RegistrationList"
-													 OnCrudActionSelected="ReturnedCrudActionSelected" />
-	</div>
+  <div class="@MediaQuery.XsOrSm.DivClass">
+    <RegistrationListCard RegistrationList="RegistrationList"
+                          OnCrudActionSelected="ReturnedCrudActionSelected" />
+  </div>
+  <div class="@MediaQuery.MdOrLgOrXl.DivClass">
+    <RegistrationListTable RegistrationList="RegistrationList"
+                           OnCrudActionSelected="ReturnedCrudActionSelected" />
+  </div>
 </LoadingComponent>
 
 <StatusInlineUL />
 <HelpInlineUL />
 
 @code {
-	[Parameter] public EventCallback<CrudAndIdArgs> OnCrudActionSelected { get; set; }
+  [Parameter] public EventCallback<CrudAndIdArgs> OnCrudActionSelected { get; set; }
 
-	void ReturnedCrudActionSelected(CrudAndIdArgs args)
-	 {
-	 	OnCrudActionSelected.InvokeAsync(args);
-	 }
+  void ReturnedCrudActionSelected(CrudAndIdArgs args)
+  {
+    OnCrudActionSelected.InvokeAsync(args);
+  }
 
-	bool TurnSpinnerOff = false;
+  bool TurnSpinnerOff = false;
 
-	protected List<ManageRegistrationQuery>? RegistrationList;
+  protected List<ManageRegistrationQuery>? RegistrationList;
 
-	protected override async Task OnInitializedAsync()
-	{
-		Logger!.LogDebug("{Method}", nameof(OnInitializedAsync));
+  protected override async Task OnInitializedAsync()
+  {
+    Logger!.LogDebug("{Method}", nameof(OnInitializedAsync));
 
-		try
-		{
-			RegistrationList = await db!.GetAll();
-			if (RegistrationList is null)
-			{
-				Logger!.LogWarning("{Method} {Message}", nameof(OnInitializedAsync), "RegistrationList is null");
-				Toast!.ShowWarning($"RegistrationList is null");
-			}
+    try
+    {
+      RegistrationList = await db!.GetAll();
+      if (RegistrationList is null)
+      {
+        Logger!.LogWarning("{Method} {Message}", nameof(OnInitializedAsync), "RegistrationList is null");
+        Toast!.ShowWarning($"RegistrationList is null");
+      }
 
-		}
-		catch (Exception ex)
-		{
-			Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
-			Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(OnInitializedAsync)}");
-		}
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+      Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(OnInitializedAsync)}");
+    }
 
-		TurnSpinnerOff = true;
-	}
+    TurnSpinnerOff = true;
+  }
 
 
 }

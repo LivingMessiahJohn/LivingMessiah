@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using System.Data;
-using Microsoft.Data.SqlClient; // System.Data.SqlClient; is Obsolete, 'Use the  package instead.'
+using Microsoft.Data.SqlClient; 
 
 namespace LivingMessiah.Data;
 
@@ -37,7 +37,6 @@ public abstract class BaseRepositoryAsync
 				throw new ArgumentException(err);
 			}
 
-			//Obsolete, 'Use the Microsoft.Data.SqlClient package instead.'
 			using (var connect = new SqlConnection(connectionString))
 			{
 				await connect.OpenAsync();
@@ -51,7 +50,6 @@ public abstract class BaseRepositoryAsync
 			throw new Exception(errMsg, ex);
 		}
 
-		//Obsolete, 'Use the Microsoft.Data.SqlClient package instead.'
 		catch (SqlException ex)
 		{
 			errMsg = $"{GetType().FullName}.{nameof(WithConnectionAsync)} experienced a Sql Exception <br /><br /> Sql...<br />[{SqlDump}] <br /><br />";

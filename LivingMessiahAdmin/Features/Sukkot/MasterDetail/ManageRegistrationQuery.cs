@@ -22,7 +22,7 @@ public class ManageRegistrationQuery
 	{
 		get
 		{
-			return StatusId == Step.Registration.Value ? "bg-secondary-subtle text-center text-black" : "";
+			return StatusId == Step.Registration.Value ? "bg-secondary-subtle text-black" : ""; // text-center
 		}
 	}
 
@@ -46,6 +46,7 @@ public class ManageRegistrationQuery
 	}
 
 	public int Adults { get; set; }
+	public int Children { get; set; }
 
 	private decimal GetRegistrationFee()
 	{

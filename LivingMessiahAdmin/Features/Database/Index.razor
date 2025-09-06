@@ -103,8 +103,7 @@
 		catch (Exception ex)
 		{
 			Logger!.LogError(ex, "{Method}", nameof(LogErrorTest));
-			//Toast!.ShowError("An invalid operation occurred, contact your administrator");
-			Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(LogErrorTest)}");
+			Toast!.ShowError($"{Global.ToastShowError} | {nameof(LogErrorTest)}");
 		}
 
 	}
@@ -128,8 +127,7 @@
 		catch (Exception ex)
 		{
 			Logger!.LogError(ex, "{Method}", nameof(EmptyErrorLog));
-			//Toast!.ShowError("An invalid operation occurred, contact your administrator");
-			Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(EmptyErrorLog)}");
+			Toast!.ShowError($"{Global.ToastShowError} | {nameof(EmptyErrorLog)}");
 		}
 
 	}
@@ -152,8 +150,7 @@
 		catch (Exception ex)
 		{
 			Logger!.LogError(ex, "{Method}", nameof(PopulateTable));
-			//Toast!.ShowError("An invalid operation occurred, contact your administrator");
-			Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(PopulateTable)}");
+			Toast!.ShowError($"{Global.ToastShowError} | {nameof(PopulateTable)}");
 		}
 
 	}
