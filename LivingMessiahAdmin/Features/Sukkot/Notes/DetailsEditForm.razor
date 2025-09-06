@@ -1,0 +1,110 @@
+﻿@using Microsoft.Extensions.Logging
+@using CrudEnums = LivingMessiahAdmin.Features.Sukkot.MasterDetail.Enums.Crud
+@using Blazored.FluentValidation
+@using LivingMessiahAdmin.Features.Sukkot.Notes
+
+@inject ILogger<DetailsEditForm>? Logger
+@inject IToastService? Toast
+@inject Data.IRepository? db
+
+@if (CurrentNote is not null)
+{
+  <div class="card text-dark bg-light my-4">
+    <div class="card-header">
+      <div class="container d-flex justify-content-between">
+        <p><b>@CurrentNote.FirstName @CurrentNote.FamilyName</b></p>
+        <p>
+          <a href="tel:@CurrentNote.Phone" title="@CurrentNote.PhoneNumber" tabindex="-1">@CurrentNote.PhoneNumber</a>&nbsp;<i class="fa fa-phone"></i>
+        </p>
+        <p>
+          <a href="mailto:@CurrentNote.EMail" title="@CurrentNote.EMail" tabindex="-1">@CurrentNote.EMail</a>&nbsp;<i class="far fa-envelope"></i>
+        </p>
+      </div>
+    </div>
+
+    <div class="card-body bg-light">
+      <EditForm id="notesEditForm" Model="@EditVM" OnValidSubmit="@OnValidSubmit">
+        <FluentValidationValidator @ref="_fluentValidationValidator" DisableAssemblyScanning="true" />
+        <ValidationSummary />
+
+        <div class="row mt-n2">
+          <div class="col-sm-6">
+            <div class="form-floating mb-3">
+              <InputTextArea id="adminNotes" class="form-control" @bind-Value="EditVM.AdminNotes" style="height:150px;" />
+              <label for="adminNotes" class="form-label"><small>Admin Notes</small></label>
+              <ValidationMessage For="@(() => EditVM.AdminNotes)" />
+            </div>
+
+          </div>
+          <div class="col-sm-6">
+            <div class="form-floating mb-3">
+              <InputTextArea id="userNotes" class="form-control" @bind-Value="EditVM.Notes" style="height:150px;" />
+              <label for="userNotes" class="form-label"><small>User Notes</small></label>
+              <ValidationMessage For="@(() => EditVM.Notes)" />
+            </div>
+          </div>
+        </div>
+
+      </EditForm>
+    </div>
+
+    <div class="d-print-none">
+      <div class="card-footer d-flex justify-content-center">
+        <button type="submit" form="notesEditForm" class="btn btn-outline-primary btn-sm mx-2">
+          <i class="fas fa-save"></i> Update
+        </button>
+        <button @onclick="CloseButtonClicked" class="btn btn-outline-warning btn-sm mx-2">
+          Close <i class='fas fa-times'></i>
+        </button>
+      </div>
+    </div>
+  </div>
+}
+else
+{
+  <p class="text-black-50"><small>CurrentNote IS NULL</small></p>
+}
+
+@code {
+  [Parameter, EditorRequired] public required NotesQuery? SelectedNote { get; set; }
+  [Parameter] public EventCallback OnCommandDetailClosed { get; set; }
+
+  protected NotesQuery? CurrentNote { get; set; }
+
+  protected EditFormVM EditVM { get; set; } = new();
+  private FluentValidationValidator? _fluentValidationValidator;
+
+  protected override void OnParametersSet()
+  {
+    if (SelectedNote is not null)
+    {
+      CurrentNote = SelectedNote;
+      EditVM.Id = CurrentNote.Id;
+      EditVM.AdminNotes = CurrentNote.AdminNotes;
+      EditVM.Notes = CurrentNote.UserNotes;
+    }
+  }
+
+  private async Task OnValidSubmit()
+  {
+    try
+    {
+      await db!.UpdateNotes(EditVM.Id, EditVM.AdminNotes, EditVM.Notes);
+      Toast!.ShowInfo("Notes updated successfully.");
+      // Optionally update CurrentNote with new values
+      CurrentNote!.AdminNotes = EditVM.AdminNotes;
+      CurrentNote!.UserNotes = EditVM.Notes;
+      CloseButtonClicked();
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "Error updating notes");
+      Toast!.ShowError("Error updating notes.");
+    }
+  }
+
+  void CloseButtonClicked()
+  {
+    OnCommandDetailClosed.InvokeAsync();
+  }
+}

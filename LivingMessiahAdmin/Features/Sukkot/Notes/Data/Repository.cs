@@ -9,6 +9,7 @@ public interface IRepository
 	string BaseSqlDump { get; }
 
 	Task<List<NotesQuery>> GetAdminOrUserNotes(Enums.Filter filter);
+	Task<int> UpdateNotes(int id, string? adminNotes, string? notes);
 }
 
 public class Repository : BaseRepositoryAsync, IRepository
@@ -40,4 +41,26 @@ FROM Sukkot.vwRegistration
 		});
 	}
 
+	public async Task<int> UpdateNotes(int id, string? adminNotes, string? notes)
+	{
+		Sql = @"
+UPDATE Sukkot.Registration
+SET AdminNotes = @AdminNotes,
+    Notes = @Notes
+WHERE Id = @Id
+";
+		Logger!.LogDebug("{Method}, {Sql}", nameof(UpdateNotes), Sql);
+
+		var parameters = new
+		{
+			Id = id,
+			AdminNotes = adminNotes,
+			Notes = notes
+		};
+
+		return await WithConnectionAsync(async connection =>
+		{
+			return await connection.ExecuteAsync(sql: Sql, param: parameters);
+		});
+	}
 }
