@@ -35,7 +35,7 @@
 <LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
   @if (ShowDetail)
   {
-    <DetailsCard SelectedNote="CurrentNote" OnCommandDetailClosed="ReturnedCommandDetailClose" />
+    <DetailsEditForm SelectedNote="CurrentNote" OnCommandDetailClosed="ReturnedCommandDetailClose" />
   }
   else
   {
