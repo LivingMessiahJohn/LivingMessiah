@@ -1,4 +1,4 @@
-﻿@using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Data
+﻿@using LivingMessiahAdmin.Features.Sukkot.Home.Data
 
 @inject ILogger<MasterList>? Logger
 @inject IRepository? db;
@@ -19,10 +19,12 @@
     <RegistrationListTable RegistrationList="RegistrationList"
                            OnCrudActionSelected="ReturnedCrudActionSelected" />
   </div>
+
+  <StatusInlineUL />
+  <HelpInlineUL />
+
 </LoadingComponent>
 
-<StatusInlineUL />
-<HelpInlineUL />
 
 @code {
   [Parameter] public EventCallback<CrudAndIdArgs> OnCrudActionSelected { get; set; }

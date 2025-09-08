@@ -1,0 +1,70 @@
+﻿@page "/Sukkot"
+
+@using LivingMessiahAdmin.Features.Sukkot.Home.Registrant
+
+@using LivingMessiahAdmin.Features.Sukkot.Home.Detail
+@using LivingMessiahAdmin.Features.Sukkot.Home.Donations
+@using LivingMessiahAdmin.Features.Sukkot.MasterDetail
+@using LivingMessiahAdmin.Features.Sukkot.MasterDetail.Enums
+
+@using LivingMessiahAdmin.Features.Sukkot.Enums
+<PageHeaderMenubar MenuBarEnum=MenuBar.Home />
+
+@if (VisibleComponent == Enums.VisibleComponent.MasterList)
+{
+  <MasterList OnCrudActionSelected="ReturnedCrudActionSelected" />
+}
+else
+{
+  <ShowMasterIndexButton OnShowListSelected="ReturnedShowList" />
+  <DetailPageHeader DetailPageHeaderVM="DetailPageHeaderVM" />
+
+  @if (VisibleComponent == Enums.VisibleComponent.AddEditForm)
+  {
+    <RegistrantForm />
+  }
+  else
+  {
+    <div class="card border-primary my-3 p-2">
+      <Report RegistrationId="Id" />
+    </div>
+  }
+}
+
+@code {
+  protected Enums.VisibleComponent? VisibleComponent { get; set; }
+
+  int Id { get; set; } = 0;
+  DetailPageHeaderVM? DetailPageHeaderVM;
+
+  protected override void OnInitialized()
+  {
+    if (VisibleComponent is null)
+    {
+      VisibleComponent = Enums.VisibleComponent.MasterList;
+    }
+  }
+
+  private void ReturnedShowList()
+  {
+    VisibleComponent = Enums.VisibleComponent.MasterList;
+  }
+
+  void ReturnedCrudActionSelected(CrudAndIdArgs args)
+  {
+    if (args.Crud == Crud.Display)
+    {
+      Id = args.Id;
+      VisibleComponent = Enums.VisibleComponent.DisplayCard;
+      DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
+    }
+    else
+    {
+      if (args.Crud == Crud.Edit)
+      {
+        VisibleComponent = Enums.VisibleComponent.AddEditForm;
+        DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
+      }
+    }
+  }
+}

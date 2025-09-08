@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 //using System.Text.Json;
 using AccountEnum = LivingMessiahAdmin.Enums.Account;
 using LivingMessiahAdmin.Features.Database;
-using LivingMessiahAdmin.Features.Sukkot.ManageRegistration.Data;
+using LivingMessiahAdmin.Features.Sukkot.Home.Data;
 using LivingMessiahAdmin.Features.Sukkot.Notes.Data;
 using LivingMessiahAdmin.Features.Sukkot.Reports.Data;
 

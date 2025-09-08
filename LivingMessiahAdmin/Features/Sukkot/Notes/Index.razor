@@ -1,36 +1,11 @@
 ﻿@page "/Sukkot/Notes"
 
-@using Page = LivingMessiahAdmin.Enums.Nav
+@using LivingMessiahAdmin.Features.Sukkot.Enums
+<PageHeaderMenubar MenuBarEnum=MenuBar.Notes ShowPrintButton=true />
 
 @inject ILogger<Index>? Logger
 @inject IToastService? Toast
 @inject Data.IRepository? db
-
-@* 
-<AuthorizeView Roles="@Roles.AdminOrSukkot">
-	<Authorized>
-	</Authorized>
-	<NotAuthorized>
-	</NotAuthorized>
-</AuthorizeView>
-*@
-
-<SukkotAdminMenubar />
-
-<div class="d-print-none">
-  <a class="btn btn-sm btn-default float-end" href="javascript:window.print()">
-    <span class="fa fa-print"></span> Print
-  </a>
-</div>
-
-@* 
-  ToDo: can I use this? 
-    <PageHeader PageEnum="Page.SukkotNotes" /> 
-  ToDo: if so, can I incorporate the print button and push it to the right?
-*@
-<div class="pb-2 mt-4 mb-2 border-bottom">
-  <h3> <span class="text-warning"><i class="fa fa-sticky-note"></i></span> @Page.SukkotNotes.Title</h3>
-</div>
 
 <LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
   @if (ShowDetail)

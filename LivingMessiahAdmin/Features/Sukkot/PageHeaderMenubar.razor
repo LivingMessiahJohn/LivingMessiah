@@ -1,0 +1,78 @@
+﻿@inject NavigationManager NavigationManager
+
+@* ToDo: use <AuthorizeView> HERE ??? *@
+
+<PageTitle>
+  @if (String.IsNullOrEmpty(PageTitle))
+  {
+    @MenuBarEnum.Title
+  }
+  else
+  {
+    @PageTitle
+  }
+</PageTitle>
+
+@* 
+ToDo: add this security block
+<AuthorizeView Roles="@Roles.AdminOrSukkot">
+	<Authorized>
+	</Authorized>
+	<NotAuthorized>
+	</NotAuthorized>
+</AuthorizeView>
+*@
+
+<div class="d-print-none mt-3">
+  <ol class="breadcrumb mx-n3 mt-n3">
+
+    @foreach (var item in Enums.MenuBar.List.ToList()
+        .OrderBy(o => o.Value))
+    {
+      <li class="@GetMenuItemClass(item) me-1">
+        <span class="fa-li"><i class="@item.Icon"></i></span>
+        <a @onclick="@(e => ButtonClicked(item))"
+           title="@item.Title @item.Title" 
+           class="@item.Css @(item == MenuBarEnum ? "text-decoration-none fw-bold text-primary" : "text-decoration-underline")">
+          @item.Title
+        </a>
+      </li>
+    }
+
+  </ol>
+</div>
+
+<div class="pb-n1 mt-2 @(ShowPrintButton ? "mb-1" : "mb-3") @BorderCSS">
+  <h1 class=""><i class="@MenuBarEnum.Icon"></i>&nbsp;&nbsp;@MenuBarEnum.Title</h1>
+</div>
+
+@if (ShowPrintButton)
+{
+  <div class="d-print-none">
+    <div class="row">
+      <div class="col-12">
+        <a class="btn btn-sm btn-default float-end" href="javascript:window.print()">
+          <span class="fa fa-print"></span> Print
+        </a>
+      </div>
+    </div>
+  </div>
+}
+
+@code {
+  [Parameter, EditorRequired] public Enums.MenuBar MenuBarEnum { get; set; }
+  [Parameter] public string? PageTitle { get; set; }
+  [Parameter] public string? BorderCSS { get; set; } = "border-bottom border-info";
+  [Parameter] public bool ShowPrintButton { get; set; } = false;
+
+  private string GetMenuItemClass(Enums.MenuBar item)
+  {
+    return item == MenuBarEnum ? "bg-light border border-secondary border-2 rounded p-1" : "p-1";
+  }
+
+  private void ButtonClicked(Enums.MenuBar nav)
+  {
+    NavigationManager!.NavigateTo(nav.Index);
+  }
+}
+
