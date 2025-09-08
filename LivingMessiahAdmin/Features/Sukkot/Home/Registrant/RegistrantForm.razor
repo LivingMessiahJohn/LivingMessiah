@@ -1,51 +1,56 @@
-﻿<h3>RegistrantForm</h3>
+﻿@using LivingMessiahAdmin.Features.Sukkot.Home.Registrant.Constants
 
 @inject ILogger<RegistrantForm>? Logger
 @inject IToastService? Toast
 
-<p>ToDo: Add EditForm which looks just like the one in LivingMessiah web app</p>
+<div class="alert alert-warning text-center fs-4" role="alert">
+  ToDo: Add EditForm which looks just like the one in LivingMessiah web app
+  <br />
+  Inside: <b>@nameof(RegistrantForm)</b>
+</div>
 
-	<div class="row">
-		<div class="col-sm-6">
-			<div class="my-2">
 
-				<button type="submit" class="@Enums.Constants.SaveButton.Color">
-					<i class="@Enums.Constants.SaveButton.Icon"></i> @Enums.FormMode.Add.SubmitText
-				@* @Enums.FormMode.Update.SubmitText *@
-				
-				</button>
+<div class="row">
+  <div class="col-sm-6">
+    <div class="my-2">
 
-				@*
+      <button type="submit" class="@SaveButton.Color">
+        <i class="@SaveButton.Icon"></i> @Enums.FormMode.Add.SubmitText
+        @* @Enums.FormMode.Update.SubmitText *@
+
+      </button>
+
+      @*
 				Cancel button has to be a div (ie not a button) thereby not triggering validation which is what I want
 				[Blazor Modal Form Validation: You have to click the cancel button twice to close the modal when you delete a form field](https://stackoverflow.com/a/67737357/41106)
 				*@
-				<div @onclick="@(e => CancelActionHandler())" class="@Enums.Constants.CancelButton.Color">
-					<i class="@Enums.Constants.CancelButton.Icon"></i> @Enums.Constants.CancelButton.Text
-					
-				</div>
+      <div @onclick="@(e => CancelActionHandler())" class="@Constants.CancelButton.Color">
+        <i class="@Constants.CancelButton.Icon"></i> @CancelButton.Text
 
-			</div>
-		</div>
-		<div class="col-sm-6"></div>
-	</div>
+      </div>
+
+    </div>
+  </div>
+  <div class="col-sm-6"></div>
+</div>
 
 @code {
 
-	protected void HandleValidSubmit()
-	{
-		Logger!.LogDebug("{Method} {FormMode}", nameof(HandleValidSubmit), "FormMode is ???");
-		
-		//Dispatcher!.Dispatch(new AddOrEdit_Action(State!.Value.FormVM!, State!.Value.FormMode!));
-		//Dispatcher!.Dispatch(new MasterDetail.GetAll_Action());
-		//Dispatcher!.Dispatch(new ParentState.Set_PageHeader_For_Index_Action(ManageRegistration.Constants.GetPageHeaderForIndexVM()));
-   
-	}
+  protected void HandleValidSubmit()
+  {
+    Logger!.LogDebug("{Method} {FormMode}", nameof(HandleValidSubmit), "FormMode is ???");
+
+    //Dispatcher!.Dispatch(new AddOrEdit_Action(State!.Value.FormVM!, State!.Value.FormMode!));
+    //Dispatcher!.Dispatch(new MasterDetail.GetAll_Action());
+    //Dispatcher!.Dispatch(new ParentState.Set_PageHeader_For_Index_Action(ManageRegistration.Constants.GetPageHeaderForIndexVM()));
+
+  }
 
 
-	void CancelActionHandler()
-	{
-		Logger!.LogDebug("{Method}", nameof(CancelActionHandler));
+  void CancelActionHandler()
+  {
+    Logger!.LogDebug("{Method}", nameof(CancelActionHandler));
     Toast!.ShowWarning("Cancel button clicked - no action taken");
-		//Dispatcher!.Dispatch(new ParentState.Set_PageHeader_For_Index_Action(ManageRegistration.Constants.GetPageHeaderForIndexVM()));
-	}
+    //Dispatcher!.Dispatch(new ParentState.Set_PageHeader_For_Index_Action(ManageRegistration.Constants.GetPageHeaderForIndexVM()));
+  }
 }

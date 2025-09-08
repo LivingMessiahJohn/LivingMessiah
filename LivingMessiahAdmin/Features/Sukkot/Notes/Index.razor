@@ -1,7 +1,15 @@
 ﻿@page "/Sukkot/Notes"
 
 @using LivingMessiahAdmin.Features.Sukkot.Enums
-<PageHeaderMenubar MenuBarEnum=MenuBar.Notes ShowPrintButton=true />
+@* <PageHeaderMenubar MenuBarEnum=MenuBar.Notes ShowPrintButton=true /> *@
+<div class="@MediaQuery.XsOrSm.DivClass">
+  <PageHeaderMenubar MenuBarEnum=MenuBar.Notes IsXsOrSm=true />
+</div>
+<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+  <PageHeaderMenubar MenuBarEnum=MenuBar.Notes ShowPrintButton=true IsXsOrSm=false />
+</div>
+
+
 
 @inject ILogger<Index>? Logger
 @inject IToastService? Toast

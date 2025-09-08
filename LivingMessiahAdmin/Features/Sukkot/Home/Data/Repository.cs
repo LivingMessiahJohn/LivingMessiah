@@ -4,10 +4,10 @@ using System.Data;
 using SukkotEnumsHelper = LivingMessiahAdmin.Features.Sukkot.Enums.Helper;
 using DataEnumsDatabase = LivingMessiahAdmin.Data.Enums.Database;
 using LivingMessiahAdmin.Data;
-
 using LivingMessiahAdmin.Features.Sukkot.Enums;
-using LivingMessiahAdmin.Features.Sukkot.MasterDetail;
-using LivingMessiahAdmin.Features.Sukkot.Home.Detail;
+using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationDetail;
+
+//using LivingMessiahAdmin.Features.Sukkot.Home.Detail;
 
 namespace LivingMessiahAdmin.Features.Sukkot.Home.Data;
 
@@ -15,7 +15,7 @@ public interface IRepository
 {
 	string BaseSqlDump { get; }
 	string BaseServerId { get; }
-	Task<List<ManageRegistrationQuery>> GetAll();
+	Task<List<RegistrationListQuery>> GetAll();
 	Task<Registrant.FormVM> Get(int id);
 
 	Task<Tuple<int, int, string>> CreateRegistration(Registrant.FormVM formVM);
@@ -40,9 +40,9 @@ public class Repository : BaseRepositoryAsync, IRepository
 	}
 	public string BaseServerId => GetServerId();
 
-	#region Registration used by FluxorStore
+	#region GetAll, Get, Create & Update
 
-	public async Task<List<ManageRegistrationQuery>> GetAll()
+	public async Task<List<RegistrationListQuery>> GetAll()
 	{
 		Sql = $@"
 SELECT Id, EMail, FullName, StatusId, Phone, Notes, AdminNotes, Adults, Children, DidNotAttend
@@ -53,7 +53,7 @@ ORDER BY FullName
 ";
 		return await WithConnectionAsync(async connection =>
 		{
-			var rows = await connection.QueryAsync<ManageRegistrationQuery>(sql: Sql);
+			var rows = await connection.QueryAsync<RegistrationListQuery>(sql: Sql);
 			return rows.ToList();
 		});
 	}
@@ -212,6 +212,7 @@ WHERE Id = @Id";
 
 	#endregion
 
+	//public async Task<RegistrationListQuery> ById(int id)
 	public async Task<RegistrationQuery> ById(int id)
 	{
 		Parms = new DynamicParameters(new { Id = id });
@@ -231,6 +232,7 @@ WHERE Id = @Id
 ";
 		return await WithConnectionAsync(async connection =>
 		{
+		//var registration = (await connection.QueryAsync<RegistrationListQuery>(sql: Sql, param: Parms)).SingleOrDefault();
 			var registration = (await connection.QueryAsync<RegistrationQuery>(sql: Sql, param: Parms)).SingleOrDefault();
 
 			if (registration != null)

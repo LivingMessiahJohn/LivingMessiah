@@ -2,9 +2,9 @@
 
 using LivingMessiahAdmin.Features.Sukkot.Enums;
 
-namespace LivingMessiahAdmin.Features.Sukkot.MasterDetail;
+namespace LivingMessiahAdmin.Features.Sukkot.Home.Data;
 
-public class ManageRegistrationQuery
+public class RegistrationListQuery
 {
 	public int Id { get; set; }
 	public string? EMail { get; set; }
@@ -127,11 +127,9 @@ public class ManageRegistrationQuery
 
 	public int DonationRowCount { get; set; }
 
-
 	public string? Phone { get; set; }
 	public string? Notes { get; set; }
 	public string? AdminNotes { get; set; }
-
 
 	public string AdminNotesShort
 	{
@@ -142,5 +140,4 @@ public class ManageRegistrationQuery
 	}
 
 	public int IdHra { get; set; }
-
 }

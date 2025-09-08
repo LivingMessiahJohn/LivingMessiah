@@ -1,68 +1,138 @@
 ﻿@page "/Sukkot"
 
-@using LivingMessiahAdmin.Features.Sukkot.Home.Registrant
-
-@using LivingMessiahAdmin.Features.Sukkot.Home.Detail
-@using LivingMessiahAdmin.Features.Sukkot.Home.Donations
-@using LivingMessiahAdmin.Features.Sukkot.MasterDetail
-@using LivingMessiahAdmin.Features.Sukkot.MasterDetail.Enums
-
 @using LivingMessiahAdmin.Features.Sukkot.Enums
-<PageHeaderMenubar MenuBarEnum=MenuBar.Home />
+@using LivingMessiahAdmin.Features.Sukkot.Home.Data
+@using LivingMessiahAdmin.Features.Sukkot.Home.Donations
+@using LivingMessiahAdmin.Features.Sukkot.Home.Registrant
+@using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationList
+@using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationList.Enums
+@using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationDetail
 
-@if (VisibleComponent == Enums.VisibleComponent.MasterList)
+@inject ILogger<Index>? Logger
+@inject IRepository? db;
+@inject IToastService? Toast
+
+<div class="@MediaQuery.XsOrSm.DivClass">
+  @if (VisibleComponent == Enums.VisibleComponent.RegistrationList)
+  {
+    <PageHeaderMenubar MenuBarEnum=MenuBar.Home IsXsOrSm=true />
+  }
+  else
+  {
+    <PageHeaderMenubar MenuBarEnum=MenuBar.Home IsXsOrSm=true />
+  }
+</div>
+
+<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+  @if (VisibleComponent == Enums.VisibleComponent.RegistrationList)
+  {
+    <PageHeaderMenubar MenuBarEnum=MenuBar.Home ShowPrintButton=true IsXsOrSm=false />
+  }
+  else
+  {
+    <PageHeaderMenubar MenuBarEnum=MenuBar.Home IsXsOrSm=false />
+  }
+</div>
+
+@if (VisibleComponent == Enums.VisibleComponent.RegistrationList)
 {
-  <MasterList OnCrudActionSelected="ReturnedCrudActionSelected" />
+  <LoadingComponent IsLoading="RegistrationList == null" TurnSpinnerOff=TurnSpinnerOff>
+    <div class="@MediaQuery.XsOrSm.DivClass">
+      <XsSmCard RegistrationList="RegistrationList"
+                OnCrudActionSelected="ReturnedCrudActionSelected" />
+    </div>
+    <div class="@MediaQuery.MdOrLgOrXl.DivClass">
+      <MdLgXlTable RegistrationList="RegistrationList"
+                   OnCrudActionSelected="ReturnedCrudActionSelected" />
+    </div>
+
+    <StatusInlineUL />
+    <HelpInlineUL />
+
+  </LoadingComponent>
+
 }
 else
 {
   <ShowMasterIndexButton OnShowListSelected="ReturnedShowList" />
   <DetailPageHeader DetailPageHeaderVM="DetailPageHeaderVM" />
 
-  @if (VisibleComponent == Enums.VisibleComponent.AddEditForm)
+  @if (VisibleComponent == Enums.VisibleComponent.Registrant)
   {
     <RegistrantForm />
   }
   else
   {
-    <div class="card border-primary my-3 p-2">
-      <Report RegistrationId="Id" />
-    </div>
+    if (VisibleComponent == Enums.VisibleComponent.RegistrationDetail)
+    {
+      <div class="card border-primary my-3 p-2">
+        <Report RegistrationId="Id" />
+      </div>
+    }
+    else
+    {
+      <div class="alert alert-warning text-center fs-4" role="alert">
+        Inside: <b>@nameof(Index)</b>  <br /> Unknown <code>VisibleComponent</code>
+      </div>
+    }
   }
+
 }
 
 @code {
-  protected Enums.VisibleComponent? VisibleComponent { get; set; }
+
+  protected Enums.VisibleComponent? VisibleComponent { get; set; } = Enums.VisibleComponent.RegistrationList;
+
+  bool TurnSpinnerOff = false;
+
+  protected List<Data.RegistrationListQuery>? RegistrationList;
+
 
   int Id { get; set; } = 0;
   DetailPageHeaderVM? DetailPageHeaderVM;
 
-  protected override void OnInitialized()
+  protected override async Task OnInitializedAsync()
   {
-    if (VisibleComponent is null)
+    Logger!.LogDebug("{Method}", nameof(OnInitializedAsync));
+
+    try
     {
-      VisibleComponent = Enums.VisibleComponent.MasterList;
+      RegistrationList = await db!.GetAll();
+      if (RegistrationList is null)
+      {
+        Logger!.LogWarning("{Method} {Message}", nameof(OnInitializedAsync), "RegistrationList is null");
+        Toast!.ShowWarning($"RegistrationList is null");
+      }
+
     }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+      Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(OnInitializedAsync)}");
+    }
+
+    TurnSpinnerOff = true;
   }
+
 
   private void ReturnedShowList()
   {
-    VisibleComponent = Enums.VisibleComponent.MasterList;
+    VisibleComponent = Enums.VisibleComponent.RegistrationList;
   }
 
-  void ReturnedCrudActionSelected(CrudAndIdArgs args)
+  void ReturnedCrudActionSelected(CrudRecord args)
   {
     if (args.Crud == Crud.Display)
     {
       Id = args.Id;
-      VisibleComponent = Enums.VisibleComponent.DisplayCard;
+      VisibleComponent = Enums.VisibleComponent.RegistrationDetail;
       DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
     }
     else
     {
       if (args.Crud == Crud.Edit)
       {
-        VisibleComponent = Enums.VisibleComponent.AddEditForm;
+        VisibleComponent = Enums.VisibleComponent.Registrant;
         DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
       }
     }

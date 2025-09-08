@@ -1,4 +1,5 @@
-﻿
+﻿@using LivingMessiahAdmin.Features.Sukkot.Home
+
 <TableTemplate Items="RegistrationList!"
                HeaderCSS="table table-light table-hover table-sm" TRCSS="fs-6">
   <TableHeader>
@@ -54,10 +55,10 @@
 </TableTemplate>
 
 @code {
-  [Parameter, EditorRequired] public List<ManageRegistrationQuery>? RegistrationList { get; set; }
-  [Parameter] public EventCallback<CrudAndIdArgs> OnCrudActionSelected { get; set; }
+  [Parameter, EditorRequired] public List<Data.RegistrationListQuery>? RegistrationList { get; set; }
+  [Parameter] public EventCallback<CrudRecord> OnCrudActionSelected { get; set; }
 
-  void ReturnedCrudActionSelected(CrudAndIdArgs args)
+  void ReturnedCrudActionSelected(CrudRecord args)
   {
     OnCrudActionSelected.InvokeAsync(args);
   }

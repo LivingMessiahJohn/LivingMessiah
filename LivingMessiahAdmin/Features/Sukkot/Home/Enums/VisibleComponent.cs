@@ -7,16 +7,16 @@ public abstract class VisibleComponent : SmartEnum<VisibleComponent>
 	#region Id's
 	private static class Id
 	{
-		internal const int MasterList = 1;  // ToDo: will this be split between RgistrationList and RegistrationCard?
-		internal const int AddEditForm = 2;
-		internal const int DisplayCard = 3;
+		internal const int RegistrationList = 1;  // ToDo: will this be split between RgistrationList and RegistrationCard?
+		internal const int RegistrationDetail = 2;
+		internal const int Registrant = 3;
 	}
 	#endregion
 
 	#region  Declared Public Instances
-	public static readonly VisibleComponent MasterList = new MasterListSE();
-	public static readonly VisibleComponent AddEditForm = new AddEditFormSE();
-	public static readonly VisibleComponent DisplayCard = new DisplayCardSE();  // Rename DisplayCard to just Display
+	public static readonly VisibleComponent RegistrationList = new RegistrationListSE();
+	public static readonly VisibleComponent RegistrationDetail = new RegistrationDetailSE();  
+	public static readonly VisibleComponent Registrant = new RegistrantSE();
 	#endregion
 
 	private VisibleComponent(string name, int value) : base(name, value)  // Constructor
@@ -30,21 +30,20 @@ public abstract class VisibleComponent : SmartEnum<VisibleComponent>
 
 	#region Private Instantiation
 
-	private sealed class MasterListSE : VisibleComponent
+	private sealed class RegistrationListSE : VisibleComponent
 	{
-		public MasterListSE() : base($"{nameof(Id.MasterList)}", Id.MasterList) { }
+		public RegistrationListSE() : base($"{nameof(Id.RegistrationList)}", Id.RegistrationList) { }
 	}
 
-	private sealed class AddEditFormSE : VisibleComponent
+	private sealed class RegistrationDetailSE : VisibleComponent
 	{
-		public AddEditFormSE() : base($"{nameof(Id.AddEditForm)}", Id.AddEditForm) { }
+		public RegistrationDetailSE() : base($"{nameof(Id.RegistrationDetail)}", Id.RegistrationDetail) { }
 	}
 
-	private sealed class DisplayCardSE : VisibleComponent
+	private sealed class RegistrantSE : VisibleComponent
 	{
-		public DisplayCardSE() : base($"{nameof(Id.DisplayCard)}", Id.DisplayCard) { }
+		public RegistrantSE() : base($"{nameof(Id.Registrant)}", Id.Registrant) { }
 	}
 
 	#endregion
 }
-// Ignore Spelling: HRA
