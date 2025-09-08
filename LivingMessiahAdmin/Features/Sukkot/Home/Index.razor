@@ -12,30 +12,10 @@
 @inject IRepository? db;
 @inject IToastService? Toast
 
-<div class="@MediaQuery.XsOrSm.DivClass">
-  @if (VisibleComponent == Enums.VisibleComponent.RegistrationList)
-  {
-    <PageHeaderMenubar MenuBarEnum=MenuBar.Home IsXsOrSm=true />
-  }
-  else
-  {
-    <PageHeaderMenubar MenuBarEnum=MenuBar.Home IsXsOrSm=true />
-  }
-</div>
-
-<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-  @if (VisibleComponent == Enums.VisibleComponent.RegistrationList)
-  {
-    <PageHeaderMenubar MenuBarEnum=MenuBar.Home ShowPrintButton=true IsXsOrSm=false />
-  }
-  else
-  {
-    <PageHeaderMenubar MenuBarEnum=MenuBar.Home IsXsOrSm=false />
-  }
-</div>
-
 @if (VisibleComponent == Enums.VisibleComponent.RegistrationList)
 {
+  <PageHeaderMenubar MenuBarEnum=MenuBar.Home ShowPrintButton=true />
+
   <LoadingComponent IsLoading="RegistrationList == null" TurnSpinnerOff=TurnSpinnerOff>
     <div class="@MediaQuery.XsOrSm.DivClass">
       <XsSmCard RegistrationList="RegistrationList"
@@ -48,9 +28,7 @@
 
     <StatusInlineUL />
     <HelpInlineUL />
-
   </LoadingComponent>
-
 }
 else
 {

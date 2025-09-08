@@ -1,30 +1,11 @@
 ﻿@page "/Sukkot/AttendanceAllFeastDays"
 
 @using LivingMessiahAdmin.Features.Sukkot.Enums
-@* <PageHeaderMenubar MenuBarEnum=MenuBar.Report ShowPrintButton=true /> *@
-<div class="@MediaQuery.XsOrSm.DivClass">
-	<PageHeaderMenubar MenuBarEnum=MenuBar.Report IsXsOrSm=true />
-</div>
-<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-	<PageHeaderMenubar MenuBarEnum=MenuBar.Report ShowPrintButton=true IsXsOrSm=false />
-</div>
+<PageHeaderMenubar MenuBarEnum=MenuBar.Report ShowPrintButton=true />
 
 @inject ILogger<Attendance>? Logger
 @inject IToastService? Toast
 @inject Data.IRepository? db
-
-@* 
-<div class="d-print-none">
-	<div class="float-end">
-
-		<a href="@Page.SukkotAttendanceReport.Index"
-			 class="btn btn-info btn-sm" disabled>
-			<i class="fas fa-chart-line fa-lg"></i>
-			Chart
-		</a>
-	</div>
-</div>
-*@
 
 <p class="text-center">The attendance for every day followed by a summary of people who attended regardless of which day(s).</p>
 

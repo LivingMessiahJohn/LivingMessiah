@@ -1,8 +1,8 @@
 ﻿@inject NavigationManager NavigationManager
 
 @* ToDo
-  1. use <AuthorizeView> HERE ??? 
-    2. Collapse Menu on small
+1. use <AuthorizeView> HERE ??? 
+ 2. Collapse Menu on small
 *@
 
 <PageTitle>
@@ -27,8 +27,7 @@ ToDo: add this security block
 *@
 
 <div class="d-print-none mt-3">
-  @if (IsXsOrSm)
-  {
+  <div class="@MediaQuery.XsOrSm.DivClass">
     <div class="d-flex justify-content-end">
       <div class="dropdown">
         <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -36,10 +35,10 @@ ToDo: add this security block
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
           @foreach (var item in Enums.MenuBar.List.ToList()
-              .OrderBy(o => o.Value))
+                    .OrderBy(o => o.Value))
           {
             <li>
-              <a class="dropdown-item @(item == MenuBarEnum ? "active" : "")" 
+              <a class="dropdown-item @(item == MenuBarEnum ? "active" : "")"
                  @onclick="@(e => ButtonClicked(item))"
                  title="@item.Title"
                  href="javascript:void(0);">
@@ -51,12 +50,11 @@ ToDo: add this security block
         </ul>
       </div>
     </div>
-  }
-  else
-  {
+  </div>
+  <div class="@MediaQuery.MdOrLgOrXl.DivClass">
     <ol class="breadcrumb mx-n3 mt-n3">
       @foreach (var item in Enums.MenuBar.List.ToList()
-          .OrderBy(o => o.Value))
+            .OrderBy(o => o.Value))
       {
         <li class="@GetMenuItemClass(item) me-1">
           <span class="fa-li"><i class="@item.Icon"></i></span>
@@ -68,29 +66,31 @@ ToDo: add this security block
         </li>
       }
     </ol>
-  }
+  </div>
 </div>
+
 
 <div class="pb-n1 mt-2 @(ShowPrintButton ? "mb-1" : "mb-3") @BorderCSS">
   <h1 class=""><i class="@MenuBarEnum.Icon"></i>&nbsp;&nbsp;@MenuBarEnum.Title</h1>
 </div>
 
-@if (ShowPrintButton)
-{
-  <div class="d-print-none">
-    <div class="row">
-      <div class="col-12">
-        <a class="btn btn-sm btn-default float-end" href="javascript:window.print()">
-          <span class="fa fa-print"></span> Print
-        </a>
+<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+  @if (ShowPrintButton)
+  {
+    <div class="d-print-none">
+      <div class="row">
+        <div class="col-12">
+          <a class="btn btn-sm btn-default float-end" href="javascript:window.print()">
+            <span class="fa fa-print"></span> Print
+          </a>
+        </div>
       </div>
     </div>
-  </div>
-}
+  }
+</div>
 
 @code {
   [Parameter, EditorRequired] public Enums.MenuBar MenuBarEnum { get; set; }
-  [Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
   [Parameter] public string? PageTitle { get; set; }
   [Parameter] public string? BorderCSS { get; set; } = "border-bottom border-info";
   [Parameter] public bool ShowPrintButton { get; set; } = false;
