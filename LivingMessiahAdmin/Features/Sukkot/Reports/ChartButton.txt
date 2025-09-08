@@ -1,0 +1,10 @@
+﻿
+<div class="d-print-none">
+	<div class="float-end">
+		<a href="@Page.SukkotAttendanceReport.Index"
+			 class="btn btn-info btn-sm" disabled>
+			<i class="fas fa-chart-line fa-lg"></i>
+			Chart
+		</a>
+	</div>
+</div>
