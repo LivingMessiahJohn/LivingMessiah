@@ -1,32 +1,11 @@
 ﻿@page "/Sukkot/AttendanceAllFeastDays"
 
-@using Page = LivingMessiahAdmin.Enums.Nav
+@using LivingMessiahAdmin.Features.Sukkot.Enums
+<PageHeaderMenubar MenuBarEnum=MenuBar.Report ShowPrintButton=true />
 
 @inject ILogger<Attendance>? Logger
 @inject IToastService? Toast
 @inject Data.IRepository? db
-
-<PageHeader PageEnum="Page.SukkotAttendanceReport" />
-
-@* 
-
-@using Page = LivingMessiahAdmin.Features.Sukkot.Constants.Pages.Reports
-<AuthorizeView Roles="@Roles.SukkotMenuBar">
-	<SukkotAdminMenubar></SukkotAdminMenubar>
-</AuthorizeView> 
-*@
-<SukkotAdminMenubar />
-
-@* 
-ToDo: Chart not yet implemented
-href="@Page.SukkotAttendanceChart.Index
-*@
-
-<div class="d-print-none">
-	<a class="btn btn-sm btn-default float-end" href="javascript:window.print()">
-		<span class="fa fa-print"></span> Print
-	</a>
-</div>
 
 @* 
 <div class="d-print-none">
@@ -39,12 +18,9 @@ href="@Page.SukkotAttendanceChart.Index
 		</a>
 	</div>
 </div>
- *@
+*@
 
-<div class="pb-2 mt-4 mb-2 border-bottom">
-	<h3><i class="fas fa-calculator"></i> Attendance Count</h3>
-	<p>The attendance for every day followed by a summary of people who attended regardless of which day(s).</p>
-</div>
+<p class="text-center">The attendance for every day followed by a summary of people who attended regardless of which day(s).</p>
 
 <LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
 
@@ -107,7 +83,6 @@ href="@Page.SukkotAttendanceChart.Index
 							<td><span class="text-center">@dataSummary.ChildSmall</span></td>
 							<td><b><span class="text-center">@dataSummary.TotalPeeps</span></b></td>
 						</tr>
-
 					}
 
 				</tbody>

@@ -1,0 +1,31 @@
+﻿
+using LivingMessiahAdmin.Features.Sukkot.Enums;
+using System.ComponentModel.DataAnnotations;
+
+namespace LivingMessiahAdmin.Features.Sukkot.Home.Donations.Data;
+
+public class DonationReport
+{
+	public int Id { get; set; }
+	public string? EMail { get; set; }
+	public string? FamilyName { get; set; }
+	public string? FirstName { get; set; }
+	public int StatusId { get; set; }
+	public string? StatusDescr { get; set; }
+
+	[DataType(DataType.Currency)]
+	[DisplayFormat(DataFormatString = "{0:C0}")]
+	public decimal RegistrationFeeAdjusted { get; set; }
+
+	[DataType(DataType.Currency)]
+	public decimal TotalDonation { get; set; }
+
+	public string FullyPaidIcon
+	{
+		get
+		{
+			return Step.FromValue(StatusId) == Step.Complete ? "X" : "";
+		}
+	}
+
+}

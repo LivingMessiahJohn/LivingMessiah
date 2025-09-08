@@ -1,5 +1,6 @@
 ﻿
 using Ardalis.SmartEnum;
+using LivingMessiahAdmin.Features.Sukkot.Enums;
 
 namespace LivingMessiahAdmin.Enums;
 
@@ -41,9 +42,6 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int PsalmsAndProverbs = 6;
 		internal const int SpecialEvents = 7;
 		internal const int Sukkot = 8;
-		internal const int SukkotNotes = 9;
-		//		internal const int SukkotDelete = 10;
-		internal const int SukkotAttendanceReport = 11;
 	}
 	#endregion
 
@@ -55,9 +53,6 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav HealthCheckTestLogger = new HealthCheckTestLoggerSE();
 	public static readonly Nav PsalmsAndProverbs = new PsalmsAndProverbsSE();
 	public static readonly Nav Sukkot = new SukkotSE();
-	public static readonly Nav SukkotNotes = new SukkotNotesSE();
-	//	public static readonly Nav SukkotDelete = new SukkotDeleteSE();
-	public static readonly Nav SukkotAttendanceReport = new SukkotAttendanceReportSE();
 	public static readonly Nav SpecialEvents = new SpecialEventsSE();
 	#endregion
 
@@ -182,53 +177,10 @@ public abstract class Nav : SmartEnum<Nav>
 	private sealed class SukkotSE : Nav
 	{
 		public SukkotSE() : base($"{nameof(Id.Sukkot)}", Id.Sukkot) { }
-		public override string Index => "/Sukkot";  // Sukkot/ManageRegistration
-		public override string Title => "Manage Registration";
-		public override string Icon => "fas fa-mask";
+		public override string Index => Features.Sukkot.Enums.MenuBar.Home.Index;
+		public override string Title => Features.Sukkot.Enums.MenuBar.Home.Title;
+		public override string Icon => Features.Sukkot.Enums.MenuBar.Home.Icon;
 		public override int Sort => Id.Sukkot;
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => false;
-	}
-
-	// This is a sub-page of Sukkot, do I want this here?
-	private sealed class SukkotNotesSE : Nav
-	{
-		public SukkotNotesSE() : base($"{nameof(Id.SukkotNotes)}", Id.SukkotNotes) { }
-		public override string Index => "/Sukkot/Notes";
-		public override string Title => "Sukkot Notes";
-		public override string Icon => "fas fa-sticky-note";
-		public override int Sort => Id.SukkotNotes;
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => false;
-	}
-
-	//public const string DeleteConfirmation = "/Sukkot/DeleteConfirmation";
-	//public const string DeleteConfirmationTitle = "Delete Sukkot Registration?";
-	//public const string DeleteConfirmationSubTitle = "Delete Registration? | ";
-
-	//private sealed class SukkotDeleteSE : Nav
-	//{
-	//	public SukkotDeleteSE() : base($"{nameof(Id.SukkotDelete)}", Id.SukkotDelete) { }
-	//	public override string Index => "/Sukkot/Delete";
-	//	public override string Title => "Sukkot Delete";
-	//	public override string Icon => "fas fa-times";
-	//	public override int Sort => Id.SukkotDelete;
-	//	public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
-	//	public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-	//	public override bool Disabled => false;
-	//}
-
-	//public const string AttendanceChart = "/SukkotAdmin/AttendanceChart";
-
-	private sealed class SukkotAttendanceReportSE : Nav
-	{
-		public SukkotAttendanceReportSE() : base($"{nameof(Id.SukkotAttendanceReport)}", Id.SukkotAttendanceReport) { }
-		public override string Index => "/Sukkot/AttendanceAllFeastDays";
-		public override string Title => "Attendance all Feast Days";
-		public override string Icon => "fas fa-sticky-note";
-		public override int Sort => Id.SukkotAttendanceReport;
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
