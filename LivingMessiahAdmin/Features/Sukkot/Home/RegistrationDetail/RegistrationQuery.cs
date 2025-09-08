@@ -1,6 +1,7 @@
 ﻿using LivingMessiahAdmin.Features.Sukkot.Enums;
+using LivingMessiahAdmin.Features.Sukkot.Home.Data;
 
-namespace LivingMessiahAdmin.Features.Sukkot.Home.Detail;
+namespace LivingMessiahAdmin.Features.Sukkot.Home.RegistrationDetail;
 
 public class RegistrationQuery
 {

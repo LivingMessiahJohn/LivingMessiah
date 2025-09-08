@@ -1,8 +1,11 @@
 ﻿@using LivingMessiahAdmin.Features.Sukkot.Enums
-@using LivingMessiahAdmin.Features.Sukkot.MasterDetail.Enums
+@using LivingMessiahAdmin.Features.Sukkot.Home
+@using LivingMessiahAdmin.Features.Sukkot.Home.Enums
+@using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationList.Enums
 @using RegStatusEnums = LivingMessiahAdmin.Features.Sukkot.Enums
 
 @inject ILogger<ActionButtonGroup>? Logger
+@inject IToastService? Toast
 
 @* @if (StatusId == RegStatusEnums.Status.StartRegistration.Value) *@
 
@@ -43,19 +46,21 @@ else
 	[Parameter] public int DonationRowCount { get; set; }
 	[Parameter, EditorRequired] public int StatusId { get; set; }
 
-	[Parameter] public EventCallback<CrudAndIdArgs> OnCrudActionSelected { get; set; }
+	[Parameter] public EventCallback<CrudRecord> OnCrudActionSelected { get; set; }
 
-	private async Task ReturnedCrud(CrudAndIdArgs args)
+	private async Task ReturnedCrud(CrudRecord args)
 	{
 		Logger!.LogDebug("{Method}, {Crud}", nameof(ReturnedCrud), args.Crud.Name);
 
 		switch (args.Crud.Name)
 		{
 			case nameof(Crud.AddRegistration):
+				Toast!.ShowWarning($"{Crud.AddRegistration.Name} is not yet implemented; Inside{nameof(ActionButtonGroup)}");
 				await OnCrudActionSelected.InvokeAsync(args);
 				break;
 
 			case nameof(Crud.Edit):
+				Toast!.ShowWarning($"{Crud.Edit.Name} is not yet implemented; Inside{nameof(ActionButtonGroup)}");
 				await OnCrudActionSelected.InvokeAsync(args);
 				break;
 
@@ -64,13 +69,16 @@ else
 				break;
 
 			case nameof(Crud.DeleteRegistration):
+				Toast!.ShowWarning($"{Crud.DeleteRegistration.Name} is not yet implemented; Inside{nameof(ActionButtonGroup)}");
 				break;
 
 			case nameof(Crud.DeleteHRA):
+				Toast!.ShowWarning($"{Crud.DeleteHRA.Name} is not yet implemented; Inside{nameof(ActionButtonGroup)}");
 				await OnCrudActionSelected.InvokeAsync(args);
 				break;
 
 			case nameof(Crud.Donation):
+				Toast!.ShowWarning($"{Crud.Donation.Name} is not yet implemented; Inside{nameof(ActionButtonGroup)}");
 				await OnCrudActionSelected.InvokeAsync(args);
 				break;
 

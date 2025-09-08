@@ -1,7 +1,13 @@
 ﻿@page "/Sukkot/AttendanceAllFeastDays"
 
 @using LivingMessiahAdmin.Features.Sukkot.Enums
-<PageHeaderMenubar MenuBarEnum=MenuBar.Report ShowPrintButton=true />
+@* <PageHeaderMenubar MenuBarEnum=MenuBar.Report ShowPrintButton=true /> *@
+<div class="@MediaQuery.XsOrSm.DivClass">
+	<PageHeaderMenubar MenuBarEnum=MenuBar.Report IsXsOrSm=true />
+</div>
+<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+	<PageHeaderMenubar MenuBarEnum=MenuBar.Report ShowPrintButton=true IsXsOrSm=false />
+</div>
 
 @inject ILogger<Attendance>? Logger
 @inject IToastService? Toast

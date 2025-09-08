@@ -1,6 +1,9 @@
 ﻿@inject NavigationManager NavigationManager
 
-@* ToDo: use <AuthorizeView> HERE ??? *@
+@* ToDo
+  1. use <AuthorizeView> HERE ??? 
+    2. Collapse Menu on small
+*@
 
 <PageTitle>
   @if (String.IsNullOrEmpty(PageTitle))
@@ -24,22 +27,48 @@ ToDo: add this security block
 *@
 
 <div class="d-print-none mt-3">
-  <ol class="breadcrumb mx-n3 mt-n3">
-
-    @foreach (var item in Enums.MenuBar.List.ToList()
-        .OrderBy(o => o.Value))
-    {
-      <li class="@GetMenuItemClass(item) me-1">
-        <span class="fa-li"><i class="@item.Icon"></i></span>
-        <a @onclick="@(e => ButtonClicked(item))"
-           title="@item.Title @item.Title" 
-           class="@item.Css @(item == MenuBarEnum ? "text-decoration-none fw-bold text-primary" : "text-decoration-underline")">
-          @item.Title
-        </a>
-      </li>
-    }
-
-  </ol>
+  @if (IsXsOrSm)
+  {
+    <div class="d-flex justify-content-end">
+      <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-bars"></i> Navigate
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
+          @foreach (var item in Enums.MenuBar.List.ToList()
+              .OrderBy(o => o.Value))
+          {
+            <li>
+              <a class="dropdown-item @(item == MenuBarEnum ? "active" : "")" 
+                 @onclick="@(e => ButtonClicked(item))"
+                 title="@item.Title"
+                 href="javascript:void(0);">
+                <span class="me-2"><i class="@item.Icon"></i></span>
+                @item.Title
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+  }
+  else
+  {
+    <ol class="breadcrumb mx-n3 mt-n3">
+      @foreach (var item in Enums.MenuBar.List.ToList()
+          .OrderBy(o => o.Value))
+      {
+        <li class="@GetMenuItemClass(item) me-1">
+          <span class="fa-li"><i class="@item.Icon"></i></span>
+          <a @onclick="@(e => ButtonClicked(item))"
+             title="@item.Title @item.Title"
+             class="@item.Css @(item == MenuBarEnum ? "text-decoration-none fw-bold text-primary" : "text-decoration-underline")">
+            @item.Title
+          </a>
+        </li>
+      }
+    </ol>
+  }
 </div>
 
 <div class="pb-n1 mt-2 @(ShowPrintButton ? "mb-1" : "mb-3") @BorderCSS">
@@ -61,6 +90,7 @@ ToDo: add this security block
 
 @code {
   [Parameter, EditorRequired] public Enums.MenuBar MenuBarEnum { get; set; }
+  [Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
   [Parameter] public string? PageTitle { get; set; }
   [Parameter] public string? BorderCSS { get; set; } = "border-bottom border-info";
   [Parameter] public bool ShowPrintButton { get; set; } = false;

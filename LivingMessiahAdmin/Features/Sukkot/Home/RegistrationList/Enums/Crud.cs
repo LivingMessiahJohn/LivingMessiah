@@ -1,6 +1,6 @@
 ﻿using Ardalis.SmartEnum;
 
-namespace LivingMessiahAdmin.Features.Sukkot.MasterDetail.Enums;
+namespace LivingMessiahAdmin.Features.Sukkot.Home.RegistrationList.Enums;
 
 public abstract class Crud : SmartEnum<Crud>
 {

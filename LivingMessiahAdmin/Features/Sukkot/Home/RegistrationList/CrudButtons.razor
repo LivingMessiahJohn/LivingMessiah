@@ -1,5 +1,6 @@
-﻿@using LivingMessiahAdmin.Features.Sukkot.MasterDetail
-@using LivingMessiahAdmin.Features.Sukkot.MasterDetail.Enums
+﻿@using LivingMessiahAdmin.Features.Sukkot.Home
+@using LivingMessiahAdmin.Features.Sukkot.Home.Enums
+@using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationList.Enums
 
 @if (ParmCrud == Crud.Donation)
 {
@@ -41,11 +42,11 @@ else
 	[Parameter] public string? FullName { get; set; } // Required for Donation
 	[Parameter] public int DonationRowCount { get; set; }
 
-	[Parameter] public EventCallback<CrudAndIdArgs> OnCrudActionSelected { get; set; }
+	[Parameter] public EventCallback<CrudRecord> OnCrudActionSelected { get; set; }
 
 	private async Task OnButtonClicked()  //Crud? crud
 	{
-		CrudAndIdArgs args = new CrudAndIdArgs
+		CrudRecord args = new CrudRecord
 		{
 			Crud = ParmCrud!,  // Crud = crud!,
 			EMail = EMail ?? "???",

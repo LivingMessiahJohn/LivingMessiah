@@ -1,4 +1,4 @@
-﻿namespace LivingMessiahAdmin.Features.Sukkot.Home.Detail;
+﻿namespace LivingMessiahAdmin.Features.Sukkot.Home.Data;
 
 public record DonationQuery(decimal Amount,	string? ReferenceId,	DateTime CreateDate);
 
