@@ -1,16 +1,21 @@
 ﻿
-<div class="card border-warning border-3 my-2" style="width: 18rem;">
-	<div class="card-header text-center fs-3">Not Authorized</div>
-	<div class="card-body text-center">
-		<p class="fs-5">To view...<br /> 
-			<b>@Nav!.Title</b>
-			<br />you need to be logged in.
-		</p>
-	</div>
-	<div class="card-footer text-end fs-3"><LoginRedirectButton ReturnUrl="@ReturnUrl" /></div>
+<div class="container mt-5">
+  <div class="card mx-auto border-warning border-3" style="width: 18rem;">
+
+    <div class="card-header text-center fs-3">Not Authorized</div>
+    <div class="card-body text-center">
+      <p class="fs-5">
+        To view...<br />
+        <b>@Nav!.Title</b>
+        <br />you need to be logged in.
+      </p>
+    </div>
+    <div class="card-footer text-end fs-3"><LoginRedirectButton ReturnUrl="@ReturnUrl" /></div>
+
+  </div>
 </div>
 
 @code {
-	[Parameter, EditorRequired] public Nav? Nav { get; set; }
-	[Parameter, EditorRequired] public string? ReturnUrl { get; set; }
+  [Parameter, EditorRequired] public Nav? Nav { get; set; }
+  [Parameter, EditorRequired] public string? ReturnUrl { get; set; }
 }

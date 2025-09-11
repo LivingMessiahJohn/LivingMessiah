@@ -1,35 +1,52 @@
 ﻿@page "/Sukkot/Notes"
 
 @using LivingMessiahAdmin.Features.Sukkot.Enums
-
-<PageHeaderMenubar MenuBarEnum=MenuBar.Notes ShowPrintButton=true />
+@using Microsoft.AspNetCore.Components.Authorization
+@using LivingMessiahAdmin.SecurityRoot
+@using RoleGroup = LivingMessiahAdmin.Enums.RoleGroup;
 
 @inject ILogger<Index>? Logger
 @inject IToastService? Toast
 @inject Data.IRepository? db
 
-<LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
-  @if (ShowDetail)
-  {
-    <DetailsEditForm SelectedNote="CurrentNote" OnCommandDetailClosed="ReturnedCommandDetailClose" />
-  }
-  else
-  {
-    @* @if (data is not null)  {  } *@
-    <div class="row">
-      <div class="col-sm-6">
-        <Typeahead SelectedNote="CurrentNote"
-                   OnNotesQuerySelected="ReturnedNotesQuery"
-                   data="data" />
-      </div>
-      <div class="col-sm-6">
-        <FilterButtons Filter="Filter" OnFilterSelected="ReturnedFilter" />
-      </div>
+<AuthorizeView Policy=@RoleGroup.Sukkot>
+  <Authorized>
+
+    <div class="alert alert-secondary text-end" role="alert">
+      <small>Authorized: Role Group Policy: @RoleGroup.Sukkot</small>
     </div>
 
-    <ListCard Filter="Filter" data="data" />
-  }
-</LoadingComponent>
+    <PageHeaderMenubar MenuBarEnum=MenuBar.Notes ShowPrintButton=true />
+
+    <LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
+      @if (ShowDetail)
+      {
+        <DetailsEditForm SelectedNote="CurrentNote" OnCommandDetailClosed="ReturnedCommandDetailClose" />
+      }
+      else
+      {
+        @* @if (data is not null)  {  } *@
+        <div class="row">
+          <div class="col-sm-6">
+            <Typeahead SelectedNote="CurrentNote"
+                       OnNotesQuerySelected="ReturnedNotesQuery"
+                       data="data" />
+          </div>
+          <div class="col-sm-6">
+            <FilterButtons Filter="Filter" OnFilterSelected="ReturnedFilter" />
+          </div>
+        </div>
+
+        <ListCard Filter="Filter" data="data" />
+      }
+    </LoadingComponent>
+
+  </Authorized>
+  <NotAuthorized>
+    <LoginRedirectCard Nav="Nav.Sukkot" ReturnUrl=@Nav.Sukkot.Index />
+  </NotAuthorized>
+</AuthorizeView>
+
 
 @code {
 
@@ -41,7 +58,7 @@
     try
     {
       //Logger!.LogDebug("{Method}, Filter: {Message}", nameof(OnInitializedAsync), CurrentFilter?.Name);
-      await Task.Delay(500); // To allow the spinner to show  
+      await Task.Delay(500); // To allow the spinner to show
       // ToDo: Note, Filter is always going to be All, because we are in OnInitializedAsync
       data = await db!.GetAdminOrUserNotes(Filter!);
       if (data is null)

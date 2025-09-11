@@ -4,57 +4,59 @@
 
 @if (ParmCrud == Crud.Donation)
 {
-	<button @onclick="@OnButtonClicked" title="@Title"
-					type="button" class="@ParmCrud.ButtonColor btn-sm position-relative me-2">
-		<i class="@ParmCrud!.Icon"></i>
-		@* @ParmCrud.Text *@
+  <button @onclick="@OnButtonClicked" title="@Title"
+          type="button" class="@ParmCrud.ButtonColor btn-sm position-relative me-2">
+    <i class="@ParmCrud!.Icon"></i>
+    @* 
+		@ParmCrud.Text 
 		<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
 			@DonationRowCount
 			<span class="visually-hidden">Donation Row Count</span>
 		</span>
-	</button>
+		*@
+  </button>
 }
 else
 {
-	@if (ParmCrud == Crud.DeleteRegistration && DonationRowCount != 0)
-	{
-		<button title="@Title"
-				type="button" disabled class="@ParmCrud.ButtonColor btn-sm me-2">
-			<i class="fas fa-hand-paper"></i>
-			@* Cant Delete *@
-		</button>
-	}
-	else
-	{
-		<button @onclick="@OnButtonClicked" title="@Title"
-						type="button" class="@ParmCrud!.ButtonColor btn-sm me-2">
-			<i class="@ParmCrud!.Icon"></i>
-			@* @ParmCrud!.Text *@
-		</button>
-	}
-
+  @if (ParmCrud == Crud.DeleteRegistration && DonationRowCount != 0)
+  {
+    <button title="@Title"
+            type="button" disabled class="@ParmCrud.ButtonColor btn-sm me-2">
+      <i class="fas fa-hand-paper"></i>
+      @* Cant Delete *@
+    </button>
+  }
+  else
+  {
+    <button @onclick="@OnButtonClicked" title="@Title"
+            type="button" class="@ParmCrud!.ButtonColor btn-sm me-2">
+      <i class="@ParmCrud!.Icon"></i>
+      @* @ParmCrud!.Text *@
+    </button>
+  }
 }
+
 @code {
-	[Parameter, EditorRequired] public Crud? ParmCrud { get; set; }
+  [Parameter, EditorRequired] public Crud? ParmCrud { get; set; }
 
-	[Parameter] public string? EMail { get; set; } // Required for Add
-	[Parameter, EditorRequired] public int Id { get; set; } // Use 0 for Add and Repopulate
-	[Parameter] public string? FullName { get; set; } // Required for Donation
-	[Parameter] public int DonationRowCount { get; set; }
+  [Parameter] public string? EMail { get; set; } // Required for Add
+  [Parameter, EditorRequired] public int Id { get; set; } // Use 0 for Add and Repopulate
+  [Parameter] public string? FullName { get; set; } // Required for Donation
+  [Parameter] public int DonationRowCount { get; set; }
 
-	[Parameter] public EventCallback<CrudRecord> OnCrudActionSelected { get; set; }
+  [Parameter] public EventCallback<CrudRecord> OnCrudActionSelected { get; set; }
 
-	private async Task OnButtonClicked()  //Crud? crud
-	{
-		CrudRecord args = new CrudRecord
-		{
-			Crud = ParmCrud!,  // Crud = crud!,
-			EMail = EMail ?? "???",
-			Id = Id,
-			FullName = FullName ?? "???"
-		};
-		await OnCrudActionSelected.InvokeAsync(args);
-	}
+  private async Task OnButtonClicked()  //Crud? crud
+  {
+    CrudRecord args = new CrudRecord
+    {
+      Crud = ParmCrud!,  // Crud = crud!,
+      EMail = EMail ?? "???",
+      Id = Id,
+      FullName = FullName ?? "???"
+    };
+    await OnCrudActionSelected.InvokeAsync(args);
+  }
 
-	private string Title => Id == 0 ? "" : $"Id: {Id}";
+  private string Title => Id == 0 ? "" : $"Id: {Id}";
 }

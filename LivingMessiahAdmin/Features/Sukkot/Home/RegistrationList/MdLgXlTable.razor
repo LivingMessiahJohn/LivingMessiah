@@ -51,7 +51,14 @@
     </td>
 
   </RowTemplate>
-
+  <TableFooter>
+    <th><span class="border-bottom border-4 border-primary">@RowCnt Reg.</span></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th class="text-end">Σ</th>
+    <th class="text-center"><span class="border-bottom border-4 border-primary">@AdultCnt - @ChildCnt</span></th>
+  </TableFooter>
 </TableTemplate>
 
 @code {
@@ -62,4 +69,18 @@
   {
     OnCrudActionSelected.InvokeAsync(args);
   }
+
+  private int RowCnt { get; set; } = 0;
+  private int AdultCnt { get; set; } = 0;
+  private int ChildCnt { get; set; } = 0;
+  protected override void OnInitialized()
+  {
+    if (RegistrationList is not null)
+    {
+      RowCnt = RegistrationList.Count;
+      AdultCnt = RegistrationList.Select(s => s.Adults).Sum();
+      ChildCnt = RegistrationList.Select(s => s.Children).Sum();
+    }
+  }
+
 }

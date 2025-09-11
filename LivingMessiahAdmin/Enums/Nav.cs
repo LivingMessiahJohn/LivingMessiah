@@ -42,6 +42,7 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int PsalmsAndProverbs = 6;
 		internal const int SpecialEvents = 7;
 		internal const int Sukkot = 8;
+		internal const int Profile = 9;
 	}
 	#endregion
 
@@ -54,6 +55,7 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav PsalmsAndProverbs = new PsalmsAndProverbsSE();
 	public static readonly Nav Sukkot = new SukkotSE();
 	public static readonly Nav SpecialEvents = new SpecialEventsSE();
+	public static readonly Nav Profile = new ProfileSE();
 	#endregion
 
 
@@ -182,6 +184,18 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Icon => Features.Sukkot.Enums.MenuBar.Home.Icon;
 		public override int Sort => Id.Sukkot;
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	private sealed class ProfileSE : Nav
+	{
+		public ProfileSE() : base($"{nameof(Id.Profile)}", Id.Profile) { }
+		public override string Index => "/Profile";
+		public override string Title => "Profile";
+		public override string Icon => "fab fa-superpowers";
+		public override int Sort => Id.Profile;
+		public override PageListType PageListType => PageListType.None;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}

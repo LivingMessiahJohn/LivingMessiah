@@ -1,11 +1,30 @@
 ﻿@page "/HealthCheck/TestLogger"
 
+@using LivingMessiahAdmin.SecurityRoot
+@using Microsoft.AspNetCore.Components.Authorization
+@using RoleEnum = LivingMessiahAdmin.Enums.Role;
 @using Page = LivingMessiahAdmin.Enums.Nav
 <PageHeader PageEnum="Page.HealthCheckTestLogger" />
 
 <div class="alert alert-warning text-center" role="alert">
 	<b>Note:</b> This page has not yet been ported over from an older version
 </div>
+
+<AuthorizeView Policy=@RoleEnum.Admin.Name>
+  <Authorized>
+    <div class="alert alert-success text-end" role="alert">
+      <small>Authorized: Policy: @RoleEnum.Admin.Name</small>
+    </div>
+  </Authorized>
+  <NotAuthorized>
+    <div class="alert alert-warning text-end" role="alert">
+      <small>Not Authorized; Policy: @RoleEnum.Admin.Name</small>
+    </div>
+    <LoginRedirectCard Nav="Nav.HealthCheckTestLogger" ReturnUrl=@Nav.HealthCheckTestLogger.Index />
+  </NotAuthorized>
+</AuthorizeView>
+
+
 
 @code {
 

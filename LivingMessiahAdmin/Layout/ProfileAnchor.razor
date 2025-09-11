@@ -4,10 +4,10 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using NavEnum = LivingMessiahAdmin.Enums.Nav
 
-@* <a href="@NavEnum.Profile.Index" class="me-2"
+<a href="@NavEnum.Profile.Index" class="me-2"
 	 title="Role(s): @Roles; Status: @Status">
 	@((MarkupString)NameTiny) @((MarkupString)BlueCheck) @((MarkupString)Thumbs)
-</a> *@
+</a>
 
 @code {
 	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
@@ -34,7 +34,7 @@
 				if (state.User.Identity.IsAuthenticated)
 				{
 					Email = state.User.FindFirst(ClaimTypes.Email)?.Value;
-					IsEmailVerified = state.User.FindFirst(Auth0.Policy.Claim)?.Value == "true";
+					IsEmailVerified = state.User.FindFirst(RoleGroup.EmailVerified.Claim)?.Value == "true";
 					IsAuthenticated = true;
 					_claims = state.User.Claims;
 					Roles = string.Join(", ", _claims.Where(w => w.Type == Auth0.MicrosoftSchemaIdentityClaimsRole).Select(s => s.Value));

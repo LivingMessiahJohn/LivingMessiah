@@ -1,19 +1,19 @@
-﻿
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 
 <header>
-	<Authorize />
-	@* ToDo: Authorize needs to be called TopRow MenuBar or something *@
-
-	@* <Wrapper /> *@
+	<div class="d-flex align-items-center justify-content-between bg-secondary-subtle p-1 mb-1">
+		<a href="@LivingMessiahAdmin.Enums.Nav.Home.Index" class="ms-2" title="@LivingMessiahAdmin.Enums.Nav.Home.Title">
+			<img src="/favicon.ico" alt="Logo" width="32" height="32" class="rounded" />
+		</a>
+		<div class="flex-grow-1"></div>
+		<Authorize />
+	</div>
 	<BlazoredToasts /> 
 </header>
 
-@* Full width requires px-0 ... <div class="container-fluid px-0"> *@
 <div class="container-fluid">
 	@Body
 </div>
-
 
 <div id="blazor-error-ui" data-nosnippet>
 	An unhandled error has occurred.
@@ -21,6 +21,4 @@
 	<span class="dismiss">🗙</span>
 </div>
 
-<footer class="text-muted">
-	@* <Footer /> *@
-</footer>
+<Footer /> 

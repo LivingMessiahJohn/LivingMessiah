@@ -1,0 +1,113 @@
+﻿@using System.Security.Claims
+@using LivingMessiahAdmin.SecurityRoot
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject IToastService? Toast
+@inject ILogger<Claims>? Logger
+
+@if (!string.IsNullOrEmpty(ProfileImage))
+{
+	<div class="container">
+		<div class="row">
+			<div class="col-1"></div>
+			<div class="col-10">
+				<div class="card border border-primary-subtle border-2 mb-4">
+					<div class="row g-0">
+						
+						<div class="col-3 d-flex justify-content-center align-items-center">
+							<img src="@ProfileImage" class="img-fluid" alt="">
+						</div>
+						
+						<div class="col-9 bg-warning-subtle">
+							@if (ClaimList != null)
+							{
+								<ul class="list-group">
+									<li class="list-group-item">Name: <b>@Name</b></li>
+									<li class="list-group-item">Email: <b>@Email</b></li>
+									<li class="list-group-item">Is Authenticated: <b>@IsAuthenticated</b></li>
+									<li class="list-group-item">Is Email Verified: <b>@IsEmailVerified</b></li>
+									<li class="list-group-item">Role(s): <b>@Roles</b></li>
+								</ul>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-1"></div>
+		</div>
+	</div>
+}
+
+
+@code {
+	//ToDo: port to SecurityHelper
+	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+
+	int RoleCount = 0;
+	string Name => authenticationState is not null ? authenticationState.Result?.User?.Identity?.Name ?? string.Empty : string.Empty;
+	string? Email { get; set; }
+	bool IsAuthenticated => authenticationState is not null && (authenticationState.Result?.User?.Identity?.IsAuthenticated ?? false);
+	bool IsEmailVerified { get; set; }
+	string Roles = string.Empty;
+
+	IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+	protected List<Claim>? ClaimList;
+	public string? ProfileImage { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		base.OnInitialized();
+		//Logger!.LogInformation("{Method}", nameof(OnInitializedAsync));
+		try
+		{
+			if (authenticationState is not null)
+			{
+				var state = await authenticationState;
+				string _username = state?.User?.Identity?.Name ?? string.Empty;
+
+				if (!string.IsNullOrEmpty(_username))
+				{
+					if (state!.User.Identity is not null)
+					{
+						if (state.User.Identity.IsAuthenticated)
+						{
+							Email = state.User.FindFirst(ClaimTypes.Email)?.Value;
+							IsEmailVerified = state.User.FindFirst(RoleGroup.EmailVerified.Claim)?.Value == "true";
+							_claims = state.User.Claims;
+
+							ClaimList = _claims.ToList();
+							RoleCount = ClaimList.Where(w => w.Type == Auth0.MicrosoftSchemaIdentityClaimsRole).Count();
+							if (RoleCount > 0)
+							{
+								Roles = string.Join(", ", ClaimList.Where(w => w.Type == Auth0.MicrosoftSchemaIdentityClaimsRole).Select(s => s.Value));
+							}
+							ProfileImage = _claims.FirstOrDefault(c => c.Type == "picture")?.Value;
+						}
+						else
+						{
+							Toast!.ShowWarning("The user is NOT authenticated.");
+						}
+					}
+					else
+					{
+						Toast!.ShowWarning("no identity");
+					}
+				}
+				else
+				{
+					Toast!.ShowWarning("no name");
+				}
+			}
+			else
+			{
+				Toast!.ShowWarning("Authentication state is null");
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+			Toast!.ShowError($"{Global.ToastShowError}");
+		}
+	}
+}
+
