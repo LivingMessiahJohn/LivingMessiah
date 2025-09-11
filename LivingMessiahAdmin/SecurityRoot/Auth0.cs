@@ -11,13 +11,6 @@ public static class Auth0
 		public const string ClientSecret = "auth0:ClientSecret";
 	}
 
-	public static class Policy
-	{
-		public const string Name = "EmailVerified";
-		public const string Claim = "email_verified";
-	}
-
-
 	/*
 	public static class Tokens
 	{
@@ -25,24 +18,5 @@ public static class Auth0
 		public const string Id = "id_token";
 	}
 	*/
-
-	public static class Roles
-	{
-		public const string Admin = "admin";
-		public const string User = "user";
-		public const string ManageRegistration = "superuser";
-		public const string Sukkot = "sukkot";
-		public const string KeyDates = "keydates";
-		public const string Elder = "elder";
-		public const string AudioVisual = "audiovisual";
-		public const string AdminOrElder = "admin, elder";
-		public const string Announcements = "announcements";
-		public const string AdminOrSukkot = "admin, sukkot";
-		public const string AdminOrAnnouncements = "admin, announcements";
-		public const string AdminOrSukkotOrElder = "admin, sukkot, elder";
-		public const string AdminOrAudiovisual = "admin, audiovisual";
-		public const string AdminOrKeyDates = "admin, keydates";
-		public const string SukkotMenuBar = Elder + "," + Admin + "," + ManageRegistration + "," + Sukkot;
-	}
 
 }

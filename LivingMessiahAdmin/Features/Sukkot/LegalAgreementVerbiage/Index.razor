@@ -1,38 +1,53 @@
 ﻿@page "/Sukkot/LegalAgreementVerbiage/"
 
 @using LivingMessiahAdmin.Features.Sukkot.Enums
-<PageHeaderMenubar MenuBarEnum=MenuBar.LegalAgreementVerbiage /> 
+@using Microsoft.AspNetCore.Components.Authorization
+@using LivingMessiahAdmin.SecurityRoot
 
-<div class="card mt-0 mb-3">
-  <div class="card-body border-info">
-    <p>
-      This is a mock-up of the legal verbiage that is shown to new registrants. This is 
-      <b>Step @Enums.Step.SignAgreement.Value | <i class="@Enums.Step.SignAgreement.Icon"></i> @Enums.Step.SignAgreement.Text</b>
-      in the registration process.
-      It also includes the buttons to show the full process of compliance.
-      Note, clicking the buttons will not actually be recorded.
-    </p>
-  </div>
+<AuthorizeView Policy="@RoleGroup.EmailVerified.Name">
+  <Authorized>
+    <PageHeaderMenubar MenuBarEnum=MenuBar.LegalAgreementVerbiage />
 
-  <div class="card-body border-info">
-    <p>
-      Should something like this be included? <br />
-      <b>If a conflict arises the decisions will be made by the Elders and those decisions are final.</b>
-      <br /><br />
-      I think there should be a reference to the process of Matthew 18 included as well.
-    </p>
-  </div>
+    <div class="alert alert-secondary text-end" role="alert">
+      <small>Policy: @RoleGroup.EmailVerified.Name</small>
+    </div>
 
-</div>
+    <div class="card mt-0 mb-3">
+      <div class="card-body border-info">
+        <p>
+          This is a mock-up of the legal verbiage that is shown to new registrants. This is
+          <b>Step @Enums.Step.SignAgreement.Value | <i class="@Enums.Step.SignAgreement.Icon"></i> @Enums.Step.SignAgreement.Text</b>
+          in the registration process.
+          It also includes the buttons to show the full process of compliance.
+          Note, clicking the buttons will not actually be recorded.
+        </p>
+      </div>
 
-<h4 class="mb-3">To register for Sukkot, you must complete these steps</h4>
+      <div class="card-body border-info">
+        <p>
+          Should something like this be included? <br />
+          <b>If a conflict arises the decisions will be made by the Elders and those decisions are final.</b>
+          <br /><br />
+          I think there should be a reference to the process of Matthew 18 included as well.
+        </p>
+      </div>
 
-<div class="card mt-0 mb-3">
-  <div class="card-body bg-light">
-    <VerbiageParagraph />
-    <AgreementButtonsMockup EmailParm="FAKE@EMAIL" />
-  </div>
-</div>
+    </div>
+
+    <h4 class="mb-3">To register for Sukkot, you must complete these steps</h4>
+
+    <div class="card mt-0 mb-3">
+      <div class="card-body bg-light">
+        <VerbiageParagraph />
+        <AgreementButtonsMockup EmailParm="FAKE@EMAIL" />
+      </div>
+    </div>
+
+  </Authorized>
+  <NotAuthorized>
+    <LoginRedirectCard Nav="Nav.Sukkot" ReturnUrl=@Nav.Sukkot.Index />
+  </NotAuthorized>
+</AuthorizeView>
 
 
 @code {

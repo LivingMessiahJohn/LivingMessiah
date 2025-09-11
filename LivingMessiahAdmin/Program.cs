@@ -8,6 +8,9 @@ using LivingMessiahAdmin.Components;
 using LivingMessiahAdmin.Settings;
 using LivingMessiahAdmin.State;
 
+using RoleEnum = LivingMessiahAdmin.Enums.Role;
+using RoleGroup = LivingMessiahAdmin.Enums.RoleGroup;
+
 using Auth0.AspNetCore.Authentication;
 using static LivingMessiahAdmin.SecurityRoot.Auth0;
 using Microsoft.AspNetCore.Authentication;
@@ -47,13 +50,52 @@ Log.Warning("{Class}, {Environment}, AppSettingJsonFile: {AppSettingJsonFile}; "
 try
 {
 	builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(configuration));
-	
+
 	builder.Services.AddBlazoredToast();
 	builder.Services.AddBlazoredLocalStorage();
 
 	builder.Services.AddAuthorizationBuilder()
-		.AddPolicy(Policy.Name, policy =>
-			policy.RequireClaim(Policy.Claim, "true"));
+		.AddPolicy(RoleGroup.EmailVerified.Name, policy => policy.RequireClaim(RoleGroup.EmailVerified.Claim, "true"))
+
+		.AddPolicy(RoleGroup.Announcements, policy =>
+			policy.RequireAssertion(context =>
+				context.User.IsInRole(RoleEnum.Announcements.Claim) ||
+				context.User.IsInRole(RoleEnum.Admin.Claim)))
+
+		.AddPolicy(RoleGroup.KeyDates, policy =>
+			policy.RequireAssertion(context =>
+				context.User.IsInRole(RoleEnum.KeyDates.Claim) ||
+				context.User.IsInRole(RoleEnum.Admin.Claim)))
+
+		.AddPolicy(RoleGroup.Sukkot, policy =>
+			policy.RequireAssertion(context =>
+				context.User.IsInRole(RoleEnum.Sukkot.Claim) ||
+				context.User.IsInRole(RoleEnum.SukkotHost.Claim) ||
+				context.User.IsInRole(RoleEnum.Admin.Claim)))
+
+		.AddPolicy(RoleGroup.SukkotHost, policy =>
+			policy.RequireAssertion(context =>
+				context.User.IsInRole(RoleEnum.SukkotHost.Claim) ||
+				context.User.IsInRole(RoleEnum.Admin.Claim)))
+
+
+		//.AddPolicy(RoleEnum.Announcements.Name, policy => policy.RequireRole(RoleEnum.Announcements.Claim, "true"))
+		//.AddPolicy(RoleEnum.KeyDates.Name, policy => policy.RequireRole(RoleEnum.KeyDates.Claim, "true"))
+		//.AddPolicy(RoleEnum.SukkotHost.Name, policy => policy.RequireRole(RoleEnum.SukkotHost.Claim, "true"))
+
+		//.AddPolicy(RoleEnum.Sukkot.Name, policy => policy.RequireRole(RoleEnum.Sukkot.Claim, "true"))
+		//.AddPolicy(RoleEnum.SukkotHost.Name, policy => policy.RequireRole(RoleEnum.SukkotHost.AndAdminClaim, "true"))
+		//.AddPolicy(RoleEnum.SukkotOrSukkotHost.Name, policy => policy.RequireRole(RoleEnum.SukkotOrSukkotHost.AndAdminClaim, "true"))
+
+		/*
+		.AddPolicy(RoleGroup.SukkotHost, policy =>
+			policy.RequireAssertion(context =>
+				context.User.IsInRole(RoleEnum.Elder.Claim) ||
+				context.User.IsInRole(RoleEnum.SukkotHost.Claim) ||
+				context.User.IsInRole(RoleEnum.Admin.Claim)))
+		*/
+
+		.AddPolicy(RoleEnum.Admin.Name, policy => policy.RequireRole(RoleEnum.Admin.Claim, "true"));
 
 	builder.Services.AddScoped<AppState>(); // Scoped is more common for Blazor Server apps	
 

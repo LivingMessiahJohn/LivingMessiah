@@ -10,9 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\Sukkot\MasterDetail\**" />
     <Compile Remove="Features\Sukkot\RegistrationSteps\**" />
+    <Content Remove="Features\Sukkot\MasterDetail\**" />
     <Content Remove="Features\Sukkot\RegistrationSteps\**" />
+    <EmbeddedResource Remove="Features\Sukkot\MasterDetail\**" />
     <EmbeddedResource Remove="Features\Sukkot\RegistrationSteps\**" />
+    <None Remove="Features\Sukkot\MasterDetail\**" />
     <None Remove="Features\Sukkot\RegistrationSteps\**" />
   </ItemGroup>
 
@@ -44,9 +48,5 @@
 		<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
 
 	</ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Features\Sukkot\MasterDetail\Enums\" />
-  </ItemGroup>
 
 </Project>

@@ -8,54 +8,70 @@
 @using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationList.Enums
 @using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationDetail
 
+@using Microsoft.AspNetCore.Components.Authorization
+@using LivingMessiahAdmin.SecurityRoot
+@using RoleGroup = LivingMessiahAdmin.Enums.RoleGroup
+
 @inject ILogger<Index>? Logger
 @inject IRepository? db;
 @inject IToastService? Toast
 
-@if (VisibleComponent == Enums.VisibleComponent.RegistrationList)
-{
-  <PageHeaderMenubar MenuBarEnum=MenuBar.Home ShowPrintButton=true />
-
-  <LoadingComponent IsLoading="RegistrationList == null" TurnSpinnerOff=TurnSpinnerOff>
-    <div class="@MediaQuery.XsOrSm.DivClass">
-      <XsSmCard RegistrationList="RegistrationList"
-                OnCrudActionSelected="ReturnedCrudActionSelected" />
-    </div>
-    <div class="@MediaQuery.MdOrLgOrXl.DivClass">
-      <MdLgXlTable RegistrationList="RegistrationList"
-                   OnCrudActionSelected="ReturnedCrudActionSelected" />
-    </div>
-
-    <StatusInlineUL />
-    <HelpInlineUL />
-  </LoadingComponent>
-}
-else
-{
-  <ShowMasterIndexButton OnShowListSelected="ReturnedShowList" />
-  <DetailPageHeader DetailPageHeaderVM="DetailPageHeaderVM" />
-
-  @if (VisibleComponent == Enums.VisibleComponent.Registrant)
-  {
-    <RegistrantForm />
-  }
-  else
-  {
-    if (VisibleComponent == Enums.VisibleComponent.RegistrationDetail)
+<AuthorizeView Policy=@RoleGroup.Sukkot>
+  <Authorized>
+    
+    @if (VisibleComponent == Enums.VisibleComponent.RegistrationList)
     {
-      <div class="card border-primary my-3 p-2">
-        <Report RegistrationId="Id" />
-      </div>
+      <PageHeaderMenubar MenuBarEnum=MenuBar.Home ShowPrintButton=true />
+
+      <LoadingComponent IsLoading="RegistrationList == null" TurnSpinnerOff=TurnSpinnerOff>
+        <div class="@MediaQuery.XsOrSm.DivClass">
+          <XsSmCard RegistrationList="RegistrationList"
+                    OnCrudActionSelected="ReturnedCrudActionSelected" />
+        </div>
+        <div class="@MediaQuery.MdOrLgOrXl.DivClass">
+          <MdLgXlTable RegistrationList="RegistrationList"
+                       OnCrudActionSelected="ReturnedCrudActionSelected" />
+        </div>
+
+        <StatusInlineUL />
+        <HelpInlineUL />
+      </LoadingComponent>
     }
     else
     {
-      <div class="alert alert-warning text-center fs-4" role="alert">
-        Inside: <b>@nameof(Index)</b>  <br /> Unknown <code>VisibleComponent</code>
-      </div>
-    }
-  }
+      <RegistrationListButton OnShowListSelected="ReturnedShowList" />
+      <DetailPageHeader DetailPageHeaderVM="DetailPageHeaderVM" />
 
-}
+      @if (VisibleComponent == Enums.VisibleComponent.Registrant)
+      {
+        <RegistrantForm />
+      }
+      else
+      {
+        if (VisibleComponent == Enums.VisibleComponent.RegistrationDetail)
+        {
+          <div class="card border-primary my-3 p-2">
+            <Report RegistrationId="Id" />
+          </div>
+        }
+        else
+        {
+          <div class="alert alert-warning text-center fs-4" role="alert">
+            Inside: <b>@nameof(Index)</b>  <br /> Unknown <code>VisibleComponent</code>
+          </div>
+        }
+      }
+    }
+  </Authorized>
+  <NotAuthorized>
+    <LoginRedirectCard Nav="Nav.Sukkot" ReturnUrl=@Nav.Sukkot.Index />
+    <div class="alert alert-warning text-end" role="alert">
+      <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small>
+    </div>
+  </NotAuthorized>
+</AuthorizeView>
+
+
 
 @code {
 

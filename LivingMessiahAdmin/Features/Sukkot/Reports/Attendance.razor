@@ -1,120 +1,142 @@
 ﻿@page "/Sukkot/AttendanceAllFeastDays"
 
 @using LivingMessiahAdmin.Features.Sukkot.Enums
-<PageHeaderMenubar MenuBarEnum=MenuBar.Report ShowPrintButton=true />
+@using LivingMessiahAdmin.SecurityRoot
+@using Microsoft.AspNetCore.Components.Authorization
+@using RoleGroup = LivingMessiahAdmin.Enums.RoleGroup;
 
 @inject ILogger<Attendance>? Logger
 @inject IToastService? Toast
 @inject Data.IRepository? db
 
-<p class="text-center">The attendance for every day followed by a summary of people who attended regardless of which day(s).</p>
+<AuthorizeView Policy=@RoleGroup.Sukkot>
+  <Authorized>
+    <div class="alert alert-success text-end" role="alert">
+      <small>Authorized: Role Group Policy: @RoleGroup.Sukkot</small>
+    </div>
+  </Authorized>
+  <NotAuthorized>
+    <div class="alert alert-warning text-end" role="alert">
+      <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small>
+    </div>
+  </NotAuthorized>
+</AuthorizeView>
 
-<LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
 
-	@if (!data!.Any())
-	{
-		<h3 class="text-danger">No Records</h3>
-	}
-	else
-	{
-		<div class="table-responsive">
-			<table class="table table-sm table-bordered table-striped">
-				<thead>
-					<tr>
-						<th>Day<br />#</th>
-						<th>Day </th>
-						<th>Adults</th>
-						<th>Child<br />Big</th>
-						<th>Child<br />Small</th>
-						<th><br />Total</th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach (var item in data!)
-					{
-						gtPeeps += item.TotalPeeps;
-						<tr>
-							<td>@item.Id</td>
-							<td>@item.FeastDay2</td>
-							<td><span class="text-center">@item.Adults</span></td>
-							<td><span class="text-center">@item.ChildBig</span></td>
-							<td><span class="text-center">@item.ChildSmall</span></td>
-							<td><b><span class="text-center">@item.TotalPeeps</span></b></td>
+<AuthorizeView Policy=@RoleGroup.Sukkot>
+  <Authorized>
+    <PageHeaderMenubar MenuBarEnum=MenuBar.Report ShowPrintButton=true />
+    <p class="text-center">The attendance for every day followed by a summary of people who attended regardless of which day(s).</p>
+    <LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
 
-						</tr>
-					}
-					<tr>
-						<td colspan="4"></td>
-						<td><h3><span class="badge bg-success">Total</span></h3></td>
-						<td><h3><span class="badge bg-success"><b>@gtPeeps</b></span></h3></td>
-					</tr>
+      @if (!data!.Any())
+      {
+        <h3 class="text-danger">No Records</h3>
+      }
+      else
+      {
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Day<br />#</th>
+                <th>Day </th>
+                <th>Adults</th>
+                <th>Child<br />Big</th>
+                <th>Child<br />Small</th>
+                <th><br />Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach (var item in data!)
+              {
+                gtPeeps += item.TotalPeeps;
+                <tr>
+                  <td>@item.Id</td>
+                  <td>@item.FeastDay2</td>
+                  <td><span class="text-center">@item.Adults</span></td>
+                  <td><span class="text-center">@item.ChildBig</span></td>
+                  <td><span class="text-center">@item.ChildSmall</span></td>
+                  <td><b><span class="text-center">@item.TotalPeeps</span></b></td>
 
-					<tr>
-						<td colspan="6">&nbsp;</td>
-					</tr>
+                </tr>
+              }
+              <tr>
+                <td colspan="4"></td>
+                <td><h3><span class="badge bg-success">Total</span></h3></td>
+                <td><h3><span class="badge bg-success"><b>@gtPeeps</b></span></h3></td>
+              </tr>
 
-					@if (dataSummary == null)
-					{
-						<tr>
-							<td colspan="5"></td>
-							<td>No Records for People Summary</td>
-						</tr>
+              <tr>
+                <td colspan="6">&nbsp;</td>
+              </tr>
 
-					}
-					else
-					{
-						<tr>
-							<td colspan="2">People Summary</td>
-							<td><span class="text-center">@dataSummary.Adults</span></td>
-							<td><span class="text-center">@dataSummary.ChildBig</span></td>
-							<td><span class="text-center">@dataSummary.ChildSmall</span></td>
-							<td><b><span class="text-center">@dataSummary.TotalPeeps</span></b></td>
-						</tr>
-					}
+              @if (dataSummary == null)
+              {
+                <tr>
+                  <td colspan="5"></td>
+                  <td>No Records for People Summary</td>
+                </tr>
 
-				</tbody>
-			</table>
-		</div>
-	}
+              }
+              else
+              {
+                <tr>
+                  <td colspan="2">People Summary</td>
+                  <td><span class="text-center">@dataSummary.Adults</span></td>
+                  <td><span class="text-center">@dataSummary.ChildBig</span></td>
+                  <td><span class="text-center">@dataSummary.ChildSmall</span></td>
+                  <td><b><span class="text-center">@dataSummary.TotalPeeps</span></b></td>
+                </tr>
+              }
 
-</LoadingComponent>
+            </tbody>
+          </table>
+        </div>
+      }
+
+    </LoadingComponent>
+  </Authorized>
+  <NotAuthorized>
+    <LoginRedirectCard Nav="Nav.Sukkot" ReturnUrl=@Nav.Sukkot.Index />
+  </NotAuthorized>
+</AuthorizeView>
 
 
 @code {
-	//[Authorize(Roles = Roles.AdminOrSukkot)]
-	public List<Data.AttendanceAllFeastDaysQuery>? data { get; set; }
-	public Data.AttendancePeopleSummaryQuery? dataSummary { get; set; }
+  public List<Data.AttendanceAllFeastDaysQuery>? data { get; set; }
+  public Data.AttendancePeopleSummaryQuery? dataSummary { get; set; }
 
-	protected bool TurnSpinnerOff = false;
-	public int gtPeeps { get; set; } = 0;
+  protected bool TurnSpinnerOff = false;
+  public int gtPeeps { get; set; } = 0;
 
-	protected override async Task OnInitializedAsync()
-	{
-		try
-		{
-			// returns both datasets in one call
-			var (allFeastDays, peopleSummary) = await db!.GetAttendanceData();
-			
-			// Handle potential null values safely;  Use null coalescing operator ?? to provide default empty list
-			//data = allFeastDays ?? new List<Data.AttendanceAllFeastDaysQuery>();
+  protected override async Task OnInitializedAsync()
+  {
+    try
+    {
+      // returns both datasets in one call
+      var (allFeastDays, peopleSummary) = await db!.GetAttendanceData();
 
-			data = allFeastDays;
-			dataSummary = peopleSummary;
+      // Handle potential null values safely;  Use null coalescing operator ?? to provide default empty list
+      //data = allFeastDays ?? new List<Data.AttendanceAllFeastDaysQuery>();
 
-			if (data is null || !data.Any())
-			{
-				Logger!.LogDebug("{Method} {Message}", nameof(OnInitializedAsync), "data is null or empty");
-				Toast!.ShowInfo("No attendance data to display");
-			}
-		}
-		catch (Exception ex)
-		{
-			Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
-			Toast!.ShowError($"{Global.ToastShowError}");
-		}
-		finally
-		{
-			TurnSpinnerOff = true;
-		}
-	}
+      data = allFeastDays;
+      dataSummary = peopleSummary;
+
+      if (data is null || !data.Any())
+      {
+        Logger!.LogDebug("{Method} {Message}", nameof(OnInitializedAsync), "data is null or empty");
+        Toast!.ShowInfo("No attendance data to display");
+      }
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+      Toast!.ShowError($"{Global.ToastShowError}");
+    }
+    finally
+    {
+      TurnSpinnerOff = true;
+    }
+  }
 }

@@ -2,6 +2,7 @@
 
 @using Microsoft.AspNetCore.Components.Authorization
 @using LivingMessiahAdmin.SecurityRoot
+@using RoleEnum = LivingMessiahAdmin.Enums.Role;
 @using Page = LivingMessiahAdmin.Enums.Nav
 
 @inject ILogger<Index>? Logger
@@ -10,33 +11,31 @@
 
 <PageHeader PageEnum="Page.Database" />
 
-@* 
-<AuthorizeView Roles="@Auth0.Roles.Admin">
+<AuthorizeView Policy=@RoleEnum.Admin.Name>
 	<Authorized>
-		<DatabaseSelectorButton CurrentDatabase="CurrentDatabase"	OnDatabaseSelected="ReturnedDatabase" />
+		<div class="alert alert-success text-end" role="alert">
+			<small>Authorized: Policy: @RoleEnum.Admin.Name</small>
+		</div>
+
+		<p class="text-end text-danger"><b>ServerId:</b> @dbSukkot!.BaseServerId</p>
+
+		<DatabaseSelectorButton CurrentDatabase="CurrentDatabase" OnDatabaseSelected="ReturnedDatabase" />
 		<ActionButtons CurrentDatabase="CurrentDatabase" OnActionSelected="@ReturnedAction" />
 
 		<LoadingComponent IsLoading="ErrorLogs == null">
 			<Table ErrorLogs="ErrorLogs" />
 		</LoadingComponent>
+
 	</Authorized>
 
 	<NotAuthorized>
+		<div class="alert alert-warning text-end" role="alert">
+			<small>Not Authorized; Policy: @RoleEnum.Admin.Name</small>
+		</div>
 		<LoginRedirectCard Nav="@Page.Database" ReturnUrl="@Page.Database.Index" />
 	</NotAuthorized>
 
 </AuthorizeView>
-*@
-
-<p class="text-end text-danger"><b>ServerId:</b> @dbSukkot!.BaseServerId</p>
-
-<DatabaseSelectorButton CurrentDatabase="CurrentDatabase" OnDatabaseSelected="ReturnedDatabase" />
-<ActionButtons CurrentDatabase="CurrentDatabase" OnActionSelected="@ReturnedAction" />
-
-<LoadingComponent IsLoading="ErrorLogs == null">
-	<Table ErrorLogs="ErrorLogs" />
-</LoadingComponent>
-
 
 @code {
 	protected Data.Enums.Database? CurrentDatabase { get; set; }

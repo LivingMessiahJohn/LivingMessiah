@@ -1,0 +1,16 @@
+﻿.footer {
+	background: linear-gradient(to right, #6c757d, #adb5bd); /* Grey gradient left to right */
+	padding: 1rem 0;
+	text-align: center;
+	margin-top: 0.5rem; /* Reduced margin top */
+}
+
+.footer a {
+	color: #ffffff;
+	text-decoration: none;
+	transition: color 0.3s;
+}
+
+	.footer a:hover {
+		color: #f8f9fa;
+	}

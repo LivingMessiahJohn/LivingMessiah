@@ -1,10 +1,5 @@
 ﻿@inject NavigationManager NavigationManager
 
-@* ToDo
-1. use <AuthorizeView> HERE ??? 
- 2. Collapse Menu on small
-*@
-
 <PageTitle>
   @if (String.IsNullOrEmpty(PageTitle))
   {
@@ -15,16 +10,6 @@
     @PageTitle
   }
 </PageTitle>
-
-@* 
-ToDo: add this security block
-<AuthorizeView Roles="@Roles.AdminOrSukkot">
-	<Authorized>
-	</Authorized>
-	<NotAuthorized>
-	</NotAuthorized>
-</AuthorizeView>
-*@
 
 <div class="d-print-none mt-3">
   <div class="@MediaQuery.XsOrSm.DivClass">

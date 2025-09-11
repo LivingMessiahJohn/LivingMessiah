@@ -1,0 +1,21 @@
+﻿@page "/profile"
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using Page = LivingMessiahAdmin.Enums.Nav
+
+<PageHeader PageEnum="Page.Profile" />
+
+<AuthorizeView>
+	<Authorized>
+		<Claims />
+	</Authorized>
+	<NotAuthorized>
+		<div class="card border-warning my-5">
+			<div class="card-header">Not Authorized</div>
+			<div class="card-body">
+				<h5 class="">To view <b>@Page.Profile.Title</b> you need to be logged in.</h5>
+				<LoginRedirectButton ReturnUrl="@Page.Profile.Index" />
+			</div>
+		</div>
+	</NotAuthorized>
+</AuthorizeView>
