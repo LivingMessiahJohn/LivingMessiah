@@ -7,13 +7,13 @@ public abstract class Database : SmartEnum<Database>
 	#region Id's
 	private static class Id
 	{
-		//internal const int LivingMessiah = 1;
+		internal const int LivingMessiah = 1;
 		internal const int Sukkot = 2;
 	}
 	#endregion
 
 	#region  Declared Public Instances
-	//public static readonly Database LivingMessiah = new LivingMessiahSE();
+	public static readonly Database LivingMessiah = new LivingMessiahSE();
 	public static readonly Database Sukkot = new SukkotSE();
 	// SE=SmartEnum
 	#endregion
@@ -27,14 +27,12 @@ public abstract class Database : SmartEnum<Database>
 
 	#region Private Instantiation
 
-	/*
 	private sealed class LivingMessiahSE : Database
 	{
 			public LivingMessiahSE() : base("LivingMessiah", Id.LivingMessiah) { }
 			public override string Title => "Living Messiah";
 			public override string ConnectionStringKey => "ConnectionStrings:LivingMessiah";
 	}
-	*/
 
 	private sealed class SukkotSE : Database
 	{

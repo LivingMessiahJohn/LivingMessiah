@@ -3,16 +3,14 @@ using Serilog;
 using Blazored.Toast;
 using Blazored.LocalStorage;
 using LivingMessiahAdmin.Components;
-//using LivingMessiahAdmin.Features.Calendar;
+using LivingMessiahAdmin.Features.KeyDates.Data;
 //using LivingMessiahAdmin.Features.FeastDayPlanner.Data;
 using LivingMessiahAdmin.Settings;
 using LivingMessiahAdmin.State;
 
-using RoleEnum = LivingMessiahAdmin.Enums.Role;
-using RoleGroup = LivingMessiahAdmin.Enums.RoleGroup;
-
 using Auth0.AspNetCore.Authentication;
 using static LivingMessiahAdmin.SecurityRoot.Auth0;
+using LivingMessiahAdmin.SecurityRoot;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -54,48 +52,7 @@ try
 	builder.Services.AddBlazoredToast();
 	builder.Services.AddBlazoredLocalStorage();
 
-	builder.Services.AddAuthorizationBuilder()
-		.AddPolicy(RoleGroup.EmailVerified.Name, policy => policy.RequireClaim(RoleGroup.EmailVerified.Claim, "true"))
-
-		.AddPolicy(RoleGroup.Announcements, policy =>
-			policy.RequireAssertion(context =>
-				context.User.IsInRole(RoleEnum.Announcements.Claim) ||
-				context.User.IsInRole(RoleEnum.Admin.Claim)))
-
-		.AddPolicy(RoleGroup.KeyDates, policy =>
-			policy.RequireAssertion(context =>
-				context.User.IsInRole(RoleEnum.KeyDates.Claim) ||
-				context.User.IsInRole(RoleEnum.Admin.Claim)))
-
-		.AddPolicy(RoleGroup.Sukkot, policy =>
-			policy.RequireAssertion(context =>
-				context.User.IsInRole(RoleEnum.Sukkot.Claim) ||
-				context.User.IsInRole(RoleEnum.SukkotHost.Claim) ||
-				context.User.IsInRole(RoleEnum.Admin.Claim)))
-
-		.AddPolicy(RoleGroup.SukkotHost, policy =>
-			policy.RequireAssertion(context =>
-				context.User.IsInRole(RoleEnum.SukkotHost.Claim) ||
-				context.User.IsInRole(RoleEnum.Admin.Claim)))
-
-
-		//.AddPolicy(RoleEnum.Announcements.Name, policy => policy.RequireRole(RoleEnum.Announcements.Claim, "true"))
-		//.AddPolicy(RoleEnum.KeyDates.Name, policy => policy.RequireRole(RoleEnum.KeyDates.Claim, "true"))
-		//.AddPolicy(RoleEnum.SukkotHost.Name, policy => policy.RequireRole(RoleEnum.SukkotHost.Claim, "true"))
-
-		//.AddPolicy(RoleEnum.Sukkot.Name, policy => policy.RequireRole(RoleEnum.Sukkot.Claim, "true"))
-		//.AddPolicy(RoleEnum.SukkotHost.Name, policy => policy.RequireRole(RoleEnum.SukkotHost.AndAdminClaim, "true"))
-		//.AddPolicy(RoleEnum.SukkotOrSukkotHost.Name, policy => policy.RequireRole(RoleEnum.SukkotOrSukkotHost.AndAdminClaim, "true"))
-
-		/*
-		.AddPolicy(RoleGroup.SukkotHost, policy =>
-			policy.RequireAssertion(context =>
-				context.User.IsInRole(RoleEnum.Elder.Claim) ||
-				context.User.IsInRole(RoleEnum.SukkotHost.Claim) ||
-				context.User.IsInRole(RoleEnum.Admin.Claim)))
-		*/
-
-		.AddPolicy(RoleEnum.Admin.Name, policy => policy.RequireRole(RoleEnum.Admin.Claim, "true"));
+	builder.Services.AddAuthorizationPolicies();
 
 	builder.Services.AddScoped<AppState>(); // Scoped is more common for Blazor Server apps	
 
@@ -104,7 +61,8 @@ try
 	builder.Services.AddSukkotData();
 	builder.Services.AddManageNotes();
 	builder.Services.AddReports();
-	//builder.Services.AddCalendar();
+	builder.Services.AddManageKeyDates();
+	builder.Services.Configure<AppSettings>(options => configuration.GetSection("AppSettings").Bind(options));
 	//builder.Services.AddFeastDayPlanner();
 
 	//builder.Services.AddApplicationInsightsTelemetry();

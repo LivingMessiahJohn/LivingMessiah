@@ -113,8 +113,7 @@ WHERE Id = @Id";
 		// Can't remove `Tuple<...>` with `(...)`, see C:\Source\LivingMessiahWiki\Tuples\Removing-Tuple-Conflicts-with-BaseRepositoryAsync.md
 		return await WithConnectionAsync(async connection =>
 		{
-			string inside = $"{nameof(Repository)}!{nameof(CreateRegistration)}, Email: {formVM.EMail}; about to execute SPROC: {Sql}";
-			Logger.LogDebug(string.Format("Inside {0}", inside));
+			Logger!.LogDebug("{Method} {Message}", nameof(CreateRegistration), $"Email: {formVM.EMail}; about to execute SPROC: {Sql}");
 
 			var affectedRows = await connection.ExecuteAsync(sql: Sql, param: Parms, commandType: CommandType.StoredProcedure);
 			SprocReturnValue = Parms.Get<int>("ReturnValue");
@@ -177,8 +176,7 @@ WHERE Id = @Id";
 		// Can't remove `Tuple<...>` with `(...)`, see C:\Source\LivingMessiahWiki\Tuples\Removing-Tuple-Conflicts-with-BaseRepositoryAsync.md
 		return await WithConnectionAsync(async connection =>
 		{
-			string inside = $"{nameof(Repository)}!{nameof(UpdateRegistration)}, Id: {formVM.Id}; Email: {formVM.EMail}; about to execute SPROC: {Sql}";
-			Logger.LogDebug(string.Format("Inside {0}", inside));
+			Logger!.LogDebug("{Method} {Message}", nameof(UpdateRegistration), $"Id: {formVM.Id}; Email: {formVM.EMail}; about to execute SPROC: {Sql}");
 
 			Logger!.LogWarning($" Notes: {formVM.Notes}");
 			Logger!.LogWarning($" AdminNotes: {formVM.AdminNotes}");

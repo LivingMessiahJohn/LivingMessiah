@@ -1,7 +1,8 @@
 ﻿using Ardalis.SmartEnum;
 using Microsoft.AspNetCore.Components;
-using FDD = LivingMessiah.Features.FeastDayPlanner.Enums.FeastDayDetail;
-namespace LivingMessiah.Features.Calendar.Enums;
+using FDDPlanner = LivingMessiahAdmin.Features.KeyDates.Enums.FeastDayDetailFDPVer;
+
+namespace LivingMessiahAdmin.Features.KeyDates.Enums;
 
 public abstract class FeastDay : SmartEnum<FeastDay>
 {
@@ -79,7 +80,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => false;
 		public override int? DaysFromPrevFeast => null;  // This is the beginning of the year
-		public override DateRange Range => new DateRange(Date, FDD.HanukkahDay8.Date);
+		public override DateRange Range => new DateRange(Date, FDDPlanner.HanukkahDay8.Date);
 //	public override DateTime Date => Convert.ToDateTime("2023-12-08"); // Hanukkah
 		public override DateTime Date => Convert.ToDateTime("2024-12-25"); // EnumId: 1; Hanukkah
 	}
@@ -105,7 +106,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override bool HasCalendarDetails => false;
 		public override int? DaysFromPrevFeast => null;  // Hanukkah comes before and it's to fluid to track, so null
 
-		public override DateRange Range => new DateRange(Date, FDD.Purim.Date);
+		public override DateRange Range => new DateRange(Date, FDDPlanner.Purim.Date);
 //	public override DateTime Date => Convert.ToDateTime("2024-03-24"); // Purim
 		public override DateTime Date => Convert.ToDateTime("2025-03-14"); // EnumId: 2; Purim
 	}
@@ -130,7 +131,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => true;
 		public override int? DaysFromPrevFeast => null;  // Purim comes before and it's to fluid to track, so null
-		public override DateRange Range => new DateRange(Date, FDD.UnleavenedBreadDay7.Date);
+		public override DateRange Range => new DateRange(Date, FDDPlanner.UnleavenedBreadDay7.Date);
 //	public override DateTime Date => Convert.ToDateTime("2024-04-23"); // 1st day of UnleavenedBreadDay1
 		public override DateTime Date => Convert.ToDateTime("2025-04-13"); // EnumId: 3; Passover
 	}
@@ -154,7 +155,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => false;  // this is the only one that isn't true
 		public override int? DaysFromPrevFeast => 51;  // Pesach is before and so a hard business rule can be made ... I think ... why isn't it 50?
-		public override DateRange Range => new DateRange(Date, FDD.Weeks.Date);
+		public override DateRange Range => new DateRange(Date, FDDPlanner.Weeks.Date);
 //	public override DateTime Date => Convert.ToDateTime("2024-06-12"); // Weeks
 		public override DateTime Date => Convert.ToDateTime("2025-06-02"); // EnumId: 4; Weeks
 	}
@@ -178,7 +179,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => true;
 		public override int? DaysFromPrevFeast => 113;  // Shavuot / Weeks is before and so a hard business rule can be made ... I think 
-		public override DateRange Range => new DateRange(Date, FDD.Trumpets.Date);
+		public override DateRange Range => new DateRange(Date, FDDPlanner.Trumpets.Date);
 //	public override DateTime Date => Convert.ToDateTime("2024-10-03"); // Trumpets
 		public override DateTime Date => Convert.ToDateTime("2025-09-23"); // EnumId: 5; Trumpets
 	}
@@ -202,7 +203,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => true;
 		public override int? DaysFromPrevFeast => 9;  // Trumpets is before and so a hard business rule can be made
-		public override DateRange Range => new DateRange(Date, FDD.YomKippur.Date);
+		public override DateRange Range => new DateRange(Date, FDDPlanner.YomKippur.Date);
 //	public override DateTime Date => Convert.ToDateTime("2024-10-12"); // Yom Kippur
 		public override DateTime Date => Convert.ToDateTime("2025-10-02"); // EnumId: 6; Yom Kippur
 	}
@@ -226,7 +227,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => true;
 		public override int? DaysFromPrevFeast => 5;  // Yom Kippur is before and so a hard business rule can be made 
-		public override DateRange Range => new DateRange(Date, FDD.SukkotCampTearDown.Date);
+		public override DateRange Range => new DateRange(Date, FDDPlanner.SukkotCampTearDown.Date);
 //	public override DateTime Date => Convert.ToDateTime("2024-10-17"); // Tabernacles
 		public override DateTime Date => Convert.ToDateTime("2025-10-06"); // EnumId: 7; Tabernacles
 	}
