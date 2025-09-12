@@ -5,7 +5,7 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection AddDatabase(this IServiceCollection services)
 	{
 		services
-			//.AddTransient<LM.IRepository, LM.Repository>()
+			.AddTransient<LM.IRepository, LM.Repository>()
 			.AddTransient<Sukkot.IRepository, Sukkot.Repository>();
 		return services;
 	}
