@@ -40,7 +40,7 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 		public HomeSE() : base($"{nameof(Id.Home)}", Id.Home) { }
 		public override string Index => "/Sukkot";
 		public override string Title => "Sukkot Registration Index";
-		public override string Icon => "fas fa-home"; //fas fa-mask
+		public override string Icon => "fas fa-campground"; //fas fa-home fas fa-mask
 		public override string Css => "badge bg-dark";
 	}
 	private sealed class NotesSE : MenuBar

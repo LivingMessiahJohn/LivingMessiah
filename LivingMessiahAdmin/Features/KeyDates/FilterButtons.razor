@@ -4,14 +4,14 @@
 @inject ILogger<FilterButtons>? Logger
 
 <div class="d-print-none mb-2">
-	<div class="container d-flex justify-content-end mt-2">
+	<div class=" d-flex justify-content-end">
 		@foreach (var item in CalendarEnumDateType
 		.List
 		.Where(w => w.Value > CalendarEnumDateType.All.Value)
 		.OrderBy(o => o.Value))
 		{
 			<button @onclick="@(() => OnButtonClicked(item))"
-							class="btn btn-outline-primary btn-sm @ActiveFilter(item)">
+							class="btn btn-outline-primary btn-sm  me-1 @ActiveFilter(item)">
 				@item.Name &nbsp;<i class="fas fa-chevron-circle-right"></i>
 			</button>
 		}
@@ -27,13 +27,14 @@
 	private CalendarEnumDateType? _SelectedFilter;
 	protected override void OnParametersSet()
 	{
-		Logger!.LogDebug("{Method}", nameof(OnParametersSet));
+		//Logger!.LogDebug("{Method}", nameof(OnParametersSet));
 		_SelectedFilter = CurrentFilter;
 	}
 
 	private void OnButtonClicked(CalendarEnumDateType filter)
 	{
-		//Logger!.LogDebug("{Method} {Message}", nameof(OnParametersSet), $"filter: {filter.Name}");
+		//Logger!.LogDebug("{Method} {Message}", nameof(OnButtonClicked), $"filter: {filter.Name}");
+		OnFilterSelected.InvokeAsync(filter);
 	}
 
 	public string ActiveFilter(CalendarEnumDateType filter)

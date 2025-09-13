@@ -72,6 +72,7 @@ public abstract class Role : SmartEnum<Role>
 
 public static class RoleGroup
 {
+	public const string EmailVerifiedWithAtLeastOneRole = "EmailVerifiedWithAtLeastOneRole";
 	public const string Announcements = "Announcements";
 	public const string KeyDates = "KeyDates";
 	public const string Sukkot = "Sukkot";

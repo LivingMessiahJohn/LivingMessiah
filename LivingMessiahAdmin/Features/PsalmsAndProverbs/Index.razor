@@ -5,12 +5,13 @@
 @using RoleEnum = LivingMessiahAdmin.Enums.Role;
 @using Page = LivingMessiahAdmin.Enums.Nav
 
-<PageHeader PageEnum="Page.PsalmsAndProverbs" />
+@* <PageHeader PageEnum="Page.PsalmsAndProverbs" /> *@
 
 <div class="alert alert-warning text-center" role="alert">
 	<b>Note:</b> This page has not yet been ported over from an older version
 </div>
 
+@* 
 <AuthorizeView Policy=@RoleEnum.Admin.Name>
   <Authorized>
     <div class="alert alert-success text-end" role="alert">
@@ -24,6 +25,7 @@
     <LoginRedirectCard Nav="Nav.PsalmsAndProverbs" ReturnUrl=@Nav.PsalmsAndProverbs.Index />
   </NotAuthorized>
 </AuthorizeView>
+ *@
 
 @code {
 
