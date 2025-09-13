@@ -11,6 +11,16 @@ public static class ServiceCollectionExtensions
 		services.AddAuthorizationBuilder()
 			.AddPolicy(RoleGroup.EmailVerified.Name, policy => policy.RequireClaim(RoleGroup.EmailVerified.Claim, "true"))
 
+			// New combined policy: Email verified AND at least one role
+			.AddPolicy(RoleGroup.EmailVerifiedWithAtLeastOneRole, policy =>
+				policy.RequireAssertion(context =>
+					context.User.HasClaim(RoleGroup.EmailVerified.Claim, "true") &&
+					(context.User.IsInRole(RoleEnum.Announcements.Claim) ||
+					 context.User.IsInRole(RoleEnum.KeyDates.Claim) ||
+					 context.User.IsInRole(RoleEnum.Sukkot.Claim) ||
+					 context.User.IsInRole(RoleEnum.SukkotHost.Claim) ||
+					 context.User.IsInRole(RoleEnum.Admin.Claim))))
+
 			.AddPolicy(RoleGroup.Announcements, policy =>
 				policy.RequireAssertion(context =>
 					context.User.IsInRole(RoleEnum.Announcements.Claim) ||

@@ -29,7 +29,7 @@
         @if (CalendarEntries is not null)
         {
           <div class="mt-4">
-            <EditQuickGrid ParamCalendarEntries="CalendarEntriesFiltered" Year="_currentYear" />
+            <EditQuickGrid ParamCalendarEntries="CalendarEntriesFiltered" Year="_currentYear" OnSave="ReturnedSaveAction" />
           </div>
 
           @if (CurrentFilter == DataTypeEnums.Feast)
@@ -67,9 +67,6 @@
             }
           }
         }
-
-        <RefreshButtons CurrentFilter="@CurrentFilter"
-                        OnRefreshSelected="@ReturnedRefresh" />
 
         @if (KeyDateConstants is not null)
         {
@@ -160,17 +157,18 @@
     PopulateCalendarEntryFiltered();
   }
 
-  private async Task ReturnedRefresh(DataTypeEnums filter)
-  {
-    Logger!.LogDebug("{Method} {Message}", nameof(ReturnedRefresh), filter.Name);
-    await PopulateCalendarAnalysisQuery();
 
-    var f = filter;
-    f
+  private async Task ReturnedSaveAction()
+  {
+    Logger!.LogDebug("{Method} {Message}", nameof(ReturnedSaveAction));
+    await PopulateCalendarAnalysisQuery();
+    await Task.Delay(500);
+    CurrentFilter!
       .When(DataTypeEnums.Month!).Then(() => PopulateMonthAnalysisList())
       .When(DataTypeEnums.Feast).Then(() => PopulateFeastAnalysisList())
       .When(DataTypeEnums.Season).Then(() => PopulateSeasonAnalysisList())
-      .Default(() => Logger!.LogDebug("{Method} {Message}", nameof(ReturnedRefresh), $"ignored: {nameof(filter)}"));
+      .Default(() => Logger!.LogDebug("{Method} {Message}", nameof(ReturnedSaveAction), $"ignored: {nameof(CurrentFilter)}"));
+
   }
 
   #endregion
@@ -244,7 +242,6 @@
       }
 
     }
-
   }
 
 

@@ -79,6 +79,7 @@
 @code {
   [Parameter, EditorRequired] public List<CalendarEntryQuery>? ParamCalendarEntries { get; set; }
   [Parameter, EditorRequired] public int Year { get; set; }
+  [Parameter] public EventCallback OnSave { get; set; }
 
   protected List<CalendarEntryQuery>? CalendarEntries;
   protected bool IsEditing = false;
@@ -140,6 +141,7 @@
           // Update the original item with the new date
           OriginalEditItem.Date = CurrentEditItem.Date;
           Toast!.ShowInfo($"Calendar entry updated successfully");
+          await OnSave.InvokeAsync();  
         }
         else
         {
