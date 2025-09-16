@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 //using System.Text.Json;
 using AccountEnum = LivingMessiahAdmin.Enums.Account;
 using LivingMessiahAdmin.Features.Database;
+using LivingMessiahAdmin.Features.Sukkot.Dashboard.Data;
 using LivingMessiahAdmin.Features.Sukkot.Home.Data;
 using LivingMessiahAdmin.Features.Sukkot.Notes.Data;
 using LivingMessiahAdmin.Features.Sukkot.Reports.Data;
@@ -58,7 +59,8 @@ try
 
 	//Services
 	builder.Services.AddDatabase();
-	builder.Services.AddSukkotData();
+	builder.Services.AddSukkotGridData();
+	builder.Services.AddSukkotData(); // CrUD
 	builder.Services.AddManageNotes();
 	builder.Services.AddReports();
 	builder.Services.AddManageKeyDates();

@@ -1,0 +1,177 @@
+﻿@using LivingMessiahAdmin.Features.Sukkot.Dashboard.Data
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+@inject ILogger<Grid>? Logger
+@inject IRepository? db;
+@inject IToastService? Toast
+
+<LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
+  @if (data != null)
+  {
+    <QuickGrid Items="@data.AsQueryable()" TGridItem="GridQuery" Class="table table-striped table-hover">
+      <PropertyColumn Property="@(item => item.Id)" Title="Id" Sortable="true" Align="Align.Center" />
+      <PropertyColumn Property="@(item => item.EMail)" Title="EMail" Sortable="true" />
+      <PropertyColumn Property="@(item => item.FullNameOrNA)" Title="Name" Sortable="true" IsDefaultSortColumn="true" />
+      <PropertyColumn Property="@(item => item.Phone)" Title="Phone" />
+
+      <TemplateColumn Title="Notes" Align=Align.Center>
+        @if (context.HasNotes)
+        {
+          <span class="text-warning fw-bold">U <i class="far fa-check-square"></i></span>
+        }
+        else
+        {
+          <span class="text-muted">U <i class="far fa-square"></i></span>
+        }
+        <span class="text-muted"> | </span>
+
+
+        @if (context.HasAdminNotes)
+        {
+          <span class="text-warning fw-bold">A <i class="far fa-check-square"></i></span>
+        }
+        else
+        {
+          <span class="text-muted">A <i class="far fa-square"></i></span>
+        }
+
+      </TemplateColumn>
+
+      <PropertyColumn Property="@(item => item.People)" Align=Align.Center Title="People" />
+      <TemplateColumn Title="$ Paid">
+        <div class="@context.TotalDonationClass">
+          @context.TotalDonationNoCents
+        </div>
+      </TemplateColumn>
+      <TemplateColumn Title="" Align=Align.Center>
+        <button @onclick="@(() => ShowDetails(context))" class="btn btn-sm btn-outline-primary">
+          <i class="fas fa-caret-down"></i>
+        </button>
+      </TemplateColumn>
+      @* <PropertyColumn Property="@(item => item.IdHra)" Title="HRA" /> *@
+
+    </QuickGrid>
+
+    <div class="card mb-3">
+      <div class="card-header">
+        <h5 class="card-title text-center mb-0">Totals</h5>
+      </div>
+      <div class="card-body">
+        <div class="row text-center">
+          <div class="col-md-4">
+            <div class="border-end">
+              <h4 class="text-primary mb-1">@RowCnt</h4>
+              <small class="text-muted">Total Registrations</small>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="border-end">
+              <h4 class="text-success mb-1">@AdultCnt</h4>
+              <small class="text-muted">Adults</small>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <h4 class="text-info mb-1">@ChildCnt</h4>
+            <small class="text-muted">Children</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  }
+</LoadingComponent>
+
+@* Modal *@
+@if (ShowDetailModal && SelectedItem != null)
+{
+  <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Details</h5>
+          <button type="button" class="btn-close" @onclick="CloseDetailModal"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Name:</strong> @SelectedItem.FullNameOrNA</p>
+
+          <div class="mt-3">
+            <strong>Admin Notes:</strong>
+            <div class="border rounded p-3 mt-2">
+              @SelectedItem.AdminNotes
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <strong>User Notes:</strong>
+            <div class="border rounded p-3 mt-2">
+              @SelectedItem.Notes
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @onclick="CloseDetailModal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+@code {
+  bool TurnSpinnerOff = false;
+  protected List<GridQuery>? data;
+
+
+  private GridQuery? SelectedItem = null;
+
+  // GridSort for default sorting
+  private static readonly GridSort<GridQuery> GridSort = GridSort<GridQuery>
+    .ByAscending(p => p.FullNameOrNA);
+
+  private int RowCnt { get; set; } = 0;
+  private int AdultCnt { get; set; } = 0;
+  private int ChildCnt { get; set; } = 0;
+
+  protected override async Task OnInitializedAsync()
+  {
+    Logger!.LogDebug("{Method}", nameof(OnInitializedAsync));
+
+    try
+    {
+      data = await db!.GetAll();
+      if (data is null)
+      {
+        Logger!.LogWarning("{Method} {Message}", nameof(OnInitializedAsync), "RegistrationList is null");
+        Toast!.ShowWarning($"RegistrationList is null");
+      }
+      else
+      {
+        RowCnt = data.Count;
+        AdultCnt = data.Select(s => s.Adults).Sum();
+        ChildCnt = data.Select(s => s.Children).Sum();
+
+      }
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+      Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(OnInitializedAsync)}");
+    }
+
+    TurnSpinnerOff = true;
+  }
+
+  private bool ShowDetailModal = false;
+  private void ShowDetails(GridQuery item)
+  {
+    SelectedItem = item;
+    ShowDetailModal = true;
+  }
+
+  private void CloseDetailModal()
+  {
+    ShowDetailModal = false;
+    SelectedItem = null;
+  }
+
+}

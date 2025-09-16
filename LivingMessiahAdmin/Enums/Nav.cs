@@ -40,7 +40,8 @@ public abstract class Nav : SmartEnum<Nav>
 		//internal const int PsalmsAndProverbs = 6;
 		internal const int SpecialEvents = 7;
 		internal const int Sukkot = 8;
-		internal const int Profile = 9;
+		internal const int SukkotDashboard = 9;
+		internal const int Profile = 10;
 	}
 	#endregion
 
@@ -51,8 +52,9 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav HealthCheckCalendar = new HealthCheckCalendarSE();
 	public static readonly Nav HealthCheckTestLogger = new HealthCheckTestLoggerSE();
 	//public static readonly Nav PsalmsAndProverbs = new PsalmsAndProverbsSE();
-	public static readonly Nav Sukkot = new SukkotSE();
 	public static readonly Nav SpecialEvents = new SpecialEventsSE();
+	public static readonly Nav Sukkot = new SukkotSE();
+	public static readonly Nav SukkotDashboard = new SukkotDashboardSE(); 
 	public static readonly Nav Profile = new ProfileSE();
 	#endregion
 
@@ -195,6 +197,19 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 		public override int RequiredRoles => Role.Sukkot.Value | Role.SukkotHost.Value | Role.Admin.Value; // Sukkot, SukkotHost, or Admin role
+	}
+
+	private sealed class SukkotDashboardSE : Nav
+	{
+		public SukkotDashboardSE() : base($"{nameof(Id.SukkotDashboard)}", Id.SukkotDashboard) { }
+		public override string Index => Features.Sukkot.Enums.MenuBar.Dashboard.Index;
+		public override string Title => Features.Sukkot.Enums.MenuBar.Dashboard.Title;
+		public override string Icon => Features.Sukkot.Enums.MenuBar.Dashboard.Icon;
+		public override int Sort => Id.SukkotDashboard;
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+		public override int RequiredRoles => Role.Sukkot.Value | Role.SukkotHost.Value | Role.Admin.Value; 
 	}
 
 	private sealed class ProfileSE : Nav
