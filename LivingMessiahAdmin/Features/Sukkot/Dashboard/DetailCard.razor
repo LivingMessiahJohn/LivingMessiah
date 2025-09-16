@@ -1,0 +1,44 @@
+﻿<div class="card border border-3 border-dark-subtle">
+
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <div>Id: @(rec.Id)</div>
+    <div class=" fs-4">@(rec.FullName ?? "None")</div>
+    <button @onclick="@OnButtonClicked" class="btn btn-outline-primary btn-sm mx-2">
+      Close <i class='fas fa-times'></i>
+    </button>
+
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+
+      @if (!String.IsNullOrEmpty(rec!.AdminNotes))
+      {
+        <div class="card-body bg-warning-subtle">
+          <span class="text-black-50"><small>Admin Notes</small></span>
+          <p class="card-text">@rec.AdminNotes </p>
+        </div>
+      }
+    </div>
+    <div class="col-sm-6">
+      @if (!String.IsNullOrEmpty(rec.UserNotes))
+      {
+        <div class="card-body bg-info-subtle">
+          <span class="text-black-50"><small>User Notes</small></span>
+          <p class="card-text">@rec.UserNotes </p>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+
+@code {
+  [Parameter, EditorRequired] public required DetailCardRecord rec { get; set; }
+  [Parameter] public EventCallback OnClose { get; set; }
+
+  private void OnButtonClicked()
+  {
+    OnClose.InvokeAsync();
+  }
+}

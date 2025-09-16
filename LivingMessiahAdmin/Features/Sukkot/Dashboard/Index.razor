@@ -1,4 +1,4 @@
-﻿@using StepEnums = LivingMessiahAdmin.Features.Sukkot.Enums.Step
+﻿@using FilterEnums = LivingMessiahAdmin.Features.Sukkot.Dashboard.Enums.Filter
 
 @page "/SukkotDashboard"
 
@@ -11,13 +11,8 @@
 <AuthorizeView Policy=@RoleGroup.Sukkot>
   <Authorized>
     <PageHeaderMenubar MenuBarEnum=MenuBar.Dashboard />
-    <div class="row">
-      <div class="col-12">
-        <FilterButtons Filter="Filter" OnFilterSelected="ReturnedFilter" />
-      </div>
-    </div>
-    <FilterRowCount />
-    <Grid />
+      <FilterButtons Filter="Filter" OnFilterSelected="ReturnedFilter" />
+    <Grid Filter="Filter" />
   </Authorized>
   <NotAuthorized>
     <LoginRedirectCard Nav="Nav.SukkotDashboard" ReturnUrl=@Nav.SukkotDashboard.Index />
@@ -28,8 +23,8 @@
 </AuthorizeView>
 
 @code {
-  private StepEnums? Filter = StepEnums.Complete; // StepEnums.All;
-  void ReturnedFilter(StepEnums filter)
+  private FilterEnums? Filter = FilterEnums.RegisteredOrPaid;
+  void ReturnedFilter(FilterEnums filter)
   {
     Filter = filter;
   }
