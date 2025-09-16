@@ -1,5 +1,6 @@
 ﻿@using LivingMessiahAdmin.Features.Sukkot.Dashboard.Data
 @using Microsoft.AspNetCore.Components.QuickGrid
+@using FilterEnums = LivingMessiahAdmin.Features.Sukkot.Dashboard.Enums.Filter
 
 @inject ILogger<Grid>? Logger
 @inject IRepository? db;
@@ -8,34 +9,22 @@
 <LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
   @if (data != null)
   {
+
+    @if (TotalsCardRecord is not null)
+    {
+      <FilterRowCount Rows="TotalsCardRecord.RowCnt" />
+    }
+
+    @if (SelectedItem != null)
+    {
+      <DetailCard rec="DetailCardRecord" OnClose="ReturnedCloseAction" />
+    }
+
     <QuickGrid Items="@data.AsQueryable()" TGridItem="GridQuery" Class="table table-striped table-hover">
       <PropertyColumn Property="@(item => item.Id)" Title="Id" Sortable="true" Align="Align.Center" />
       <PropertyColumn Property="@(item => item.EMail)" Title="EMail" Sortable="true" />
       <PropertyColumn Property="@(item => item.FullNameOrNA)" Title="Name" Sortable="true" IsDefaultSortColumn="true" />
       <PropertyColumn Property="@(item => item.Phone)" Title="Phone" />
-
-      <TemplateColumn Title="Notes" Align=Align.Center>
-        @if (context.HasNotes)
-        {
-          <span class="text-warning fw-bold">U <i class="far fa-check-square"></i></span>
-        }
-        else
-        {
-          <span class="text-muted">U <i class="far fa-square"></i></span>
-        }
-        <span class="text-muted"> | </span>
-
-
-        @if (context.HasAdminNotes)
-        {
-          <span class="text-warning fw-bold">A <i class="far fa-check-square"></i></span>
-        }
-        else
-        {
-          <span class="text-muted">A <i class="far fa-square"></i></span>
-        }
-
-      </TemplateColumn>
 
       <PropertyColumn Property="@(item => item.People)" Align=Align.Center Title="People" />
       <TemplateColumn Title="$ Paid">
@@ -43,134 +32,84 @@
           @context.TotalDonationNoCents
         </div>
       </TemplateColumn>
-      <TemplateColumn Title="" Align=Align.Center>
-        <button @onclick="@(() => ShowDetails(context))" class="btn btn-sm btn-outline-primary">
+
+      <TemplateColumn Title="Notes" Align=Align.Center>
+        <span class="@(context.HasAdminNotes ? "bg-warning p-1" : "p-1")">A</span>
+        <span class="text-black-50"> | </span>
+        <span class="@(context.HasNotes ? "bg-info p-1" : "p-1")">U</span>
+        &nbsp;
+        <button @onclick="@(() => ShowDetails(context))" class="btn btn-sm btn-outline-primary d-print-none">
           <i class="fas fa-caret-down"></i>
         </button>
       </TemplateColumn>
-      @* <PropertyColumn Property="@(item => item.IdHra)" Title="HRA" /> *@
 
     </QuickGrid>
 
-    <div class="card mb-3">
-      <div class="card-header">
-        <h5 class="card-title text-center mb-0">Totals</h5>
-      </div>
-      <div class="card-body">
-        <div class="row text-center">
-          <div class="col-md-4">
-            <div class="border-end">
-              <h4 class="text-primary mb-1">@RowCnt</h4>
-              <small class="text-muted">Total Registrations</small>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="border-end">
-              <h4 class="text-success mb-1">@AdultCnt</h4>
-              <small class="text-muted">Adults</small>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <h4 class="text-info mb-1">@ChildCnt</h4>
-            <small class="text-muted">Children</small>
-          </div>
-        </div>
-      </div>
-    </div>
+    @if (TotalsCardRecord is not null)
+    {
+      <TotalsCard TotalsCardRecord="TotalsCardRecord" />
+    }
 
   }
 </LoadingComponent>
 
-@* Modal *@
-@if (ShowDetailModal && SelectedItem != null)
-{
-  <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Details</h5>
-          <button type="button" class="btn-close" @onclick="CloseDetailModal"></button>
-        </div>
-        <div class="modal-body">
-          <p><strong>Name:</strong> @SelectedItem.FullNameOrNA</p>
-
-          <div class="mt-3">
-            <strong>Admin Notes:</strong>
-            <div class="border rounded p-3 mt-2">
-              @SelectedItem.AdminNotes
-            </div>
-          </div>
-
-          <div class="mt-3">
-            <strong>User Notes:</strong>
-            <div class="border rounded p-3 mt-2">
-              @SelectedItem.Notes
-            </div>
-          </div>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @onclick="CloseDetailModal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-}
-
 @code {
+  [Parameter, EditorRequired] public required FilterEnums? Filter { get; set; } = FilterEnums.RegisteredOrPaid;
+
+  protected TotalsCardRecord? TotalsCardRecord { get; set; }
+
   bool TurnSpinnerOff = false;
   protected List<GridQuery>? data;
 
-
-  private GridQuery? SelectedItem = null;
-
-  // GridSort for default sorting
-  private static readonly GridSort<GridQuery> GridSort = GridSort<GridQuery>
-    .ByAscending(p => p.FullNameOrNA);
-
-  private int RowCnt { get; set; } = 0;
-  private int AdultCnt { get; set; } = 0;
-  private int ChildCnt { get; set; } = 0;
-
-  protected override async Task OnInitializedAsync()
+  protected override async Task OnParametersSetAsync()
   {
-    Logger!.LogDebug("{Method}", nameof(OnInitializedAsync));
+    Logger!.LogDebug("{Method} {Message}", nameof(OnParametersSetAsync), $"Filter: {Filter!.Name}");
 
     try
     {
-      data = await db!.GetAll();
-      if (data is null)
+      if (Filter == null)
       {
-        Logger!.LogWarning("{Method} {Message}", nameof(OnInitializedAsync), "RegistrationList is null");
-        Toast!.ShowWarning($"RegistrationList is null");
+        throw new ArgumentNullException(nameof(Filter), $"{nameof(Filter)} is null");
       }
       else
       {
-        RowCnt = data.Count;
-        AdultCnt = data.Select(s => s.Adults).Sum();
-        ChildCnt = data.Select(s => s.Children).Sum();
-
+        data = await db!.GetAll(Filter);
+        if (data is not null)
+        {
+          TotalsCardRecord = new TotalsCardRecord(data.Count(), data.Sum(s => s.Adults), data.Sum(s => s.Children));
+        }
+        else
+        {
+          Logger!.LogWarning("{Method} {Message}", nameof(OnParametersSetAsync), "RegistrationList is null");
+          Toast!.ShowWarning($"RegistrationList is null");
+        }
       }
     }
     catch (Exception ex)
     {
-      Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
-      Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(OnInitializedAsync)}");
+      Logger!.LogError(ex, "{Method}", nameof(OnParametersSetAsync));
+      Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(OnParametersSetAsync)}");
     }
-
     TurnSpinnerOff = true;
   }
 
-  private bool ShowDetailModal = false;
-  private void ShowDetails(GridQuery item)
+  private GridQuery? SelectedItem = null;
+
+  private static readonly GridSort<GridQuery> GridSort = GridSort<GridQuery>
+    .ByAscending(p => p.FullNameOrNA);
+
+  private DetailCardRecord? DetailCardRecord;
+  private void ShowDetails(GridQuery? item)
   {
-    SelectedItem = item;
-    ShowDetailModal = true;
+    if (item is not null)
+    {
+      SelectedItem = item;
+      DetailCardRecord = new DetailCardRecord(item.Id, item!.FullName ?? "None", item!.AdminNotes ?? "", item!.Notes ?? "");
+    }
   }
 
-  private void CloseDetailModal()
+  private void ReturnedCloseAction()
   {
-    ShowDetailModal = false;
     SelectedItem = null;
   }
 

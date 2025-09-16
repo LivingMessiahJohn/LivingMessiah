@@ -1,28 +1,27 @@
-﻿@using StepEnums = LivingMessiahAdmin.Features.Sukkot.Enums.Step
+﻿@using FilterEnums = LivingMessiahAdmin.Features.Sukkot.Dashboard.Enums.Filter
 @using Microsoft.Extensions.Logging;
 
- <div class="d-print-none mb-2">
-	<div class="container d-flex justify-content-end mt-2">
+<div class="d-print-none">
+  <div class="text-end mt-2">
 
-		@foreach (var item in StepEnums.List.Where(w => w.Value >= StepEnums.Payment).OrderBy(o => o.Value))
-		{
-			<button @onclick="@(() => OnButtonClicked(item))"
-							class="btn btn-outline-primary btn-sm @ActiveFilter(item)">
-				@item.Name &nbsp;<i class="fas fa-chevron-circle-right"></i>
-			</button>
-		}
-
-	</div>
+    @foreach (var item in FilterEnums.List.OrderBy(o => o.Value))
+    {
+      <button @onclick="@(() => OnButtonClicked(item))"
+              class="btn btn-outline-primary btn-sm me-1 @ActiveFilter(item)" title="@item.ButtonTitle">
+        @item.ButtonLabel &nbsp;<i class="fas fa-chevron-circle-right"></i>
+      </button>
+    }
+  </div>
 </div>
 
 @code {
-	[Parameter, EditorRequired] public required StepEnums? Filter { get; set; }
-	[Parameter] public EventCallback<StepEnums> OnFilterSelected { get; set; }
+  [Parameter, EditorRequired] public required FilterEnums? Filter { get; set; }
+  [Parameter] public EventCallback<FilterEnums> OnFilterSelected { get; set; }
 
-	public string ActiveFilter(StepEnums filter) => filter == Filter ? "active" : "";
-	
-	private void OnButtonClicked(StepEnums filter)
-	{
-		OnFilterSelected.InvokeAsync(filter); 
-	}
+  public string ActiveFilter(FilterEnums filter) => filter == Filter ? "active" : "";
+
+  private void OnButtonClicked(FilterEnums filter)
+  {
+    OnFilterSelected.InvokeAsync(filter);
+  }
 }
