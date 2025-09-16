@@ -1,0 +1,28 @@
+﻿@using StepEnums = LivingMessiahAdmin.Features.Sukkot.Enums.Step
+@using Microsoft.Extensions.Logging;
+
+ <div class="d-print-none mb-2">
+	<div class="container d-flex justify-content-end mt-2">
+
+		@foreach (var item in StepEnums.List.Where(w => w.Value >= StepEnums.Payment).OrderBy(o => o.Value))
+		{
+			<button @onclick="@(() => OnButtonClicked(item))"
+							class="btn btn-outline-primary btn-sm @ActiveFilter(item)">
+				@item.Name &nbsp;<i class="fas fa-chevron-circle-right"></i>
+			</button>
+		}
+
+	</div>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public required StepEnums? Filter { get; set; }
+	[Parameter] public EventCallback<StepEnums> OnFilterSelected { get; set; }
+
+	public string ActiveFilter(StepEnums filter) => filter == Filter ? "active" : "";
+	
+	private void OnButtonClicked(StepEnums filter)
+	{
+		OnFilterSelected.InvokeAsync(filter); 
+	}
+}

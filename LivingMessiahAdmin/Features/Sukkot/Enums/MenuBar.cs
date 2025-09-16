@@ -11,6 +11,7 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 		internal const int Notes = 2;
 		internal const int Report = 3;  // or AttendanceReport
 		internal const int LegalAgreementVerbiage = 4;
+		internal const int Dashboard = 5;
 		//internal const int DeleteConfirmation = 2;
 
 	}
@@ -23,6 +24,7 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 	public static readonly MenuBar Notes = new NotesSE();
 	public static readonly MenuBar Report = new ReportSE();
 	public static readonly MenuBar LegalAgreementVerbiage = new LegalAgreementVerbiageSE();
+	public static readonly MenuBar Dashboard = new DashboardSE();
 	// SE=SmartEnum
 	#endregion
 
@@ -39,7 +41,7 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 	{
 		public HomeSE() : base($"{nameof(Id.Home)}", Id.Home) { }
 		public override string Index => "/Sukkot";
-		public override string Title => "Sukkot Registration Index";
+		public override string Title => "Registration CrUD";
 		public override string Icon => "fas fa-campground"; //fas fa-home fas fa-mask
 		public override string Css => "badge bg-dark";
 	}
@@ -69,6 +71,16 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 		public override string Icon => "fas fa-balance-scale";   // "fas fa-handshake" "far fa-handshake"
 		public override string Css => "badge bg-secondary";  
 	}
+
+	private sealed class DashboardSE : MenuBar
+	{
+		public DashboardSE() : base($"{nameof(Id.Dashboard)}", Id.Dashboard) { }
+		public override string Index => "/SukkotDashboard";
+		public override string Title => "Registration Dashboard";
+		public override string Icon => "fas fa-tachometer-alt"; 
+		public override string Css => "badge bg-danger text-black";
+	}
+
 	#endregion
 
 

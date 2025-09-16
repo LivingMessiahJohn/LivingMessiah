@@ -1,0 +1,36 @@
+﻿@using StepEnums = LivingMessiahAdmin.Features.Sukkot.Enums.Step
+
+@page "/SukkotDashboard"
+
+@using LivingMessiahAdmin.Features.Sukkot.Enums
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using LivingMessiahAdmin.SecurityRoot
+@using RoleGroup = LivingMessiahAdmin.Enums.RoleGroup
+
+<AuthorizeView Policy=@RoleGroup.Sukkot>
+  <Authorized>
+    <PageHeaderMenubar MenuBarEnum=MenuBar.Dashboard />
+    <div class="row">
+      <div class="col-12">
+        <FilterButtons Filter="Filter" OnFilterSelected="ReturnedFilter" />
+      </div>
+    </div>
+    <FilterRowCount />
+    <Grid />
+  </Authorized>
+  <NotAuthorized>
+    <LoginRedirectCard Nav="Nav.SukkotDashboard" ReturnUrl=@Nav.SukkotDashboard.Index />
+    <div class="alert alert-warning text-end" role="alert">
+      <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small>
+    </div>
+  </NotAuthorized>
+</AuthorizeView>
+
+@code {
+  private StepEnums? Filter = StepEnums.Complete; // StepEnums.All;
+  void ReturnedFilter(StepEnums filter)
+  {
+    Filter = filter;
+  }
+}
