@@ -1,11 +1,19 @@
 ﻿<div class="row">
   <div class="col-12">
     <p class="text-black-50 float-end mt-1 mb-3 me-2">
-      <small>Rows: <b>@Rows</b></small>
+      <small>Total Rows: <b>@Rows</b></small>
+      <small>Filtered Rows: <b>@FilteredRows</b> <b>@SearchFilter</b>
+        @if (!string.IsNullOrEmpty(SearchFilter))
+        {
+          <i class="fas fa-filter"></i>
+        }
+      </small>
     </p>
   </div>
 </div>
 
 @code {
   [Parameter, EditorRequired] public required int Rows { get; set; }
+  [Parameter, EditorRequired] public required int FilteredRows { get; set; }
+  [Parameter, EditorRequired] public required string SearchFilter { get; set; }
 }
