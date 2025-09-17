@@ -62,7 +62,7 @@ public class GridQuery
 
 	private string GetTotalDonationFormatted(decimal amount)
 	{
-		return string.Format("{0:C2}", TotalDonation - amount);
+		return string.Format("{0:C0}", TotalDonation - amount);
 	}
 
 	public string StepHeading => StepEnums.FromValue(StatusId).Heading;

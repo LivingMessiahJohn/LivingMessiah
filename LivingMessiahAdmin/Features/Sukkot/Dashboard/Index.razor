@@ -10,8 +10,8 @@
 
 <AuthorizeView Policy=@RoleGroup.Sukkot>
   <Authorized>
-    <PageHeaderMenubar MenuBarEnum=MenuBar.Dashboard />
-      <FilterButtons Filter="Filter" OnFilterSelected="ReturnedFilter" />
+    <PageHeaderMenubar MenuBarEnum=MenuBar.Dashboard ShowPrintButton=true />
+    <FilterButtons Filter="Filter" OnFilterSelected="ReturnedFilter" />
     <Grid Filter="Filter" />
   </Authorized>
   <NotAuthorized>

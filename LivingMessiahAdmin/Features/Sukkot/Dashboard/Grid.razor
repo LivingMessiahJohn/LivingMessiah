@@ -6,42 +6,73 @@
 @inject IRepository? db;
 @inject IToastService? Toast
 
-<LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
-  @if (data != null)
+<LoadingComponent IsLoading="items == null" TurnSpinnerOff=TurnSpinnerOff>
+  @if (items != null)
   {
-
     @if (TotalsCardRecord is not null)
     {
-      <FilterRowCount Rows="TotalsCardRecord.RowCnt" />
+      <FilterRowCount Rows="TotalsCardRecord.RowCnt"
+                      FilteredRows="@(FilteredItems?.Count() ?? 0)"
+                      SearchFilter="@nameFilter" />
     }
+
+  <div class="@MediaQuery.XsOrSm.DivClass">
+    <ShowColumn rec="ShowColumnRec"  IsXsOrSm="true" OnShowColumnChanged="ReturnedShowColumn" />
+	</div>
+	<div class="d-none d-md-block">
+    <ShowColumn rec="ShowColumnRec"  IsXsOrSm="false" OnShowColumnChanged="ReturnedShowColumn" />
+	</div>
 
     @if (SelectedItem != null)
     {
       <DetailCard rec="DetailCardRecord" OnClose="ReturnedCloseAction" />
     }
 
-    <QuickGrid Items="@data.AsQueryable()" TGridItem="GridQuery" Class="table table-striped table-hover">
-      <PropertyColumn Property="@(item => item.Id)" Title="Id" Sortable="true" Align="Align.Center" />
-      <PropertyColumn Property="@(item => item.EMail)" Title="EMail" Sortable="true" />
-      <PropertyColumn Property="@(item => item.FullNameOrNA)" Title="Name" Sortable="true" IsDefaultSortColumn="true" />
-      <PropertyColumn Property="@(item => item.Phone)" Title="Phone" />
-
-      <PropertyColumn Property="@(item => item.People)" Align=Align.Center Title="People" />
-      <TemplateColumn Title="$ Paid">
-        <div class="@context.TotalDonationClass">
-          @context.TotalDonationNoCents
-        </div>
-      </TemplateColumn>
-
-      <TemplateColumn Title="Notes" Align=Align.Center>
-        <span class="@(context.HasAdminNotes ? "bg-warning p-1" : "p-1")">A</span>
-        <span class="text-black-50"> | </span>
-        <span class="@(context.HasNotes ? "bg-info p-1" : "p-1")">U</span>
-        &nbsp;
+    <QuickGrid Items="FilteredItems" TGridItem="GridQuery" Class="table table-striped table-hover">
+      <TemplateColumn Title="Id" Sortable="true" Align=Align.Center SortBy="@(GridSort<GridQuery>.ByAscending(x => x.Id))">
+        <b>@context.Id</b>
         <button @onclick="@(() => ShowDetails(context))" class="btn btn-sm btn-outline-primary d-print-none">
-          <i class="fas fa-caret-down"></i>
+          <i class="fas fa-caret-up"></i>
         </button>
       </TemplateColumn>
+
+      <PropertyColumn Property="@(item => item.FullNameOrNA)" Title="Name" Sortable="true" IsDefaultSortColumn="true">
+        <ColumnOptions>
+          <div class="search-box">
+            <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="filter by name" />
+          </div>
+        </ColumnOptions>
+      </PropertyColumn>
+
+      @if (ShowColumnRec.ShowEmail)
+      {
+        <PropertyColumn Property="@(item => item.EMail)" Title="EMail" Sortable="true" />
+      }
+
+      <PropertyColumn Property="@(item => item.Phone)" Title="Phone" />
+
+      @if (ShowColumnRec.ShowPeople)
+      {
+        <PropertyColumn Property="@(item => item.People)" Align=Align.Center Title="People" />
+      }
+
+      @if (ShowColumnRec.ShowPaid)
+      {
+        <TemplateColumn Title="Paid" Align=Align.Center>
+          <div class="@context.TotalDonationClass text-center">
+            @context.TotalDonationNoCents
+          </div>
+        </TemplateColumn>
+      }
+
+      @if (ShowColumnRec.ShowNotes)
+      {
+        <TemplateColumn Title="Notes" Align=Align.Center>
+          <span class="@(context.HasAdminNotes ? "bg-warning p-1" : "p-1")">A</span>
+          <span class="text-black-50"> | </span>
+          <span class="@(context.HasNotes ? "bg-info p-1" : "p-1")">U</span>
+        </TemplateColumn>
+      }
 
     </QuickGrid>
 
@@ -50,16 +81,22 @@
       <TotalsCard TotalsCardRecord="TotalsCardRecord" />
     }
 
+
   }
 </LoadingComponent>
 
 @code {
   [Parameter, EditorRequired] public required FilterEnums? Filter { get; set; } = FilterEnums.RegisteredOrPaid;
 
+  string nameFilter = string.Empty;
+
   protected TotalsCardRecord? TotalsCardRecord { get; set; }
 
   bool TurnSpinnerOff = false;
-  protected List<GridQuery>? data;
+
+
+  protected IQueryable<GridQuery>? items;
+  IQueryable<GridQuery>? FilteredItems => items?.Where(x => x.FullName!.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase));
 
   protected override async Task OnParametersSetAsync()
   {
@@ -73,10 +110,10 @@
       }
       else
       {
-        data = await db!.GetAll(Filter);
-        if (data is not null)
+        items = (await db!.GetAll(Filter)).AsQueryable();
+        if (items is not null)
         {
-          TotalsCardRecord = new TotalsCardRecord(data.Count(), data.Sum(s => s.Adults), data.Sum(s => s.Children));
+          TotalsCardRecord = new TotalsCardRecord(items.Count(), items.Sum(s => s.Adults), items.Sum(s => s.Children));
         }
         else
         {
@@ -92,6 +129,7 @@
     }
     TurnSpinnerOff = true;
   }
+
 
   private GridQuery? SelectedItem = null;
 
@@ -111,6 +149,32 @@
   private void ReturnedCloseAction()
   {
     SelectedItem = null;
+  }
+
+  ShowColumnRecord ShowColumnRec = new(true, true, true, true);
+
+  private void ReturnedShowColumn(ShowColumnReply repl)
+  {
+    Logger!.LogDebug("{Method} {Message}", nameof(ReturnedShowColumn), $"ColEnum: {repl.colEnum}, {repl.Value}");
+    switch (repl.colEnum)
+    {
+      case ShowColumnEnum.Email:
+        ShowColumnRec = ShowColumnRec with { ShowEmail = repl.Value };
+        break;
+      case ShowColumnEnum.People:
+        ShowColumnRec = ShowColumnRec with { ShowPeople = repl.Value };
+        break;
+      case ShowColumnEnum.Paid:
+        ShowColumnRec = ShowColumnRec with { ShowPaid = repl.Value };
+        break;
+      case ShowColumnEnum.Notes:
+        ShowColumnRec = ShowColumnRec with { ShowNotes = repl.Value };
+        break;
+      default:
+        // Optionally handle unexpected enum values
+        break;
+    }
+
   }
 
 }
