@@ -31,18 +31,19 @@ public class Repository : BaseRepositoryAsync, IRepository
 	{
 		base.Parms = new DynamicParameters(new
 		{
-			StatusId = filter.Step.Value,
-			StatusId2 = filter.Step2?.Value ?? filter.Step.Value
+			StepId1 = filter.Step.Value,
+			StepId2 = filter.Step2?.Value ?? filter.Step.Value
 		});
 
 		Sql = $@"
---DECLARE @statusId int=3
---DECLARE @statusId2 int=4
-SELECT Id, EMail, FullName, StatusId, Phone, Notes, AdminNotes, Adults, Children, DidNotAttend
+--DECLARE @stepId int=3
+--DECLARE @stepId2 int=4
+SELECT Id, EMail, FullName, StepId, Phone, Notes, AdminNotes, Adults, Children, DidNotAttend
 , TotalDonation, DonationRowCount
 , IdHra
-FROM Sukkot.vwManageRegistration
-WHERE StatusId = @statusId OR StatusId = @statusId2
+, AttendanceBitwise
+FROM Sukkot.vwDashboardGrid
+WHERE StepId = @StepId1 OR StepId = @StepId2
 ORDER BY FullName
 "; 
 

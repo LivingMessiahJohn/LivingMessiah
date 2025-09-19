@@ -1,6 +1,7 @@
 ﻿using LivingMessiahAdmin.Helpers;
 
 using StepEnums = LivingMessiahAdmin.Features.Sukkot.Enums.Step;
+using Attendance = LivingMessiahAdmin.Features.Sukkot.Enums.AttendanceDate;
 
 namespace LivingMessiahAdmin.Features.Sukkot.Dashboard.Data;
 
@@ -14,7 +15,7 @@ public class GridQuery
 	{
 		get
 		{
-			return StatusId == StepEnums.Registration.Value ? "N/A" : FullName!;
+			return StepId == StepEnums.Registration.Value ? "N/A" : FullName!;
 		}
 	}
 
@@ -22,21 +23,14 @@ public class GridQuery
 	{
 		get
 		{
-			return StatusId == StepEnums.Registration.Value ? "bg-secondary-subtle text-black" : ""; // text-center
+			return StepId == StepEnums.Registration.Value ? "bg-secondary-subtle text-black" : ""; // text-center
 		}
 	}
 
-	public int StatusId { get; set; }
+	//ToDo: rename to StepId or get rid of it and rename Step to StepId
+	public int StepId { get; set; }
 
-	public int Step => StatusId;
-
-	public string StatusName
-	{
-		get
-		{
-			return $"{StepEnums.FromValue(StatusId).Value}. {StepEnums.FromValue(StatusId).Heading}"; // .Text
-		}
-	}
+	//public string StepName => $"{StepEnums.FromValue(StatusId).Value}. {StepEnums.FromValue(StatusId).Heading}";
 
 	public bool DidNotAttend { get; set; }
 	public string NoShow
@@ -65,13 +59,13 @@ public class GridQuery
 		return string.Format("{0:C0}", TotalDonation - amount);
 	}
 
-	public string StepHeading => StepEnums.FromValue(StatusId).Heading;
+	public string StepHeading => StepEnums.FromValue(StepId).Heading;
 
 	public string TotalDonationNoCents
 	{
 		get
 		{
-			if (StatusId == StepEnums.Registration.Value) return "N/A";
+			if (StepId == StepEnums.Registration.Value) return "N/A";
 
 			return Adults == 1
 			 ? TotalDonation == 50.0m ? "✓" : GetTotalDonationFormatted(-50.0m)
@@ -83,7 +77,7 @@ public class GridQuery
 	{
 		get
 		{
-			if (StatusId == StepEnums.Registration.Value)
+			if (StepId == StepEnums.Registration.Value)
 			{
 				return "bg-secondary-subtle text-center text-black";
 			}
@@ -112,7 +106,7 @@ public class GridQuery
 	{
 		get
 		{
-			if (StatusId == StepEnums.Registration.Value) return "badge bg-secondary text-white";
+			if (StepId == StepEnums.Registration.Value) return "badge bg-secondary text-white";
 
 			if (GetRegistrationFee() == TotalDonation)
 			{
@@ -141,6 +135,27 @@ public class GridQuery
 
 	public string? AdminNotes { get; set; }
 	public bool HasAdminNotes => !string.IsNullOrEmpty(AdminNotes);
+
+	public int AttendanceBitwise { get; set; }
+	public string AttendanceColumnValue
+	{
+		get
+		{
+			return LivingMessiahAdmin.Features.Sukkot.Enums.Helper.GetAttendanceDatesColumnValue(AttendanceBitwise);
+		}
+	}
+
+	/*
+	This information is gotten from LivingMessiahAdmin\Features\Sukkot\Dashboard\Constants\GridHelper.cs
+	public string AttendanceColumnHeader
+	{
+		get
+		{
+			return LivingMessiahAdmin.Features.Sukkot.Enums.Helper.GetAttendanceDatesColumnHeader(AttendanceBitwise);
+		}
+	}
+	*/
+
 
 	/*
 	public string AdminNotesShort

@@ -2,9 +2,16 @@
 
 namespace LivingMessiahAdmin.Enums;
 
+/*
+ToDo: see MenuBar where I consider using the `[Flags]` attribute of Roles
+*/
+
 public abstract class Role : SmartEnum<Role>
 {
-	// This is a SmartEnum the leverages Bitwise, therefor all the Id values need to be powers of two
+	/*
+	This is a SmartEnum the leverages Bitwise, therefor all the Id values need to be powers of two
+	*/
+
 
 	#region Id's
 	private static class BitwiseId

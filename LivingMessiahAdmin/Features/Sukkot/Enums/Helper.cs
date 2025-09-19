@@ -2,49 +2,6 @@
 
 public class Helper
 {
-	public static (DateTime[]? week1, DateTime[]? week2) GetAttendanceDatesArray(int attendanceBitwise)
-	{
-		if (!Enums.DateRangeType.Attendance.HasSecondMonth)
-		{
-#pragma warning disable CS0252 // Possible unintended reference comparison; left hand side needs cast
-			if (AttendanceDate.FromValue(attendanceBitwise) == AttendanceDate.None)
-			{
-				return (null, null);
-			}
-			else
-			{
-				return (AttendanceDate.FromValue(attendanceBitwise).Select(s => s.Date).ToArray(), null);
-			}
-#pragma warning restore CS0252 // Possible unintended reference comparison; left hand side needs cast
-		}
-		else
-		{
-			DateTime[]? wk1;
-			DateTime[]? wk2;
-#pragma warning disable CS0252 // Possible unintended reference comparison; left hand side needs cast
-			if (AttendanceDate.FromValue(attendanceBitwise) == AttendanceDate.None)
-			{
-				wk1 = null;
-			}
-			else
-			{
-				wk1 = AttendanceDate.FromValue(attendanceBitwise).Where(w => w.Week == 1).Select(s => s.Date).ToArray();
-			}
-#pragma warning restore CS0252 // Possible unintended reference comparison; left hand side needs cast
-#pragma warning disable CS0252 // Possible unintended reference comparison; left hand side needs cast
-			if (AttendanceDate.FromValue(attendanceBitwise) == AttendanceDate.None)
-			{
-				wk2 = null;
-			}
-			else
-			{
-				wk2 = AttendanceDate.FromValue(attendanceBitwise).Where(w => w.Week == 2).Select(s => s.Date).ToArray();
-			}
-#pragma warning restore CS0252 // Possible unintended reference comparison; left hand side needs cast
-			return (wk1, wk2);
-		}
-	}
-
 	public static int GetDaysBitwise(DateTime[] selectedDateArray, DateTime[] selectedDateArray2ndMonth, DateRangeType dateRangeType)
 	{
 		int bitwise = 0;
@@ -102,6 +59,23 @@ public class Helper
 		}
 
 		return bitwise;
+	}
+
+	/*
+	This information is gotten from LivingMessiahAdmin\Features\Sukkot\Dashboard\Constants\GridHelper.cs
+	public static string GetAttendanceDatesColumnHeader(int attendanceBitwise) 
+	{ 
+		return string.Join(" ", AttendanceDate.FromValue(attendanceBitwise).Select(s => s.Date.ToString("dd")));	
+	}
+	*/
+
+	public static string GetAttendanceDatesColumnValue(int attendanceBitwise)
+	{
+		// Assumes AttendanceDate.List contains all AttendanceDate instances in order
+		return string.Join(" ", AttendanceDate.List
+			.Where(d => d != AttendanceDate.None) // Skip 'None' if present
+			.Select(d => (attendanceBitwise & d.Value) == d.Value ? $"{d.Day}" : "  "));
+		//.Select(d => (attendanceBitwise & d.Value) == d.Value ? "  X" : "  "));
 	}
 
 }
