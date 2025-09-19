@@ -50,7 +50,7 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 	public abstract DateTime Date { get; }
 	public abstract DateRangeType DateRangeType { get; }
 	public abstract int Week { get; }
-
+	public abstract int Day { get; } // ToDo: is there a smarter way to do this? I already know the Dates
 	// Properties
 
 	#endregion
@@ -77,6 +77,7 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 		public override DateTime Date => DateTime.MinValue;
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1; // N/A
+		public override int Day => 0; 
 	}
 
 	private sealed class Sun_10_05_SE : AttendanceDate
@@ -86,6 +87,7 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 		public override DateTime Date => Convert.ToDateTime("2025-10-05");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1;
+		public override int Day => 5;
 	}
 	private sealed class Mon_10_06_SE : AttendanceDate
 	{
@@ -94,6 +96,7 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 		public override DateTime Date => Convert.ToDateTime("2025-10-06");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1;
+		public override int Day => 6;
 	}
 	private sealed class Tue_10_07_SE : AttendanceDate
 	{
@@ -102,6 +105,7 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 		public override DateTime Date => Convert.ToDateTime("2025-10-07");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1;
+		public override int Day => 7;
 	}
 	private sealed class Wed_10_08_SE : AttendanceDate
 	{
@@ -110,6 +114,7 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 		public override DateTime Date => Convert.ToDateTime("2025-10-08");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1;
+		public override int Day => 8;
 	}
 	private sealed class Thu_10_09_SE : AttendanceDate
 	{
@@ -118,6 +123,7 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 		public override DateTime Date => Convert.ToDateTime("2025-10-09");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1;
+		public override int Day => 09;
 	}
 	private sealed class Fri_10_10_SE : AttendanceDate
 	{
@@ -126,6 +132,7 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 		public override DateTime Date => Convert.ToDateTime("2025-10-10");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1;
+		public override int Day => 10;
 	}
 	private sealed class Sat_10_11_SE : AttendanceDate
 	{
@@ -134,6 +141,7 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 		public override DateTime Date => Convert.ToDateTime("2025-10-11");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1;
+		public override int Day => 11;
 	}
 	private sealed class Sun_10_12_SE : AttendanceDate
 	{
@@ -142,6 +150,7 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 		public override DateTime Date => Convert.ToDateTime("2025-10-12");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 2;
+		public override int Day => 12;
 	}
 	private sealed class Mon_10_13_SE : AttendanceDate
 	{
@@ -150,6 +159,7 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 		public override DateTime Date => Convert.ToDateTime("2025-10-13");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 2;
+		public override int Day => 13;
 	}
 	private sealed class Tue_10_14_SE : AttendanceDate
 	{
@@ -158,6 +168,7 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 		public override DateTime Date => Convert.ToDateTime("2025-10-14");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 2;
+		public override int Day => 14;
 	}
 
 	#endregion

@@ -1,6 +1,7 @@
 ﻿@using LivingMessiahAdmin.Features.Sukkot.Dashboard.Data
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using FilterEnums = LivingMessiahAdmin.Features.Sukkot.Dashboard.Enums.Filter
+@using ShowColumnEnums = LivingMessiahAdmin.Features.Sukkot.Dashboard.Enums.ShowColumn
 
 @inject ILogger<Grid>? Logger
 @inject IRepository? db;
@@ -16,12 +17,12 @@
                       SearchFilter="@nameFilter" />
     }
 
-  <div class="@MediaQuery.XsOrSm.DivClass">
-    <ShowColumn rec="ShowColumnRec"  IsXsOrSm="true" OnShowColumnChanged="ReturnedShowColumn" />
-	</div>
-	<div class="d-none d-md-block">
-    <ShowColumn rec="ShowColumnRec"  IsXsOrSm="false" OnShowColumnChanged="ReturnedShowColumn" />
-	</div>
+    <div class="@MediaQuery.XsOrSm.DivClass">
+      <ShowColumnSelector Bitwise=Bitwise IsXsOrSm="true" OnShowColumnChanged="ReturnedShowColumn" />
+    </div>
+    <div class="d-none d-md-block">
+      <ShowColumnSelector Bitwise=Bitwise IsXsOrSm="false" OnShowColumnChanged="ReturnedShowColumn" />
+    </div>
 
     @if (SelectedItem != null)
     {
@@ -44,19 +45,23 @@
         </ColumnOptions>
       </PropertyColumn>
 
-      @if (ShowColumnRec.ShowEmail)
+      @if (ShowColumnRecord!.ShowEmail)
       {
         <PropertyColumn Property="@(item => item.EMail)" Title="EMail" Sortable="true" />
       }
 
-      <PropertyColumn Property="@(item => item.Phone)" Title="Phone" />
+      @if (ShowColumnRecord!.ShowPhone)
+      {
+        <PropertyColumn Property="@(item => item.Phone)" Title="Phone" />
+      }
 
-      @if (ShowColumnRec.ShowPeople)
+
+      @if (ShowColumnRecord!.ShowPeople)
       {
         <PropertyColumn Property="@(item => item.People)" Align=Align.Center Title="People" />
       }
 
-      @if (ShowColumnRec.ShowPaid)
+      @if (ShowColumnRecord!.ShowPaid)
       {
         <TemplateColumn Title="Paid" Align=Align.Center>
           <div class="@context.TotalDonationClass text-center">
@@ -65,7 +70,19 @@
         </TemplateColumn>
       }
 
-      @if (ShowColumnRec.ShowNotes)
+
+      @if (ShowColumnRecord!.ShowAttendance)
+      {
+        <TemplateColumn Title="@Constants.GridHelper.GetAttendanceDatesColumnHeader()" Align=Align.Center>
+          <div class="">
+            <div>
+              <span style="white-space: pre;">@context.AttendanceColumnValue</span>
+            </div>
+          </div>
+        </TemplateColumn>
+      }
+
+      @if (ShowColumnRecord!.ShowNotes)
       {
         <TemplateColumn Title="Notes" Align=Align.Center>
           <span class="@(context.HasAdminNotes ? "bg-warning p-1" : "p-1")">A</span>
@@ -104,6 +121,8 @@
 
     try
     {
+      if (ShowColumnRecord == null) { ShowColumnRecord = PopulateShowColumn(Bitwise); }
+
       if (Filter == null)
       {
         throw new ArgumentNullException(nameof(Filter), $"{nameof(Filter)} is null");
@@ -128,8 +147,8 @@
       Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(OnParametersSetAsync)}");
     }
     TurnSpinnerOff = true;
-  }
 
+  }
 
   private GridQuery? SelectedItem = null;
 
@@ -151,30 +170,30 @@
     SelectedItem = null;
   }
 
-  ShowColumnRecord ShowColumnRec = new(true, true, true, true);
 
-  private void ReturnedShowColumn(ShowColumnReply repl)
+  // Initial default setting done by using `Bitwise Operator` `|` (OR).
+  protected int Bitwise = ShowColumnEnums.Email.Value | ShowColumnEnums.People.Value | ShowColumnEnums.Attendance.Value;
+  protected ShowColumnRecord? ShowColumnRecord; // = PopulateShowColumn(Bitwise); 
+
+  // Using the `Bitwise Operator` `&` (AND) to determine if a column should be shown or not.
+
+  private void ReturnedShowColumn(int bitwise)
   {
-    Logger!.LogDebug("{Method} {Message}", nameof(ReturnedShowColumn), $"ColEnum: {repl.colEnum}, {repl.Value}");
-    switch (repl.colEnum)
-    {
-      case ShowColumnEnum.Email:
-        ShowColumnRec = ShowColumnRec with { ShowEmail = repl.Value };
-        break;
-      case ShowColumnEnum.People:
-        ShowColumnRec = ShowColumnRec with { ShowPeople = repl.Value };
-        break;
-      case ShowColumnEnum.Paid:
-        ShowColumnRec = ShowColumnRec with { ShowPaid = repl.Value };
-        break;
-      case ShowColumnEnum.Notes:
-        ShowColumnRec = ShowColumnRec with { ShowNotes = repl.Value };
-        break;
-      default:
-        // Optionally handle unexpected enum values
-        break;
-    }
+    Bitwise = bitwise;
+    ShowColumnRecord = PopulateShowColumn(bitwise);
+    Logger!.LogDebug("{Method} {Message}", nameof(ReturnedShowColumn), $"Returned Bitwise: {bitwise}");
+  }
 
+  private ShowColumnRecord PopulateShowColumn(int bitwise)
+  {
+    return new ShowColumnRecord(
+        (bitwise & ShowColumnEnums.Email.Value) == ShowColumnEnums.Email.Value,
+        (bitwise & ShowColumnEnums.Phone.Value) == ShowColumnEnums.Phone.Value,
+        (bitwise & ShowColumnEnums.People.Value) == ShowColumnEnums.People.Value,
+        (bitwise & ShowColumnEnums.Paid.Value) == ShowColumnEnums.Paid.Value,
+        (bitwise & ShowColumnEnums.Notes.Value) == ShowColumnEnums.Notes.Value,
+        (bitwise & ShowColumnEnums.Attendance.Value) == ShowColumnEnums.Attendance.Value
+    );
   }
 
 }

@@ -1,0 +1,94 @@
+﻿@using LivingMessiahAdmin.Features.Sukkot.Dashboard.Enums
+
+@inject ILogger<ShowColumnSelector>? Logger
+
+@if (IsXsOrSm)
+{
+   <div class="btn-group-vertical btn-group-md dropend" role="group" aria-label="Show columns dropdown">
+    <button type="button" class="btn btn-primary btn-md dropdown-toggle"
+            data-bs-toggle="dropdown" aria-expanded="false">
+      Show
+    </button>
+    <ul class="dropdown-menu">
+      @foreach (var item in ShowColumn.List.OrderBy(c => c.Value))
+      {
+        int i = item.Value;
+        <li class="dropdown-item">
+          <button type="button" class="btn btn-outline-primary btn-sm w-100"
+                  @onclick="() => ToggleColumn(item)">
+            @(GetChecked(item) ? "Hide " + item.Name : "Show " + item.Name)
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
+}
+else
+{
+  <div class="d-flex align-items-center gap-3 bg-body-secondary p-1">
+    <span><b>Show:</b></span>
+    @foreach (var item in ShowColumn.List.OrderBy(c => c.Value))
+    {
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="@($"{item.Name.ToLower()}Checkbox")"
+               checked="@GetChecked(item)"
+               @onchange="@(e => OnColumnChanged(e, item))">
+        <label class="form-check-label" for="@($"{item.Name.ToLower()}Checkbox")">@item.Name</label>
+      </div>
+    }
+  </div>
+}
+
+@code {
+  [Parameter] public int Bitwise { get; set; }
+  [Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
+  [Parameter] public EventCallback<int> OnShowColumnChanged { get; set; }
+
+  //ToDo: these two methods could be combined into one method 
+  private void ToggleColumn(ShowColumn column)
+  {
+    bool isChecked = GetChecked(column);
+    int newBitwise;
+
+    if (isChecked)
+    {
+        // Currently checked, so uncheck (clear the bit)
+        newBitwise = Bitwise & ~column.Value;
+    }
+    else
+    {
+        // Currently unchecked, so check (set the bit)
+        newBitwise = Bitwise | column.Value;
+    }
+
+    OnShowColumnChanged.InvokeAsync(newBitwise);
+
+  }
+
+  private void OnColumnChanged(ChangeEventArgs e, ShowColumn column)
+  {
+    bool isChecked = (bool)e.Value!;
+    int newBitwise;
+
+    if (isChecked)
+    {
+      // Set the bit
+      newBitwise = Bitwise | column.Value;
+    }
+    else
+    {
+      // Clear the bit
+      newBitwise = Bitwise & ~column.Value;
+    }
+
+    OnShowColumnChanged.InvokeAsync(newBitwise);
+  }
+
+  protected bool GetChecked(ShowColumn column)
+  {
+    // use bitwise AND:
+    return (Bitwise & column.Value) == column.Value;
+  }
+
+}
+
