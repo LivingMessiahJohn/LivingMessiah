@@ -1,0 +1,55 @@
+﻿@using LivingMessiahAdmin.Features.Sukkot.Dashboard.Data
+@using CsvHelper
+@using System.Globalization
+@using System.Text
+@using System.IO
+
+@inject IJSRuntime JS
+@inject ILogger<ExportCSV>? Logger
+@inject IToastService? Toast
+
+@inject IJSRuntime JSRuntime
+@* 
+<button class="btn btn-outline-info btn-sm text-dark" title="Download registrations to registrations.csv"
+  onclick="@OnButtonClicked">
+  Download CSV
+  <i class="fas fa-file-csv"></i>
+</button>
+ *@
+
+@code {
+  //[Parameter, EditorRequired] public List<GridQuery>? items { get; set; }
+
+  private IJSObjectReference? _module;
+
+  public async Task DownloadCSV(List<GridQuery>? items)
+  {
+    if (items is not null)
+    {
+      Logger!.LogDebug("{Method}", nameof(DownloadCSV));
+      try
+      {
+        //var registrations = items;
+        using var memoryStream = new MemoryStream();
+        using var writer = new StreamWriter(memoryStream, Encoding.UTF8);
+        using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+
+        csv.WriteRecords(items); // registrations
+        await writer.FlushAsync();
+        var csvData = Encoding.UTF8.GetString(memoryStream.ToArray());
+        await JSRuntime.InvokeVoidAsync("downloadFile", "registration.csv", csvData);
+        Toast!.ShowSuccess($"downloaded registrations");
+      }
+
+      catch (Exception ex)
+      {
+        Logger!.LogError(ex, "{Method}", nameof(DownloadCSV));
+        Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(DownloadCSV)}");
+      }
+    }
+    else
+    {
+      Toast!.ShowWarning($"{nameof(items)} list is null | {nameof(DownloadCSV)}");
+    }
+  }
+}

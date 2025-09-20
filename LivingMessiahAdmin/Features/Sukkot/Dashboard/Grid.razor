@@ -6,10 +6,14 @@
 @inject ILogger<Grid>? Logger
 @inject IRepository? db;
 @inject IToastService? Toast
+@inject ExportCSV ExportCSV
 
 <LoadingComponent IsLoading="items == null" TurnSpinnerOff=TurnSpinnerOff>
   @if (items != null)
   {
+    <TopRowButtons  OnCommandDoExport="ReturnedOnCommandDoExport" />
+    
+
     @if (TotalsCardRecord is not null)
     {
       <FilterRowCount Rows="TotalsCardRecord.RowCnt"
@@ -103,9 +107,10 @@
 </LoadingComponent>
 
 @code {
-  [Parameter, EditorRequired] public required FilterEnums? Filter { get; set; } = FilterEnums.RegisteredOrPaid;
+    [Parameter, EditorRequired] public required FilterEnums? Filter { get; set; } = FilterEnums.RegisteredOrPaid;
 
-  string nameFilter = string.Empty;
+
+    string nameFilter = string.Empty;
 
   protected TotalsCardRecord? TotalsCardRecord { get; set; }
 
@@ -152,8 +157,9 @@
 
   private GridQuery? SelectedItem = null;
 
-  private static readonly GridSort<GridQuery> GridSort = GridSort<GridQuery>
-    .ByAscending(p => p.FullNameOrNA);
+  private static readonly GridSort<GridQuery>
+    GridSort = GridSort<GridQuery>
+      .ByAscending(p => p.FullNameOrNA);
 
   private DetailCardRecord? DetailCardRecord;
   private void ShowDetails(GridQuery? item)
@@ -171,9 +177,18 @@
   }
 
 
+  private async Task ReturnedOnCommandDoExport()
+  {
+    if (FilteredItems != null)
+    {
+      await ExportCSV.DownloadCSV(FilteredItems.ToList());
+    }
+  }
+
+
   // Initial default setting done by using `Bitwise Operator` `|` (OR).
   protected int Bitwise = ShowColumnEnums.Email.Value | ShowColumnEnums.People.Value | ShowColumnEnums.Attendance.Value;
-  protected ShowColumnRecord? ShowColumnRecord; // = PopulateShowColumn(Bitwise); 
+  protected ShowColumnRecord? ShowColumnRecord; // = PopulateShowColumn(Bitwise);
 
   // Using the `Bitwise Operator` `&` (AND) to determine if a column should be shown or not.
 
@@ -187,12 +202,12 @@
   private ShowColumnRecord PopulateShowColumn(int bitwise)
   {
     return new ShowColumnRecord(
-        (bitwise & ShowColumnEnums.Email.Value) == ShowColumnEnums.Email.Value,
-        (bitwise & ShowColumnEnums.Phone.Value) == ShowColumnEnums.Phone.Value,
-        (bitwise & ShowColumnEnums.People.Value) == ShowColumnEnums.People.Value,
-        (bitwise & ShowColumnEnums.Paid.Value) == ShowColumnEnums.Paid.Value,
-        (bitwise & ShowColumnEnums.Notes.Value) == ShowColumnEnums.Notes.Value,
-        (bitwise & ShowColumnEnums.Attendance.Value) == ShowColumnEnums.Attendance.Value
+    (bitwise & ShowColumnEnums.Email.Value) == ShowColumnEnums.Email.Value,
+    (bitwise & ShowColumnEnums.Phone.Value) == ShowColumnEnums.Phone.Value,
+    (bitwise & ShowColumnEnums.People.Value) == ShowColumnEnums.People.Value,
+    (bitwise & ShowColumnEnums.Paid.Value) == ShowColumnEnums.Paid.Value,
+    (bitwise & ShowColumnEnums.Notes.Value) == ShowColumnEnums.Notes.Value,
+    (bitwise & ShowColumnEnums.Attendance.Value) == ShowColumnEnums.Attendance.Value
     );
   }
 
