@@ -11,7 +11,7 @@
 <AuthorizeView Policy=@RoleGroup.Sukkot>
   <Authorized>
     <PageHeaderMenubar MenuBarEnum=MenuBar.Dashboard />
-    <Grid ParamFilter=FilterEnums.RegisteredOrPaid />
+    <Grid />
   </Authorized>
   <NotAuthorized>
     <LoginRedirectCard Nav="Nav.SukkotDashboard" ReturnUrl=@Nav.SukkotDashboard.Index />
