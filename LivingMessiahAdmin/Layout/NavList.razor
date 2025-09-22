@@ -1,0 +1,120 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Authorization
+@using LivingMessiahAdmin.Enums
+@using LivingMessiahAdmin.SecurityRoot
+@using System.Security.Claims
+
+@inject NavigationManager NavigationManager
+
+@* ToDo: copied from Home/NavList*@
+@* <div class="h5"></div>  *@
+
+<ul class="@ulCSS">
+
+  @if (authorizedNavItems != null)
+  {
+    @foreach (var item in authorizedNavItems)
+    {
+      <li class="@liCSS">
+
+        <a class="@anchorCSS @textCSS" 
+          @onclick="@(e => ButtonClicked(item))" title="@item.Title">
+          <i class="@item.Icon"></i> @GetTitle(item.Title)
+        </a>
+        @if (item.Disabled)
+        {
+          <text>&nbsp;</text>
+          <i class="fas fa-ban"></i>
+        }
+      </li>
+    }
+  }
+</ul>
+
+@code {
+  [CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+  [Parameter, EditorRequired] public bool IsXs { get; set; }
+
+  string divCSS = "";               // h5
+  string ulCSS = "navbar-nav";      // fa-ul
+  string liCSS = "nav-item";        // py-1
+  string anchorCSS = "nav-link";    // "@item.TextColor text-decoration-underline"
+  string textCSS = " text-white";   // see above
+ 
+  // <span class="fa-li"><i class="@item.Icon"></i></span>
+  //<span class="text-black-50"><i class="fas fa-ban"></i></span>
+
+  private string GetTitle(string title)
+  {
+    return IsXs ? $" {title}" : "";
+  }
+
+  private IEnumerable<Nav>? authorizedNavItems;
+
+  protected override async Task OnInitializedAsync()
+  {
+    authorizedNavItems = await GetAuthorizedNavItems();
+  }
+
+  private void ButtonClicked(Nav nav)
+  {
+    NavigationManager!.NavigateTo(nav.Index);
+  }
+
+  // ToDo: Duplicate code from Home/NavList 
+  private async Task<IEnumerable<Nav>> GetAuthorizedNavItems()
+  {
+    if (authenticationState == null)
+    {
+      return Nav.List.ToList()
+        .Where(w => w.Value != Nav.Home.Value && w.Value != Nav.Profile.Value && w.RequiredRoles == 0)
+        .OrderBy(o => o.Name);
+    }
+
+    var state = await authenticationState;
+    var userRoles = GetUserRoleBitmask(state.User);
+
+    return Nav.List.ToList()
+      .Where(w => w.Value != Nav.Home.Value && w.Value != Nav.Profile.Value && HasRequiredRole(w.RequiredRoles, userRoles))
+      .OrderBy(o => o.Name);
+  }
+
+  private int GetUserRoleBitmask(ClaimsPrincipal user)
+  {
+    if (user == null || !user.Identity!.IsAuthenticated)
+    {
+      return 0;
+    }
+
+    int userRoles = 0;
+
+    // Check for each role claim and build the bitmask
+    var roleClaims = user.Claims.Where(c => c.Type == Auth0.MicrosoftSchemaIdentityClaimsRole);
+
+    foreach (var roleClaim in roleClaims)
+    {
+      if (roleClaim.Value == Role.Admin.Claim)
+        userRoles |= Role.Admin.Value;
+      else if (roleClaim.Value == Role.KeyDates.Claim)
+        userRoles |= Role.KeyDates.Value;
+      else if (roleClaim.Value == Role.Sukkot.Claim)
+        userRoles |= Role.Sukkot.Value;
+      else if (roleClaim.Value == Role.SukkotHost.Claim)
+        userRoles |= Role.SukkotHost.Value;
+      else if (roleClaim.Value == Role.Announcements.Claim)
+        userRoles |= Role.Announcements.Value;
+    }
+
+    return userRoles;
+  }
+
+  private bool HasRequiredRole(int requiredRoles, int userRoles)
+  {
+    // If no roles are required (requiredRoles == 0), allow access
+    if (requiredRoles == 0)
+      return true;
+
+    // Check if user has any of the required roles using bitwise AND
+    return (userRoles & requiredRoles) != 0;
+  }
+}

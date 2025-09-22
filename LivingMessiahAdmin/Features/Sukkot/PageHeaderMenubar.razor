@@ -11,79 +11,37 @@
   }
 </PageTitle>
 
-<div class="d-print-none mt-3">
-  <div class="@MediaQuery.XsOrSm.DivClass">
-    <div class="d-flex justify-content-end">
-      <div class="dropdown">
-        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="fas fa-bars"></i> Navigate
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
-          @foreach (var item in Enums.MenuBar.List.ToList()
-                    .OrderBy(o => o.Value))
-          {
-            <li>
-              <a class="dropdown-item @(item == MenuBarEnum ? "active" : "")"
-                 @onclick="@(e => ButtonClicked(item))"
-                 title="@item.Title"
-                 href="javascript:void(0);">
-                <span class="me-2"><i class="@item.Icon"></i></span>
-                @item.Title
-              </a>
-            </li>
-          }
-        </ul>
-      </div>
-    </div>
+<div class="d-flex justify-content-between align-items-center mt-3">
+  <div class="h3 mb-0">
+    <i class="@MenuBarEnum.Icon"></i>&nbsp;&nbsp;@MenuBarEnum.Title
   </div>
-  <div class="@MediaQuery.MdOrLgOrXl.DivClass">
-    <ol class="breadcrumb mx-n3 mt-n3">
-      @foreach (var item in Enums.MenuBar.List.ToList()
-            .OrderBy(o => o.Value))
+
+  <div class="dropdown  d-print-none">
+    <button class="btn btn-outline-secondary dropdown-toggle btn-sm" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="fas fa-bars"></i> Nav
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
+      @foreach (var item in Enums.MenuBar.List.ToList().OrderBy(o => o.Value))
       {
-        <li class="@GetMenuItemClass(item) me-1">
-          <span class="fa-li"><i class="@item.Icon"></i></span>
-          <a @onclick="@(e => ButtonClicked(item))"
-             title="@item.Title @item.Title"
-             class="@item.Css @(item == MenuBarEnum ? "text-decoration-none fw-bold text-primary" : "text-decoration-underline")">
+        <li>
+          <a class="dropdown-item @(item == MenuBarEnum ? "active" : "")"
+             @onclick="@(e => ButtonClicked(item))"
+             title="@item.Title"
+             href="javascript:void(0);">
+            <span class="me-2"><i class="@item.Icon"></i></span>
             @item.Title
           </a>
         </li>
       }
-    </ol>
+    </ul>
   </div>
-</div>
-
-
-<div class="pb-n1 mt-2 @(ShowPrintButton ? "mb-1" : "mb-3") @BorderCSS">
-  <h1 class=""><i class="@MenuBarEnum.Icon"></i>&nbsp;&nbsp;@MenuBarEnum.Title</h1>
-</div>
-
-<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-  @if (ShowPrintButton)
-  {
-    <div class="d-print-none">
-      <div class="row">
-        <div class="col-12">
-          <a class="btn btn-sm btn-default float-end" href="javascript:window.print()">
-            <span class="fa fa-print"></span> Print
-          </a>
-        </div>
-      </div>
-    </div>
-  }
 </div>
 
 @code {
   [Parameter, EditorRequired] public Enums.MenuBar MenuBarEnum { get; set; }
   [Parameter] public string? PageTitle { get; set; }
   [Parameter] public string? BorderCSS { get; set; } = "border-bottom border-info";
-  [Parameter] public bool ShowPrintButton { get; set; } = false;
-
-  private string GetMenuItemClass(Enums.MenuBar item)
-  {
-    return item == MenuBarEnum ? "bg-light border border-secondary border-2 rounded p-1" : "p-1";
-  }
+  [Parameter] public bool ShowPrintButton { get; set; } = false; // Deleted button related code for this don't know if I need this feature
 
   private void ButtonClicked(Enums.MenuBar nav)
   {

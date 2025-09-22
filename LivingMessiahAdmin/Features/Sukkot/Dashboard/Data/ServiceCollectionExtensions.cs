@@ -1,6 +1,6 @@
 ﻿//using FluentValidation;
+using LivingMessiahAdmin.Features.Sukkot.Dashboard.Services;
 
-using LivingMessiahAdmin.Features.Sukkot.Dashboard;
 namespace LivingMessiahAdmin.Features.Sukkot.Dashboard.Data;
 
 public static class ServiceCollectionExtensions

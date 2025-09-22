@@ -1,26 +1,26 @@
-﻿
+﻿@* 
 <div class="@MediaQuery.MdOrLgOrXl.DivClass">
-  <div class="d-print-none">
-    <div class="row mb-2">
-      <div class="col-12 d-flex justify-content-end gap-2">
-@*         
-        <button class="btn btn-default btn-sm text-dark"
-                onclick="@OnButtonClicked"
-        title="Download registrations to registrations.csv">
-          Download CSV
-          <i class="fas fa-file-csv"></i>
-        </button>
+</div>
+*@
 
- *@        <a class="btn btn-sm btn-default" href="javascript:window.print()">
-          <span class="fa fa-print"></span> Print
-        </a>
-      </div>
-    </div>
+<div class="d-print-none">
+  <div class="text-end mt-2 ">
+    <button class="@btnCSS"
+            onclick="@OnButtonClicked"
+            title="Download to @Constants.ExportCSVHelper.DownloadFileName">
+      Download <i class="fas fa-file-csv"></i>
+    </button>
+
+    <a class="@btnCSS" href="javascript:window.print()">
+      <span class="fa fa-print"></span> Print
+    </a>
   </div>
 </div>
 
 @code {
   [Parameter] public EventCallback OnCommandDoExport { get; set; }
+
+  string btnCSS = "btn btn-outline-secondary btn-sm me-1";
 
   void OnButtonClicked()
   {
