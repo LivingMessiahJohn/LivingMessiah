@@ -11,10 +11,6 @@
 
 <TopRowButtons OnCommandDoExport="ReturnedOnCommandDoExport" />
 
-@if (CurrentFilter is not null)
-{
-}
-
 <LoadingComponent IsLoading="items == null" TurnSpinnerOff=TurnSpinnerOff>
   @if (items != null)
   {
@@ -112,48 +108,20 @@
 </LoadingComponent>
 
 @code {
-  [Parameter, EditorRequired] public required FilterEnums? ParamFilter { get; set; } = FilterEnums.RegisteredOrPaid;
-
-  protected FilterEnums? CurrentFilter;
 
   string nameFilter = string.Empty;
-
   protected TotalsCardRecord? TotalsCardRecord { get; set; }
-
   bool TurnSpinnerOff = false;
 
   protected IQueryable<GridQuery>? items;
   IQueryable<GridQuery>? FilteredItems => items?.Where(x => x.FullName!.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase));
 
-  void ReturnedFilter(FilterEnums filter)
+  protected override async Task OnInitializedAsync()
   {
-    CurrentFilter = filter;
-  }
-
-  protected override async Task OnParametersSetAsync()
-  {
-    //Logger!.LogDebug("{Method} {Message}", nameof(OnParametersSetAsync), $"Filter: {ParamFilter!.Name}");
-
+    Logger!.LogDebug("{Method}", nameof(OnInitializedAsync));
     try
     {
-      if (ParamFilter == null)
-      {
-        throw new ArgumentNullException(nameof(ParamFilter), $"{nameof(ParamFilter)} is null");
-      }
-      else
-      {
-        CurrentFilter = ParamFilter;
-        items = (await db!.GetAll(CurrentFilter)).AsQueryable();
-        if (items is not null)
-        {
-          TotalsCardRecord = new TotalsCardRecord(items.Count(), items.Sum(s => s.Adults), items.Sum(s => s.Children));
-        }
-        else
-        {
-          Logger!.LogWarning("{Method} {Message}", nameof(OnParametersSetAsync), "RegistrationList is null");
-          Toast!.ShowWarning($"RegistrationList is null");
-        }
-      }
+      await PopulateGrid();
     }
     catch (Exception ex)
     {
@@ -161,7 +129,30 @@
       Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(OnParametersSetAsync)}");
     }
     TurnSpinnerOff = true;
+  }
 
+  private async Task PopulateGrid()
+  {
+    Logger!.LogDebug("{Method}", nameof(PopulateGrid));
+    await Task.Delay(500);
+    try
+    {
+      items = (await db!.GetAll(CurrentFilter!)).AsQueryable();
+      if (items is not null)
+      {
+        TotalsCardRecord = new TotalsCardRecord(items.Count(), items.Sum(s => s.Adults), items.Sum(s => s.Children));
+      }
+      else
+      {
+        Logger!.LogWarning("{Method} {Message}", nameof(OnParametersSetAsync), "RegistrationList is null");
+        Toast!.ShowWarning($"RegistrationList is null");
+      }
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(PopulateGrid));
+      Toast!.ShowError($"{Global.ToastShowError} | {nameof(PopulateGrid)}");
+    }
   }
 
   private GridQuery? SelectedItem = null;
@@ -169,6 +160,14 @@
   private static readonly GridSort<GridQuery>
     GridSort = GridSort<GridQuery>
       .ByAscending(p => p.FullNameOrNA);
+
+  protected FilterEnums? CurrentFilter = FilterEnums.RegisteredOrPaid;
+  private async Task ReturnedFilter(FilterEnums filter)
+  {
+    Logger!.LogDebug("{Method} {Message}", nameof(ReturnedFilter), $"CurrentFilter: {(CurrentFilter == null ? "NULL" : CurrentFilter.Name)}; filter: {filter.Name}");
+    CurrentFilter = filter;
+    await PopulateGrid();
+  }
 
   private DetailCardRecord? DetailCardRecord;
   private void ShowDetails(GridQuery? item)
@@ -208,8 +207,6 @@
 
   // Initial default setting done by using `Bitwise Operator` `|` (OR).
   protected int Bitwise = ShowColumnEnums.Email.Value | ShowColumnEnums.People.Value | ShowColumnEnums.Attendance.Value;
-
-  // Using the `Bitwise Operator` `&` (AND) to determine if a column should be shown or not.
 
   private void ReturnedShowColumn(int bitwise)
   {
