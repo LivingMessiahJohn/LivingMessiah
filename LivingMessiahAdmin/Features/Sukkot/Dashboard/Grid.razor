@@ -1,4 +1,5 @@
 ﻿@using LivingMessiahAdmin.Features.Sukkot.Dashboard.Data
+@using LivingMessiahAdmin.Features.Sukkot.Dashboard.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using FilterEnums = LivingMessiahAdmin.Features.Sukkot.Dashboard.Enums.Filter
 @using ShowColumnEnums = LivingMessiahAdmin.Features.Sukkot.Dashboard.Enums.ShowColumn
@@ -8,14 +9,18 @@
 @inject IToastService? Toast
 @inject ExportCSV ExportCSV
 
+<TopRowButtons OnCommandDoExport="ReturnedOnCommandDoExport" />
+
+@if (CurrentFilter is not null)
+{
+}
+
 <LoadingComponent IsLoading="items == null" TurnSpinnerOff=TurnSpinnerOff>
   @if (items != null)
   {
-    <TopRowButtons  OnCommandDoExport="ReturnedOnCommandDoExport" />
-    
-
     @if (TotalsCardRecord is not null)
     {
+      <FilterButtons Filter="CurrentFilter" OnFilterSelected="ReturnedFilter" />
       <FilterRowCount Rows="TotalsCardRecord.RowCnt"
                       FilteredRows="@(FilteredItems?.Count() ?? 0)"
                       SearchFilter="@nameFilter" />
@@ -49,23 +54,23 @@
         </ColumnOptions>
       </PropertyColumn>
 
-      @if (ShowColumnRecord!.ShowEmail)
+      @if ((Bitwise & ShowColumnEnums.Email.Value) != 0)
       {
         <PropertyColumn Property="@(item => item.EMail)" Title="EMail" Sortable="true" />
       }
 
-      @if (ShowColumnRecord!.ShowPhone)
+      @if ((Bitwise & ShowColumnEnums.Phone.Value) != 0)
       {
         <PropertyColumn Property="@(item => item.Phone)" Title="Phone" />
       }
 
 
-      @if (ShowColumnRecord!.ShowPeople)
+      @if ((Bitwise & ShowColumnEnums.People.Value) != 0)
       {
         <PropertyColumn Property="@(item => item.People)" Align=Align.Center Title="People" />
       }
 
-      @if (ShowColumnRecord!.ShowPaid)
+      @if ((Bitwise & ShowColumnEnums.Paid.Value) != 0)
       {
         <TemplateColumn Title="Paid" Align=Align.Center>
           <div class="@context.TotalDonationClass text-center">
@@ -75,7 +80,7 @@
       }
 
 
-      @if (ShowColumnRecord!.ShowAttendance)
+      @if ((Bitwise & ShowColumnEnums.Attendance.Value) != 0)
       {
         <TemplateColumn Title="@Constants.GridHelper.GetAttendanceDatesColumnHeader()" Align=Align.Center>
           <div class="">
@@ -86,7 +91,7 @@
         </TemplateColumn>
       }
 
-      @if (ShowColumnRecord!.ShowNotes)
+      @if ((Bitwise & ShowColumnEnums.Notes.Value) != 0)
       {
         <TemplateColumn Title="Notes" Align=Align.Center>
           <span class="@(context.HasAdminNotes ? "bg-warning p-1" : "p-1")">A</span>
@@ -107,34 +112,38 @@
 </LoadingComponent>
 
 @code {
-    [Parameter, EditorRequired] public required FilterEnums? Filter { get; set; } = FilterEnums.RegisteredOrPaid;
+  [Parameter, EditorRequired] public required FilterEnums? ParamFilter { get; set; } = FilterEnums.RegisteredOrPaid;
 
+  protected FilterEnums? CurrentFilter;
 
-    string nameFilter = string.Empty;
+  string nameFilter = string.Empty;
 
   protected TotalsCardRecord? TotalsCardRecord { get; set; }
 
   bool TurnSpinnerOff = false;
 
-
   protected IQueryable<GridQuery>? items;
   IQueryable<GridQuery>? FilteredItems => items?.Where(x => x.FullName!.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase));
 
+  void ReturnedFilter(FilterEnums filter)
+  {
+    CurrentFilter = filter;
+  }
+
   protected override async Task OnParametersSetAsync()
   {
-    Logger!.LogDebug("{Method} {Message}", nameof(OnParametersSetAsync), $"Filter: {Filter!.Name}");
+    //Logger!.LogDebug("{Method} {Message}", nameof(OnParametersSetAsync), $"Filter: {ParamFilter!.Name}");
 
     try
     {
-      if (ShowColumnRecord == null) { ShowColumnRecord = PopulateShowColumn(Bitwise); }
-
-      if (Filter == null)
+      if (ParamFilter == null)
       {
-        throw new ArgumentNullException(nameof(Filter), $"{nameof(Filter)} is null");
+        throw new ArgumentNullException(nameof(ParamFilter), $"{nameof(ParamFilter)} is null");
       }
       else
       {
-        items = (await db!.GetAll(Filter)).AsQueryable();
+        CurrentFilter = ParamFilter;
+        items = (await db!.GetAll(CurrentFilter)).AsQueryable();
         if (items is not null)
         {
           TotalsCardRecord = new TotalsCardRecord(items.Count(), items.Sum(s => s.Adults), items.Sum(s => s.Children));
@@ -176,39 +185,35 @@
     SelectedItem = null;
   }
 
-
   private async Task ReturnedOnCommandDoExport()
   {
     if (FilteredItems != null)
     {
-      await ExportCSV.DownloadCSV(FilteredItems.ToList());
+      try
+      {
+        await ExportCSV.DownloadCSV(FilteredItems.ToList());
+        Logger!.LogDebug("{Method} {Message}", nameof(ReturnedOnCommandDoExport), $"Download complete; Constants: {Constants.ExportCSVHelper.Dump()}");
+      }
+      catch (Exception ex)
+      {
+        Logger!.LogError(ex, "{Method}", nameof(ReturnedOnCommandDoExport));
+        Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(ReturnedOnCommandDoExport)}");
+      }
+    }
+    else
+    {
+      Toast!.ShowWarning($"FilteredItems is null");
     }
   }
 
-
   // Initial default setting done by using `Bitwise Operator` `|` (OR).
   protected int Bitwise = ShowColumnEnums.Email.Value | ShowColumnEnums.People.Value | ShowColumnEnums.Attendance.Value;
-  protected ShowColumnRecord? ShowColumnRecord; // = PopulateShowColumn(Bitwise);
 
   // Using the `Bitwise Operator` `&` (AND) to determine if a column should be shown or not.
 
   private void ReturnedShowColumn(int bitwise)
   {
     Bitwise = bitwise;
-    ShowColumnRecord = PopulateShowColumn(bitwise);
     Logger!.LogDebug("{Method} {Message}", nameof(ReturnedShowColumn), $"Returned Bitwise: {bitwise}");
   }
-
-  private ShowColumnRecord PopulateShowColumn(int bitwise)
-  {
-    return new ShowColumnRecord(
-    (bitwise & ShowColumnEnums.Email.Value) == ShowColumnEnums.Email.Value,
-    (bitwise & ShowColumnEnums.Phone.Value) == ShowColumnEnums.Phone.Value,
-    (bitwise & ShowColumnEnums.People.Value) == ShowColumnEnums.People.Value,
-    (bitwise & ShowColumnEnums.Paid.Value) == ShowColumnEnums.Paid.Value,
-    (bitwise & ShowColumnEnums.Notes.Value) == ShowColumnEnums.Notes.Value,
-    (bitwise & ShowColumnEnums.Attendance.Value) == ShowColumnEnums.Attendance.Value
-    );
-  }
-
 }

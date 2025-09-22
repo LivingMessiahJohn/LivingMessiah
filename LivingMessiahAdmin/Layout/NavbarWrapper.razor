@@ -1,0 +1,46 @@
+﻿@using LivingMessiahAdmin.Enums
+
+<div class="d-print-none">
+
+  <nav class="navbar navbar-expand-sm @css">
+    <div class="container-fluid">
+
+      <a href="@LivingMessiahAdmin.Enums.Nav.Home.Index" class="ms-2" title="@LivingMessiahAdmin.Enums.Nav.Home.Title">
+        <img src="/favicon.ico" alt="Logo" width="32" height="32" class="rounded" />
+      </a>
+
+      <!-- Toggle button for mobile -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Collapsible navbar content -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-sm-0"></ul>
+
+        <!-- Right-aligned items -->
+        <div class="@MediaQuery.Xs.DivClass"><NavList IsXs=true /></div>
+        <div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><NavList IsXs=false /></div>
+
+      </div>
+    </div>
+
+  </nav>
+</div>
+
+@code {
+  
+  const string css = " bg-success text-white";
+
+  /*
+  const string css = " bg-dark text-white";
+  const string css = " bg-primary text-white";
+  const string css = " bg-light text-dark";
+  const string css = " bg-secondary text-white";
+  const string css = " bg-success-subtle text-black";
+  const string css = " bg-warning text-white";
+  */
+
+}
+
