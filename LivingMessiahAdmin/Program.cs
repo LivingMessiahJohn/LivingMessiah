@@ -14,7 +14,7 @@ using LivingMessiahAdmin.SecurityRoot;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
-//using Stripe;
+
 //using System.Text.Json;
 using AccountEnum = LivingMessiahAdmin.Enums.Account;
 using LivingMessiahAdmin.Features.Database;
@@ -22,6 +22,11 @@ using LivingMessiahAdmin.Features.Sukkot.Dashboard.Data;
 using LivingMessiahAdmin.Features.Sukkot.Home.Data;
 using LivingMessiahAdmin.Features.Sukkot.Notes.Data;
 using LivingMessiahAdmin.Features.Sukkot.Reports.Data;
+
+//using Stripe; 
+using HealthChecksSukkot = LivingMessiahAdmin.HealthChecks.Sukkot;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,8 +71,10 @@ try
 	builder.Services.AddManageKeyDates();
 	builder.Services.Configure<AppSettings>(options => configuration.GetSection("AppSettings").Bind(options));
 	//builder.Services.AddFeastDayPlanner();
-
 	//builder.Services.AddApplicationInsightsTelemetry();
+	builder.Services.Configure<HealthChecksSukkot.Settings.Stripe>(options => configuration.GetSection(nameof(Stripe)).Bind(options));
+	builder.Services.AddHealthChecks()
+    .AddCheck<HealthChecksSukkot.StripeWebhookHealthCheck>(HealthChecksSukkot.Endpoints.Constants.StripeConstants.HealthCheckName); 
 
 	builder.Services.AddAuth0WebAppAuthentication(options =>
 	{
@@ -115,8 +122,8 @@ try
 	});
 	#endregion
 
-	app.MapRazorComponents<App>()
-			.AddInteractiveServerRenderMode();
+	app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+	app.MapHealthChecks(HealthChecksSukkot.Endpoints.Constants.StripeConstants.HealthCheckUrl);  
 
 	app.Run();
 

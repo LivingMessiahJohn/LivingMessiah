@@ -1,15 +1,10 @@
-﻿@page "/Calendar/HealthCheck"
+﻿
 
-@using Microsoft.Extensions.Logging;
-@using CalendarEnum = LivingMessiah.Features.Calendar.Enums
-@using LivingMessiah.Settings
+```html
+@using CalendarEnum = LivingMessiahAdmin.Features.Calendar.Enums
 @using Microsoft.Extensions.Options
 @using DateType = LivingMessiah.Features.Calendar.Enums.DateType
 
-@inject ILogger<Index>? Logger
-@inject IOptions<AppSettings>? AppSettings
-
-<PageHeader PageEnum="LivingMessiah.Enums.Nav.Calendar" />
 
 <p class="mt-3 mb-3 bg-info-subtle p-2">
 	This page is a <i>Health Check</i> of the calendar dates.
@@ -85,7 +80,9 @@
 
 	</RowTemplate>
 </TableTemplate>
+```
 
+```csharp
 @code {
 
 	protected int YearId { get; set; }
@@ -119,13 +116,14 @@
 		else if (dateType == DateType.Season)
 		{
 			return $"{enumId} - {Enums.Season.FromValue(enumId).Name}";
-		}	
+		}
 		else
 		{
 			return "???";
-		}	
-		
+		}
+
 	}
 
-	
+
 }
+```

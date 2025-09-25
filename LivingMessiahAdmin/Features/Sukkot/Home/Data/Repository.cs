@@ -135,7 +135,7 @@ WHERE Id = @Id";
 			{
 				NewId = int.TryParse(x.ToString(), out NewId) ? NewId : 0;
 				ReturnMsg = $"Registration created for {formVM.FamilyName}/{formVM.EMail}; NewId={NewId}";
-				Logger.LogDebug($"...Return NewId:{NewId}");
+				Logger!.LogDebug("{Method} {Message}", nameof(CreateRegistration), ReturnMsg);
 			}
 
 			return new Tuple<int, int, string>(NewId, SprocReturnValue, ReturnMsg);
@@ -275,7 +275,7 @@ ORDER BY Detail
 		Parms = new DynamicParameters(new { Id = id });
 		Sql = "DELETE FROM Sukkot.Donation WHERE Id=@Id";
 
-		Logger.LogDebug($"Inside {nameof(Repository)}!{nameof(DeleteDonationDetail)}, Sql: {Sql}, id: {id}");
+		Logger!.LogDebug("{Method} {Message}", nameof(DeleteDonationDetail), $"Sql: {Sql}, id: {id}");
 
 		return await WithConnectionAsync(async connection =>
 		{

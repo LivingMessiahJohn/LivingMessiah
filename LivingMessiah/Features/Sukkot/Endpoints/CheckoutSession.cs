@@ -1,6 +1,7 @@
 ﻿using Stripe.Checkout;
 using LivingMessiah.Features.Sukkot.Enums;
 using LivingMessiah.Features.Sukkot.Constants;
+using LivingMessiah.Features.Sukkot.Data;
 
 namespace LivingMessiah.Features.Sukkot.Endpoints;
 
@@ -17,68 +18,49 @@ public static class CheckoutSession
 		endpoints.MapPost(sessionUrl,
 			async (HttpContext context,
 			IConfiguration config,
-			ILoggerFactory loggerFactory) =>
+			ILoggerFactory loggerFactory,
+			IRepository db) =>
 			{
 				var Logger = loggerFactory.CreateLogger(nameof(CheckoutSession));
 
 				IFormCollection form = await context.Request.ReadFormAsync();
 
-				var (registrationIdError, registrationId) = ValidateRegistrationId(form);
-				if (!string.IsNullOrEmpty(registrationIdError))
+				var validationResult = CheckValidation(form, Logger, out int registrationId, out RegistrationFee registrationFee, out string email);
+				if (validationResult != null)
 				{
-					Logger.LogError("{Method}, Validation failed: {ErrorMessage}", nameof(CheckoutSessionConfig), registrationIdError);
-					return Results.BadRequest($"{registrationIdError}".Trim());
+					return validationResult;
 				}
 
-				var (feeEnumIdValueError, registrationFee) = ValidateFeeEnumValue(form);
-				if (!string.IsNullOrEmpty(feeEnumIdValueError))
+				Logger.LogDebug("{Method} {Message}", nameof(CheckoutSession), $"Passed validation, amount: {registrationFee.Fee}");
+
+				try
 				{
-					Logger.LogError("{Method}, Validation failed: {ErrorMessage}", nameof(CheckoutSessionConfig), feeEnumIdValueError);
-					return Results.BadRequest($"{feeEnumIdValueError}".Trim());
+					var sprocTuple = await db!.StripeMerge(email, registrationId);
+				}
+				catch (Exception ex)
+				{
+					Logger!.LogError(ex, "{Method}, {Message} {Called}", nameof(CheckoutSessionConfig)
+						, "Error: {ex.Message}", $"just called {nameof(db.StripeMerge)}, keep moving");
+					//return Results.BadRequest();
 				}
 
-				var (emailError, email) = ValidateEmail(form);
-				if (!string.IsNullOrEmpty(emailError))
+				try
 				{
-					Logger.LogError("{Method}, Validation failed: {ErrorMessage}", nameof(CheckoutSessionConfig), emailError);
-					return Results.BadRequest($"{emailError}".Trim());
+					SessionCreateOptions options = GetSessionOptions(registrationId, registrationFee, email, domain);
+
+					var service = new SessionService();
+					var session = await service.CreateAsync(options);
+					Logger.LogInformation("Stripe session created with ID: {SessionId}", session.Id);
+					return Results.Redirect(session.Url);
+
+				}
+				catch (Exception ex)
+				{
+					Logger!.LogError(ex, "{Method}, {Message} {Called}", nameof(CheckoutSessionConfig)
+						, "Error: {ex.Message}", $"just called {nameof(GetSessionOptions)}");
+					return Results.BadRequest();
 				}
 
-				Logger.LogDebug("{Method} {Message}", nameof(CheckoutSession), $"amount: {registrationFee.Fee}");
-				SessionCreateOptions options = new SessionCreateOptions
-				{
-					PaymentMethodTypes = new List<string> { "card" },
-					LineItems = new List<SessionLineItemOptions>
-				{
-					new SessionLineItemOptions
-					{
-						PriceData = new SessionLineItemPriceDataOptions
-						{
-							Currency = "usd",
-							UnitAmount = registrationFee.Pennies,
-							ProductData = new SessionLineItemPriceDataProductDataOptions
-							{
-								Name = "Registration Fee",
-							},
-						},
-						Quantity = 1,
-					},
-				},
-					Mode = "payment",
-					SuccessUrl = $"{domain}/{ReturnUrl.SuccessUrl}",
-					CancelUrl = $"{domain}/{ReturnUrl.CancelUrl}",
-					CustomerEmail = email,
-					Metadata = new Dictionary<string, string>
-					{
-						{ FormFields.RegistrationId, registrationId.ToString() },
-						{ FormFields.Email, email! }
-					}
-				};
-
-				var service = new SessionService();
-				var session = await service.CreateAsync(options);
-				Logger.LogInformation("Stripe session created with ID: {SessionId}", session.Id);
-				return Results.Redirect(session.Url);
 			});
 	}
 
@@ -143,4 +125,89 @@ public static class CheckoutSession
 
 	}
 
+	private static IResult? CheckValidation(
+		IFormCollection form,
+		ILogger Logger,
+		out int registrationId,
+		out RegistrationFee registrationFee,
+		out string email)
+	{
+		registrationId = 0;
+		registrationFee = null!;
+		email = string.Empty;
+
+		try
+		{
+			var (registrationIdError, regId) = ValidateRegistrationId(form);
+			if (!string.IsNullOrEmpty(registrationIdError))
+			{
+				Logger.LogError("{Method}, Validation failed: {ErrorMessage}", nameof(CheckoutSessionConfig), registrationIdError);
+				return Results.BadRequest($"{registrationIdError}".Trim());
+			}
+			registrationId = regId;
+
+			var (feeEnumIdValueError, regFee) = ValidateFeeEnumValue(form);
+			if (!string.IsNullOrEmpty(feeEnumIdValueError))
+			{
+				Logger.LogError("{Method}, Validation failed: {ErrorMessage}", nameof(CheckoutSessionConfig), feeEnumIdValueError);
+				return Results.BadRequest($"{feeEnumIdValueError}".Trim());
+			}
+			registrationFee = regFee;
+
+			var (emailError, emailValue) = ValidateEmail(form);
+			if (!string.IsNullOrEmpty(emailError))
+			{
+				Logger.LogError("{Method}, Validation failed: {ErrorMessage}", nameof(CheckoutSessionConfig), emailError);
+				return Results.BadRequest($"{emailError}".Trim());
+			}
+			email = emailValue;
+
+			return null;
+
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}, {Message} {Variables}"
+			, nameof(CheckValidation), "Error: {ex.Message}"
+			, $"registrationId: {registrationId}; email: {email}; ");
+			return Results.BadRequest();
+		}
+	}
+
+	private static SessionCreateOptions GetSessionOptions(
+		int registrationId,
+		RegistrationFee registrationFee,
+		string email,
+		string domain)
+	{
+		return new SessionCreateOptions
+		{
+			PaymentMethodTypes = new List<string> { "card" },
+			LineItems = new List<SessionLineItemOptions>
+			{
+				new SessionLineItemOptions
+				{
+					PriceData = new SessionLineItemPriceDataOptions
+					{
+						Currency = "usd",
+						UnitAmount = registrationFee.Pennies,
+						ProductData = new SessionLineItemPriceDataProductDataOptions
+						{
+							Name = "Registration Fee",
+						},
+					},
+					Quantity = 1,
+				},
+			},
+			Mode = "payment",
+			SuccessUrl = $"{domain}/{ReturnUrl.SuccessUrl}",
+			CancelUrl = $"{domain}/{ReturnUrl.CancelUrl}",
+			CustomerEmail = email,
+			Metadata = new Dictionary<string, string>
+			{
+				{ FormFields.RegistrationId, registrationId.ToString() },
+				{ FormFields.Email, email! }
+			}
+		};
+	}
 }
