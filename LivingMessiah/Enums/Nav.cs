@@ -29,33 +29,31 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int Home = 1;
 		internal const int Calendar = 2;
 		internal const int FeastTable = 3;
-		internal const int CalendarHealthCheck = 4;
-		internal const int Donate = 5;
-		internal const int DonateReplyConfirm = 6;
-		internal const int Sitemap = 7;
-		internal const int HealthCheckTestLogger = 8;
-		internal const int Feasts = 9;
-		internal const int LunarMonth = 10;
-		internal const int Leadership = 11;
-		internal const int HeavensDeclare = 12;
-		internal const int ThresholdCovenant = 13;
-		internal const int Podcast = 14;
-		internal const int Parasha = 15;  // PageParasha.Archive
-		internal const int Welcome = 16;
-		internal const int Liturgy = 17; 
-		internal const int UpcomingEvents = 18; // ToDo: replace with SpecialEvents
-		internal const int WindmillRanch = 19;
-		internal const int TorahTuesday = 20;
-		internal const int IndepthStudy = 21;
-		internal const int About = 22;
-		internal const int BloodMoons = 23;
-		internal const int Articles = 24;
-		internal const int FurtherStudies = 25;	
-		internal const int ImportantLinks = 26;
-		internal const int ShabbatService = 27;
-		internal const int Sukkot = 28;
-		internal const int Profile = 29;
-		internal const int PasswordChanged = 29;
+		internal const int Donate = 4;
+		internal const int DonateReplyConfirm = 5;
+		internal const int Sitemap = 6;
+		internal const int Feasts = 7;
+		internal const int LunarMonth = 8;
+		internal const int Leadership = 9;
+		internal const int HeavensDeclare = 10;
+		internal const int ThresholdCovenant = 11;
+		internal const int Podcast = 12;
+		internal const int Parasha = 13;  // PageParasha.Archive
+		internal const int Welcome = 14;
+		internal const int Liturgy = 15; 
+		internal const int UpcomingEvents = 16; // ToDo: replace with SpecialEvents
+		internal const int WindmillRanch = 17;
+		internal const int TorahTuesday = 18;
+		internal const int IndepthStudy = 19;
+		internal const int About = 20;
+		internal const int BloodMoons = 21;
+		internal const int Articles = 22;
+		internal const int FurtherStudies = 23;	
+		internal const int ImportantLinks = 24;
+		internal const int ShabbatService = 25;
+		internal const int Sukkot = 26;
+		internal const int Profile = 27;
+		internal const int PasswordChanged = 28;
 	}
 	#endregion
 
@@ -63,11 +61,9 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav Home = new HomeSE();
 	public static readonly Nav Calendar = new CalendarSE();
 	public static readonly Nav FeastTable = new FeastTableSE();
-	public static readonly Nav CalendarHealthCheck = new CalendarHealthCheckSE();
 	public static readonly Nav Donate = new DonateSE();
 	public static readonly Nav DonateReplyConfirm = new DonateReplyConfirmSE();
 	public static readonly Nav Sitemap = new SitemapSE();
-	public static readonly Nav HealthCheckTestLogger = new HealthCheckTestLoggerSE();
 	public static readonly Nav Feasts = new FeastsSE();
 	public static readonly Nav LunarMonth = new LunarMonthSE();
 	public static readonly Nav Leadership = new LeadershipSE();
@@ -171,20 +167,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false;
 	}
 
-	private sealed class CalendarHealthCheckSE : Nav
-	{
-		public CalendarHealthCheckSE() : base($"{nameof(Id.CalendarHealthCheck)}", Id.CalendarHealthCheck) { }
-		public override string Index => "/Calendar/HealthCheck";
-		public override string Title => "Calendar Health Check";
-		public override string Icon => "fas fa-heartbeat";
-		public override int Sort => Id.CalendarHealthCheck;
-		public override string HomeTitleSuffix => " ";
-		public override string HomeFloatRightHebrew => "";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => false;
-	}
-
 	private sealed class DonateSE : Nav
 	{
 		public DonateSE() : base($"{nameof(Id.Donate)}", Id.Donate) { }
@@ -224,20 +206,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeTitleSuffix => " nahal H5095";
 		public override string HomeFloatRightHebrew => "נָהַל";
 		public override PageListType PageListType => PageListType.Footer | PageListType.Layout;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => false;
-	}
-
-	private sealed class HealthCheckTestLoggerSE : Nav
-	{
-		public HealthCheckTestLoggerSE() : base($"{nameof(Id.HealthCheckTestLogger)}", Id.HealthCheckTestLogger) { }
-		public override string Index => "HealthCheck/TestLogger";
-		public override string Title => "Test Logger (HC)";
-		public override string Icon => "fas fa-bomb";  //fas fa-wrench
-		public override int Sort => Id.HealthCheckTestLogger;
-		public override string HomeTitleSuffix => " ";
-		public override string HomeFloatRightHebrew => "";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}

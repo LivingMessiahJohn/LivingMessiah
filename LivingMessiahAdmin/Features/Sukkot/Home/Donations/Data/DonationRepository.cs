@@ -69,7 +69,7 @@ ORDER BY FirstName
 
 		Parms.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-		Logger.LogDebug($"Inside {nameof(DonationRepository)}!{nameof(DonationRepository)}!{nameof(InsertRegistrationDonation)}, Sql: {Sql}");
+		Logger!.LogDebug("{Method} {Sql}", nameof(InsertRegistrationDonation), $"Sql: {Sql}");
 
 		return await WithConnectionAsync(async connection =>
 		{
@@ -77,13 +77,15 @@ ORDER BY FirstName
 			int? x = Parms.Get<int?>("NewId");
 			if (x == null)
 			{
-				Logger.LogWarning($"NewId is null; returning as 0; Check dbo.ErrorLog for FK_Donation_Registration conflict Error; donation.RegistrationId: {donation.RegistrationId}");
+				Logger!.LogWarning("{Method} {Message}"
+					, nameof(InsertRegistrationDonation)
+					, $"NewId is null; returning as 0; Check dbo.ErrorLog for FK_Donation_Registration conflict Error; donation.RegistrationId: {donation.RegistrationId}");
 				return 0;
 			}
 			else
 			{
 				int NewId = int.TryParse(x.ToString(), out NewId) ? NewId : 0;
-				Logger.LogDebug($"Return NewId:{NewId}");
+				Logger.LogDebug("{Method} {Message}", nameof(InsertRegistrationDonation), $"Return NewId:{NewId}");
 				return NewId;
 			}
 		});
@@ -94,7 +96,7 @@ ORDER BY FirstName
 		_ = await UpdateDonationProcess(donationDetail);
 		DonationDetail NewDonation = new DonationDetail();
 		NewDonation = await GetDonationDetail(donationDetail.Id);
-		Logger.LogDebug($"Inside {nameof(DonationRepository)}!{nameof(UpdateDonationDetail)}, Sql: {Sql}");
+		Logger!.LogDebug("{Method} {Sql}", nameof(UpdateDonationDetail), $"Sql: {Sql}");
 		return NewDonation;
 	}
 
@@ -123,8 +125,7 @@ UPDATE Sukkot.Donation SET
 , CreatedBy = @CreatedBy
 WHERE Id=@Id
 ";
-		Logger.LogDebug($"Inside {nameof(DonationRepository)}!{nameof(UpdateDonationProcess)}, Sql: {Sql}");
-
+		Logger!.LogDebug("{Method} {Sql}", nameof(UpdateDonationProcess), $"Sql: {Sql}");
 		return await WithConnectionAsync(async connection =>
 		{
 			var count = await connection.ExecuteAsync(sql: Sql, param: Parms);
@@ -142,8 +143,7 @@ FROM Sukkot.Donation
 WHERE RegistrationId = @RegistrationId
 ORDER BY Detail
 ";
-		Logger.LogDebug($"Inside {nameof(DonationRepository)}!{nameof(GetDonationDetails)}, Sql: {Sql}, registrationId: {registrationId}");
-
+		Logger!.LogDebug("{Method} {Message}", nameof(GetDonationDetails), $"Sql: {Sql}, registrationId: {registrationId}");
 		return await WithConnectionAsync(async connection =>
 		{
 			var rows = await connection.QueryAsync<DonationDetail>(Sql, Parms);
@@ -161,7 +161,7 @@ FROM Sukkot.Donation d
 INNER JOIN Sukkot.Registration r ON r.Id = d.RegistrationId
 ORDER BY RegistrationId, Detail";
 
-		Logger.LogDebug($"Inside {nameof(DonationRepository)}!{nameof(GetDonationDetailsAll)}, Sql: {Sql}");
+		Logger!.LogDebug("{Method} {Sql}", nameof(GetDonationDetailsAll), $"Sql: {Sql}");
 
 		return await WithConnectionAsync(async connection =>
 		{
@@ -181,7 +181,7 @@ FROM Sukkot.Donation d
 INNER JOIN Sukkot.Registration r ON r.Id = d.RegistrationId
 WHERE d.Id = @Id	
 ";
-		Logger.LogDebug($"Inside {nameof(DonationRepository)}!{nameof(GetDonationDetail)}, Sql: {Sql}, id: {id}");
+		Logger!.LogDebug("{Method} {Message}", nameof(GetDonationDetail), $"Sql: {Sql}, id: {id}");
 
 		return await WithConnectionAsync(async connection =>
 		{
