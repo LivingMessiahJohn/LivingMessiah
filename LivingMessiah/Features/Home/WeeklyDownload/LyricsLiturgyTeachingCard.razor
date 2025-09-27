@@ -1,0 +1,70 @@
+﻿@using TriennialEnum = LivingMessiah.Features.Parasha.Enums.Triennial
+@using ParashaEnums = LivingMessiah.Features.Parasha.Enums
+
+@inject IToastService? Toast
+
+@* if (CurrentReading is not null && bibleBook is not null) *@
+
+@if (CurrentReading is not null)
+{
+  <div class="card border border-danger border-3 rounded-top text-center mb-3 mt-3">
+
+    <div class="card-header bg-danger">
+      <h2 class="text-center text-white ">Lyrics, Liturgy and Teaching</h2>
+    </div>
+
+    <div class="body my-2 fs-4">@GetCurrentTitle()</div>
+
+    <div class="card-footer">
+      <div class="text-center">
+        <a href="@GetCurrentTeachingPDF()" target="_blank" title="@AnchorTitle()"
+           class="btn btn-outline-danger btn-xl">
+          <i class="fas fa-file-pdf fa-fw fa-2x"></i>
+          <span class="fs-4"> @AnchorText</span>
+          <i class="fas fa-file-download fa-fw fa-2x" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+}
+
+@code {
+
+  private TriennialEnum? CurrentReading = ParashaEnums.Constants.GetCurrentReading();
+  private BibleBook? bibleBook;
+
+  protected override void OnInitialized()
+  {
+    if (CurrentReading is null)
+    {
+      Toast!.ShowWarning($"Parasha not found; inside: {nameof(LyricsLiturgyTeachingCard)}!{nameof(OnInitialized)}");
+    }
+    else
+    {
+      // ToDo: Finish
+      // ToDo: do a tryvalue for BibleBook
+      //bibleBook = BibleBook.FromValue(CurrentReading.TorahVerse.BibleBook);
+      //ParashaFile = $"{CurrentReading.TorahAbrv}-{CurrentReading.TorahBookFilter} ";
+     
+      ShabbatDate = CurrentReading.Date.ToString("yyyy MMMM dd"); 
+      ParashaTitle = CurrentReading.BCV;
+      ParashaDate = CurrentReading.Date.ToString("yyyy-MM-dd");
+    }
+  }
+
+  private string ShabbatDate = string.Empty;  // "2025 September 27";
+  private string ParashaTitle = string.Empty; // "Exodus 4:14-6:1";
+  private string ParashaDate = string.Empty;  // "2025-09-27";
+  private string ParashaFile = "Exo-04-14-to-06-01";
+
+  private const string AnchorText = "Pdf Download";
+
+  private string GetCurrentTeachingPDF() => $"{Constants.TeachingBlobFolder}{ParashaDate}-{ParashaFile}.pdf";
+  private string GetCurrentTitle() => $"{ShabbatDate} | {ParashaTitle}";
+  private string AnchorTitle() => $"{AnchorText} | {ParashaDate}-{ParashaFile}.pdf";
+
+  //https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-07-05-Gen-39.pdf
+  //https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2025-09-27-Exo-04-14-to-06-01.pdf
+}

@@ -337,7 +337,11 @@ public abstract class Triennial : SmartEnum<Triennial>
 	#region Extra Fields
 	public abstract string TriNum { get; } // 1.1	
 	public abstract string ParashaName { get; } // B'reisheet (1)	
+
+	//ToDo: where is NameUrl used?
+	//  What does `public override string NameUrl => NameUrl;` actually do?
 	public abstract string NameUrl { get; } // b-reisheet-genesis-1-1-to-19-number-1-1	
+	
 	public abstract string AhavtaURL { get; } // http://www.ahavta.org/Commentary Y-1/Y1-01.htm	
 	public abstract string Meaning { get; } // In the beginning (Days 1 - 4)	
 

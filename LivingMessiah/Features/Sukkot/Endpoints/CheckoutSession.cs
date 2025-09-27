@@ -93,7 +93,7 @@ public static class CheckoutSession
 
 		if (!RegistrationFee.TryFromValue(feeEnumId, out var registrationFee))
 		{
-			return ($"RegistrationFee fee, gotten by TryFromValue using feeEnumId: {feeEnumId} is unknown", null!);
+			return ($"Registration donation, gotten by TryFromValue using feeEnumId: {feeEnumId} is unknown", null!);
 		}
 
 		return (string.Empty, registrationFee);
