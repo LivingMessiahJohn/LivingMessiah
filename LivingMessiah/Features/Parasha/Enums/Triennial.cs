@@ -396,6 +396,10 @@ public abstract class Triennial : SmartEnum<Triennial>
 		}
 	}
 
+	public string WeeklyReadingParashaFile => 
+		$"{BibleBook.FromValue(this.TorahVerse.BibleBook).Abrv}-{this.TorahVerse.ChapterVerse.Replace("-", "-to-")
+		.Replace(":", "-").Replace(" & ", "-and-")}";
+
 	public DateTime Date
 	{
 		get

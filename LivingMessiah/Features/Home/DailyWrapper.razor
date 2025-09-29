@@ -5,10 +5,19 @@
 
 <div class="@MediaQuery.Xs.DivClass">
   <ShabbatMeter />
-  <LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" DaysOld="DaysOld" />
+  <div class="d-flex justify-content-center">
+    <LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" DaysOld="DaysOld" />
+  </div>
 </div>
 
-<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+<div class="@MediaQuery.Sm.DivClass">
+  <div class="d-flex justify-content-evenly">
+    <ShabbatMeter />
+    <LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" DaysOld="DaysOld" MaxWidth="max-width: 250px;" />
+  </div>
+</div>
+  
+<div class="@MediaQuery.MdOrLgOrXl.DivClass">
   <div class="d-flex justify-content-evenly">
     <ShabbatMeter />
     <LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" DaysOld="DaysOld" />
@@ -26,7 +35,7 @@
 
     LunarMonth = LunarMonthEnum.List
       .Where(w => w.Date >= dateTimeWithoutTime)
-      .OrderBy(o => o.Date) 
+      .OrderBy(o => o.Date)
       .FirstOrDefault();
     if (LunarMonth != null)
     {
@@ -37,7 +46,8 @@
     if (LunarMonth is not null)
     {
       Logger!.LogDebug("{Method}, {Message}, {DayCalc}", nameof(OnInitialized)
-          , $"{LunarMonth!.Name} {LunarMonth!.Date.ToShortDateString()}", $"ToGo: {DaysToGo}, Old: {DaysOld}");
+          , $"Lunar Month: {LunarMonth!.Name} {LunarMonth!.Date.ToShortDateString()}"
+          , $"ToGo: {DaysToGo}, Old: {DaysOld}");
     }
 
   }

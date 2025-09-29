@@ -53,6 +53,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	// This is a sanity check based on the idea for some feast days you can determine how many days are in between the dates
 	// E.g. There's 9 days between Trumpets and Yom Kippur, so if the difference between those dates is off then one of the dates is wrong.
 	public abstract int? DaysFromPrevFeast { get; }
+	public abstract Season Season { get; }
 	#endregion
 
 
@@ -82,6 +83,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override DateRange Range => new DateRange(Date, FDD.HanukkahDay8.Date);
 //	public override DateTime Date => Convert.ToDateTime("2023-12-08"); // Hanukkah
 		public override DateTime Date => Convert.ToDateTime("2024-12-25"); // EnumId: 1; Hanukkah
+		public override Season Season => Season.Winter;
 	}
 
 	private sealed class PurimSE : FeastDay
@@ -108,6 +110,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override DateRange Range => new DateRange(Date, FDD.Purim.Date);
 //	public override DateTime Date => Convert.ToDateTime("2024-03-24"); // Purim
 		public override DateTime Date => Convert.ToDateTime("2025-03-14"); // EnumId: 2; Purim
+		public override Season Season => Season.Winter;
 	}
 
 	//ToDo, Rename this PassoverWeek(SE)
@@ -133,6 +136,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override DateRange Range => new DateRange(Date, FDD.UnleavenedBreadDay7.Date);
 //	public override DateTime Date => Convert.ToDateTime("2024-04-23"); // 1st day of UnleavenedBreadDay1
 		public override DateTime Date => Convert.ToDateTime("2025-04-13"); // EnumId: 3; Passover
+		public override Season Season => Season.Spring;
 	}
 
 	private sealed class WeeksSE : FeastDay
@@ -157,6 +161,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override DateRange Range => new DateRange(Date, FDD.Weeks.Date);
 //	public override DateTime Date => Convert.ToDateTime("2024-06-12"); // Weeks
 		public override DateTime Date => Convert.ToDateTime("2025-06-02"); // EnumId: 4; Weeks
+		public override Season Season => Season.Summer;
 	}
 
 	private sealed class TrumpetsSE : FeastDay
@@ -181,6 +186,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override DateRange Range => new DateRange(Date, FDD.Trumpets.Date);
 //	public override DateTime Date => Convert.ToDateTime("2024-10-03"); // Trumpets
 		public override DateTime Date => Convert.ToDateTime("2025-09-23"); // EnumId: 5; Trumpets
+		public override Season Season => Season.Fall;
 	}
 
 	private sealed class YomKippurSE : FeastDay
@@ -205,6 +211,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override DateRange Range => new DateRange(Date, FDD.YomKippur.Date);
 //	public override DateTime Date => Convert.ToDateTime("2024-10-12"); // Yom Kippur
 		public override DateTime Date => Convert.ToDateTime("2025-10-02"); // EnumId: 6; Yom Kippur
+		public override Season Season => Season.Fall;
 	}
 
 	private sealed class TabernaclesSE : FeastDay
@@ -229,6 +236,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override DateRange Range => new DateRange(Date, FDD.SukkotCampTearDown.Date);
 //	public override DateTime Date => Convert.ToDateTime("2024-10-17"); // Tabernacles
 		public override DateTime Date => Convert.ToDateTime("2025-10-06"); // EnumId: 7; Tabernacles
+		public override Season Season => Season.Fall;
 	}
 
 	#endregion
@@ -241,7 +249,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		}
 	}
 
-	public MarkupString HasCalendarDetailsFormated
+	public MarkupString HasCalendarDetailsFormatted
 	{
 		get
 		{

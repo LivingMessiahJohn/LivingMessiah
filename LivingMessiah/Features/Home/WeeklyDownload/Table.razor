@@ -1,0 +1,32 @@
+﻿@page "/WeeklyDownload"
+
+@using ParashaEnums = LivingMessiah.Features.Parasha.Enums
+@using Page = LivingMessiah.Enums.Nav
+
+<PageHeader PageEnum="Page.WeeklyDownload" />
+
+
+
+<TableTemplate HeaderCSS="table table-sm table-warning table-hover" Items="ParashaEnums.Triennial.List.OrderBy(o => o.Value).ToList()">
+	<TableHeader>
+		<th>Id</th>
+		<th class="text-start"><i class="fas fa-file-download" aria-hidden="true"></i></th>
+		
+	</TableHeader>
+	<RowTemplate>
+		<td>@context.Value</td>
+		<td>
+			<a href="@GetBlobPDF(context)" target="_blank">
+				@context.Date.ToString("yyyy-MM-dd")-@context.WeeklyReadingParashaFile
+			</a>
+		</td>
+	</RowTemplate>
+</TableTemplate>
+
+
+@code {
+	private string GetBlobPDF(ParashaEnums.Triennial item)
+	{
+		return $"{Constants.TeachingBlobFolder}{item.Date.ToString("yyyy-MM-dd")}-{@item.WeeklyReadingParashaFile}.pdf";
+	}
+}

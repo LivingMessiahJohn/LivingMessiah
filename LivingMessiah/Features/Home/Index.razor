@@ -12,47 +12,45 @@
 <HomeImage />
 
 <div class="container">
-	<div class="@MediaQuery.Xs.DivClass">
-		<WelcomeCard />
-	</div>
-	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
-		<div class="row">
-			<div class="col-1"></div>
-			<div class="col-10"><WelcomeCard /></div>
-			<div class="col-1"></div>
-		</div>
-	</div>
+  <div class="@MediaQuery.Xs.DivClass">
+    <WelcomeCard />
+  </div>
+  <div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col-10"><WelcomeCard /></div>
+      <div class="col-1"></div>
+    </div>
+  </div>
 </div>
 
 <div class="container">
-	<div class="@MediaQuery.Xs.DivClass">
-		<LyricsLiturgyTeachingCard/>
-	</div>
-	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
-		<div class="row">
-			<div class="col-1"></div>
-			<div class="col-10">
-				<LyricsLiturgyTeachingCard/>
-			</div>
-			<div class="col-1"></div>
-		</div>
-	</div>
+  <div class="@MediaQuery.Xs.DivClass">
+    <LyricsLiturgyTeachingCard />
+  </div>
+  <div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col-10">
+        <LyricsLiturgyTeachingCard />
+      </div>
+      <div class="col-1"></div>
+    </div>
+  </div>
 </div>
 
 <DailyWrapper />
 
-@if (FeastList is not null && FeastList.Count() != 0)
-{
-	<div class="@MediaQuery.Xs.DivClass"><FeastCards FeastList="FeastList" IsXs="true" /></div>
-	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><FeastCards FeastList="FeastList" IsXs="false" /></div>
-}
+<div class="@MediaQuery.Xs.DivClass"><FeastCards IsXs="true" /></div>
+<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><FeastCards IsXs="false" /></div>
+
 
 <div class="card card border-0 ">
-	<div class="@MediaQuery.Xs.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Xs" /></div>
-	<div class="@MediaQuery.Sm.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Sm" /></div>
-	<div class="@MediaQuery.Md.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Md" /></div>
-	<div class="@MediaQuery.Lg.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Lg" /></div>
-	<div class="@MediaQuery.Xl.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Xl" /></div>
+  <div class="@MediaQuery.Xs.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Xs" /></div>
+  <div class="@MediaQuery.Sm.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Sm" /></div>
+  <div class="@MediaQuery.Md.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Md" /></div>
+  <div class="@MediaQuery.Lg.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Lg" /></div>
+  <div class="@MediaQuery.Xl.DivClass"><SidebarButtonsFlex MediaQuery="MediaQuery.Xl" /></div>
 </div>
 
 <div class="@MediaQuery.XsOrSm.DivClass"><SocialMediaButtons IsXsOrSm=true /></div>
@@ -61,15 +59,6 @@
 @code {
 
 
-	List<FeastEnums.Feast>? FeastList = null;
-
-	protected override void OnInitialized()
-	{
-		//.Where(w => w.Value != FeastEnums.Feast.Shabbat)
-		FeastList = FeastEnums.Feast.List.ToList()
-		.Where(w => w.Season == SeasonEnum.Fall)
-		.OrderBy(o => o.Value).ToList();
-	}
 }
 
 
