@@ -11,7 +11,7 @@ public partial class Index
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		Logger!.LogDebug("Inside: {Class}!{Method}", nameof(Index), nameof(OnInitialized));
+		//Logger!.LogDebug("{Method}}", nameof(OnInitialized));
 		GetDefaultFeastDayType();
 	}
 

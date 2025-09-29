@@ -181,8 +181,8 @@ public class Service(ILogger<Service> logger) : IService
 				Id = i + runningCount,
 				Subject = $"{season.Emoji} {season.Name}",
 				Description = $"{season.Name} | {season.Type}",
-				StartTime = season.Date,
-				EndTime = season.Date,
+				StartTime = season.Range.Min,
+				EndTime = season.Range.Min,
 				CategoryColor = season.CalendarColor,
 				IsAllDay = true,
 				IsReadonly = true

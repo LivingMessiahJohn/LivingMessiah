@@ -54,6 +54,7 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int Sukkot = 26;
 		internal const int Profile = 27;
 		internal const int PasswordChanged = 28;
+		internal const int WeeklyDownload = 29;
 	}
 	#endregion
 
@@ -86,7 +87,8 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav Sukkot = new SukkotSE();
 	public static readonly Nav Profile = new ProfileSE();
 	public static readonly Nav PasswordChanged = new PasswordChangedSE();
-	
+	public static readonly Nav WeeklyDownload = new WeeklyDownloadSE();
+
 	#endregion
 
 
@@ -530,6 +532,22 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false;
 	}
 	
+	private sealed class WeeklyDownloadSE : Nav
+	{
+		public WeeklyDownloadSE() : base($"{nameof(Id.WeeklyDownload)}", Id.WeeklyDownload) { }
+		public override string Index => "/WeeklyDownload";
+		public override string Title => "Weekly Download";
+		public override string Icon => "fas fa-file-pdf";
+		public override int Sort => Id.WeeklyDownload;
+		public override string HomeTitleSuffix => "";
+		public override string HomeFloatRightHebrew => "";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	
+
 	#endregion
 
 }
