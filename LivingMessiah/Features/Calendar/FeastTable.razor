@@ -14,9 +14,10 @@
 				<th class="text-info">Id</th>
 				<th class="text-info">Name</th>
 				<th class="text-info">Title</th>
-				<th class="text-info">Details</th>
-				<th class="text-info">HCD<sup>&dagger;</sup></th>
+				<th class="text-info">Start Show</th>
+				@* <th class="text-info">Details</th> *@
 				<th class="text-info">Date</th>
+				<th class="text-info">HCD<sup>&dagger;</sup></th>
 			</TableHeader>
 			<RowTemplate>
 				<td>
@@ -32,9 +33,10 @@
 
 				<td>@context.Name</td>
 				<td>@context.CalendarTitle</td>
-				<td>@context.Details.Truncate(25)</td>
+				<td>@context.StartShowingCard.ToShortDateString()</td>
+				@* <td>@context.Details.Truncate(25)</td> *@
+				<td>@context.Date.ToShortDateString()</td>
 				<td>@context.HasCalendarDetailsFormatted</td>
-				<td>@context.Date.ToString(DateFormat.ddd_mm_dd)</td>
 			</RowTemplate>
 		</TableTemplate>
 	</div>

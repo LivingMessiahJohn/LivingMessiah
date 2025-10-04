@@ -1,0 +1,62 @@
+﻿@page "/TestFeastCards"
+
+@using CalendarEnums = LivingMessiah.Features.Calendar.Enums
+
+<h3>TestFeastCards</h3>
+
+
+<div class="btn-row mb-3 text-center">
+  @foreach (var item in CalendarEnums.FeastDay.List.OrderBy(o => o.Value))
+  {
+    <button class="btn btn-outline-success btn-sm mx-1 text-black" title="@item.Name @item.FirstAndLastDates"
+            @onclick='() => OnButtonClicked(item.StartShowingCard.AddDays(-1))'>
+      <b>@item.StartShowingCard.AddDays(-1).ToShortDateString()</b>
+    </button>
+  }
+  <span>-1</span>
+</div>
+
+<div class="btn-row mb-3 text-center">
+  @foreach (var item in CalendarEnums.FeastDay.List.OrderBy(o => o.Value))
+  {
+    <button class="btn btn-outline-info btn-sm mx-1 text-black" title="@item.Name @item.FirstAndLastDates"
+            @onclick='() => OnButtonClicked(item.StartShowingCard)'>
+      <b>@item.StartShowingCard.ToShortDateString()</b>
+    </button>
+  }
+  <span>--</span>
+</div>
+
+<div class="btn-row mb-3 text-center">
+  @foreach (var item in CalendarEnums.FeastDay.List.OrderBy(o => o.Value))
+  {
+    <button class="btn btn-outline-danger btn-sm mx-1" title="@item.Name @item.FirstAndLastDates"
+            @onclick='() => OnButtonClicked(item.StartShowingCard.AddDays(+1))'>
+      <b>@item.StartShowingCard.AddDays(+1).ToShortDateString()</b>
+    </button>
+    
+  }
+  <span>+ 1</span>
+</div>
+
+<p class="text-muted text-center mb-0 mt-3">
+  Current Date: @(currentDateTime?.ToShortDateString() ?? "No date selected")
+</p>
+
+@if(currentDateTime.HasValue)
+{
+  <FeastCards IsXs="false" CurrentDateOverride="@currentDateTime" />
+}
+
+@code {
+  private DateTime? currentDateTime;
+
+  //CalendarEnums.FeastDay feastDay
+  private void OnButtonClicked(DateTime dateTime)
+  {
+    currentDateTime = dateTime;
+    //currentDateTime = feastDay.StartShowingCard;
+    //StateHasChanged();
+  }
+
+}
