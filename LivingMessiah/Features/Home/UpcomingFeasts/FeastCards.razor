@@ -1,5 +1,4 @@
-﻿@* @using FeastDayType = LivingMessiah.Features.Calendar.Enums.FeastDay *@
-@using FeastEnums = LivingMessiah.Features.Feasts.Enums
+﻿@using FeastEnums = LivingMessiah.Features.Feasts.Enums
 @using CalendarEnums = LivingMessiah.Features.Calendar.Enums
 @using LivingMessiah.Helpers
 @using NavEnums = LivingMessiah.Enums.Nav
@@ -15,14 +14,14 @@
   <div class="container text-center">
     @if (IsXs)
     {
-      <h3 class="bg-warning text-black mt-5 mb-3 p-2"><b>Upcoming Feasts</b> | @Season!.Name</h3>
+      <h3 class="bg-warning text-black mt-5 mb-3 p-2"><b>Upcoming Feasts</b></h3>
     }
     else
     {
       <div class="row mt-4">
         <div class="col-1"></div>
         <div class="col-10">
-          <h2 class="bg-warning text-center text-black p-2"><b>Upcoming Feasts</b> | @Season!.Name</h2>
+          <h2 class="bg-warning text-center text-black p-2"><b>Upcoming Feasts</b></h2>
         </div>
         <div class="col-1"></div>
       </div>
@@ -34,17 +33,16 @@
     @if (IsXs)
     {
       <div class="container">
-        @if (item.FeastDay is not null)
         {
-          <p class="mb-0 text-end fs-6 text-black-50">@GetDays(item.FeastDay) days away</p>
+        <p class="mb-0 text-end fs-6 text-black-50">@item.DaysAway) days away</p>
         }
         <div class="card border border-warning border-4 mb-4">
           <div class="row g-0">
             <div class="col-5 "><img src="@item.Image" class="img-fluid rounded-start" alt="@item.Title"></div>
             <div class="col-7 bg-warning-subtle text-center">
-              <div class="mt-2"><RelatedVersesAnchor Feast="@item" FontSize="@FontSize" /></div>
-              <div class="text-primary @HebrewCSS">@item!.Hebrew.FloatRightHebrew</div>
-              <div class=""><SpecialEventAnchor Feast="@item" IsXs=IsXs /></div>
+              <div class="mt-2"><RelatedVersesAnchor Title="@item.Title" Index="@item.Index" FontSize="@FontSize" /></div>
+              <div class="text-primary @HebrewCSS">@item!.FloatRightHebrew</div>
+              <div class=""><SpecialEventAnchor Title="@item.Title" Index="@item.Index" IsXs=IsXs /></div>
             </div>
           </div>
         </div>
@@ -57,18 +55,17 @@
         <div class="row">
           <div class="col-1"></div>
           <div class="col-10">
-            @if (item.FeastDay is not null)
-            {
-              <p class="mb-0 text-end fs-6 text-black-50">@GetDays(item.FeastDay) days away</p>
-            }
+              <div class="d-flex justify-content-between">
+                <span class="fs-6 text-black-50">Date: @item.RangeFormatted</span>
+                <span class="fs-6 text-black-50">@item.DaysAway days away</span>
+              </div>
             <div class="card border border-warning border-4 mb-4">
               <div class="row g-0">
                 <div class="col-5 "><img src="@item.Image" class="img-fluid rounded-start" alt="@item.Title"></div>
                 <div class="col-7 bg-warning-subtle text-center">
-                  <div class="mt-2"><RelatedVersesAnchor Feast="@item" FontSize="@FontSize" /></div>
-                  <div class="text-primary @HebrewCSS">@item!.Hebrew.FloatRightHebrew</div>
-                  <div class=""><SpecialEventAnchor Feast="@item" IsXs=IsXs /></div>
-                  @* <div class=""><SpecialEventAnchor Feast="@item" IsXs=IsXs /></div> *@
+                  <div class="mt-2"><RelatedVersesAnchor Title="@item.Title" Index="@item.Index" FontSize="@FontSize" /></div>
+                  <div class="text-primary @HebrewCSS">@item!.FloatRightHebrew</div>
+                  <div class=""><SpecialEventAnchor Title="@item.Title" Index="@item.Index" IsXs=IsXs /></div>
                 </div>
               </div>
             </div>
@@ -81,55 +78,46 @@
 
 }
 
+
 @code {
   [Parameter, EditorRequired] public bool IsXs { get; set; }
+  [Parameter] public DateTime? CurrentDateOverride { get; set; }
 
   protected string FontSize => IsXs ? " fs-5" : " fs-2";
   protected string HebrewCSS => IsXs ? " hebrew" : "  hebrew44";
 
-  protected List<FeastEnums.Feast>? FeastList;
+  protected List<FeastCardDTO>? FeastList;
 
-  DateTime DateOnly;
-  protected CalendarEnums.FeastDay? FeastDay { get; set; }
-  protected CalendarEnums.Season? Season;
-  
-  protected override void OnInitialized()
+  DateTime CurrentDate;
+
+  protected override void OnParametersSet()
   {
-    base.OnInitialized();
     try
     {
-      DateOnly = GetCurrentDate();
-      Logger!.LogDebug("{Method}, {Message}", $"{nameof(GetCurrentDate)} (just called)", $"DateOnly: {DateOnly.ToString("dd MMM yyyy")}");
+      CurrentDate = CurrentDateOverride ?? GetCurrentDate();
 
-      FeastDay = GetNextFeastDay();
-      if (FeastDay is null)
-      {
-        Logger!.LogWarning("{Method}, {Message}", $"{nameof(GetNextFeastDay)} (just called)", "FeastDay is null");
-        Toast!.ShowWarning("FeastDay is null. Please check the calendar data.");
-        return;
-      }
-      
-      Logger!.LogDebug("{Method}, {Message}", $"{nameof(GetNextFeastDay)} (just called)", $"NextFeastDay: {FeastDay.Name}");
+      Logger!.LogDebug("{Method}, {Message}", $"{nameof(GetCurrentDate)} (just called)"
+      , $"CurrentDate: {CurrentDate.ToShortDateString()}");
 
-      Season = GetSeason();
-      if (Season is null)
-      {
-        Logger!.LogWarning("{Method}, {Message}", $"{nameof(GetSeason)} (just called)", "Season is null");
-        Toast!.ShowWarning("Season is null. Please check the calendar data.");
-        return;
-      }
-
-      Logger!.LogDebug("{Method}, {Message}", $"{nameof(GetSeason)} (just called)", $"Season: {Season.Name}");
-
-      FeastList = FeastEnums.Feast.List.ToList()
-        .Where(w => w.Season == Season && w.FeastDay!.Date >= FeastDay.Date)
-        .OrderBy(o => o.Value).ToList();
-
+      FeastList = (from feast in FeastEnums.Feast.List.ToList()
+                   join feastDay in CalendarEnums.FeastDay.List.ToList()
+                       on feast.FeastDay?.Value equals feastDay.Value
+                   where CurrentDate >= feastDay.StartShowingCard && CurrentDate <= feastDay.Range.Max
+                   orderby feast.Value
+                   select new FeastCardDTO
+                   {
+                     Title = feast.Title,
+                     Index = feast.Index,
+                     Image = feast.Image,
+                     FloatRightHebrew = feast.Hebrew.FloatRightHebrew ?? "",
+                     RangeFormatted = feastDay.RangeFormatted, 
+                     DaysAway = (feastDay.Date - CurrentDate).Days
+                   }).ToList();
     }
     catch (Exception ex)
     {
-      Logger!.LogError(ex, "{Method}", nameof(OnInitialized));
-      Toast!.ShowError($"{Global.ToastShowError} {nameof(FeastCards)}!{nameof(OnInitialized)}");
+      Logger!.LogError(ex, "{Method}", nameof(OnParametersSet));
+      Toast!.ShowError($"{Global.ToastShowError} {nameof(FeastCards)}!{nameof(OnParametersSet)}");
     }
 
   }
@@ -139,27 +127,5 @@
     return DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(Test.AddDays).AddHours(Utc.ArizonaUtcMinus7));
   }
 
-  private CalendarEnums.FeastDay? GetNextFeastDay()
-  {
-    // ToDo: Do I want to use w.Range.Min?, need testing
-    return CalendarEnums.FeastDay.List
-                      .Where(w => w.Range.Max >= DateOnly)
-                      .OrderBy(o => o.Date)
-                      .FirstOrDefault();
-  }
-
-  private CalendarEnums.Season? GetSeason()
-  {
-    return CalendarEnums.Season.List
-      .Where(w => DateOnly >= w.Range.Min && DateOnly <= w.Range.Max)  
-      .OrderBy(o => o.Range.Min)
-      .FirstOrDefault();
-  }
-
-  protected int GetDays(CalendarEnums.FeastDay feastDay)
-  {
-    HeaderServiceModel? vm = new();
-    vm = Service!.GetHeaderServiceModel(feastDay!);
-    return vm.DaysDifferent;
-  }
 }
+

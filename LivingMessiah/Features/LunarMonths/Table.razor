@@ -1,0 +1,73 @@
+﻿@using LivingMessiah.Helpers
+@using LivingMessiah.Features.Calendar.Constants
+@using CalendarEnums = LivingMessiah.Features.Calendar.Enums
+
+
+<div class="card mb-3 border-warning mt-2">
+  <div class="card-header">
+    <h4 class="card-title text-center">Lunar Months <b>@KeyDateYear.YearId</b></h4>
+  </div>
+  <TableTemplate Items="CalendarEnums.LunarMonth.List.OrderBy(o => o.Date).ToList()"
+                 HeaderCSS="table table-sm table-seconary table-hover">
+    <TableHeader>
+      <th class="text-info text-center"><br />EV</th>
+      <th class="text-info"><br />Name<sup>&dagger;</sup></th>
+      <th class="text-info text-end"><br />Hebrew</th>
+      <th class="text-info text-center">Biblical <br />Name</th>
+      <th class="text-info text-end">Biblical <br /> Hebrew</th>
+      <th class="text-info text-center"><br />Date</th>
+      <th class="text-info"><br />HS</th>
+      <th class="text-info"><br />BS</th>
+      @* <th class="text-info text"><br />Enum Name</th> *@
+      <th class="text-info text"><br />Coordinates <i class="fas fa-long-arrow-alt-down"></i></th>
+      <th class="text-info text"><br />Coordinates <i class="fas fa-long-arrow-alt-up"></i></th>
+    </TableHeader>
+    <RowTemplate>
+      <td class="text-center">@context.Value</td>
+      <td class="@context.FullNameCSS @context.FullNameTextDecorationCSS">@context.FullName</td>
+      <td class="hebrew16">@context.Hebrew</td>
+      <td class="text-center">@context.BiblicalName</td>
+      <td class="hebrew16">@context.BiblicalHebrew</td>
+      <td class="text-center">@context.Date.ToShortDateString()</td>
+      <td>@context.HebrewSort</td>
+      <td>@context.BabylonianSort</td>
+      @* <td>@context.Name</td> *@
+      <td>@context.CoordinateRecord.MoonriseTime @context.CoordinateRecord.MoonriseAzimuth</td>
+      <td>@context.CoordinateRecord.MoonsetTime @context.CoordinateRecord.MoonsetAzimuth</td>
+    </RowTemplate>
+
+    <TableFooter>
+      <th class="border-bottom border-4 border-primary text-center">@RowCnt Σ</th>
+      <th colspan="8"></th>
+    </TableFooter>
+
+  </TableTemplate>
+
+  <div class="card-footer">
+    <p class="card-title">
+      <sup><b>&dagger;</b></sup> The different colors represents the different categories
+      <ul>
+        <li class="text-success fw-bold">Previous Year months</li>
+        <li class="text-primary fw-bold">Current Year months</li>
+        <li class="text-danger fw-bold">Adar II month (used only in pregnant years)</li>
+        <li style="margin-left: 2em; list-style-type: none;">
+          <b>Is Pregnant Year?</b>: @(KeyDateYear.IsPregnant ? "Yes" : "No")
+        </li>
+        <li class="text-seconary fw-bold">Neither Previous nor Current Year months</li>
+      </ul>
+    </p>
+
+    <p class="card-title"><b>Column Header Abbreviations</b>: <b>EV</b>: Enum.Value; <b>HS</b>: Hebrew Sort; <b>BS</b>: Babylonian Sort</p>
+  </div>
+
+</div>
+
+@code {
+  private int RowCnt { get; set; } = 0;
+  protected override void OnInitialized()
+  {
+    RowCnt = CalendarEnums.LunarMonth.List.ToList().Count();
+  }
+
+}
+

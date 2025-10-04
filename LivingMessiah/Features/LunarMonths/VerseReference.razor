@@ -1,6 +1,4 @@
-﻿@using LunarMonthType = LivingMessiah.Features.Calendar.Enums.LunarMonth
-@using LivingMessiah.Enums
-
+﻿
 <div class="card border-primary mt-1">
 	<div class="card-header"><h5 class="text-center">Lunar Month References</h5></div>
 
@@ -33,29 +31,7 @@
 
 </div>
 
-<div class="card my-3 border-warning">
-	<div class="card-header">
-		<h4 class="card-title text-center">Lunar Months</h4>
-	</div>
-	<div class="card-body">
-		<TableTemplate Items="LunarMonthType.List
-													.Where(w => w.IsPreviousYear==false)
-													.OrderBy(o => o.Value).ToList()">
-			<TableHeader>
-				<th class="text-info">Name</th>
-				<th class="text-info">Hebrew</th>
-				<th class="text-info">Torah</th>
-				<th class="text-info">New Moon</th>
-			</TableHeader>
-			<RowTemplate>
-				<td class="fs-5">@context.Name</td>
-				<td class="fs-5"><span class="hebrew">@context.Hebrew</span> </td>
-				<td class="fs-5">@context.Description</td>
-				<td class="fs-5">@context.Date.ToString(@DateFormat.YYYY_MM_DD)</td>
-			</RowTemplate>
-		</TableTemplate>
-	</div>
-</div>
 
+@code {
 
-
+}
