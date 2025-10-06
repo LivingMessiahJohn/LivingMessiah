@@ -16,15 +16,14 @@ public class FormVM
 	public int ChildBig { get; set; }
 	public int ChildSmall { get; set; }
 
-	public int StatusId { get; set; } // The ManageRegistration!EntryForm needs this
-	public Step? Status { get; set; }  // Status? Status
+	public int StepId { get; set; } // The ManageRegistration!EntryForm needs this
+	public Step? Step { get; set; }
 
 	public int AttendanceBitwise { get; set; } // does the VM need this?
 	public DateTime[]? AttendanceDateList { get; set; }
 	public DateTime[]? AttendanceDateList2ndMonth { get; set; }
 
 	public string? Notes { get; set; }
-	public string? AdminNotes { get; set; }
-	public bool DidNotAttend { get; set; }
-	public decimal LmmDonation { get; set; }
+	//public string? AdminNotes { get; set; }
+	//public bool DidNotAttend { get; set; }
 }

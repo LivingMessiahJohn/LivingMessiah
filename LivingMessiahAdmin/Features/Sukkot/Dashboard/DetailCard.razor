@@ -1,4 +1,6 @@
 ﻿@using LivingMessiahAdmin.Features.Sukkot.Constants
+@using LivingMessiahAdmin.Features.Sukkot.Enums
+
 <div class="card border border-3 border-dark-subtle mt-2">
 
   <div class="card-header text-center">
@@ -35,6 +37,19 @@
         Sukkot Receipt Url
       </a>
     </div>
+
+    @* Fee *@
+    <div class="my-1">
+      <div class="d-flex justify-content-center mb-2">
+        <span class="p-1"><b>Registration Fee</b>:&nbsp;</span>
+        <span class="p-1 bg-warning-subtle text-black">
+          @rec.RegistrationFee.CurrencyFormat
+        </span>
+      </div>
+    </div>
+
+    <DonationTable RegistrationId="rec.Id" />  
+
   }
 
   <div class="card-footer">
@@ -44,12 +59,25 @@
       </button>
   </div>
 
+
+
 </div>
 
 
 @code {
   [Parameter, EditorRequired] public required DetailCardRecord rec { get; set; }
   [Parameter] public EventCallback OnClose { get; set; }
+  string Fee = "___";
+
+
+  // protected override void OnParametersSet()
+  // {
+  //   //if (RegistrationFee.TryFromValue(rec.FeeEnumValue, out var registrationFee))
+  //   if (RegistrationFee.TryFromValue(rec.Adults, out var registrationFee))
+  //   {
+  //     Fee = registrationFee!.CurrencyFormat;
+  //   }
+  // }
 
   private void OnButtonClicked()
   {

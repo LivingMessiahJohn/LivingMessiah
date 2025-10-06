@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using FilterEnums = LivingMessiahAdmin.Features.Sukkot.Dashboard.Enums.Filter
 @using ShowColumnEnums = LivingMessiahAdmin.Features.Sukkot.Dashboard.Enums.ShowColumn
+@using SukkotEnumsHelpers = LivingMessiahAdmin.Features.Sukkot.Enums.Helpers
 
 @inject ILogger<Grid>? Logger
 @inject IRepository? db;
@@ -175,7 +176,12 @@
     if (item is not null)
     {
       SelectedItem = item;
-      DetailCardRecord = new DetailCardRecord(item.Id, item!.FullName ?? "None", item!.AdminNotes ?? "", item!.Notes ?? "");
+      
+      DetailCardRecord = new DetailCardRecord(
+        item.Id, item!.FullName ?? "None"
+        , item!.AdminNotes ?? ""
+        , item!.Notes ?? ""
+        , SukkotEnumsHelpers.RegistrationFeeHelper.AdultsToRegistrationFee(item.Adults));
     }
   }
 
@@ -206,7 +212,7 @@
   }
 
   // Initial default setting done by using `Bitwise Operator` `|` (OR).
-  protected int Bitwise = ShowColumnEnums.Email.Value | ShowColumnEnums.People.Value | ShowColumnEnums.Attendance.Value;
+  protected int Bitwise = ShowColumnEnums.Email.Value | ShowColumnEnums.People.Value | ShowColumnEnums.Paid.Value | ShowColumnEnums.Attendance.Value;
 
   private void ReturnedShowColumn(int bitwise)
   {
