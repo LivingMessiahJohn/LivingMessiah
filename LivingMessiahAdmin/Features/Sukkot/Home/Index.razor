@@ -7,6 +7,7 @@
 @using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationList
 @using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationList.Enums
 @using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationDetail
+@using LivingMessiahAdmin.Features.Sukkot.Home.Agreement
 
 @using Microsoft.AspNetCore.Components.Authorization
 @using LivingMessiahAdmin.SecurityRoot
@@ -21,7 +22,7 @@
 
     @if (VisibleComponent == Enums.VisibleComponent.RegistrationList)
     {
-      <PageHeaderMenubar MenuBarEnum=MenuBar.Home ShowPrintButton=true />
+      <PageHeaderMenubar MenuBarEnum=MenuBar.Home ShowPrintButton=true OnHraActionSelected="ReturnedShowAgreement" />
 
       <LoadingComponent IsLoading="RegistrationList == null" TurnSpinnerOff=TurnSpinnerOff>
         <div class="@MediaQuery.XsOrSm.DivClass">
@@ -61,9 +62,18 @@
         }
         else
         {
-          <div class="alert alert-warning text-center fs-4" role="alert">
-            Inside: <b>@nameof(Index)</b>  <br /> Unknown <code>VisibleComponent</code>
-          </div>
+          if (VisibleComponent == Enums.VisibleComponent.Agreement)
+          {
+            <div class="card border-primary my-3 p-2">
+              <HRAWrapper OnActionCompleted="ReturnedShowList" />
+            </div>
+          }
+          else
+          {
+            <div class="alert alert-warning text-center fs-4" role="alert">
+              Inside: <b>@nameof(Index)</b>  <br /> Unknown <code>VisibleComponent</code>
+            </div>
+          }
         }
       }
     }
@@ -119,6 +129,12 @@
   {
     VisibleComponent = Enums.VisibleComponent.RegistrationList;
   }
+
+  private void ReturnedShowAgreement()
+  {
+    VisibleComponent = Enums.VisibleComponent.Agreement;
+  }
+
 
   void ReturnedCrudActionSelected(CrudRecord args)
   {

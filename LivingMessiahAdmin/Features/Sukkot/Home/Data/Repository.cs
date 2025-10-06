@@ -18,8 +18,7 @@ public interface IRepository
 	Task<List<RegistrationListQuery>> GetAll();
 	Task<Registrant.FormVM> Get(int id);
 
-	//Task<Tuple<int, int, string>> CreateRegistration(Registrant.FormVM formVM);
-	//Task<Tuple<int, int, string>> UpdateRegistration(Registrant.FormVM formVM);
+	Task<Tuple<int, int, string>> InsertHouseRulesAgreement(string email, string timeZone);  // FN:1
 	Task<Tuple<int, int, string>> CreateRegistration(Registrant.DTO formVM);
 	Task<Tuple<int, int, string>> UpdateRegistration(Registrant.DTO formVM);
 	
@@ -41,6 +40,56 @@ public class Repository : BaseRepositoryAsync, IRepository
 		get { return SqlDump!; }
 	}
 	public string BaseServerId => GetServerId();
+
+
+	#region HRA
+	public async Task<Tuple<int, int, string>> InsertHouseRulesAgreement(string email, string timeZone)
+	{
+		Sql = "Sukkot.stpHouseRulesAgreementInsert";
+		Parms = new DynamicParameters(new
+		{
+			EMail = email,
+			TimeZone = timeZone
+		});
+		Parms.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+		Parms.Add("@ReturnValue", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
+
+		int NewId = 0;
+		int SprocReturnValue = 0;
+		string ReturnMsg = "";
+
+		return await WithConnectionAsync(async connection =>
+		{
+			Logger!.LogDebug("{Method} Sql: {Sql}", nameof(InsertHouseRulesAgreement), Sql);
+			var affectedRows = await connection.ExecuteAsync(sql: Sql, param: Parms, commandType: CommandType.StoredProcedure);
+			SprocReturnValue = base.Parms.Get<int>("ReturnValue");
+			int? x = Parms.Get<int?>("NewId");
+
+			if (x == null)
+			{
+				if (SprocReturnValue == 2601) // Unique Index Violation
+				{
+					ReturnMsg = $"Database call did not insert a new HRA record because it caused a Unique Index Violation; email: {email}; ";
+					Logger!.LogWarning("{Method} ReturnMsg: {ReturnMsg}", nameof(InsertHouseRulesAgreement), ReturnMsg);
+				}
+				else
+				{
+					ReturnMsg = $"Database call failed; email: {email ?? "NULL!!"}; SprocReturnValue: {SprocReturnValue}";
+					Logger!.LogWarning("{Method} ReturnMsg: {ReturnMsg}", nameof(InsertHouseRulesAgreement), ReturnMsg);
+				}
+			}
+			else
+			{
+				NewId = int.TryParse(x.ToString(), out var tempId) ? tempId : 0;
+				ReturnMsg = $"House Rules Agreement created for {email}; NewId={NewId}";
+				Logger!.LogDebug("{Method} {NewId}", nameof(InsertHouseRulesAgreement), NewId);
+			}
+
+			return new Tuple<int, int, string>(NewId, SprocReturnValue, ReturnMsg);
+
+		});
+	}
+	#endregion
 
 	#region GetAll, Get, Create & Update
 
