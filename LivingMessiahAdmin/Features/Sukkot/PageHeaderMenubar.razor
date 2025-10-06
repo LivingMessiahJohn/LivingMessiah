@@ -16,24 +16,31 @@
     <i class="@MenuBarEnum.Icon"></i>&nbsp;&nbsp;@MenuBarEnum.Title
   </div>
 
-  <div class="dropdown  d-print-none">
-    <button class="btn btn-outline-secondary dropdown-toggle btn-sm" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-      <i class="fas fa-bars"></i> Nav
+  <div class="d-flex align-items-center gap-2">
+    <button @onclick="@AddHraButtonClicked"
+            type="button" class="btn btn-outline-primary btn-sm">
+      Add HRA
     </button>
-    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
-      @foreach (var item in Enums.MenuBar.List.ToList().OrderBy(o => o.Value))
-      {
-        <li>
-          <a class="dropdown-item @(item == MenuBarEnum ? "active" : "")"
-             @onclick="@(e => ButtonClicked(item))"
-             title="@item.Title"
-             href="javascript:void(0);">
-            <span class="me-2"><i class="@item.Icon"></i></span>
-            @item.Title
-          </a>
-        </li>
-      }
-    </ul>
+
+    <div class="dropdown d-print-none">
+      <button class="btn btn-outline-secondary dropdown-toggle btn-sm" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-bars"></i> Nav
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
+        @foreach (var item in Enums.MenuBar.List.ToList().OrderBy(o => o.Value))
+        {
+          <li>
+            <a class="dropdown-item @(item == MenuBarEnum ? "active" : "")"
+               @onclick="@(e => ButtonClicked(item))"
+               title="@item.Title"
+               href="javascript:void(0);">
+              <span class="me-2"><i class="@item.Icon"></i></span>
+              @item.Title
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
   </div>
 </div>
 
@@ -42,6 +49,12 @@
   [Parameter] public string? PageTitle { get; set; }
   [Parameter] public string? BorderCSS { get; set; } = "border-bottom border-info";
   [Parameter] public bool ShowPrintButton { get; set; } = false; // Deleted button related code for this don't know if I need this feature
+  [Parameter] public EventCallback OnHraActionSelected { get; set; }
+
+  void AddHraButtonClicked()
+  {
+    OnHraActionSelected.InvokeAsync();
+  }
 
   private void ButtonClicked(Enums.MenuBar nav)
   {

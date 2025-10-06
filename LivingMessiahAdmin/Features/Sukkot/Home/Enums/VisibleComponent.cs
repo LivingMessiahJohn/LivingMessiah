@@ -10,6 +10,7 @@ public abstract class VisibleComponent : SmartEnum<VisibleComponent>
 		internal const int RegistrationList = 1;  // ToDo: will this be split between RgistrationList and RegistrationCard?
 		internal const int RegistrationDetail = 2;
 		internal const int Registrant = 3;
+		internal const int Agreement = 4;
 	}
 	#endregion
 
@@ -17,6 +18,7 @@ public abstract class VisibleComponent : SmartEnum<VisibleComponent>
 	public static readonly VisibleComponent RegistrationList = new RegistrationListSE();
 	public static readonly VisibleComponent RegistrationDetail = new RegistrationDetailSE();  
 	public static readonly VisibleComponent Registrant = new RegistrantSE();
+	public static readonly VisibleComponent Agreement = new AgreementSE();
 	#endregion
 
 	private VisibleComponent(string name, int value) : base(name, value)  // Constructor
@@ -43,6 +45,11 @@ public abstract class VisibleComponent : SmartEnum<VisibleComponent>
 	private sealed class RegistrantSE : VisibleComponent
 	{
 		public RegistrantSE() : base($"{nameof(Id.Registrant)}", Id.Registrant) { }
+	}
+
+	private sealed class AgreementSE : VisibleComponent
+	{
+		public AgreementSE() : base($"{nameof(Id.Agreement)}", Id.Agreement) { }
 	}
 
 	#endregion

@@ -1,0 +1,57 @@
+﻿@using SukkotEnums = LivingMessiahAdmin.Features.Sukkot.Enums
+@using System.ComponentModel.DataAnnotations
+
+@inject ILogger<HRAWrapper>? Logger
+
+<EditForm Model="@emailModel" OnValidSubmit="HandleValidSubmit">
+  <DataAnnotationsValidator />
+  <ValidationSummary />
+
+  <div class="mb-3">
+    <label for="emailInput" class="form-label">Email</label>
+    <InputText id="emailInput" class="form-control" @bind-Value="emailModel.Email" />
+    <ValidationMessage For="@(() => emailModel.Email)" />
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+<VerbiageParagraph />
+
+@if (Email is not null)
+{
+  <YesNoButtons EmailParm="@Email" OnActionCompleted="ReturnedActionCompleted" />
+}
+else
+{
+  <p class="text-danger">Please enter a valid email to proceed.</p>
+}
+
+
+@code {
+  private EmailModel emailModel = new();
+
+  private void HandleValidSubmit()
+  {
+    Email = emailModel.Email;
+  }
+
+  public class EmailModel
+  {
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Invalid email address")]
+    public string? Email { get; set; }
+  }
+
+  //[Parameter, EditorRequired] public string? EmailParm { get; set; }
+  [Parameter, EditorRequired] public EventCallback<SukkotEnums.Step> OnActionCompleted { get; set; }
+
+  string? Email { get; set; }
+
+  private void ReturnedActionCompleted(SukkotEnums.Step nextStep)
+  {
+    Logger!.LogDebug("{Method}, nextStep: {Status}", nameof(ReturnedActionCompleted), nextStep);
+    OnActionCompleted.InvokeAsync(nextStep);
+  }
+
+}
