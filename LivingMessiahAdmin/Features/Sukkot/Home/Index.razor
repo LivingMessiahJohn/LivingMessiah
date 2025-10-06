@@ -18,7 +18,7 @@
 
 <AuthorizeView Policy=@RoleGroup.Sukkot>
   <Authorized>
-    
+
     @if (VisibleComponent == Enums.VisibleComponent.RegistrationList)
     {
       <PageHeaderMenubar MenuBarEnum=MenuBar.Home ShowPrintButton=true />
@@ -44,7 +44,12 @@
 
       @if (VisibleComponent == Enums.VisibleComponent.Registrant)
       {
-        <RegistrantForm />
+        <div class="card mt-0 mb-3 @Step.Registration.CardBodyCSS">
+          <div class="card-body @Step.Registration.CardBodyCSS">
+            @*  OnAddCompleted="ReturnedRegistrationAddCompleted"  *@
+            <RegistrantForm Email="@Email" Id="@Id"  CurrentStep="Step.Registration"/>
+          </div>
+        </div>
       }
       else
       {
@@ -83,6 +88,7 @@
 
 
   int Id { get; set; } = 0;
+  string? Email { get; set; } = null;
   DetailPageHeaderVM? DetailPageHeaderVM;
 
   protected override async Task OnInitializedAsync()
@@ -124,11 +130,30 @@
     }
     else
     {
-      if (args.Crud == Crud.Edit)
+      if (args.Crud == Crud.AddRegistration)
       {
+        Id = 0;
+        Email = args.EMail;
         VisibleComponent = Enums.VisibleComponent.Registrant;
         DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
       }
+      else
+      {
+        if (args.Crud == Crud.Edit)
+        {
+          Id = args.Id;
+          Email = args.EMail;
+          VisibleComponent = Enums.VisibleComponent.Registrant;
+          DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
+        }
+         else
+         {
+          Toast!.ShowWarning($"Unknown Crud Action: {args.Crud.Name}");
+         //  if (args.Crud == Crud.Donation)  { }
+         //  if (args.Crud == Crud.DeleteRegistration) { }
+         }
+      } 
+
     }
   }
 }

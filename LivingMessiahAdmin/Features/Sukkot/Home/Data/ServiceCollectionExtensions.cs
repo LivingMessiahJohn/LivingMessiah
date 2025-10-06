@@ -1,4 +1,4 @@
-﻿//using FluentValidation;
+﻿using FluentValidation;
 
 namespace LivingMessiahAdmin.Features.Sukkot.Home.Data;
 
@@ -8,8 +8,8 @@ public static class ServiceCollectionExtensions
 	{
 		services
 			//.AddTransient<ISecurityHelper, SecurityHelper>()
-			.AddTransient<IRepository, Repository>();
-			//.AddTransient<IValidator<NormalUser.EntryFormVM>, NormalUser.EntryFormVMValidator>();
+			.AddTransient<IRepository, Repository>()
+			.AddTransient<IValidator<Registrant.FormVM>, Registrant.FormVMValidator>();
 		return services;
 	}
 }

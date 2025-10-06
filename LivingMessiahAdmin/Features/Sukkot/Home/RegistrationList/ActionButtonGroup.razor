@@ -55,12 +55,10 @@ else
 		switch (args.Crud.Name)
 		{
 			case nameof(Crud.AddRegistration):
-				Toast!.ShowWarning($"{Crud.AddRegistration.Name} is not yet implemented; Inside{nameof(ActionButtonGroup)}");
 				await OnCrudActionSelected.InvokeAsync(args);
 				break;
 
 			case nameof(Crud.Edit):
-				Toast!.ShowWarning($"{Crud.Edit.Name} is not yet implemented; Inside{nameof(ActionButtonGroup)}");
 				await OnCrudActionSelected.InvokeAsync(args);
 				break;
 

@@ -18,8 +18,10 @@ public interface IRepository
 	Task<List<RegistrationListQuery>> GetAll();
 	Task<Registrant.FormVM> Get(int id);
 
-	Task<Tuple<int, int, string>> CreateRegistration(Registrant.FormVM formVM);
-	Task<Tuple<int, int, string>> UpdateRegistration(Registrant.FormVM formVM);
+	//Task<Tuple<int, int, string>> CreateRegistration(Registrant.FormVM formVM);
+	//Task<Tuple<int, int, string>> UpdateRegistration(Registrant.FormVM formVM);
+	Task<Tuple<int, int, string>> CreateRegistration(Registrant.DTO formVM);
+	Task<Tuple<int, int, string>> UpdateRegistration(Registrant.DTO formVM);
 	
 	Task<RegistrationQuery> ById(int id);
 
@@ -66,21 +68,23 @@ ORDER BY FullName
 SELECT
 Id, FamilyName, FirstName, SpouseName, OtherNames
 , EMail, Phone, Adults, ChildBig, ChildSmall
-, StatusId
+, FeeEnumValue
+, StatusId AS StepId
 , AttendanceBitwise
-, Notes, AdminNotes, DidNotAttend
-, LmmDonation
+, Notes
+--, Avatar
 FROM Sukkot.Registration
 WHERE Id = @Id";
 
 		return await WithConnectionAsync(async connection =>
 		{
+			Logger!.LogDebug("{Method} {Sql} {id} ", nameof(Get), Sql, id);
 			var rows = await connection.QueryAsync<Registrant.FormVM>(sql: Sql, param: Parms);
 			return rows.SingleOrDefault()!;
 		});
 	}
 
-	public async Task<Tuple<int, int, string>> CreateRegistration(Registrant.FormVM formVM)
+	public async Task<Tuple<int, int, string>> CreateRegistration(Registrant.DTO formVM) //Registrant.FormVM formVM
 	{
 		Sql = "Sukkot.stpRegistrationInsert";
 		Parms = new DynamicParameters(new
@@ -94,13 +98,15 @@ WHERE Id = @Id";
 			formVM.Adults,
 			formVM.ChildBig,
 			formVM.ChildSmall,
-			formVM.StatusId,
-			AttendanceBitwise = SukkotEnumsHelper.GetDaysBitwise(formVM.AttendanceDateList!, formVM.AttendanceDateList2ndMonth!, DateRangeType.Attendance),
-			LmmDonation = 0,
+			formVM.FeeEnumValue,
+			//AttendanceBitwise = SukkotEnumsHelper.GetDaysBitwise(formVM.AttendanceDateList!, formVM.AttendanceDateList2ndMonth!, DateRangeType.Attendance),
+			formVM.AttendanceBitwise,
+			formVM.StatusId, //	change to 	formVM.StepId, after updating stp
+			//LmmDonation = 0,
 			formVM.Notes,
-			formVM.AdminNotes,
-			formVM.DidNotAttend,
-			Avatar = string.Empty
+			//formVM.AdminNotes,
+			//formVM.DidNotAttend,
+			formVM.Avatar 	//Avatar = string.Empty
 		});
 
 		Parms.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -143,7 +149,7 @@ WHERE Id = @Id";
 		});
 	}
 
-	public async Task<Tuple<int, int, string>> UpdateRegistration(Registrant.FormVM formVM)
+	public async Task<Tuple<int, int, string>> UpdateRegistration(Registrant.DTO formVM) // Registrant.FormVM 
 	{
 		Sql = "Sukkot.stpRegistrationUpdate";
 		Parms = new DynamicParameters(new
@@ -158,13 +164,14 @@ WHERE Id = @Id";
 			formVM.Adults,
 			formVM.ChildBig,
 			formVM.ChildSmall,
-			AttendanceBitwise = SukkotEnumsHelper.GetDaysBitwise(formVM.AttendanceDateList!, formVM.AttendanceDateList2ndMonth!, DateRangeType.Attendance),
-			formVM.StatusId,
-			formVM.LmmDonation,
-			Notes = LivingMessiahAdmin.Data.Helper.Scrub(formVM.Notes),
-			AdminNotes = LivingMessiahAdmin.Data.Helper.Scrub(formVM.AdminNotes),
-			formVM.DidNotAttend,
-			Avatar = string.Empty
+			formVM.FeeEnumValue,
+			//AttendanceBitwise = SukkotEnumsHelper.GetDaysBitwise(formVM.AttendanceDateList!, formVM.AttendanceDateList2ndMonth!, DateRangeType.Attendance),
+			formVM.AttendanceBitwise,
+			formVM.StatusId, //	change to 	formVM.StepId, after updating stp
+			formVM.Notes,
+			formVM.Avatar   //Avatar = string.Empty
+			//AdminNotes = LivingMessiahAdmin.Data.Helper.Scrub(formVM.AdminNotes),
+			//formVM.DidNotAttend,
 		});
 
 		Parms.Add("@ReturnValue", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
@@ -179,8 +186,8 @@ WHERE Id = @Id";
 			Logger!.LogDebug("{Method} {Message}", nameof(UpdateRegistration), $"Id: {formVM.Id}; Email: {formVM.EMail}; about to execute SPROC: {Sql}");
 
 			Logger!.LogWarning($" Notes: {formVM.Notes}");
-			Logger!.LogWarning($" AdminNotes: {formVM.AdminNotes}");
-			Logger!.LogWarning($" DidNotAttend: {formVM.DidNotAttend}");
+			//Logger!.LogWarning($" AdminNotes: {formVM.AdminNotes}");
+			//Logger!.LogWarning($" DidNotAttend: {formVM.DidNotAttend}");
 
 
 			RowsAffected = await connection.ExecuteAsync(sql: Sql, param: Parms, commandType: CommandType.StoredProcedure);
@@ -211,6 +218,7 @@ WHERE Id = @Id";
 	#endregion
 
 	//public async Task<RegistrationListQuery> ById(int id)
+	// KeyWord: Dapper Multi-Mapping (one-to-one) Header / 1 Detail
 	public async Task<RegistrationQuery> ById(int id)
 	{
 		Parms = new DynamicParameters(new { Id = id });

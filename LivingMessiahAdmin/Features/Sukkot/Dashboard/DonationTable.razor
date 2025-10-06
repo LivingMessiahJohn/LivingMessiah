@@ -1,0 +1,54 @@
+@using LivingMessiahAdmin.Features.Sukkot.Dashboard.Data
+@using System.Globalization
+
+@inject ILogger<StripeTable>? Logger
+@inject IToastService? Toast
+@inject IRepository? db
+
+<LoadingComponent IsLoading="DonationTableList == null" TurnSpinnerOff=TurnSpinnerOff>
+
+  <div class="mt-2 mx-2">
+    <h4 class="text-center bg-primary-subtle pt-2 pb-0 mb-0">Donation</h4>
+    <TableTemplate Items="DonationTableList" HeaderCSS="@HeaderCSS">
+      <TableHeader>
+        <th>#</th>
+        <th>Amount</th>
+        <th>Notes</th>
+        <th>Reference Id</th>
+        <th>Created</th>
+        <th>Created By</th>
+      </TableHeader>
+      <RowTemplate>
+        <td>@context.Detail</td>
+        <td>@context.Amount.ToString("C0", CultureInfo.GetCultureInfo("en-US"))</td>
+        <td>@context.Notes</td>
+        <td>@context.ReferenceId</td>
+        <td>@context.CreateDate.ToString("g")</td>
+        <td>@context.CreatedBy</td>
+      </RowTemplate>
+    </TableTemplate>
+  </div>
+</LoadingComponent>
+
+@code {
+  [Parameter, EditorRequired] public int RegistrationId { get; set; }
+  protected string? HeaderCSS = "table table-primary table-hover";
+
+  bool TurnSpinnerOff = false;
+  public List<DonationTableQuery>? DonationTableList { get; set; }
+  protected override async Task OnParametersSetAsync()
+  {
+    Logger!.LogDebug("{Method}", nameof(OnParametersSetAsync));
+    try
+    {
+      DonationTableList = await db!.GetAllDonations(RegistrationId);
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(OnParametersSetAsync));
+      Toast!.ShowError($"{Global.ToastShowError} | {nameof(OnParametersSetAsync)}");
+    }
+    TurnSpinnerOff = true;
+  }
+
+}

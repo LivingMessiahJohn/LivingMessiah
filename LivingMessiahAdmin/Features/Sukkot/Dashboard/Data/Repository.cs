@@ -12,6 +12,8 @@ public interface IRepository
 	string BaseSqlDump { get; }
 	string BaseServerId { get; }
 	Task<List<GridQuery>> GetAll(FilterEnums filter);
+	Task<List<StripeQuery>> GetAllStripe();
+	Task<List<DonationTableQuery>> GetAllDonations(int registrationId);
 }
 
 public class Repository : BaseRepositoryAsync, IRepository
@@ -55,4 +57,37 @@ ORDER BY FullName
 		});
 	}
 
+	public async Task<List<StripeQuery>> GetAllStripe()
+	{
+		Sql = @"
+SELECT Id, Email, RegistrationId, ModificationCount, LastModifiedDate, FirstName, FamilyName
+FROM Sukkot.vwStripe
+ORDER BY RegistrationId
+";
+		base.Logger.LogDebug("{Method}, Sql: {Sql}", nameof(GetAllStripe), Sql);
+
+		return await WithConnectionAsync(async connection =>
+		{
+			var rows = await connection.QueryAsync<StripeQuery>(sql: Sql);
+			return rows.ToList();
+		});
+	}
+
+	public async Task<List<DonationTableQuery>> GetAllDonations(int registrationId)
+	{
+		Parms = new DynamicParameters(new { RegistrationId = registrationId });
+		Sql = @"
+SELECT
+Detail, Amount, Notes, ReferenceId, CreateDate, CreatedBy
+FROM Sukkot.Donation 
+WHERE RegistrationId = @RegistrationId
+";
+		base.Logger.LogDebug("{Method}, Sql: {Sql}", nameof(GetAllDonations), Sql);
+
+		return await WithConnectionAsync(async connection =>
+		{
+			var rows = await connection.QueryAsync<DonationTableQuery>(sql: Sql, param: Parms);
+			return rows.ToList();
+		});
+	}
 }
