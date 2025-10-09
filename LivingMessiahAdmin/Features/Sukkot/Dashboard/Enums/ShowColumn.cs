@@ -17,6 +17,7 @@ public abstract class ShowColumn : SmartEnum<ShowColumn>
 		internal const int Paid = 8;
 		internal const int Notes = 16;
 		internal const int Attendance = 32;
+		internal const int Others = 64;
 	}
 	#endregion
 
@@ -27,6 +28,7 @@ public abstract class ShowColumn : SmartEnum<ShowColumn>
 	public static readonly ShowColumn Paid = new PaidSE();
 	public static readonly ShowColumn Notes = new NotesSE();
 	public static readonly ShowColumn Attendance = new AttendanceSE();
+	public static readonly ShowColumn Others = new OthersSE();
 	#endregion
 
 	private ShowColumn(string name, int value) : base(name, value) { }
@@ -63,5 +65,12 @@ public abstract class ShowColumn : SmartEnum<ShowColumn>
 	{
 		public AttendanceSE() : base(nameof(BitwiseId.Attendance), BitwiseId.Attendance) { }
 	}
+
+	private sealed class OthersSE : ShowColumn
+	{
+		public OthersSE() : base(nameof(BitwiseId.Others), BitwiseId.Others) { }
+	}
+
+	
 	#endregion
 }

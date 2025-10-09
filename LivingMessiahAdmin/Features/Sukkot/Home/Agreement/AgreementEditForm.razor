@@ -1,0 +1,45 @@
+﻿@using SukkotEnums = LivingMessiahAdmin.Features.Sukkot.Enums
+
+@inject ILogger<AgreementEditForm>? Logger
+
+<EditForm Model="@VM" OnValidSubmit="HandleValidSubmit">
+  <DataAnnotationsValidator />
+  <ValidationSummary />
+
+  <div class="mb-3">
+    <label for="emailInput" class="form-label">Email</label>
+    <InputText id="emailInput" class="form-control" @bind-Value="VM.Email" />
+    <ValidationMessage For="@(() => VM.Email)" />
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+<VerbiageParagraph />
+
+@if (Email is not null)
+{
+  <YesNoButtons EmailParm="@Email" OnActionCompleted="ReturnedActionCompleted" />
+}
+
+
+
+@code {
+  [Parameter, EditorRequired] public EventCallback OnActionCompleted { get; set; }
+
+  private AgreementEditFormVM VM = new();
+
+  private void HandleValidSubmit()
+  {
+    Email = VM.Email;
+  }
+
+  string? Email { get; set; }
+
+  private void ReturnedActionCompleted()
+  {
+    Logger!.LogDebug("{Method}", nameof(ReturnedActionCompleted));
+    OnActionCompleted.InvokeAsync();
+  }
+
+}
