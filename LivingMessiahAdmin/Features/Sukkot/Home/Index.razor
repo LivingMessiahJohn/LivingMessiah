@@ -65,14 +65,23 @@
           if (VisibleComponent == Enums.VisibleComponent.Agreement)
           {
             <div class="card border-primary my-3 p-2">
-              <HRAWrapper OnActionCompleted="ReturnedShowList" />
+              <AgreementEditForm OnActionCompleted="ReturnedShowList" />
             </div>
           }
           else
           {
-            <div class="alert alert-warning text-center fs-4" role="alert">
-              Inside: <b>@nameof(Index)</b>  <br /> Unknown <code>VisibleComponent</code>
-            </div>
+            if (VisibleComponent == Enums.VisibleComponent.Donation)
+            {
+              <div class="card border-primary my-3 p-2">
+                <DonationEntryForm RegistrationId="Id" OnActionCompleted="ReturnedShowList" />
+              </div>
+            }
+            else
+            {
+              <div class="alert alert-warning text-center fs-4" role="alert">
+                Inside: <b>@nameof(Index)</b>  <br /> Unknown <code>VisibleComponent</code>
+              </div>
+            }
           }
         }
       }
@@ -162,12 +171,20 @@
           VisibleComponent = Enums.VisibleComponent.Registrant;
           DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
         }
-         else
-         {
-          Toast!.ShowWarning($"Unknown Crud Action: {args.Crud.Name}");
-         //  if (args.Crud == Crud.Donation)  { }
-         //  if (args.Crud == Crud.DeleteRegistration) { }
-         }
+        else
+        {
+          if (args.Crud == Crud.Donation)
+          {
+            Id = args.Id;
+            VisibleComponent = Enums.VisibleComponent.Donation;
+            DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
+          }
+          else
+          {
+            Toast!.ShowWarning($"Unknown Crud Action: {args.Crud.Name}");
+            //  if (args.Crud == Crud.DeleteRegistration) { }
+          }
+        }
       } 
 
     }

@@ -1,0 +1,124 @@
+﻿@using Blazored.FluentValidation
+@using LivingMessiahAdmin.Features.Sukkot.Home.Donations.Data
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+
+@inject ILogger<DonationEntryForm>? Logger
+@inject IToastService? Toast
+@inject IRepository? db
+
+@* class="card card-body bg-light mt-1" *@
+
+<EditForm Model="@VM" OnValidSubmit="@SubmitValidForm">
+  <FluentValidationValidator @ref="_fluentValidationValidator2" DisableAssemblyScanning="@true" />
+  <ValidationSummary />
+
+  <fieldset class="mt-3">
+
+    <div class="row mt-n2 gx-sm-1">
+
+      <div class="col-sm-2">
+        <div class="mb-3">
+          <label for="amount" class="control-label">Amount</label>
+          <InputNumber id="amount" class="form-control" @bind-Value="VM!.Amount" />
+          <ValidationMessage For="@(() => VM.Amount)" />
+        </div>
+      </div>
+
+      <div class="col-sm-4">
+        <div class="mb-3">
+          <label for="referenceId" class="control-label">Reference Id</label>
+          <InputText id="referenceId" class="form-control" @bind-Value="VM!.ReferenceId" />
+          <ValidationMessage For="@(() => VM.ReferenceId)" />
+        </div>
+      </div>
+
+      <div class="col-sm-5">
+        <div class="mb-3">
+          <label for="notes" class="control-label">Notes</label>
+          <InputText id="notes" class="form-control" @bind-Value="VM.Notes" />
+          <ValidationMessage For="@(() => VM.Notes)" />
+        </div>
+      </div>
+
+    </div>
+
+
+  </fieldset>
+
+  <div class="row">
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary mt-2">
+        <i class="fas fa-save"></i> Add
+      </button>
+    </div>
+  </div>
+
+</EditForm>
+
+
+@code {
+  [Parameter, EditorRequired] public int RegistrationId { get; set; }
+  [Parameter, EditorRequired] public EventCallback OnActionCompleted { get; set; }
+  [CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+
+  private string email = "?";
+  private FluentValidationValidator? _fluentValidationValidator2;
+
+  protected DonationVM? VM { get; set; } = new DonationVM();
+
+  protected override async Task OnParametersSetAsync()
+  {
+    if (authenticationState is not null)
+    {
+      var authState = await authenticationState;
+      var user = authState?.User;
+
+      if (user?.Identity is not null && user.Identity.IsAuthenticated)
+      {
+        email = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+      }
+    }
+  }
+
+  protected async Task SubmitValidForm()
+  {
+    //Logger!.LogDebug("{Method}", nameof(SubmitValidForm));
+    try
+    {
+      DonationRecord rec = new(
+        RegistrationId,
+        VM!.Amount,
+        VM!.Notes,
+        VM!.ReferenceId,
+        email,
+        DateTime.UtcNow, 
+        email);
+
+      int newId = 0;
+      newId = await db!.InsertDonation(rec!);
+      if(newId != 0)
+      {
+        Toast!.ShowInfo($"Donation record added; newId: {newId}");
+        ReturnedActionCompleted();
+      } 
+      else
+      {
+        Toast!.ShowWarning("Failed to add donation record. newId==0");
+      }
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(SubmitValidForm));
+      Toast!.ShowError(Global.ToastShowError);
+    }
+  }
+
+
+  private void ReturnedActionCompleted()
+  {
+    Logger!.LogDebug("{Method}", nameof(ReturnedActionCompleted));
+    OnActionCompleted.InvokeAsync();
+  }
+
+}

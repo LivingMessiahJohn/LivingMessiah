@@ -40,7 +40,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 		Sql = $@"
 --DECLARE @stepId int=3
 --DECLARE @stepId2 int=4
-SELECT Id, EMail, FullName, StepId, Phone, Notes, AdminNotes, Adults, Children, DidNotAttend
+SELECT Id, EMail, FullName, OtherNames, StepId, Phone, Notes, AdminNotes, Adults, Children, DidNotAttend
 , TotalDonation, DonationRowCount
 , IdHra
 , AttendanceBitwise

@@ -10,6 +10,7 @@ public static class ServiceCollectionExtensions
 			//.AddTransient<ISecurityHelper, SecurityHelper>()
 			.AddTransient<IRepository, Repository>()
 			.AddTransient<IValidator<Registrant.FormVM>, Registrant.FormVMValidator>();
+
 		return services;
 	}
 }

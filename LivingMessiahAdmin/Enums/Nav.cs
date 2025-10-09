@@ -1,5 +1,4 @@
 ﻿using Ardalis.SmartEnum;
-using LivingMessiahAdmin.Features.Sukkot.Enums;
 
 namespace LivingMessiahAdmin.Enums;
 
@@ -33,14 +32,14 @@ public abstract class Nav : SmartEnum<Nav>
 	private static class Id
 	{
 		internal const int Home = 1; // The content is Sitemap
-		internal const int KeyDates = 2;
-		internal const int Database = 3;
-		internal const int HealthCheckCalendar = 4;
-		internal const int HealthCheckTestLogger = 5;
-		//internal const int PsalmsAndProverbs = 6;
-		internal const int SpecialEvents = 7;
-		internal const int Sukkot = 8;
-		internal const int SukkotDashboard = 9;
+		internal const int SukkotDashboard = 2;
+		internal const int Sukkot = 3;
+		internal const int KeyDates = 4;
+		internal const int Database = 5;
+		internal const int HealthCheckCalendar = 6;
+		internal const int HealthCheckTestLogger = 7;
+		//internal const int PsalmsAndProverbs = 8;
+		internal const int SpecialEvents = 9;
 		internal const int Profile = 10;
 	}
 	#endregion

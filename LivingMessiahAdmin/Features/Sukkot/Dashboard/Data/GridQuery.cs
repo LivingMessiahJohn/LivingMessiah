@@ -27,6 +27,8 @@ public class GridQuery
 		}
 	}
 
+	public string? OtherNames { get; set; }
+
 	//ToDo: rename to StepId or get rid of it and rename Step to StepId
 	public int StepId { get; set; }
 

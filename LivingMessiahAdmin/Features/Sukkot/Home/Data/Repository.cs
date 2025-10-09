@@ -4,10 +4,7 @@ using System.Data;
 using SukkotEnumsHelper = LivingMessiahAdmin.Features.Sukkot.Enums.Helper;
 using DataEnumsDatabase = LivingMessiahAdmin.Data.Enums.Database;
 using LivingMessiahAdmin.Data;
-using LivingMessiahAdmin.Features.Sukkot.Enums;
 using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationDetail;
-
-//using LivingMessiahAdmin.Features.Sukkot.Home.Detail;
 
 namespace LivingMessiahAdmin.Features.Sukkot.Home.Data;
 
@@ -23,9 +20,6 @@ public interface IRepository
 	Task<Tuple<int, int, string>> UpdateRegistration(Registrant.DTO formVM);
 	
 	Task<RegistrationQuery> ById(int id);
-
-	Task<List<DonationDetailQuery>> GetByRegistrationId(int registrationId);
-	Task<int> DeleteDonationDetail(int id);
 }
 
 public class Repository : BaseRepositoryAsync, IRepository
@@ -287,7 +281,6 @@ WHERE Id = @Id
 ";
 		return await WithConnectionAsync(async connection =>
 		{
-		//var registration = (await connection.QueryAsync<RegistrationListQuery>(sql: Sql, param: Parms)).SingleOrDefault();
 			var registration = (await connection.QueryAsync<RegistrationQuery>(sql: Sql, param: Parms)).SingleOrDefault();
 
 			if (registration != null)
@@ -305,44 +298,4 @@ WHERE RegistrationId = @Id
 			return registration!;
 		});
 	}
-
-
-	#region Donation
-
-	public async Task<List<DonationDetailQuery>> GetByRegistrationId(int registrationId)
-	{
-		Sql = $@"
--- DECLARE @registrationId int = 20
-SELECT Id, Detail, Amount, Notes, ReferenceId, CreateDate, CreatedBy --, FamilyName
-FROM Sukkot.vwDonationDetail 
-WHERE RegistrationId=@registrationId
-ORDER BY Detail
-";
-		Parms = new DynamicParameters(new { RegistrationId = registrationId });
-
-		return await WithConnectionAsync(async connection =>
-		{
-			var rows = await connection.QueryAsync<DonationDetailQuery>(sql: Sql, param: Parms);
-			return rows.ToList();
-		});
-	}
-
-	public async Task<int> DeleteDonationDetail(int id)
-	{
-		Parms = new DynamicParameters(new { Id = id });
-		Sql = "DELETE FROM Sukkot.Donation WHERE Id=@Id";
-
-		Logger!.LogDebug("{Method} {Message}", nameof(DeleteDonationDetail), $"Sql: {Sql}, id: {id}");
-
-		return await WithConnectionAsync(async connection =>
-		{
-			var affectedrows = await connection.ExecuteAsync(sql: Sql, param: Parms);
-			return affectedrows;
-		});
-	}
-
-	#endregion
-
-
-
 }

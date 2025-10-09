@@ -50,7 +50,7 @@
     {
       return Nav.List.ToList()
         .Where(w => w.Value != Nav.Home.Value && w.Value != Nav.Profile.Value && w.RequiredRoles == 0)
-        .OrderBy(o => o.Name);
+        .OrderBy(o => o.Value);
     }
 
     var state = await authenticationState;
@@ -58,7 +58,7 @@
 
     return Nav.List.ToList()
       .Where(w => w.Value != Nav.Home.Value && w.Value != Nav.Profile.Value && HasRequiredRole(w.RequiredRoles, userRoles))
-      .OrderBy(o => o.Name);
+      .OrderBy(o => o.Value);
   }
 
   private int GetUserRoleBitmask(ClaimsPrincipal user)

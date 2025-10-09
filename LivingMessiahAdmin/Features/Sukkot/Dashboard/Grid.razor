@@ -51,6 +51,13 @@
         </ColumnOptions>
       </PropertyColumn>
 
+
+      @if ((Bitwise & ShowColumnEnums.Others.Value) != 0)
+      {
+        <PropertyColumn Property="@(item => item.OtherNames)" Title="Others" />
+      }
+
+
       @if ((Bitwise & ShowColumnEnums.Email.Value) != 0)
       {
         <PropertyColumn Property="@(item => item.EMail)" Title="EMail" Sortable="true" />
@@ -176,9 +183,11 @@
     if (item is not null)
     {
       SelectedItem = item;
-      
+
       DetailCardRecord = new DetailCardRecord(
-        item.Id, item!.FullName ?? "None"
+        item.Id
+        , item!.FullName ?? "None"
+        , item!.OtherNames ?? ""
         , item!.AdminNotes ?? ""
         , item!.Notes ?? ""
         , SukkotEnumsHelpers.RegistrationFeeHelper.AdultsToRegistrationFee(item.Adults));

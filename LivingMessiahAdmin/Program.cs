@@ -22,6 +22,7 @@ using LivingMessiahAdmin.Features.Sukkot.Dashboard.Data;
 using LivingMessiahAdmin.Features.Sukkot.Home.Data;
 using LivingMessiahAdmin.Features.Sukkot.Notes.Data;
 using LivingMessiahAdmin.Features.Sukkot.Reports.Data;
+using LivingMessiahAdmin.Features.Sukkot.Home.Donations.Data;
 
 //using Stripe; 
 using HealthChecksSukkot = LivingMessiahAdmin.HealthChecks.Sukkot;
@@ -66,6 +67,7 @@ try
 	builder.Services.AddDatabase();
 	builder.Services.AddSukkotGridData();
 	builder.Services.AddSukkotData(); // CrUD
+	builder.Services.AddSukkotDonationsData();	
 	builder.Services.AddManageNotes();
 	builder.Services.AddReports();
 	builder.Services.AddManageKeyDates();
