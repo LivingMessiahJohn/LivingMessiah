@@ -2,6 +2,7 @@
 
 namespace LivingMessiah.Features.Sukkot.LandingPage.Constants;
 
+//ToDo: this only used by RegistrationFeeTableNOTUSING which is not used
 public static class RegistrationMeta
 {
 	public static bool IsThereEarlyRegistration { get; set; } = false;
