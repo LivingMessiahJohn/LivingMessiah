@@ -2,55 +2,68 @@
 
 @using LivingMessiah.Features.Sukkot.Constants
 @using LivingMessiah.Features.Sukkot.LandingPage
-@using LivingMessiah.Features.Sukkot.Settings
 @using LivingMessiah.SecurityRoot
-@using LivingMessiah.Settings
 @using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.Extensions.Options
 @using static LivingMessiah.SecurityRoot.Auth0
 
-@inject IOptions<SukkotSettings> SukkotSettings
 @inject ISecurityHelper? SecurityHelper
 
 <PageHeader PageEnum="Nav.Sukkot" />
 
-@if (SukkotSettings.Value.SukkotIsOpen)
+@switch (lifeCyclePhase.Value)
 {
-	@if (!SukkotSettings.Value.IsRegistrationClosed)
-	{
-		<div class="card border border-warning border-4 bg-warning-subtle mt-4 mb-4">
-			<AuthorizeView Policy=@Auth0.Policy.Name>
-				<Authorized>
-					<div class="card-body  text-center"><h3>Hello, @context.User.Identity?.Name!</h3></div>
-					<StartRegistrationButton IsAuthenticatedAndVerified=true />
-				</Authorized>
-				<NotAuthorized>
-					<StartRegistrationButton IsAuthenticatedAndVerified=false />
-					<LoggingInInstructions />
-						<HelpGuideTogleButton />
-				</NotAuthorized>
-			</AuthorizeView>
-		</div>
+  case var item when lifeCyclePhase == Enums.LifeCyclePhase.GetReady:
+    <div class="p-5 my-4 bg-warning rounded-3">
+      <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold text-center">
+          @Enums.LifeCyclePhase.GetReady.Title
+          <br> @Enums.LifeCyclePhase.GetReady.Emoji
+        </h1>
+        <h4 class="text-center mt-5">@Enums.LifeCyclePhase.GetReady.SubTitle</h4>
+      </div>
+    </div>
 
-		@* <PaymentInfo /> *@
-		<div class="@MediaQuery.XsOrSm.DivClass"><Header IsXsOrSm=true /></div>
-		<div class="@MediaQuery.MdOrLgOrXl.DivClass"><Header IsXsOrSm=false /></div>
-		<CalendarWeek />
-		<Location />
-		<Documents />
-		@* <SukkotTShirt /> *@
-	}
+    break;
 
-	@if (SukkotSettings.Value.IsRegistrationClosed)
-	{
-		<RegistrationClosed />
-	}
-}
-else
-{
-	<RegistrationNotReady />
+  case var item when lifeCyclePhase == Enums.LifeCyclePhase.RegistrationOpen:
+    <div class="card border border-warning border-4 bg-warning-subtle mt-4 mb-4">
+      <AuthorizeView Policy=@Auth0.Policy.Name>
+        <Authorized>
+          <div class="card-body  text-center"><h3>Hello, @context.User.Identity?.Name!</h3></div>
+          <StartRegistrationButton IsAuthenticatedAndVerified=true />
+        </Authorized>
+        <NotAuthorized>
+          <StartRegistrationButton IsAuthenticatedAndVerified=false />
+          <LoggingInInstructions />
+          <HelpGuideTogleButton />
+        </NotAuthorized>
+      </AuthorizeView>
+    </div>
+
+    <div class="@MediaQuery.XsOrSm.DivClass"><Header IsXsOrSm=true /></div>
+    <div class="@MediaQuery.MdOrLgOrXl.DivClass"><Header IsXsOrSm=false /></div>
+    <CalendarWeek />
+    <Location />
+    <Documents />
+    @* <SukkotTShirt /> *@
+
+    break;
+
+  case var item when lifeCyclePhase == Enums.LifeCyclePhase.Over:
+    <div class="p-5 my-4 bg-danger rounded-3">
+      <div class="container-fluid py-5">
+        <h1 class="display-4 fw-bold text-center">@Enums.LifeCyclePhase.Over.Title <br> @Enums.LifeCyclePhase.Over.Emoji</h1>
+        <h4 class="text-center mt-5">@Enums.LifeCyclePhase.Over.SubTitle</h4>
+      </div>
+    </div>
+
+    break;
+
+  default:
+    <p>Unknown Sukkot LifeCyclePhase</p>
+    break;
 }
 
 @code {
-
+  [Parameter, EditorRequired] public Enums.LifeCyclePhase lifeCyclePhase { get; set; } = Enums.LifeCyclePhase.Over;
 }

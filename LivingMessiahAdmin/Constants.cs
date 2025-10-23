@@ -6,6 +6,7 @@ public static class Emoji
 	public const string Happy = @"ʘ‿ʘ";
 	public const string Sad = @"(◡︵◡)";
 	public const string Shrug = @"¯\_(ツ)_/¯";
+	public const string Surprise = @"O_O";
 }
 
 public static class Global

@@ -18,7 +18,7 @@ using LivingMessiah.Enums;
 //using OneTimeEndpoints = LivingMessiah.Features.OneTime.Endpoints;
 using SukkotEndpointsCheckoutSession = LivingMessiah.Features.Sukkot.Endpoints.CheckoutSession;
 using SukkotEndpointsWebhook = LivingMessiah.Features.Sukkot.Endpoints.Webhook;
-using LivingMessiah.Features.Sukkot.Settings;
+
 
 using AccountEnum = LivingMessiah.Enums.Account;
 using LivingMessiah.Features.Sukkot.Data;
@@ -96,7 +96,6 @@ try
 	builder.Services.Configure<AppSettings>(options => configuration.GetSection(nameof(AppSettings)).Bind(options));
 	//LivingMessiah.Helpers.LogHelper.DumpSectionConfiguration(builder.Configuration.GetSection("AppSettings"), "AppSettings");
 	builder.Services.Configure<StripeSettings>(options => configuration.GetSection(nameof(StripeSettings)).Bind(options));
-	builder.Services.Configure<SukkotSettings>(options => configuration.GetSection(nameof(SukkotSettings)).Bind(options));
 
 	builder.Services.AddRazorComponents()
 			.AddInteractiveServerComponents();
