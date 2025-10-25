@@ -16,9 +16,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Stripe;
 using LivingMessiah.Enums;
 //using OneTimeEndpoints = LivingMessiah.Features.OneTime.Endpoints;
+
+using SukkotSettings = LivingMessiah.Features.Sukkot.Settings;
 using SukkotEndpointsCheckoutSession = LivingMessiah.Features.Sukkot.Endpoints.CheckoutSession;
 using SukkotEndpointsWebhook = LivingMessiah.Features.Sukkot.Endpoints.Webhook;
-
 
 using AccountEnum = LivingMessiah.Enums.Account;
 using LivingMessiah.Features.Sukkot.Data;
@@ -93,8 +94,13 @@ try
 	//builder.Services.AddScoped<TokenProvider>();
 	//TokenProvider used by _Host App
 
+
 	builder.Services.Configure<AppSettings>(options => configuration.GetSection(nameof(AppSettings)).Bind(options));
 	//LivingMessiah.Helpers.LogHelper.DumpSectionConfiguration(builder.Configuration.GetSection("AppSettings"), "AppSettings");
+	
+	builder.Services.Configure<SukkotSettings>(options => configuration.GetSection(nameof(SukkotSettings)).Bind(options));
+	//LivingMessiah.Helpers.LogHelper.DumpSectionConfiguration(builder.Configuration.GetSection(nameof(SukkotSettings)), nameof(SukkotSettings));
+
 	builder.Services.Configure<StripeSettings>(options => configuration.GetSection(nameof(StripeSettings)).Bind(options));
 
 	builder.Services.AddRazorComponents()
@@ -110,7 +116,7 @@ try
 	 StripeConfiguration.ApiKey = sukkotStripeSettings?.ApiKey ?? "";
   */
 	
-	 var stripeApiKey = builder.Configuration[StripeConstants.ApiKey];
+	var stripeApiKey = builder.Configuration[StripeConstants.ApiKey];
 	StripeConfiguration.ApiKey = stripeApiKey;
 
 	var app = builder.Build();
@@ -155,12 +161,9 @@ try
 	app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();
 
-	#region Stripe Endpoints
-	AppSettings? appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
-	//OneTimeEndpoints.CheckoutSession(app, Donation.OneTime.SessionUrl, appSettings!.Domain!);
-	//OneTimeEndpoints.OneTimeDonationInsertWebhook(app, Donation.OneTime.Url);
-
-	SukkotEndpointsCheckoutSession.CheckoutSessionConfig(app, Donation.SukkotRegistration.SessionUrl, appSettings!.Domain!);
+	#region Sukkot Stripe Endpoints
+	SukkotSettings? sukkotSettings = configuration.GetSection(nameof(SukkotSettings)).Get<SukkotSettings>();
+	SukkotEndpointsCheckoutSession.CheckoutSessionConfig(app, Donation.SukkotRegistration.SessionUrl, sukkotSettings!.Domain!);
 	SukkotEndpointsWebhook.WebhookConfig(app, Donation.SukkotRegistration.WebhookUrl);
 
 	#endregion
