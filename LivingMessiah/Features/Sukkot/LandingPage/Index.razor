@@ -1,7 +1,7 @@
 ﻿@page "/sukkot"
 
+@using LivingMessiah.Features.Sukkot.Components
 @using LivingMessiah.Features.Sukkot.Constants
-@using LivingMessiah.Features.Sukkot.LandingPage
 @using LivingMessiah.SecurityRoot
 @using Microsoft.AspNetCore.Components.Authorization
 @using static LivingMessiah.SecurityRoot.Auth0
@@ -10,22 +10,9 @@
 
 <PageHeader PageEnum="Nav.Sukkot" />
 
-@switch (lifeCyclePhase.Value)
-{
-  case var item when lifeCyclePhase == Enums.LifeCyclePhase.GetReady:
-    <div class="p-5 my-4 bg-warning rounded-3">
-      <div class="container-fluid py-5">
-        <h1 class="display-5 fw-bold text-center">
-          @Enums.LifeCyclePhase.GetReady.Title
-          <br> @Enums.LifeCyclePhase.GetReady.Emoji
-        </h1>
-        <h4 class="text-center mt-5">@Enums.LifeCyclePhase.GetReady.SubTitle</h4>
-      </div>
-    </div>
+<LifeCycleAuthority>
+  <OpenContent>
 
-    break;
-
-  case var item when lifeCyclePhase == Enums.LifeCyclePhase.RegistrationOpen:
     <div class="card border border-warning border-4 bg-warning-subtle mt-4 mb-4">
       <AuthorizeView Policy=@Auth0.Policy.Name>
         <Authorized>
@@ -47,23 +34,9 @@
     <Documents />
     @* <SukkotTShirt /> *@
 
-    break;
-
-  case var item when lifeCyclePhase == Enums.LifeCyclePhase.Over:
-    <div class="p-5 my-4 bg-danger rounded-3">
-      <div class="container-fluid py-5">
-        <h1 class="display-4 fw-bold text-center">@Enums.LifeCyclePhase.Over.Title <br> @Enums.LifeCyclePhase.Over.Emoji</h1>
-        <h4 class="text-center mt-5">@Enums.LifeCyclePhase.Over.SubTitle</h4>
-      </div>
-    </div>
-
-    break;
-
-  default:
-    <p>Unknown Sukkot LifeCyclePhase</p>
-    break;
-}
+  </OpenContent>
+</LifeCycleAuthority>
 
 @code {
-  [Parameter, EditorRequired] public Enums.LifeCyclePhase lifeCyclePhase { get; set; } = Enums.LifeCyclePhase.Over;
+
 }

@@ -1,0 +1,90 @@
+﻿@using LivingMessiah.Features.Sukkot
+@using LivingMessiah.Features.Sukkot.Constants
+@using Microsoft.Extensions.Options
+@using static LivingMessiah.Helpers.Constants.Emoji
+
+@inject IOptions<Settings>? Settings
+@inject ILogger<LifeCycleAuthority>? Logger
+@inject IToastService? Toast
+
+<LoadingComponent IsLoading="isDone==false" TurnSpinnerOff=TurnSpinnerOff>
+
+  @if (lifeCyclePhaseEnum == LifeCyclePhaseEnum.RegistrationOpen)
+  {
+    @OpenContent
+  }
+  else
+  {
+    @if (lifeCyclePhaseEnum == LifeCyclePhaseEnum.GetReady)
+    {
+      <div class="p-5 my-4 bg-warning rounded-3">
+        <div class="container-fluid py-5">
+          <h1 class="display-5 fw-bold text-center">
+            Sukkot Registration is getting close!
+            <br> @Surprise
+          </h1>
+          <h4 class="text-center mt-5">Start getting prepared and making plans</h4>
+        </div>
+      </div>
+    }
+    else
+    {
+      if (lifeCyclePhaseEnum == LifeCyclePhaseEnum.Over)
+      {
+        <div class="p-5 my-4 bg-danger rounded-3">
+          <div class="container-fluid py-5">
+            <h1 class="display-4 fw-bold text-center">
+              Sukkot Is Over
+              <br> @Sad
+            </h1>
+            <h4 class="text-center mt-5">We had a great time as usual, hope to see you next year.</h4>
+          </div>
+        </div>
+      }
+      else
+      {
+        <p>Unknown Sukkot LifeCyclePhase</p>
+      }
+    }
+
+  }
+</LoadingComponent>
+
+@code {
+  [Parameter] public RenderFragment? OpenContent { get; set; }
+
+  protected int lifeCyclePhaseInt;
+  protected LifeCyclePhaseEnum lifeCyclePhaseEnum;
+
+
+  protected bool TurnSpinnerOff = false;
+  protected bool isDone = false;
+
+  //protected override void OnInitialized()
+
+  protected override void OnParametersSet()
+  {
+    try
+    {
+      lifeCyclePhaseInt = Settings!.Value!.LifeCyclePhaseInt;
+
+      if (lifeCyclePhaseInt == 0)
+      {
+        throw new InvalidOperationException("lifeCyclePhaseInt==0");
+      }
+      lifeCyclePhaseEnum = (LifeCyclePhaseEnum)Settings!.Value.LifeCyclePhaseInt;
+
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(OnParametersSet));
+      Toast!.ShowError("An invalid operation occurred, contact your administrator");
+    }
+    finally
+    {
+      isDone = true;
+      TurnSpinnerOff = true;
+    }
+  }
+
+}

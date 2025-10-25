@@ -2,11 +2,13 @@
 
 public class AppSettings
 {
-	public string? Domain { get; set; }
-	public int YearId { get; set; }
-	public string? SiteShortTitle { get; set; }
-	public string? SiteTitle { get; set; }
-	//public string? GoogleAnalytics { get; set; }
-	public bool ShabbatServiceLoadQuickly { get; set; }
-	public bool ShowCurrentWeeklyVideos { get; set; }
+	/*
+	LivingMessiah\Features\Calendar\Index.razor
+	
+	  Development: "AppSettings": { "Domain": "https://localhost:7142", ...
+		Production: "AppSettings": {    "Domain": "https://livingmessiah.com",
+		
+		YearId = AppSettings!.Value.YearId;
+	*/
+	public int YearId { get; set; }  
 }

@@ -1,6 +1,8 @@
 ﻿@page "/Sukkot/RegistrationSteps"
 @page "/Sukkot/RegistrationShell"
 
+@using LivingMessiah.Features.Sukkot.Components
+@using LivingMessiah.Features.Sukkot.Constants
 @using LivingMessiah.Features.Sukkot.Enums
 @using LivingMessiah.Features.Sukkot.NormalUser
 @using LivingMessiah.Features.Sukkot.RegistrationSteps.Agreement
@@ -14,105 +16,107 @@
 @inject IToastService? Toast
 @inject Data.IRepository? db
 
-<PageTop TextColor="@GetTextColor()" />
+<LifeCycleAuthority>
+  <OpenContent>
 
-<AuthorizeView Policy=@Auth0.Policy.Name>
-  <Authorized>
+    <PageTop TextColor="@GetTextColor()" />
+    <AuthorizeView Policy=@Auth0.Policy.Name>
+      <Authorized>
 
-    @if (CurrentStep is not null)
-    {
-      <HeaderRow CurrentStep="CurrentStep" />
-
-      <p class="text-center fs-5 py-2 mb-0 @StepConstants.Border @CurrentStep.CardBodyCSS">
-        <b>Step:</b> @CurrentStep.Value
-        @* <i class="@CurrentStep).Icon"></i> *@
-        @CurrentStep.Heading
-      </p>
-    }
-
-    @if (CurrentStep == Step.SignAgreement)
-    {
-      <div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
-        <div class="card-body @CurrentStep!.CardBodyCSS">
-          <HRAWrapper EmailParm="@Email" OnActionCompleted="ReturnedHraActionCompleted" />
-        </div>
-      </div>
-    }
-
-    <LoadingComponent IsLoading="vw == null" TurnSpinnerOff=TurnSpinnerOff>
-
-      @* <DebugShowStepEnum UsersCurrentStep="vm!.Step" /> *@
-
-      <StepSkeleton CurrentStep="Step.FromValue(vm!.Step!.Value)">
-
-        <RegistrationFormRF>
-          @if (@vm.Step == Step.Registration)
-          {
-            <div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
-              <div class="card-body @CurrentStep!.CardBodyCSS">
-                <EntryForm Email="@Email" Id="null"
-                           CurrentStep="CurrentStep"
-                           OnAddCompleted="ReturnedRegistrationAddCompleted" />
-              </div>
+        @if (CurrentStep is not null)
+        {
+          <HeaderRow CurrentStep="CurrentStep" />
+          <p class="text-center fs-5 py-2 mb-0 @StepConstants.Border @CurrentStep.CardBodyCSS">
+            <b>Step:</b> @CurrentStep.Value
+            @* <i class="@CurrentStep).Icon"></i> *@
+            @CurrentStep.Heading
+          </p>
+        }
+        @if (CurrentStep == Step.SignAgreement)
+        {
+          <div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
+            <div class="card-body @CurrentStep!.CardBodyCSS">
+              <HRAWrapper EmailParm="@Email" OnActionCompleted="ReturnedHraActionCompleted" />
             </div>
-          }
-        </RegistrationFormRF>
+          </div>
+        }
 
-        <PaymentRF>
-          @if (@vm.Step == Step.Payment && CurrentRegistrationId != 0)
+        <LoadingComponent IsLoading="vw == null" TurnSpinnerOff=TurnSpinnerOff>
+
+          @* <DebugShowStepEnum UsersCurrentStep="vm!.Step" /> *@
+
+          <StepSkeleton CurrentStep="Step.FromValue(vm!.Step!.Value)">
+
+            <RegistrationFormRF>
+              @if (@vm.Step == Step.Registration)
+              {
+                <div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
+                  <div class="card-body @CurrentStep!.CardBodyCSS">
+                    <EntryForm Email="@Email" Id="null"
+                               CurrentStep="CurrentStep"
+                               OnAddCompleted="ReturnedRegistrationAddCompleted" />
+                  </div>
+                </div>
+              }
+            </RegistrationFormRF>
+
+            <PaymentRF>
+              @if (@vm.Step == Step.Payment && CurrentRegistrationId != 0)
+              {
+                <div class="card my-2 @CurrentStep!.CardBodyCSS">
+                  <div class="card-body">
+                    <p class="fs-5 text-center">
+                      We are currently using <b>Stripe Payment Links</b> for processing Living Messiah Ministry Sukkot donations.
+                      <br /><br />
+                      Click the <span class="text-success">button</span> below to proceed to the payment page.
+                    </p>
+                  </div>
+                  <div class="card-body">
+                    <StripeCard RegistrationFee="CurrentRegistrationFee"
+                                Email="@vm.EmailAddress"
+                                RegistrationId="CurrentRegistrationId" />
+                  </div>
+
+                  <div class="card-body">
+                    <AlternativePaymentsToggle Id="CurrentRegistrationId" />
+                  </div>
+                </div>
+              }
+            </PaymentRF>
+
+            <CompleteRF>
+              @if (@vm.Step == Step.Complete)
+              {
+                <div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
+                  <div class="card-body">
+                    <CompleteParagraph Id="CurrentRegistrationId" />
+                  </div>
+                </div>
+              }
+            </CompleteRF>
+
+          </StepSkeleton>
+
+          @if (CurrentRegistrationId != 0)
           {
-            <div class="card my-2 @CurrentStep!.CardBodyCSS">
-              <div class="card-body">
-                <p class="fs-5 text-center">
-                  We are currently using <b>Stripe Payment Links</b> for processing Living Messiah Ministry Sukkot donations.
-                  <br /><br />
-                  Click the <span class="text-success">button</span> below to proceed to the payment page.
-                </p>
-              </div>
-              <div class="card-body">
-                <StripeCard RegistrationFee="CurrentRegistrationFee"
-                            Email="@vm.EmailAddress"
-                            RegistrationId="CurrentRegistrationId" />
-              </div>
+            <PrintButton Id="CurrentRegistrationId" />
 
-              <div class="card-body">
-                <AlternativePaymentsToggle Id="CurrentRegistrationId" />
-              </div>
-            </div>
+            <UpdateRegistrationToggle Email="@Email"
+                                      Id="CurrentRegistrationId"
+                                      CurrentStep="CurrentStep"
+                                      OnUpdateCompleted="ReturnedRegistrationUpdateCompleted" />
+
           }
-        </PaymentRF>
 
-        <CompleteRF>
-          @if (@vm.Step == Step.Complete)
-          {
-            <div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
-              <div class="card-body">
-                <CompleteParagraph Id="CurrentRegistrationId" />
-              </div>
-            </div>
-          }
-        </CompleteRF>
+        </LoadingComponent>
 
-      </StepSkeleton>
-
-      @if (CurrentRegistrationId != 0)
-      {
-        <PrintButton Id="CurrentRegistrationId" />
-
-        <UpdateRegistrationToggle Email="@Email"
-                                  Id="CurrentRegistrationId"
-                                  CurrentStep="CurrentStep"
-                                  OnUpdateCompleted="ReturnedRegistrationUpdateCompleted" />
-
-      }
-
-    </LoadingComponent>
-
-  </Authorized>
-  <NotAuthorized>
-    <NoEmailOrNotVerified Email="@Email" />
-  </NotAuthorized>
-</AuthorizeView>
+      </Authorized>
+      <NotAuthorized>
+        <NoEmailOrNotVerified Email="@Email" />
+      </NotAuthorized>
+    </AuthorizeView>
+  </OpenContent>
+</LifeCycleAuthority>
 
 @code {
 
