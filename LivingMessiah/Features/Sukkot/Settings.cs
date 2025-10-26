@@ -2,7 +2,7 @@
 
 public class Settings
 {
-	public int LifeCyclePhaseInt { get; set; }
+	public int LifeCyclePhase { get; set; }
 	public string? Domain { get; set; }
 }
 

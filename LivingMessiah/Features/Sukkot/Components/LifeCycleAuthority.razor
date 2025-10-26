@@ -53,32 +53,30 @@
 @code {
   [Parameter] public RenderFragment? OpenContent { get; set; }
 
-  protected int lifeCyclePhaseInt;
+  protected int lifeCyclePhase;
   protected LifeCyclePhaseEnum lifeCyclePhaseEnum;
 
 
   protected bool TurnSpinnerOff = false;
   protected bool isDone = false;
 
-  //protected override void OnInitialized()
-
-  protected override void OnParametersSet()
+  protected override void OnInitialized()
   {
     try
     {
-      lifeCyclePhaseInt = Settings!.Value!.LifeCyclePhaseInt;
+      lifeCyclePhase = Settings!.Value!.LifeCyclePhase;
 
-      if (lifeCyclePhaseInt == 0)
+      if (lifeCyclePhase == 0)
       {
-        throw new InvalidOperationException("lifeCyclePhaseInt==0");
+        throw new InvalidOperationException("lifeCyclePhase==0");
       }
-      lifeCyclePhaseEnum = (LifeCyclePhaseEnum)Settings!.Value.LifeCyclePhaseInt;
+      lifeCyclePhaseEnum = (LifeCyclePhaseEnum)Settings!.Value.LifeCyclePhase;
 
     }
     catch (Exception ex)
     {
-      Logger!.LogError(ex, "{Method}", nameof(OnParametersSet));
-      Toast!.ShowError("An invalid operation occurred, contact your administrator");
+      Logger!.LogError(ex, "{Method}", nameof(OnInitialized));
+      Toast!.ShowError($"{Global.ToastShowError} {nameof(LifeCycleAuthority)}!{nameof(OnInitialized)}");
     }
     finally
     {
