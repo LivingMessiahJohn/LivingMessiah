@@ -1,6 +1,7 @@
 ﻿@page "/Sukkot/Print/{Id:int}/{showPrintInstructionMessage:bool}"
 @* used to be Sukkot/Details, should I add another page directive? *@
 
+@using LivingMessiah.Features.Sukkot.Components
 @using LivingMessiah.Features.Sukkot.Enums
 @using LivingMessiah.Features.Sukkot.Enums.Helpers
 @using LivingMessiah.SecurityRoot
@@ -11,97 +12,103 @@
 @inject ISecurityHelper? SecurityHelper
 @inject Data.IRepository? db
 
-<PageTitle>@NavButton.Print.Title</PageTitle>
+<PageHeaderSukkot PageEnum="Pages.Print" />
 
-<Toolbar />
+<LifeCycleAuthority>
+  <OpenContent>
 
-<AuthorizeView Policy=@Auth0.Policy.Name>
-	<Authorized>
-		<LoadingComponent IsLoading="RegistrationQuery == null" TurnSpinnerOff=TurnSpinnerOff>
+    <AuthorizeView Policy=@Auth0.Policy.Name>
+      <Authorized>
+        <Toolbar />
+        <LoadingComponent IsLoading="RegistrationQuery == null" TurnSpinnerOff=TurnSpinnerOff>
 
-			@if (IsAuthorized)
-			{
-				<Details RegistrationQuery="@RegistrationQuery" />
-			}
-			else
-			{
-				<p class="fs-3 bg-danger text-center text-white mt-5 mx-5">NOT Authorized to view content</p>
-			}
-		</LoadingComponent>
-	</Authorized>
-	<NotAuthorized>
-		<p class="fs-5 bg-danger text-center text-white mt-5 mx-5">NOT Authorized</p>
-	</NotAuthorized>
+          @if (IsAuthorized)
+          {
+            <Details RegistrationQuery="@RegistrationQuery" />
+          }
+          else
+          {
+            <p class="fs-3 bg-danger text-center text-white mt-5 mx-5">NOT Authorized to view content</p>
+          }
+        </LoadingComponent>
+      </Authorized>
+      <NotAuthorized>
+        <p class="fs-5 bg-danger text-center text-white mt-5 mx-5">NOT Authorized</p>
+      </NotAuthorized>
 
-</AuthorizeView>
+    </AuthorizeView>
+
+  </OpenContent>
+</LifeCycleAuthority>
+
 
 @code {
-	[Parameter, EditorRequired] public int Id { get; set; }
-	[Parameter] public bool showPrintInstructionMessage { get; set; } = true;
+  [Parameter, EditorRequired] public int Id { get; set; }
+  [Parameter] public bool showPrintInstructionMessage { get; set; } = true;
 
-	protected bool TurnSpinnerOff = false;
-	string? Email;
-	protected bool IsAuthorized = false;
+  protected bool TurnSpinnerOff = false;
+  string? Email;
+  protected bool IsAuthorized = false;
 
-	public Data.RegistrationQuery? RegistrationQuery { get; set; }
-	private string[] OverrideRoles = new[] { Auth0.Roles.Sukkot, Auth0.Roles.Admin };
+  public Data.RegistrationQuery? RegistrationQuery { get; set; }
+  private string[] OverrideRoles = new[] { Auth0.Roles.Sukkot, Auth0.Roles.Admin };
 
-	protected override async Task OnInitializedAsync()
-	{
-		Logger!.LogDebug("{Method} {Id}", nameof(OnInitializedAsync), Id);
-		try
-		{
-			Email = await SecurityHelper!.GetEmail();
-			if (String.IsNullOrEmpty(Email))
-			{
-				DoToastLog("Email is empty");
-			}
-			else
-			{
-				RegistrationQuery = await db!.ById(Id);
+  protected override async Task OnInitializedAsync()
+  {
+    Logger!.LogDebug("{Method} {Id}", nameof(OnInitializedAsync), Id);
+    try
+    {
+      Email = await SecurityHelper!.GetEmail();
+      if (String.IsNullOrEmpty(Email))
+      {
+        DoToastLog("Email is empty");
+      }
+      else
+      {
+        RegistrationQuery = await db!.ById(Id);
 
-				if (RegistrationQuery is not null)
-				{
-					var (passed, errorMsg, securityOverride) = await SecurityHelper!.DoAuthentication(Email!, RegistrationQuery.EMail ?? "");
+        if (RegistrationQuery is not null)
+        {
+          var (passed, errorMsg, securityOverride) = await SecurityHelper!.DoAuthentication(Email!, RegistrationQuery.EMail ?? "");
 
-					if (passed)
-					{
-						DoPassed();
-					}
-					else
-					{
-						DoToastLog($"Failed DoAuthentication | {errorMsg}");
-					}
-				}
-				else
-				{
-					DoToastLog("Registration Not Found");
-				}
-			}
-		}
-		catch (Exception ex)
-		{
-			Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
-			Toast!.ShowError("An invalid operation occurred, contact your administrator");
-		}
-		finally
-		{
-			TurnSpinnerOff = true;
-		}
-	}
+          if (passed)
+          {
+            DoPassed();
+          }
+          else
+          {
+            DoToastLog($"Failed DoAuthentication | {errorMsg}");
+          }
+        }
+        else
+        {
+          DoToastLog("Registration Not Found");
+        }
+      }
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+      Toast!.ShowError("An invalid operation occurred, contact your administrator");
+    }
+    finally
+    {
+      TurnSpinnerOff = true;
+    }
+  }
 
-	private void DoToastLog(string message)
-	{
-		Logger!.LogWarning("{Method} {Message}", nameof(DoToastLog), message);
-		Toast!.ShowWarning(message);
-	}
+  private void DoToastLog(string message)
+  {
+    Logger!.LogWarning("{Method} {Message}", nameof(DoToastLog), message);
+    Toast!.ShowWarning(message);
+  }
 
-	private void DoPassed()
-	{
-		IsAuthorized = true;
-		(DateTime[]? week1, DateTime[]? week2) = EntryFormHelper.GetAttendanceDatesArray(RegistrationQuery!.AttendanceBitwise);
-		RegistrationQuery.AttendanceDateList = week1;
-		RegistrationQuery.AttendanceDateList2ndMonth = week2!;
-	}
+  private void DoPassed()
+  {
+    IsAuthorized = true;
+    (DateTime[]? week1, DateTime[]? week2) = EntryFormHelper.GetAttendanceDatesArray(RegistrationQuery!.AttendanceBitwise);
+    RegistrationQuery.AttendanceDateList = week1;
+    RegistrationQuery.AttendanceDateList2ndMonth = week2!;
+  }
 
 }
