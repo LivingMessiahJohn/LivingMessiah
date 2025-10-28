@@ -1,0 +1,298 @@
+﻿@using Blazored.FluentValidation
+@using LivingMessiahSukkot.Features.Enums
+@using LivingMessiahSukkot.Features.Enums.Helpers
+@using LivingMessiahSukkot.Features.Data
+@using LivingMessiahSukkot.Features
+@using RegistrationFeeEnums = LivingMessiahSukkot.Features.Enums;
+@using static LivingMessiahSukkot.Constants.Global
+
+@inject IRepository? db
+@inject ILogger<EntryForm>? Logger
+@inject IToastService? Toast
+
+@* Hack: I'm using LoadingComponent because AddOrEditState (a record) can't be null  *@
+
+<LoadingComponent IsLoading="AddOrEditState == null" TurnSpinnerOff=TurnSpinnerOff>
+  <h4>@AddOrEditState!.Title <span class="float-end"><sup><i>@AddOrEditState!.Title2</i></sup></span></h4>
+
+  <EditForm Model="@VM" OnValidSubmit="@SubmitValidForm">
+    <FluentValidationValidator @ref="_fluentValidationValidator" DisableAssemblyScanning="@true" />
+    <ValidationSummary />
+
+    <fieldset class="mt-3">
+      <legend class="text-primary">Contact Information</legend>
+
+      <div class="row">
+
+        <div class="col-sm-4">
+          <div class="form-floating mb-3">
+            <InputText id="lastName" class="form-control" @bind-Value="VM!.FamilyName" placeholder="Ben Levi" />
+            <label for="familyName" class="form-label">Last Name</label>
+            <ValidationMessage For="@(() => VM.FamilyName)" />
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <div class="form-floating mb-3">
+            <InputText id="firstName" class="form-control" @bind-Value="VM.FirstName" placeholder="Moshe" />
+            <label for="firstName" class="form-label">First Name</label>
+            <ValidationMessage For="@(() => VM.FirstName)" />
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <div class="form-floating mb-3">
+            <InputText id="spouseName" class="form-control" @bind-Value="VM.SpouseName" placeholder="Spousal Unit" />
+            <label for="spouseName" class="form-label">Spouses Name</label>
+            <ValidationMessage For="@(() => VM.SpouseName)" />
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="row">
+
+        <div class="col-sm-6">
+          <div class="form-floating mb-3">
+            <InputText id="otherNames" class="form-control" @bind-Value="VM.OtherNames" placeholder="other names" />
+            <label for="otherNames" class="form-label">Other Names</label>
+            <ValidationMessage For="@(() => VM.OtherNames)" />
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <div class="form-floating mb-3">
+            <InputText id="phone" class="form-control" @bind-Value="VM.Phone" placeholder="phone (optional)" />
+            <label for="phone" class="form-label">Phone (optional)</label>
+            <ValidationMessage For="@(() => VM.Phone)" />
+          </div>
+        </div>
+
+        @*<div class="col-sm-4">
+				<div class="form-floating mb-3">
+				<label for="avatar">Avatar</label>
+				<InputText id="avatar" class="form-control" @bind-Value="VM.Avatar" placeholder="picture (optional)" />
+				<ValidationMessage For="@(() => VM.Avatar)" />
+				</div>
+				</div>*@
+
+      </div>
+    </fieldset>
+
+    <fieldset class="mt-3">
+      <legend class="text-primary">Attendance</legend>
+
+      <div class="row mt-n2">
+
+        <div class="col-12">
+          <div class="card bg-light mb-3">
+            <div class="card-body">
+              <p class="card-text">
+                To help us with planning, select what days will you be attending.  Please select <u>ALL</u> the dates, not just the beginning and ending.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <AttendanceEditDateList @bind-SelectedDates="VM.AttendanceDateList" />
+
+    </fieldset>
+
+    <fieldset class="mt-3">
+      <legend class="text-primary">People Count <small class="text-black-50">Step: @(CurrentStep?.Name ?? "???")</small></legend>
+
+      <div class="row mt-n2">
+        <div class="col-sm-4">
+
+          <div class="form-floating mb-3">
+
+            <InputNumber id="adults"
+                         class="form-control"
+                         @bind-Value="VM.Adults"
+                         placeholder="Adult Count"
+                         disabled="@(CurrentStep?.Value == Step.Complete.Value)" />
+            <label for="adults" class="form-label">Adults</label>
+            <ValidationMessage For="@(() => VM.Adults)" />
+
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <div class="form-floating mb-3">
+            <InputNumber id="childBig" class="form-control" @bind-Value="VM.ChildBig" placeholder="Child Count Big" />
+            <label for="childBig" class="form-label">Child <sup>big</sup></label>
+            <ValidationMessage For="@(() => VM.ChildBig)" />
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <div class="form-floating mb-3">
+            <InputNumber id="childSmall" class="form-control" @bind-Value="VM.ChildSmall" placeholder="Child Count Small" />
+            <label for="childSmall" class="form-label">Child <sup>small</sup></label>
+            <ValidationMessage For="@(() => VM.ChildSmall)" />
+          </div>
+        </div>
+
+      </div>
+    </fieldset>
+
+    <fieldset class="mt-3">
+      <legend class="text-primary">Other (optional)</legend>
+      <div class="row mt-n2">
+        <div class="col-12">
+          <div class="form-floating mb-3">
+            <InputTextArea id="notes" class="form-control" @bind-Value="VM.Notes" placeholder="Notes" />
+            <label for="notes" class="form-label"><small>Notes / Emergency Contact / Fellowship Attending</small></label>
+            <p class="mt-1">
+              Please include emergency contact.  If not attending Living Messiah, please include name of fellowship or congregation currently attending, if none list a personal reference.
+            </p>
+            <ValidationMessage For="@(() => VM.Notes)" />
+
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <button type="submit" class="btn btn-primary btn-lg mt-2">
+      <i class="fas fa-save"></i> @AddOrEditState!.SubmitButtonText
+    </button>
+
+  </EditForm>
+
+</LoadingComponent>
+
+@code {
+  [Parameter, EditorRequired] public int? Id { get; set; }
+  [Parameter, EditorRequired] public string? Email { get; set; }
+  [Parameter, EditorRequired] public Step? CurrentStep { get; set; }
+  [Parameter] public EventCallback<StepAndRegFee> OnAddCompleted { get; set; }
+  [Parameter] public EventCallback<int> OnUpdateCompleted { get; set; }
+
+  bool TurnSpinnerOff = false;
+
+  protected EntryFormVM? VM { get; set; } = new EntryFormVM();
+
+  private FluentValidationValidator? _fluentValidationValidator;
+  public Enums.DateRangeType DateRangeAttendance { get; set; } = Enums.DateRangeType.Attendance;
+
+  EntryFormAddOrEditRecord? AddOrEditState;
+
+  private int Id2;
+  protected override async Task OnInitializedAsync()
+  {
+    Id2 = Id ?? 0;
+    Logger!.LogDebug("{Method}, Action: {Action} Id2:{id}; Email: {Email}"
+      , nameof(OnInitializedAsync), Id2 == 0 ? "Add" : "Update", Id2, Email);
+
+    try
+    {
+      if (Id2 == 0)
+      {
+        VM = new EntryFormVM();
+        VM.EMail = Email;
+        AddOrEditState = new EntryFormAddOrEditRecord(IsAdd: true, "Add - Registration", Email!, "Save");
+      }
+      else
+      {
+        AddOrEditState = new EntryFormAddOrEditRecord(IsAdd: false, "Edit - Registration", $"{Email}", "Update");
+        VM = await GetById(Id2);
+      }
+    }
+
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+      Toast!.ShowError(ToastShowError);
+    }
+
+    TurnSpinnerOff = true;
+  }
+
+  private async Task<EntryFormVM> GetById(int id)
+  {
+    Logger!.LogInformation("{Method} id: {id}", nameof(GetById), id);
+
+    EntryFormVM? VM = new();
+    try
+    {
+      VM = await db!.GetById2(id);
+      VM.Step = Step.FromValue(VM.StepId);
+      var (week1, week2) = EntryFormHelper.GetAttendanceDatesArray(VM.AttendanceBitwise);
+      VM.AttendanceDateList = week1;
+      VM.AttendanceDateList2ndMonth = week2;
+
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(GetById));
+      Toast!.ShowError(ToastShowError);
+    }
+    return VM;
+
+  }
+
+  protected async Task SubmitValidForm()
+  {
+    Logger!.LogDebug("{Method}, Action: {Action} Id2:{id}", nameof(SubmitValidForm), Id2 == 0 ? "Add" : "Update", Id2);
+    try
+    {
+      if (AddOrEditState!.IsAdd)
+      {
+        VM!.Step = Step.Payment;
+        VM.AttendanceBitwise = EntryFormHelper.GetDaysBitwise(VM.AttendanceDateList!, VM.AttendanceDateList2ndMonth!, DateRangeType.Attendance);
+        var (newId, sprocReturnValue, returnMsg) = await db!.Create(DTO_From_VM_To_DB(VM));
+        if (newId == 0)
+        {
+          Logger!.LogWarning("{Method} {Message} {Sql} {ReturnValue} {ReturnMsg}"
+          , nameof(SubmitValidForm), "Registration NOT CREATED! newId==0", nameof(db.Create), sprocReturnValue, returnMsg);
+          Toast!.ShowError("Error creating registration");
+          return;
+        }
+        else
+        {
+          Logger!.LogInformation("{Method} Registration created! Id2:{id}", nameof(SubmitValidForm), Id2);
+          Toast!.ShowInfo($"Registration Added!");
+          await OnAddCompleted.InvokeAsync(new StepAndRegFee(Step.Payment, RegistrationFeeHelper.AdultsToRegistrationFee(VM.Adults)));
+        }
+      }
+      else
+      {
+        var (rowsAffected, sprocReturnValue, returnMsg) = await db!.Update(DTO_From_VM_To_DB(VM!));
+        Logger!.LogInformation("{Method}; Registration updated!", nameof(SubmitValidForm));
+        Toast!.ShowInfo($"Registration updated!");
+        await OnUpdateCompleted.InvokeAsync(VM!.Adults);
+      }
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method} {Action}", nameof(SubmitValidForm), AddOrEditState!.Title);
+      Toast!.ShowError(ToastShowError);
+    }
+  }
+
+  private DTO DTO_From_VM_To_DB(EntryFormVM vm)
+  {
+    DTO poco = new DTO
+    {
+      Id = vm.Id,
+      FamilyName = vm.FamilyName,
+      FirstName = vm.FirstName,
+      SpouseName = vm.SpouseName?.Trim() ?? string.Empty,
+      OtherNames = vm.OtherNames,
+      EMail = vm.EMail,
+      Phone = vm.Phone,
+      Adults = vm.Adults,
+      ChildBig = vm.ChildBig,
+      ChildSmall = vm.ChildSmall,
+      StatusId = vm.Step!.Value, // ToDo Convert to StepId
+      AttendanceBitwise = EntryFormHelper.GetDaysBitwise(vm.AttendanceDateList!, vm.AttendanceDateList2ndMonth!, DateRangeType.Attendance),
+      Avatar = vm.Avatar,
+      FeeEnumValue = RegistrationFeeHelper.AdultsToRegistrationFee(vm.Adults),
+      Notes = vm.Notes
+    };
+    return poco;
+  }
+  
+}

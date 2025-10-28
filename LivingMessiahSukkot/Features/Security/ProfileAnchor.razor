@@ -1,0 +1,83 @@
+﻿@using System.Security.Claims
+@using LivingMessiahSukkot.Helpers
+@using LivingMessiahSukkot.Constants
+@using Microsoft.AspNetCore.Components.Authorization
+@using NavEnum = LivingMessiahSukkot.Enums.Nav
+
+<a href="@NavEnum.Profile.Index" class="me-2"
+	 title="Role(s): @Roles; Status: @Status">
+	@((MarkupString)NameTiny) @((MarkupString)BlueCheck) @((MarkupString)Thumbs)
+</a>
+
+@code {
+	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+
+	string Username = "";
+	string? EmailAddress { get; set; }  // Email:@EmailAddress
+	bool IsAuthenticated { get; set; }
+	IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+	bool IsEmailVerified { get; set; }
+	string? Email { get; set; }
+	string? Roles { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		base.OnInitialized();
+
+		if (authenticationState is not null)
+		{
+			var state = await authenticationState;
+			Username = state?.User?.Identity?.Name ?? "???"; // string.Empty
+
+			if (state!.User.Identity is not null)
+			{
+				if (state.User.Identity.IsAuthenticated)
+				{
+					Email = state.User.FindFirst(ClaimTypes.Email)?.Value;
+					IsEmailVerified = state.User.FindFirst(Auth0.Policy.Claim)?.Value == "true";
+					IsAuthenticated = true;
+					_claims = state.User.Claims;
+					Roles = string.Join(", ", _claims.Where(w => w.Type == Auth0.MicrosoftSchemaIdentityClaimsRole).Select(s => s.Value));
+				}
+				else
+				{
+					IsAuthenticated = false;
+				}
+
+				EmailAddress = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+			}
+
+		}
+	}
+
+	public string NameTiny =>
+	!string.IsNullOrEmpty(Username)
+	? $"<span class='text-success'><b>{Username.Truncate(25)}</b></span>"
+	: "";
+	
+	public string Status =>
+	(IsAuthenticated ? "Authenticated" : "NOT Authenticated") + " / " +
+	(IsEmailVerified ? "Email Verified" : "Email NOT Verified");
+
+	public string BlueCheck
+	{
+		get
+		{
+			return IsAuthenticated
+			? "<span class='text-primary'><i class='fas fa-check'></i></span>"
+			: "<span class='text-danger'><i class='fas fa-question'></i></span>";
+		}
+	}
+
+	public string Thumbs
+	{
+		get
+		{
+			return IsEmailVerified
+			? "<span class='text-primary'><i class='far fa-thumbs-up'></i></span>"
+			: "<span class='text-danger'><i class='far fa-thumbs-down'></i></span>";
+		}
+	}
+
+
+}

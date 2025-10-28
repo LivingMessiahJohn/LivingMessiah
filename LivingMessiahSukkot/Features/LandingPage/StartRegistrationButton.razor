@@ -1,0 +1,23 @@
+﻿@using LivingMessiahSukkot.Features.Enums
+@using LivingMessiahSukkot.Features.Enums.Constants
+
+@* @inject ILogger<StartRegistrationButton>? Logger *@
+@inject NavigationManager NavigationManager
+
+<div class="card-body text-center">
+	<button @onclick="ButtonClicked" type="button"
+					class="btn btn-lg btn @(IsAuthenticatedAndVerified ? "btn-success" : " btn-outline-secondary disabled")">
+		@Breadcrumbs.Start.Text
+		<i class="@Breadcrumbs.Start.Icon"></i>
+	</button>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public bool IsAuthenticatedAndVerified { get; set; }
+
+	private void ButtonClicked()
+	{
+		// Logger!.LogInformation("{Method} {Email}", nameof(BeginRegistrationAnchor), Email);
+		NavigationManager!.NavigateTo($"{Pages.RegistrationSteps.Index}");
+	}
+}

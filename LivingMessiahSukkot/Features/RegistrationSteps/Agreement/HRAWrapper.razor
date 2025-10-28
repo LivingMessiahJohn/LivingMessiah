@@ -1,0 +1,29 @@
+﻿@using LivingMessiahSukkot.Features.Enums
+
+@inject ILogger<HRAWrapper>? Logger
+
+<div class="@MediaQuery.Xs.DivClass">
+	<div class="card mt-0 mb-3">
+		<div class="card-body">
+			<VerbiageParagraph />
+			<YesNoButtons EmailParm="@EmailParm" OnActionCompleted="ReturnedActionCompleted" />
+		</div>
+	</div>
+</div>
+
+<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+	<VerbiageParagraph />
+	<YesNoButtons EmailParm="@EmailParm" OnActionCompleted="ReturnedActionCompleted" />
+</div>
+
+@code {
+	[Parameter, EditorRequired] public string? EmailParm { get; set; }
+	[Parameter, EditorRequired] public EventCallback<Step> OnActionCompleted { get; set; }
+
+	private void ReturnedActionCompleted(Step nextStep)
+	{
+		Logger!.LogDebug("{Method}, nextStep: {Status}", nameof(ReturnedActionCompleted), nextStep);
+		OnActionCompleted.InvokeAsync(nextStep);
+	}
+
+}
