@@ -1,0 +1,128 @@
+﻿@page "/PaymentConfirm"
+
+@using LivingMessiahSukkot.Features.Components
+@using static LivingMessiahSukkot.Constants.Auth0
+@using LivingMessiahSukkot.Features.Enums
+@using Microsoft.AspNetCore.Components.Authorization
+@using Page = LivingMessiahSukkot.Features.Enums.Pages
+
+@inject ISecurityHelper? SecurityHelper
+@inject NavigationManager NavigationManager
+@inject ILogger<PaymentConfirm>? Logger
+@inject IToastService? Toast
+@inject Data.IRepository? db
+
+
+<PageTitle>@Page.ConfirmRegistration.Title</PageTitle>
+
+@* 
+ToDo: 
+- investigate how to implement PageHeader and remove<PageTitle>
+- this is dependent on how much of the Admin code removal task is done
+- it's also probably dependent on the refactoring of `NavButtons.cs` and `Pages.cs`
+<PageHeader PageEnum="@Nav.DonateReplyConfirm" /> 
+*@
+
+<AuthorizeView Policy=@Policy.Name>
+  <Authorized>
+    <div class="pb-2 mt-4 mb-2 border-bottom">
+      <h1><span class="text-secondary @Page.ConfirmRegistration.Icon"></span> @Page.ConfirmRegistration.Title</h1>
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+
+      <div class="card border border-dark-subtle border-3" style="width: 40rem;">
+        <div class="card-header fs-2 text-center">Registration Completed</div>
+        <div class="card-body">
+          <p class="fs-6 text-center">Your Stripe transaction has completed successfully!</p>
+
+        </div>
+        <div class="card-body">
+          <p class="fs-4 text-center mb-5">Lets make  this years Sukkot and awesome one!</p>
+        </div>
+        
+        <div class="card-footer">
+
+          <div class="@MediaQuery.XsOrSm.DivClass">
+            <div class="d-flex justify-content-between mt-4">
+              <ReturnToIntroButton Title="" />
+              <button @onclick="@(e => ButtonPrintClick(IdNullable))"
+                      class="btn btn-outline-primary btn-lg"
+                      title="Registration Print"
+                      disabled="@(!IdNullable.HasValue)">
+                <i class="fas fa-print"></i> Print
+              </button>
+            </div>
+          </div>
+
+          <div class="@MediaQuery.MdOrLgOrXl.DivClass">
+            <div class="d-flex justify-content-between mt-4">
+              <ReturnToIntroButton />
+              <button @onclick="@(e => ButtonPrintClick(IdNullable))"
+                      class="btn btn-outline-primary btn-lg"
+                      title="Registration Print"
+                      disabled="@(!IdNullable.HasValue)">
+                <i class="fas fa-print"></i> Print Registration
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+
+  </Authorized>
+  <NotAuthorized>
+    <div class="card border-warning my-5">
+      <div class="card-header">Not Authorized</div>
+    </div>
+  </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+  protected int? IdNullable;
+  protected int Id;
+  string? Email;
+
+  protected override async Task OnInitializedAsync()
+  {
+    Email = await SecurityHelper!.GetEmail();
+
+    if (String.IsNullOrEmpty(Email))
+    {
+      Logger!.LogDebug("{Method} Email is null or Empty", nameof(OnInitializedAsync));
+    }
+    else
+    {
+      try
+      {
+        IdNullable = await db!.GetRegistrationIdByEmail(Email);
+        if (IdNullable.HasValue)
+        {
+          Id = IdNullable.Value;
+          Logger!.LogInformation("{Method} {Id}", nameof(OnInitializedAsync), Id);
+        }
+        else
+        {
+          Toast!.ShowWarning("Registration not found");
+        } 
+      }
+      catch (Exception ex)
+      {
+        Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+        Toast!.ShowError("An invalid operation occurred, contact your administrator");
+      }
+    }
+  }
+  void ButtonPrintClick(int? id)
+  {
+    if (id is not null)
+    {
+      NavigationManager!.NavigateTo($"{Enums.Pages.Print.Index}/{id}/true");
+    }
+  }
+}

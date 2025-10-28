@@ -27,7 +27,6 @@ using LivingMessiah.Features.Sukkot.Endpoints;
 using LivingMessiah.Features.Sukkot.Endpoints.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.AddServiceDefaults();
 
 string appSettingJson =
@@ -60,6 +59,7 @@ try
 	*/
 	Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(builder.Configuration["SyncfusionLicense"] ?? "");
 
+	//Services.Add
 	builder.Services.AddBlazoredToast();
 	builder.Services.AddBlazoredLocalStorage();
 
@@ -71,18 +71,11 @@ try
 	builder.Services.AddAuthorizationBuilder()
 			.AddPolicy(Policy.Name, policy =>
 				policy.RequireClaim(Policy.Claim, "true"));
-
 	builder.Services.AddScoped<AppState>(); // Scoped is more common for Blazor Server apps	
-
 	builder.Services.AddApplicationInsightsTelemetry();
-
-
-	//Services
-	//builder.Services.AddOneTimeData(); ToDo: add
 	builder.Services.AddSukkotData();
 	builder.Services.AddCalendar();
 	builder.Services.AddFeastDayPlanner();
-
 	builder.Services.AddAuth0WebAppAuthentication(options =>
 	{
 		options.Domain = builder.Configuration[Configuration.Domain] ?? "";
@@ -102,12 +95,8 @@ try
 	//LivingMessiah.Helpers.LogHelper.DumpSectionConfiguration(builder.Configuration.GetSection(nameof(SukkotSettings)), nameof(SukkotSettings));
 
 	builder.Services.Configure<StripeSettings>(options => configuration.GetSection(nameof(StripeSettings)).Bind(options));
-
-	builder.Services.AddRazorComponents()
-			.AddInteractiveServerComponents();
-
+	builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 	builder.Services.AddSyncfusionBlazor();
-
 	builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 	/*
@@ -122,6 +111,7 @@ try
 	var app = builder.Build();
 	app.MapDefaultEndpoints();
 
+	//app.Use
 	if (!app.Environment.IsDevelopment())
 	{
 		app.UseExceptionHandler("/Error", createScopeForErrors: true);
@@ -133,7 +123,6 @@ try
 	}
 
 	app.UseSerilogRequestLogging();
-
 	app.UseHttpsRedirection();
 	app.UseAntiforgery();
 
@@ -158,14 +147,12 @@ try
 	});
 	#endregion
 
-	app.MapRazorComponents<App>()
-			.AddInteractiveServerRenderMode();
+	app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
 	#region Sukkot Stripe Endpoints
 	SukkotSettings? sukkotSettings = configuration.GetSection(nameof(SukkotSettings)).Get<SukkotSettings>();
 	SukkotEndpointsCheckoutSession.CheckoutSessionConfig(app, Donation.SukkotRegistration.SessionUrl, sukkotSettings!.Domain!);
 	SukkotEndpointsWebhook.WebhookConfig(app, Donation.SukkotRegistration.WebhookUrl);
-
 	#endregion
 
 	app.Run();

@@ -1,0 +1,60 @@
+﻿@using Microsoft.AspNetCore.Components
+@using LivingMessiahSukkot.Features.Enums;
+
+<div class="mt-0">
+	<ul style="list-style-type:none; padding-inline-start: 0px">
+		@foreach (var item in AttendanceDate.List.Where(w => w.Value != AttendanceDate.None).OrderBy(o => o.Value).ToList())
+		{
+			<li class="font-monospace @GetCSS(item.Date)">
+				<input type="checkbox"
+					   checked="@IsSelected(item.Date)"
+					   @onchange="() => ToggleDate(item.Date)" />
+				<span>@item.Title</span>
+			</li>
+		}
+	</ul>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public DateTime[]? SelectedDates { get; set; }
+	[Parameter] public EventCallback<DateTime[]> SelectedDatesChanged { get; set; }
+
+	private bool IsSelected(DateTime date) =>
+		SelectedDates != null && Array.Exists(SelectedDates, d => d == date);
+
+	private async Task ToggleDate(DateTime date)
+	{
+		if (SelectedDates == null)
+		{
+			SelectedDates = new[] { date };
+		}
+		else if (IsSelected(date))
+		{
+			SelectedDates = SelectedDates.Where(d => d != date).ToArray();
+		}
+		else
+		{
+			SelectedDates = SelectedDates.Append(date).ToArray();
+		}
+		await SelectedDatesChanged.InvokeAsync(SelectedDates);
+	}
+
+	private string GetCSS(DateTime date)
+	{
+		if (SelectedDates is null)
+		{
+			return "";
+		}
+		else
+		{
+			if (Array.Exists(SelectedDates, d => d == date))
+			{
+				return "fw-bold text-primary";
+			}
+			else
+			{
+				return "";
+			}
+		}
+	}
+}

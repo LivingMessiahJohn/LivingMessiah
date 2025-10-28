@@ -1,0 +1,35 @@
+﻿@page "/auth-failed"
+
+@using Microsoft.AspNetCore.Components
+@inject NavigationManager NavigationManager
+@inject ILogger<AuthCancelled> Logger
+
+<PageHeader PageEnum="Nav.AuthCanceled" />
+
+@if (!string.IsNullOrEmpty(ErrorDescription))
+{
+  <div class="alert alert-warning">
+    You canceled sign-in: @ErrorDescription
+  </div>
+}
+else
+{
+  <div class="alert alert-warning">
+    You canceled sign-in or did not authorize the request.
+  </div>
+}
+
+<button class="btn btn-primary" type="button" @onclick="ReturnToLandingPage">Return home</button>
+
+@code {
+  [SupplyParameterFromQuery(Name = "error")] public string? Error { get; set; }
+  [SupplyParameterFromQuery(Name = "error_description")] public string? ErrorDescription { get; set; }
+
+  protected override void OnInitialized()
+  {
+    Logger!.LogInformation("{Method}, {Message}", nameof(OnInitialized), $"Error: {Error}, {ErrorDescription}");
+  }
+
+  private void ReturnToLandingPage() => NavigationManager.NavigateTo(Nav.LandingPage.Index);
+
+}

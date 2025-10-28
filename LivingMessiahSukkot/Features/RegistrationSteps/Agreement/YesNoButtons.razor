@@ -1,0 +1,66 @@
+﻿@using LivingMessiahSukkot.Features.Enums
+@using static LivingMessiahSukkot.Constants.Global
+
+@* [Inject] AppState? AppState { get; set; } *@
+
+@inject ILogger<YesNoButtons>? Logger
+@inject IToastService? Toast
+@inject Data.IRepository? db
+@inject NavigationManager NavigationManager
+
+<div class="row col-12 my-2">
+	<div class="mb-3">
+
+		<button @onclick="@(() => DoNotAgree_ButtonClick())"
+						class="btn btn-danger">
+			<i class="far fa-hand-paper"></i> No, I Do NOT Agree
+		</button>
+
+		<button @onclick="@(() => Agree_ButtonClick())"
+						class="btn btn-success">
+			<i class="fas fa-check"></i> Yes, I Agree
+		</button>
+
+	</div>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public string? EmailParm { get; set; }
+	[Parameter, EditorRequired] public EventCallback<Step> OnActionCompleted { get; set; } //
+
+	void DoNotAgree_ButtonClick()
+	{
+		Logger!.LogDebug("{Method}", nameof(DoNotAgree_ButtonClick));
+		Toast!.ShowWarning("Not agreeing to the House Rules Agreement terminates the Registration Process");
+		NavigationManager!.NavigateTo($"{Nav.LandingPage.Index}", forceLoad: false);
+	}
+
+	private async Task Agree_ButtonClick()
+	{
+		try
+		{
+			var sprocTuple = await db!.InsertHouseRulesAgreement(EmailParm!, GetLocalTimeZone());
+			Logger!.LogDebug("{Method} id: {id}", nameof(Agree_ButtonClick), sprocTuple.Item3);
+			
+			/*
+			ToDo: convert to named Tuples
+			var (newId, sprocReturnValue, returnMsg) = await db!.InsertHouseRulesAgreement(EmailParm!, GetLocalTimeZone());
+			Logger!.LogDebug("{Method} id: {id}", nameof(Agree_ButtonClick), newId);
+			*/
+
+			Toast!.ShowInfo("Record updated for House Rules Agreement");
+			await OnActionCompleted.InvokeAsync(Step.Registration);
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(Agree_ButtonClick));
+			Toast!.ShowError($"{ToastShowError}");
+		}
+	}
+
+	private string GetLocalTimeZone()
+	{
+		return $"Time Zone: {TimeZoneInfo.Local}.";
+	}
+
+}

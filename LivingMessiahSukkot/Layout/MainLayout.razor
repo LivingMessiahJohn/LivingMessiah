@@ -1,0 +1,25 @@
+﻿@using LivingMessiahSukkot.Layout.MenuNavbar
+@using LivingMessiahSukkot.Features.Security
+
+@inherits LayoutComponentBase
+
+<header>
+	<Wrapper />
+	<Authorize />
+	<BlazoredToasts />
+</header>
+
+@* Full width requires px-0 ... <div class="container-fluid px-0"> *@
+<div class="container-fluid">
+  @Body
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+<footer class="text-muted">
+  <Footer />
+</footer>

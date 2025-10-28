@@ -1,0 +1,15 @@
+﻿@using LivingMessiahSukkot.Features.Enums
+@using LivingMessiahSukkot.Features.RegistrationSteps.PaymentStep
+
+<h2 class="text-success text-center">Success <i class="fas fa-exclamation"></i></h2>
+
+<p class="fs-3 text-center my-3">You have completed the task of Sukkot Registration! <i class="far fa-smile-wink fa-fw fa-2x"></i></p>
+
+<p class="fs-5 text-center">
+  If you want a receipt, click	<PrintButton Id="Id" /> and click the Print button on the top right.
+</p>
+
+
+@code {
+	[Parameter, EditorRequired] public int Id { get; set; }
+}

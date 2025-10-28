@@ -1,0 +1,89 @@
+﻿
+@using LivingMessiahSukkot.Settings
+@using Microsoft.Extensions.Options
+@using static LivingMessiahSukkot.Constants.Emoji
+@using static LivingMessiahSukkot.Constants.Global
+
+@inject IOptions<LifeCyclePhaseSetting>? Setting
+@inject ILogger<LifeCycleAuthority>? Logger
+@inject IToastService? Toast
+
+<LoadingComponent IsLoading="isDone==false" TurnSpinnerOff=TurnSpinnerOff>
+
+  @if (lifeCyclePhaseEnum == LifeCyclePhaseEnum.RegistrationOpen)
+  {
+    @OpenContent
+  }
+  else
+  {
+    @if (lifeCyclePhaseEnum == LifeCyclePhaseEnum.GetReady)
+    {
+      <div class="p-5 my-4 bg-warning rounded-3">
+        <div class="container-fluid py-5">
+          <h1 class="display-5 fw-bold text-center">
+            Sukkot Registration is getting close!
+            <br> @Surprise
+          </h1>
+          <h4 class="text-center mt-5">Start getting prepared and making plans</h4>
+        </div>
+      </div>
+    }
+    else
+    {
+      if (lifeCyclePhaseEnum == LifeCyclePhaseEnum.Over)
+      {
+        <div class="p-5 my-4 bg-danger rounded-3">
+          <div class="container-fluid py-5">
+            <h1 class="display-4 fw-bold text-center">
+              Sukkot Is Over
+              <br> @Sad
+            </h1>
+            <h4 class="text-center mt-5">We had a great time as usual, hope to see you next year.</h4>
+          </div>
+        </div>
+      }
+      else
+      {
+        <p>Unknown Sukkot LifeCyclePhase</p>
+      }
+    }
+
+  }
+</LoadingComponent>
+
+@code {
+  [Parameter] public RenderFragment? OpenContent { get; set; }
+
+  protected int lifeCyclePhase;
+  protected LifeCyclePhaseEnum lifeCyclePhaseEnum;
+
+
+  protected bool TurnSpinnerOff = false;
+  protected bool isDone = false;
+
+  protected override void OnInitialized()
+  {
+    try
+    {
+      lifeCyclePhase = Setting!.Value!.LifeCyclePhase;
+
+      if (lifeCyclePhase == 0)
+      {
+        throw new InvalidOperationException("lifeCyclePhase==0");
+      }
+      lifeCyclePhaseEnum = (LifeCyclePhaseEnum)Setting!.Value.LifeCyclePhase;
+
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(OnInitialized));
+      Toast!.ShowError($"{ToastShowError} {nameof(LifeCycleAuthority)}!{nameof(OnInitialized)}");
+    }
+    finally
+    {
+      isDone = true;
+      TurnSpinnerOff = true;
+    }
+  }
+
+}
