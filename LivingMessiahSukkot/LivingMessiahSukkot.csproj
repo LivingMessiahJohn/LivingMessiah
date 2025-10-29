@@ -42,5 +42,10 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\LivingMessiah.ServiceDefaults\LivingMessiah.ServiceDefaults.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Features\Enums\Helpers\" />
+	  <Folder Include="Features\NormalUser\" />
+	</ItemGroup>
 	
 </Project>

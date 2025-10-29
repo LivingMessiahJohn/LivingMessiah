@@ -1,9 +1,9 @@
 ﻿using LivingMessiahSukkot.Constants;
 using LivingMessiahSukkot.Features.Enums;
 
-namespace LivingMessiahSukkot.Features.NormalUser;
+namespace LivingMessiahSukkot.Features.Components.RegistrationForm;
 
-public class EntryFormVM
+public class VM
 {
 	public int Id { get; set; }
 	public string? FamilyName { get; set; }
@@ -18,7 +18,7 @@ public class EntryFormVM
 	public int ChildSmall { get; set; }
 	public int FeeEnumValue { get; set; }
 
-	public int StepId { get; set; } // The ManageRegistration!EntryForm needs this
+	public int StepId { get; set; } 
 	public Step? Step { get; set; }
 
 	public int AttendanceBitwise { get; set; } // does the VM need this?

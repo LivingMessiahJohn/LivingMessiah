@@ -1,9 +1,9 @@
 ﻿@page "/Sukkot"
 
+@using LivingMessiahAdmin.Features.Sukkot.Components.RegistrationForm
 @using LivingMessiahAdmin.Features.Sukkot.Enums
 @using LivingMessiahAdmin.Features.Sukkot.Home.Data
 @using LivingMessiahAdmin.Features.Sukkot.Home.Donations
-@using LivingMessiahAdmin.Features.Sukkot.Home.Registrant
 @using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationList
 @using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationList.Enums
 @using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationDetail
@@ -48,7 +48,7 @@
         <div class="card mt-0 mb-3 @Step.Registration.CardBodyCSS">
           <div class="card-body @Step.Registration.CardBodyCSS">
             @*  OnAddCompleted="ReturnedRegistrationAddCompleted"  *@
-            <RegistrantForm Email="@Email" Id="@Id"  CurrentStep="Step.Registration"/>
+            <Form Email="@Email" Id="@Id"  CurrentStep="Step.Registration"/>
           </div>
         </div>
       }

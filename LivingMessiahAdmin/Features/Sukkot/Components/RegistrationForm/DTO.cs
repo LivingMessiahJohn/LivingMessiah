@@ -1,4 +1,4 @@
-﻿namespace LivingMessiahAdmin.Features.Sukkot.Home.Registrant;
+﻿namespace LivingMessiahAdmin.Features.Sukkot.Components.RegistrationForm;
 
 public record DTO
 {

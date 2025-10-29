@@ -1,4 +1,4 @@
-﻿namespace LivingMessiahAdmin.Features.Sukkot.Home.Registrant.Constants;
+﻿namespace LivingMessiahAdmin.Features.Sukkot.Components.RegistrationForm.Constants;
 
 public static class CancelButton
 {

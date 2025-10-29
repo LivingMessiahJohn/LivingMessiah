@@ -1,5 +1,4 @@
-﻿@using LivingMessiahSukkot.Features.Enums
-@using LivingMessiahSukkot.Features.Enums.Constants
+﻿@using LivingMessiahSukkot.Features.Enums.Constants
 
 @* @inject ILogger<StartRegistrationButton>? Logger *@
 @inject NavigationManager NavigationManager
@@ -18,6 +17,6 @@
 	private void ButtonClicked()
 	{
 		// Logger!.LogInformation("{Method} {Email}", nameof(BeginRegistrationAnchor), Email);
-		NavigationManager!.NavigateTo($"{Pages.RegistrationSteps.Index}");
+		NavigationManager!.NavigateTo($"{Nav.Steps.Index}");
 	}
 }
