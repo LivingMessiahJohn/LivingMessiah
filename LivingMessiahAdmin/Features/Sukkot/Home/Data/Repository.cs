@@ -5,6 +5,7 @@ using SukkotEnumsHelper = LivingMessiahAdmin.Features.Sukkot.Enums.Helper;
 using DataEnumsDatabase = LivingMessiahAdmin.Data.Enums.Database;
 using LivingMessiahAdmin.Data;
 using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationDetail;
+using LivingMessiahAdmin.Features.Sukkot.Components.RegistrationForm;
 
 namespace LivingMessiahAdmin.Features.Sukkot.Home.Data;
 
@@ -13,11 +14,11 @@ public interface IRepository
 	string BaseSqlDump { get; }
 	string BaseServerId { get; }
 	Task<List<RegistrationListQuery>> GetAll();
-	Task<Registrant.FormVM> Get(int id);
+	Task<VM> Get(int id);
 
 	Task<Tuple<int, int, string>> InsertHouseRulesAgreement(string email, string timeZone);  // FN:1
-	Task<Tuple<int, int, string>> CreateRegistration(Registrant.DTO formVM);
-	Task<Tuple<int, int, string>> UpdateRegistration(Registrant.DTO formVM);
+	Task<Tuple<int, int, string>> CreateRegistration(DTO formVM);
+	Task<Tuple<int, int, string>> UpdateRegistration(DTO formVM);
 	
 	Task<RegistrationQuery> ById(int id);
 }
@@ -103,7 +104,7 @@ ORDER BY FullName
 		});
 	}
 
-	public async Task<Registrant.FormVM> Get(int id)
+	public async Task<VM> Get(int id)
 	{
 		Parms = new DynamicParameters(new { Id = id });
 		Sql = $@"
@@ -122,12 +123,12 @@ WHERE Id = @Id";
 		return await WithConnectionAsync(async connection =>
 		{
 			Logger!.LogDebug("{Method} {Sql} {id} ", nameof(Get), Sql, id);
-			var rows = await connection.QueryAsync<Registrant.FormVM>(sql: Sql, param: Parms);
+			var rows = await connection.QueryAsync<VM>(sql: Sql, param: Parms);
 			return rows.SingleOrDefault()!;
 		});
 	}
 
-	public async Task<Tuple<int, int, string>> CreateRegistration(Registrant.DTO formVM) //Registrant.FormVM formVM
+	public async Task<Tuple<int, int, string>> CreateRegistration(DTO formVM) // Form.razor
 	{
 		Sql = "Sukkot.stpRegistrationInsert";
 		Parms = new DynamicParameters(new
@@ -192,7 +193,7 @@ WHERE Id = @Id";
 		});
 	}
 
-	public async Task<Tuple<int, int, string>> UpdateRegistration(Registrant.DTO formVM) // Registrant.FormVM 
+	public async Task<Tuple<int, int, string>> UpdateRegistration(DTO formVM) // Registrant.FormVM 
 	{
 		Sql = "Sukkot.stpRegistrationUpdate";
 		Parms = new DynamicParameters(new

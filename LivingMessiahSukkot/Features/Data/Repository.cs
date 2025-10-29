@@ -3,7 +3,7 @@ using System.Data;
 using DataEnumsDatabase = LivingMessiahSukkot.Data.Enums.Database;
 using LivingMessiahSukkot.Data;
 using LivingMessiahSukkot.Features.Domain;
-using LivingMessiahSukkot.Features.NormalUser;
+using LivingMessiahSukkot.Features.Components.RegistrationForm;
 
 namespace LivingMessiahSukkot.Features.Data;
 
@@ -22,7 +22,7 @@ public interface IRepository
 
 	Task<RegistrationQuery> ById(int id);
 	Task<vwRegistrationStep> GetByEmail(string email);
-	Task<EntryFormVM> GetById2(int id);   //ViewModel_RE_DELETE
+	Task<VM> GetById2(int id);   //ViewModel_RE_DELETE
 	Task<Tuple<int, int, string>> Create(DTO registration);
 	Task<Tuple<int, int, string>> Update(DTO registration);
 	// FN:1 Also used by RegistrationSteps/Wrapper/YesNoButtons
@@ -266,7 +266,7 @@ WHERE EMail = @EMail
 		});
 	}
 
-	public async Task<EntryFormVM> GetById2(int id)  //ViewModel_RE_DELETE
+	public async Task<VM> GetById2(int id)  //ViewModel_RE_DELETE
 	{
 		Parms = new DynamicParameters(new { Id = id });
 		Sql = $@"
@@ -281,7 +281,7 @@ WHERE Id = @Id";
 		return await WithConnectionAsync(async connection =>
 		{
 			Logger!.LogDebug("{Method} {Sql} {id} ", nameof(GetById2), Sql, id);
-			var rows = await connection.QueryAsync<EntryFormVM>(sql: Sql, param: Parms);  //ViewModel_RE_DELETE
+			var rows = await connection.QueryAsync<VM>(sql: Sql, param: Parms);  //ViewModel_RE_DELETE
 			return rows.SingleOrDefault()!;
 		});
 	}

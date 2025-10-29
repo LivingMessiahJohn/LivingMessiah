@@ -1,10 +1,8 @@
 ﻿@page "/PaymentConfirm"
 
+@using Microsoft.AspNetCore.Components.Authorization
 @using LivingMessiahSukkot.Features.Components
 @using static LivingMessiahSukkot.Constants.Auth0
-@using LivingMessiahSukkot.Features.Enums
-@using Microsoft.AspNetCore.Components.Authorization
-@using Page = LivingMessiahSukkot.Features.Enums.Pages
 
 @inject ISecurityHelper? SecurityHelper
 @inject NavigationManager NavigationManager
@@ -13,20 +11,12 @@
 @inject Data.IRepository? db
 
 
-<PageTitle>@Page.ConfirmRegistration.Title</PageTitle>
-
-@* 
-ToDo: 
-- investigate how to implement PageHeader and remove<PageTitle>
-- this is dependent on how much of the Admin code removal task is done
-- it's also probably dependent on the refactoring of `NavButtons.cs` and `Pages.cs`
-<PageHeader PageEnum="@Nav.DonateReplyConfirm" /> 
-*@
+<PageTitle>@Nav.ConfirmRegistration.Title</PageTitle>
 
 <AuthorizeView Policy=@Policy.Name>
   <Authorized>
     <div class="pb-2 mt-4 mb-2 border-bottom">
-      <h1><span class="text-secondary @Page.ConfirmRegistration.Icon"></span> @Page.ConfirmRegistration.Title</h1>
+      <h1><span class="text-secondary @Nav.ConfirmRegistration.Icon"></span> @Nav.ConfirmRegistration.Title</h1>
     </div>
 
     <div class="d-flex justify-content-center mt-4">
@@ -122,7 +112,7 @@ ToDo:
   {
     if (id is not null)
     {
-      NavigationManager!.NavigateTo($"{Enums.Pages.Print.Index}/{id}/true");
+      NavigationManager!.NavigateTo($"{Nav.Print.Index}/{id}/true");
     }
   }
 }

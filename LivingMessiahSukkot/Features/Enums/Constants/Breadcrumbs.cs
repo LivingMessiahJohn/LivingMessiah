@@ -1,5 +1,6 @@
 ﻿namespace LivingMessiahSukkot.Features.Enums.Constants;
 
+// ToDo: can this be removed?
 public static class Breadcrumbs
 {
 	public static class Start

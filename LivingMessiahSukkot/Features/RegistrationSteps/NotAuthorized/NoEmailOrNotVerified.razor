@@ -6,7 +6,7 @@
 			@if (String.IsNullOrEmpty(Email))
 			{
 				<div class="">user not logged in</div> <br />
-				<LoginRedirectButton ReturnUrl="@NavButton.RegistrationSteps.Route" />
+				<LoginRedirectButton ReturnUrl="@Nav.Steps.Index" />
 			}
 			else
 			{

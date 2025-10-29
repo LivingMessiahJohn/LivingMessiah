@@ -1,14 +1,13 @@
 ﻿@using Blazored.FluentValidation
-@using LivingMessiahAdmin.Features.Sukkot.Home.Registrant.Constants
-@using LivingMessiahAdmin.Features.Sukkot.Home.Data
-@using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationDetail
+@using LivingMessiahSukkot.Features.Enums
+@using LivingMessiahSukkot.Features.Data
+@using LivingMessiahSukkot.Features
+@using RegistrationFeeEnums = LivingMessiahSukkot.Features.Enums;
+@using static LivingMessiahSukkot.Constants.Global
 
-@using SukkotEnums = LivingMessiahAdmin.Features.Sukkot.Enums
-@using SukkotEnumsHelpers = LivingMessiahAdmin.Features.Sukkot.Enums.Helpers
-
-@inject ILogger<RegistrantForm>? Logger
-@inject IToastService? Toast
 @inject IRepository? db
+@inject ILogger<Form>? Logger
+@inject IToastService? Toast
 
 @* Hack: I'm using LoadingComponent because AddOrEditState (a record) can't be null  *@
 
@@ -84,6 +83,7 @@
       <legend class="text-primary">Attendance</legend>
 
       <div class="row mt-n2">
+
         <div class="col-12">
           <div class="card bg-light mb-3">
             <div class="card-body">
@@ -94,7 +94,7 @@
           </div>
         </div>
       </div>
-
+      
       <p class="text-center">
         Date Range: @DateRangeAttendance.Range.Min.ToShortDateString() - @DateRangeAttendance.Range.Max.ToShortDateString()
       </p>
@@ -119,7 +119,7 @@
                          class="form-control"
                          @bind-Value="VM.Adults"
                          placeholder="Adult Count"
-                         disabled="@(CurrentStep?.Value == SukkotEnums.Step.Complete.Value)" />
+                         disabled="@(CurrentStep?.Value == Step.Complete.Value)" />
             <label for="adults" class="form-label">Adults</label>
             <ValidationMessage For="@(() => VM.Adults)" />
 
@@ -162,7 +162,7 @@
       </div>
     </fieldset>
 
-    <button type="submit" class="btn btn-primary btn-sm mt-2">
+    <button type="submit" class="btn btn-primary btn-lg mt-2">
       <i class="fas fa-save"></i> @AddOrEditState!.SubmitButtonText
     </button>
 
@@ -170,24 +170,26 @@
 
 </LoadingComponent>
 
-
 @code {
-  [Parameter, EditorRequired] public int Id { get; set; }
+  [Parameter, EditorRequired] public int? Id { get; set; }
   [Parameter, EditorRequired] public string? Email { get; set; }
-  [Parameter, EditorRequired] public SukkotEnums.Step? CurrentStep { get; set; }
-
-  protected FormVM? VM { get; set; } = new FormVM();
-
-  private FluentValidationValidator? _fluentValidationValidator;
-  public SukkotEnums.DateRangeType DateRangeAttendance { get; set; } = SukkotEnums.DateRangeType.Attendance;
+  [Parameter, EditorRequired] public Step? CurrentStep { get; set; }
+  [Parameter] public EventCallback<StepAndRegFee> OnAddCompleted { get; set; }
+  [Parameter] public EventCallback<int> OnUpdateCompleted { get; set; }
 
   bool TurnSpinnerOff = false;
-  EntryFormAddOrEditRecord? AddOrEditState;
-  private int Id2;
 
+  protected VM? VM { get; set; } = new VM();
+
+  private FluentValidationValidator? _fluentValidationValidator;
+  public Enums.DateRangeType DateRangeAttendance { get; set; } = Enums.DateRangeType.Attendance;
+
+  AddOrEditRecord? AddOrEditState;
+
+  private int Id2;
   protected override async Task OnInitializedAsync()
   {
-    Id2 = Id; // Id ?? 0;
+    Id2 = Id ?? 0;
     Logger!.LogDebug("{Method}, Action: {Action} Id2:{id}; Email: {Email}"
       , nameof(OnInitializedAsync), Id2 == 0 ? "Add" : "Update", Id2, Email);
 
@@ -195,13 +197,13 @@
     {
       if (Id2 == 0)
       {
-        VM = new FormVM();
+        VM = new VM();
         VM.EMail = Email;
-        AddOrEditState = new EntryFormAddOrEditRecord(IsAdd: true, "Add - Registration", Email!, "Save");
+        AddOrEditState = new AddOrEditRecord(IsAdd: true, "Add - Registration", Email!, "Save");
       }
       else
       {
-        AddOrEditState = new EntryFormAddOrEditRecord(IsAdd: false, "Edit - Registration", $"{Email}", "Update");
+        AddOrEditState = new AddOrEditRecord(IsAdd: false, "Edit - Registration", $"{Email}", "Update");
         VM = await GetById(Id2);
       }
     }
@@ -209,21 +211,23 @@
     catch (Exception ex)
     {
       Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
-      Toast!.ShowError(Global.ToastShowError);
+      Toast!.ShowError(ToastShowError);
+      
     }
+
     TurnSpinnerOff = true;
   }
 
-  private async Task<FormVM> GetById(int id)
+  private async Task<VM> GetById(int id)
   {
     Logger!.LogInformation("{Method} id: {id}", nameof(GetById), id);
 
-    FormVM? VM = new();
+    VM? VM = new();
     try
     {
-      VM = await db!.Get(id);  
-      VM.Step = SukkotEnums.Step.FromValue(VM.StepId);
-      var (week1, week2) = SukkotEnumsHelpers.EntryFormHelper.GetAttendanceDatesArray(VM.AttendanceBitwise);
+      VM = await db!.GetById2(id);
+      VM.Step = Step.FromValue(VM.StepId);
+      var (week1, week2) = FormHelper.GetAttendanceDatesArray(VM.AttendanceBitwise);
       VM.AttendanceDateList = week1;
       VM.AttendanceDateList2ndMonth = week2;
 
@@ -231,7 +235,7 @@
     catch (Exception ex)
     {
       Logger!.LogError(ex, "{Method}", nameof(GetById));
-      Toast!.ShowError(Global.ToastShowError);
+      Toast!.ShowError(ToastShowError);
     }
     return VM;
 
@@ -244,14 +248,14 @@
     {
       if (AddOrEditState!.IsAdd)
       {
-        VM!.Step = SukkotEnums.Step.Payment;
-        VM.AttendanceBitwise = SukkotEnumsHelpers.EntryFormHelper.GetDaysBitwise(
-            VM.AttendanceDateList!, VM.AttendanceDateList2ndMonth!, SukkotEnums.DateRangeType.Attendance);
-        var (newId, sprocReturnValue, returnMsg) = await db!.CreateRegistration(DTO_From_VM_To_DB(VM));
+        VM!.Step = Step.Payment;
+        VM.AttendanceBitwise = FormHelper.GetDaysBitwise(VM.AttendanceDateList!
+          , VM.AttendanceDateList2ndMonth!, DateRangeType.Attendance);
+        var (newId, sprocReturnValue, returnMsg) = await db!.Create(DTO_From_VM_To_DB(VM));
         if (newId == 0)
         {
           Logger!.LogWarning("{Method} {Message} {Sql} {ReturnValue} {ReturnMsg}"
-          , nameof(SubmitValidForm), "Registration NOT CREATED! newId==0", nameof(db.CreateRegistration), sprocReturnValue, returnMsg);
+          , nameof(SubmitValidForm), "Registration NOT CREATED! newId==0", nameof(db.Create), sprocReturnValue, returnMsg);
           Toast!.ShowError("Error creating registration");
           return;
         }
@@ -259,23 +263,25 @@
         {
           Logger!.LogInformation("{Method} Registration created! Id2:{id}", nameof(SubmitValidForm), Id2);
           Toast!.ShowInfo($"Registration Added!");
+          await OnAddCompleted.InvokeAsync(new StepAndRegFee(Step.Payment, RegistrationFeeHelper.AdultsToRegistrationFee(VM.Adults)));
         }
       }
       else
       {
-        var (rowsAffected, sprocReturnValue, returnMsg) = await db!.UpdateRegistration(DTO_From_VM_To_DB(VM!));
+        var (rowsAffected, sprocReturnValue, returnMsg) = await db!.Update(DTO_From_VM_To_DB(VM!));
         Logger!.LogInformation("{Method}; Registration updated!", nameof(SubmitValidForm));
         Toast!.ShowInfo($"Registration updated!");
+        await OnUpdateCompleted.InvokeAsync(VM!.Adults);
       }
     }
     catch (Exception ex)
     {
       Logger!.LogError(ex, "{Method} {Action}", nameof(SubmitValidForm), AddOrEditState!.Title);
-      Toast!.ShowError(Global.ToastShowError);
+      Toast!.ShowError(ToastShowError);
     }
   }
 
-  private DTO DTO_From_VM_To_DB(FormVM vm)
+  private DTO DTO_From_VM_To_DB(VM vm)
   {
     DTO poco = new DTO
     {
@@ -289,12 +295,11 @@
       Adults = vm.Adults,
       ChildBig = vm.ChildBig,
       ChildSmall = vm.ChildSmall,
-      FeeEnumValue = SukkotEnumsHelpers.RegistrationFeeHelper.AdultsToRegistrationFee(vm.Adults),
-      StatusId = vm.Step, //  StepId = vm.Step!.Value,
-      AttendanceBitwise = SukkotEnumsHelpers.EntryFormHelper.GetDaysBitwise(
-        vm.AttendanceDateList!, vm.AttendanceDateList2ndMonth!, SukkotEnums.DateRangeType.Attendance),
-      Notes = LivingMessiahAdmin.Data.Helper.Scrub(vm.Notes),
-      Avatar = string.Empty
+      StatusId = vm.Step!.Value, // ToDo Convert to StepId
+      AttendanceBitwise = FormHelper.GetDaysBitwise(vm.AttendanceDateList!, vm.AttendanceDateList2ndMonth!, DateRangeType.Attendance),
+      Avatar = vm.Avatar,
+      FeeEnumValue = RegistrationFeeHelper.AdultsToRegistrationFee(vm.Adults),
+      Notes = vm.Notes
     };
     return poco;
   }

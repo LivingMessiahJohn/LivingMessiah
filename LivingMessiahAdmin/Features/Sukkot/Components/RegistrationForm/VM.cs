@@ -1,9 +1,8 @@
-﻿
-using LivingMessiahAdmin.Features.Sukkot.Enums;
+﻿using LivingMessiahAdmin.Features.Sukkot.Enums;
 
-namespace LivingMessiahAdmin.Features.Sukkot.Home.Registrant;
+namespace LivingMessiahAdmin.Features.Sukkot.Components.RegistrationForm;
 
-public class FormVM
+public class VM
 {
 	public int Id { get; set; }
 	public string? FamilyName { get; set; }

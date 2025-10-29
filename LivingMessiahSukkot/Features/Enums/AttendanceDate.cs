@@ -2,7 +2,6 @@ using Ardalis.SmartEnum;
 
 namespace LivingMessiahSukkot.Features.Enums;
 
-//  Used by: NormalUser\AttendanceDateList.razor
 public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 {
 	#region Id's

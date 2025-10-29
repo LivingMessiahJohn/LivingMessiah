@@ -1,12 +1,11 @@
-﻿@page "/RegistrationSteps"
-@page "/RegistrationShell"
+﻿@page "/Steps"
 
 @using Microsoft.AspNetCore.Components.Authorization
 
 @using LivingMessiahSukkot.Features.Components
+@using LivingMessiahSukkot.Features.Components.RegistrationForm
 @using LivingMessiahSukkot.Features.Constants
 @using LivingMessiahSukkot.Features.Enums
-@using LivingMessiahSukkot.Features.NormalUser
 @using LivingMessiahSukkot.Features.RegistrationSteps.Agreement
 @using LivingMessiahSukkot.Features.RegistrationSteps.NotAuthorized
 @using LivingMessiahSukkot.Features.RegistrationSteps.PaymentStep
@@ -17,7 +16,7 @@
 @inject IToastService? Toast
 @inject Data.IRepository? db
 
-<PageHeader PageEnum="Nav.RegistrationSteps" />
+<PageHeader PageEnum="Nav.Steps" />
 
 <LifeCycleAuthority>
   <OpenContent>
@@ -55,7 +54,7 @@
               {
                 <div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
                   <div class="card-body @CurrentStep!.CardBodyCSS">
-                    <EntryForm Email="@Email" Id="null"
+                    <Form Email="@Email" Id="null"
                                CurrentStep="CurrentStep"
                                OnAddCompleted="ReturnedRegistrationAddCompleted" />
                   </div>

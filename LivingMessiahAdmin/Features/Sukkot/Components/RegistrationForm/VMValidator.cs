@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace LivingMessiahAdmin.Features.Sukkot.Home.Registrant;
+namespace LivingMessiahAdmin.Features.Sukkot.Components.RegistrationForm;
 
-public class FormVMValidator : AbstractValidator<FormVM>
+public class VMValidator : AbstractValidator<VM>
 {
-	public FormVMValidator()
+	public VMValidator()
 	{
 		RuleFor(p => p.FirstName)
 			.NotEmpty().WithMessage("You must enter your first name")

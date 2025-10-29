@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using LivingMessiahSukkot.Features.Components.RegistrationForm;
 
 namespace LivingMessiahSukkot.Features.Data;
 
@@ -9,7 +10,7 @@ public static class ServiceCollectionExtensions
 		services
 			.AddTransient<ISecurityHelper, SecurityHelper>()
 			.AddTransient<IRepository, Repository>()
-			.AddTransient<IValidator<NormalUser.EntryFormVM>, NormalUser.EntryFormVMValidator>();
+			.AddTransient<IValidator<VM>, VMValidator>();
 		return services;
 	}
 }

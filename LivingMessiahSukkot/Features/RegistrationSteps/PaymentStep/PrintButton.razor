@@ -2,8 +2,8 @@
 @inject NavigationManager NavigationManager
 
 <button @onclick="@(e => ButtonClick(Id))"
-        class="@NavButton.Print!.Css" title="@NavButton.Print!.Title">
-  <i class="@NavButton.Print.Icon"></i> @NavButton.Print.Label
+        class="btn btn-outline-primary btn-sm" title="@Nav.Print!.Title">
+  <i class="@Nav.Print.Icon"></i> @Nav.Print.Title
 </button>
 
 @code {
@@ -11,6 +11,9 @@
 
   void ButtonClick(int? id)
   {
-    NavigationManager!.NavigateTo($"{NavButton.Print.Route}/{id}{NavButton.Print.RouteSuffix}");
+    NavigationManager!.NavigateTo($"{Nav.Print.Index}");
   }
+
+  //   @Nav.Print!.Css
 }
+

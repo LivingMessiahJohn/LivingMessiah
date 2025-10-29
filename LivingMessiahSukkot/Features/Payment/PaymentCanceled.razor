@@ -1,26 +1,18 @@
 ﻿@page "/PaymentCanceled"
 
 @using Microsoft.AspNetCore.Components.Authorization
+
 @using LivingMessiahSukkot.Features.Components
 @using static LivingMessiahSukkot.Constants.Auth0
 @using static LivingMessiahSukkot.Constants.Emails
-@using LivingMessiahSukkot.Features.Enums
-@using Page = LivingMessiahSukkot.Features.Enums.Pages
 
+<PageTitle>@Nav.CancelRegistration.Title</PageTitle>
 
-<PageTitle>@Page.CancelRegistration.Title</PageTitle>
-@* 
-ToDo: 
-- investigate how to implement PageHeader and remove<PageTitle>
-- this is dependent on how much of the Admin code removal task is done
-- it's also probably dependent on the refactoring of `NavButtons.cs` and `Pages.cs`
-<PageHeader PageEnum="@Nav.DonateReplyConfirm" /> 
-*@
 
 <AuthorizeView Policy=@Policy.Name>
 	<Authorized>
     <div class="pb-2 mt-4 mb-2 border-bottom">
-      <h1><span class="text-secondary @Page.CancelRegistration.Icon"></span> @Page.CancelRegistration.Title</h1>
+      <h1><span class="text-secondary @Nav.CancelRegistration.Icon"></span> @Nav.CancelRegistration.Title</h1>
     </div>
 
     <div class="d-flex justify-content-center mt-4">

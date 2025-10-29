@@ -1,15 +1,14 @@
 ﻿using LivingMessiahSukkot.Features.Enums;
 
-namespace LivingMessiahSukkot.Features.Enums.Helpers;
-
-public class EntryFormHelper
+namespace LivingMessiahSukkot.Features.Components.RegistrationForm;
+// was called EntryFormHelper, copied from Admin 
+public class FormHelper
 {
 	public static (DateTime[]? week1, DateTime[]? week2) GetAttendanceDatesArray(int attendanceBitwise)
 	{
 		if (!DateRangeType.Attendance.HasSecondMonth)
 		{
-#pragma warning disable CS0252 // Possible unintended reference comparison; left hand side needs cast
-			if (AttendanceDate.FromValue(attendanceBitwise) == AttendanceDate.None)
+			if (AttendanceDate.FromValue(attendanceBitwise)?.Any() != true)
 			{
 				return (null, null);
 			}
@@ -17,14 +16,12 @@ public class EntryFormHelper
 			{
 				return (AttendanceDate.FromValue(attendanceBitwise).Select(s => s.Date).ToArray(), null);
 			}
-#pragma warning restore CS0252 // Possible unintended reference comparison; left hand side needs cast
 		}
 		else
 		{
 			DateTime[]? wk1;
 			DateTime[]? wk2;
-#pragma warning disable CS0252 // Possible unintended reference comparison; left hand side needs cast
-			if (AttendanceDate.FromValue(attendanceBitwise) == AttendanceDate.None)
+			if (AttendanceDate.FromValue(attendanceBitwise)?.Any() != true)
 			{
 				wk1 = null;
 			}
@@ -32,9 +29,8 @@ public class EntryFormHelper
 			{
 				wk1 = AttendanceDate.FromValue(attendanceBitwise).Where(w => w.Week == 1).Select(s => s.Date).ToArray();
 			}
-#pragma warning restore CS0252 // Possible unintended reference comparison; left hand side needs cast
-#pragma warning disable CS0252 // Possible unintended reference comparison; left hand side needs cast
-			if (AttendanceDate.FromValue(attendanceBitwise) == AttendanceDate.None)
+
+			if (AttendanceDate.FromValue(attendanceBitwise)?.Any() != true)
 			{
 				wk2 = null;
 			}
@@ -42,7 +38,6 @@ public class EntryFormHelper
 			{
 				wk2 = AttendanceDate.FromValue(attendanceBitwise).Where(w => w.Week == 2).Select(s => s.Date).ToArray();
 			}
-#pragma warning restore CS0252 // Possible unintended reference comparison; left hand side needs cast
 			return (wk1, wk2);
 		}
 	}
