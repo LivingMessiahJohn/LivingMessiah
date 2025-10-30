@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using System.Data;
-using DataEnumsDatabase = LivingMessiahSukkot.Data.Enums.Database;
+using static LivingMessiahSukkot.Constants.ConnectionString;
 using LivingMessiahSukkot.Data;
 using LivingMessiahSukkot.Features.Domain;
 using LivingMessiahSukkot.Features.Components.RegistrationForm;
@@ -21,13 +21,10 @@ public interface IRepository
 
 
 	Task<RegistrationQuery> ById(int id);
-	Task<vwRegistrationStep> GetByEmail(string email);
+	Task<QueryRegistrationStep> GetByEmail(string email);
 	Task<VM> GetById2(int id);   //ViewModel_RE_DELETE
 	Task<Tuple<int, int, string>> Create(DTO registration);
 	Task<Tuple<int, int, string>> Update(DTO registration);
-	// FN:1 Also used by RegistrationSteps/Wrapper/YesNoButtons
-	Task<RegistrationSummary> GetRegistrationSummary(int id);
-
 	Task<Tuple<int, string>> DonationInsert(DonationRecord donation);
 	Task<int?> GetRegistrationIdByEmail(string email);
 }
@@ -35,7 +32,7 @@ public interface IRepository
 public class Repository : BaseRepositoryAsync, IRepository
 {
 	public Repository(IConfiguration config, ILogger<Repository> logger)
-		: base(config, logger, DataEnumsDatabase.Sukkot.ConnectionStringKey)
+		: base(config, logger, Sukkot)
 	{
 	}
 
@@ -229,7 +226,7 @@ WHERE RegistrationId = @Id
 	}
 
 
-	public async Task<vwRegistrationStep> GetByEmail(string email)
+	public async Task<QueryRegistrationStep> GetByEmail(string email)
 	{
 		Logger.LogDebug("{Method}, email: {email}", nameof(GetByEmail), email);
 		Parms = new DynamicParameters(new { EMail = email });
@@ -243,7 +240,7 @@ WHERE EMail = @EMail
 ";
 		return await WithConnectionAsync(async connection =>
 		{
-			var rows = await connection.QueryAsync<vwRegistrationStep>(sql: Sql, param: Parms);
+			var rows = await connection.QueryAsync<QueryRegistrationStep>(sql: Sql, param: Parms);
 			return rows.SingleOrDefault()!;
 		});
 	}
@@ -404,22 +401,6 @@ WHERE Id = @Id";
 
 	#endregion
 
-
-	public async Task<RegistrationSummary> GetRegistrationSummary(int id)
-	{
-		Parms = new DynamicParameters(new { Id = id });
-		Sql = $@"
---DECLARE @id int=2
-SELECT Id, EMail, FamilyName, Adults, ChildBig, ChildSmall, StatusId AS StepId
-, AttendanceBitwise, RegistrationFeeAdjusted, TotalDonation
-FROM Sukkot.tvfRegistrationSummary(@Id)
-";
-		return await WithConnectionAsync(async connection =>
-		{
-			var rows = await connection.QueryAsync<RegistrationSummary>(Sql, Parms);
-			return rows.SingleOrDefault()!;
-		});
-	}
 
 	public async Task<Tuple<int, string>> DonationInsert(DonationRecord donation)
 	{

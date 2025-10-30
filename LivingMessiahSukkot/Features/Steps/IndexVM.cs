@@ -1,6 +1,6 @@
 ﻿using LivingMessiahSukkot.Features.Enums;
 
-namespace LivingMessiahSukkot.Features.RegistrationSteps;
+namespace LivingMessiahSukkot.Features.Steps;
 
 public class IndexVM
 {

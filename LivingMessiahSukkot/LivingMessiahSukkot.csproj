@@ -9,9 +9,13 @@
 
   <ItemGroup>
     <Compile Remove="Data\Docs\**" />
+    <Compile Remove="Features\NormalUser\**" />
     <Content Remove="Data\Docs\**" />
+    <Content Remove="Features\NormalUser\**" />
     <EmbeddedResource Remove="Data\Docs\**" />
+    <EmbeddedResource Remove="Features\NormalUser\**" />
     <None Remove="Data\Docs\**" />
+    <None Remove="Features\NormalUser\**" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -45,7 +49,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Features\Enums\Helpers\" />
-	  <Folder Include="Features\NormalUser\" />
 	</ItemGroup>
 	
 </Project>

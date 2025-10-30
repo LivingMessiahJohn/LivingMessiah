@@ -2,7 +2,7 @@
 
 namespace LivingMessiahSukkot.Features.Domain;
 
-public class vwRegistrationStep
+public class QueryRegistrationStep
 {
 	public int Id { get; set; }
 	public string? EMail { get; set; }
