@@ -10,8 +10,7 @@
 @inject IToastService? Toast
 @inject Data.IRepository? db
 
-
-<PageTitle>@Nav.ConfirmRegistration.Title</PageTitle>
+<PageHeader PageEnum="Nav.ConfirmRegistration" />
 
 <AuthorizeView Policy=@Policy.Name>
   <Authorized>

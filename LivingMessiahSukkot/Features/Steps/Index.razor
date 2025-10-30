@@ -6,9 +6,9 @@
 @using LivingMessiahSukkot.Features.Components.RegistrationForm
 @using LivingMessiahSukkot.Features.Constants
 @using LivingMessiahSukkot.Features.Enums
-@using LivingMessiahSukkot.Features.RegistrationSteps.Agreement
-@using LivingMessiahSukkot.Features.RegistrationSteps.NotAuthorized
-@using LivingMessiahSukkot.Features.RegistrationSteps.PaymentStep
+@using LivingMessiahSukkot.Features.Steps.Agreement
+@using LivingMessiahSukkot.Features.Steps.NotAuthorized
+@using LivingMessiahSukkot.Features.Steps.PaymentStep
 @using static LivingMessiahSukkot.Constants.Auth0
 
 @inject ISecurityHelper? SecurityHelper
@@ -128,7 +128,7 @@
 
   protected bool TurnSpinnerOff = false;
   string? Email;
-  protected Domain.vwRegistrationStep? vw;
+  protected Domain.QueryRegistrationStep? vw;
   IndexVM? vm { get; set; } = new IndexVM();
 
   protected override async Task OnInitializedAsync()
