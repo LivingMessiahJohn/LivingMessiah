@@ -8,7 +8,7 @@
     <div class="container-fluid">
 
       <a href="@Nav.LandingPage.Index" class="ms-2" title="@Nav.LandingPage.Title">
-        <img src="/images/sukkotregistration.svg" alt="Logo" style="width:256px; height:auto;" />
+        <img src="/images/sukkotregistration.svg" alt="Logo" style="width:@logoWidth; height:auto;" />
         @* <img src="/images/sukkotregistration14.svg" alt="Logo" style="width:128px; height:auto;" /> *@
       </a>
 
@@ -45,7 +45,10 @@
 </div>
 
 @code {
- 
+ [Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
+
+  protected string logoWidth => IsXsOrSm ? "192px" : "256px";
+
   private void ButtonClicked(Nav nav)
   {
     NavigationManager!.NavigateTo(nav.Index);

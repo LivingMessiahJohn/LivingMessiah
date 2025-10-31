@@ -4,7 +4,16 @@
 @inherits LayoutComponentBase
 
 <header>
-  <NavbarWrapper />
+
+
+  <div class="@MediaQuery.XsOrSm.DivClass">
+    <NavbarWrapper IsXsOrSm=true />
+	</div>
+
+  <div class="@MediaQuery.MdOrLgOrXl.DivClass">
+    <NavbarWrapper IsXsOrSm=false />
+  </div>
+
 	<Authorize />
 	<BlazoredToasts />
 </header>
