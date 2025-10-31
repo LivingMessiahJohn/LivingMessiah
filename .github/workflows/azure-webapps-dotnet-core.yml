@@ -33,6 +33,25 @@ permissions:
   contents: read
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      sukkot-changed: ${{ steps.filter.outputs.sukkot }}
+      main-changed: ${{ steps.filter.outputs.livingmessiah }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Filter paths
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            livingmessiah:
+              - 'LivingMessiah/**'
+            admin:
+              - 'LivingMessiahAdmin/**'
+            sukkot:
+              - 'LivingMessiahSukkot/**'
+
   build:
     runs-on: ubuntu-latest
 
@@ -126,3 +145,18 @@ jobs:
           app-name: 'LivingMessiahAdmin'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_ADMIN }}
           package: './deploy-livingmessiahadmin'
+
+  build-and-deploy-sukkot:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.sukkot-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build & publish Sukkot
+        run: dotnet publish LivingMessiahSukkot/LivingMessiahSukkot.csproj -c Release -o publish/Sukkot
+      - name: Deploy Sukkot
+        uses: azure/webapps-deploy@v4
+        with:
+          app-name: 'LivingMessiahSukkot'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_SUKKOT }}
+          package: 'publish/Sukkot'
