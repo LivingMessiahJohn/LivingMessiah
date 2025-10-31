@@ -10,11 +10,12 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int LandingPage = 1;
 		internal const int Steps = 2;
 		internal const int Print = 3;
-		internal const int CancelRegistration = 4;
-		internal const int ConfirmRegistration = 5;
-		//internal const int DeleteConfirmation = 6;  // ToDo: Not implemented yet
-		internal const int Profile = 7;
-		internal const int AuthCanceled = 8;
+		internal const int About = 4;
+		internal const int CancelRegistration = 5;
+		internal const int ConfirmRegistration = 6;
+		//internal const int DeleteConfirmation = 7;  // ToDo: Not implemented yet
+		internal const int Profile = 8;
+		internal const int AuthCanceled = 9;
 
 	}
 	#endregion
@@ -23,6 +24,7 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav LandingPage = new LandingPageSE();
 	public static readonly Nav Steps = new StepsSE();
 	public static readonly Nav Print = new PrintSE();
+	public static readonly Nav About = new AboutSE();
 	public static readonly Nav CancelRegistration = new CancelRegistrationSE();
 	public static readonly Nav ConfirmRegistration = new ConfirmRegistrationSE();
 	//public static readonly Nav DeleteConfirmation = new DeleteConfirmationSE(); // ToDo: Not implemented yet
@@ -68,6 +70,15 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Index => "/Print"; 
 		public override string Title => "Print"; 
 		public override string Icon => "fas fa-print";
+		public override bool IsOnToolbar => true;
+	}
+
+	private sealed class AboutSE : Nav
+	{
+		public AboutSE() : base($"{nameof(Id.About)}", Id.About) { }
+		public override string Index => "/About";
+		public override string Title => "About";
+		public override string Icon => "fas fa-info";
 		public override bool IsOnToolbar => true;
 	}
 
