@@ -149,11 +149,11 @@ try
 
 	app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
-	#region Sukkot Stripe Endpoints
-	SukkotSettings? sukkotSettings = configuration.GetSection(nameof(SukkotSettings)).Get<SukkotSettings>();
-	SukkotEndpointsCheckoutSession.CheckoutSessionConfig(app, Donation.SukkotRegistration.SessionUrl, sukkotSettings!.Domain!);
-	SukkotEndpointsWebhook.WebhookConfig(app, Donation.SukkotRegistration.WebhookUrl);
-	#endregion
+	//#region Sukkot Stripe Endpoints
+	//SukkotSettings? sukkotSettings = configuration.GetSection(nameof(SukkotSettings)).Get<SukkotSettings>();
+	//SukkotEndpointsCheckoutSession.CheckoutSessionConfig(app, Donation.SukkotRegistration.SessionUrl, sukkotSettings!.Domain!);
+	//SukkotEndpointsWebhook.WebhookConfig(app, Donation.SukkotRegistration.WebhookUrl);
+	//#endregion
 
 	app.Run();
 
