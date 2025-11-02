@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
 
 using Stripe;
-using DonationEnums = LivingMessiahSukkot.Enums.Donation;
 using EndpointsSetting = LivingMessiahSukkot.Settings.EndpointsSetting;
 using EndpointsCheckoutSession = LivingMessiahSukkot.Endpoints.CheckoutSession;
 using EndpointsWebhook = LivingMessiahSukkot.Endpoints.Webhook;
+
+using static LivingMessiahSukkot.Enums.DonationConstants; 
 
 using AccountEnum = LivingMessiahSukkot.Enums.Account;
 using LivingMessiahSukkot.Features.Data;
@@ -156,9 +157,9 @@ try
 
 	// Stripe Endpoints
 	EndpointsSetting? endpointsSetting = configuration.GetSection(nameof(EndpointsSetting)).Get<EndpointsSetting>();
-	EndpointsCheckoutSession.CheckoutSessionConfig(app, DonationEnums.SukkotRegistration.SessionUrl, endpointsSetting!.Domain!);
-	EndpointsWebhook.WebhookConfig(app, DonationEnums.SukkotRegistration.WebhookUrl);
-	
+	EndpointsCheckoutSession.CheckoutSessionConfig(app, BaseSessionUrl, endpointsSetting!.Domain!);
+	EndpointsWebhook.WebhookConfig(app, WebHookUrl);
+
 
 	app.Run();
 	Log.Information("{Class}, Stopped cleanly", nameof(Program));

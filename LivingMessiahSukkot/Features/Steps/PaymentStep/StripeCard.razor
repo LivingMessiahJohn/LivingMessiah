@@ -3,7 +3,7 @@
 
 @inject ILogger<StripeCard>? Logger
 
-<form method="post" action="@Donation.SukkotRegistration.SessionUrl" @formname="sukkot-registration-checkout-form">
+  <form method="post" action="@Action" @formname="sukkot-registration-checkout-form">
   <AntiforgeryToken />
   <input type="hidden" name="@FormFields.FeeEnumValue" value="@RegistrationFee!.Value" />
   <input type="hidden" name="@FormFields.RegistrationId" value="@RegistrationId" />
@@ -23,6 +23,7 @@
   [Parameter, EditorRequired] public int RegistrationId { get; set; }
   [Parameter, EditorRequired] public string Email { get; set; }
 
+  string? Action => $"{DonationConstants.BaseSessionUrl}-sukkotregistration";
 
   // protected override void OnInitialized()
   // {
