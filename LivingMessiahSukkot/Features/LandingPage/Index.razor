@@ -1,14 +1,16 @@
 ﻿@page "/"
 
 @using LivingMessiahSukkot.Features.Components
+@using LivingMessiahSukkot.Features.Components.LifeCycleAuthority
+@using LivingMessiahSukkot.Security
+@using LivingMessiahSukkot.Security.Constants
 @using Microsoft.AspNetCore.Components.Authorization
-@using static LivingMessiahSukkot.Constants.Auth0
 
 @inject ISecurityHelper? SecurityHelper
 
 <PageHeader PageEnum="Nav.LandingPage" />
 
-<LifeCycleAuthority>
+<PhaseWrapper>
   <OpenContent>
 
     <div class="card border border-warning border-4 bg-warning-subtle mt-4 mb-4">
@@ -33,7 +35,7 @@
     @* <SukkotTShirt /> *@
 
   </OpenContent>
-</LifeCycleAuthority>
+</PhaseWrapper>
 
 @code {
 

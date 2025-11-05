@@ -1,10 +1,10 @@
 ﻿@using System.Security.Claims
-@using LivingMessiahSukkot.Helpers
 @using LivingMessiahSukkot.Constants
+@using LivingMessiahSukkot.Helpers
+@using LivingMessiahSukkot.Security.Constants
 @using Microsoft.AspNetCore.Components.Authorization
-@using NavEnum = LivingMessiahSukkot.Enums.Nav
 
-<a href="@NavEnum.Profile.Index" class="me-2"
+<a href="@Nav.Profile.Index" class="me-2"
 	 title="Role(s): @Roles; Status: @Status">
 	@((MarkupString)NameTiny) @((MarkupString)BlueCheck) @((MarkupString)Thumbs)
 </a>
@@ -34,10 +34,10 @@
 				if (state.User.Identity.IsAuthenticated)
 				{
 					Email = state.User.FindFirst(ClaimTypes.Email)?.Value;
-					IsEmailVerified = state.User.FindFirst(Auth0.Policy.Claim)?.Value == "true";
+					IsEmailVerified = state.User.FindFirst(Policy.Claim)?.Value == "true";
 					IsAuthenticated = true;
 					_claims = state.User.Claims;
-					Roles = string.Join(", ", _claims.Where(w => w.Type == Auth0.MicrosoftSchemaIdentityClaimsRole).Select(s => s.Value));
+					Roles = string.Join(", ", _claims.Where(w => w.Type == Configuration.MicrosoftSchemaIdentityClaimsRole).Select(s => s.Value));
 				}
 				else
 				{

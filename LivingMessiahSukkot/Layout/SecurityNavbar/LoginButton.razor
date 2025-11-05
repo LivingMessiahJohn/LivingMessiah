@@ -1,0 +1,18 @@
+﻿
+@inject NavigationManager NavigationManager
+@inject ILogger<LoginButton>? Logger
+
+<button type="button"
+				class="btn btn-xs btn-outline-info float-end text-black me-2"
+				@onclick="ButtonClick">
+	<b><u>@Nav.Login.Title</u></b> <i class="@Nav.Login.Icon"></i>
+</button>
+
+@code {
+	private void ButtonClick()
+	{
+		Logger!.LogInformation("{Method}, LoginIndex: {LoginIndex}, ReturnURL: {ReturnURL}"
+		, nameof(ButtonClick), Nav.Login.Index, @Nav.LandingPage.Index);
+		NavigationManager!.NavigateTo($"{Nav.Login.Index}?returnUrl={@Nav.LandingPage.Index}", true);
+	}
+}

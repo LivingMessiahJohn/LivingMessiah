@@ -4,19 +4,21 @@
 @using static LivingMessiahSukkot.Constants.Emoji
 @using static LivingMessiahSukkot.Constants.Global
 
-@inject IOptions<LifeCyclePhaseSetting>? Setting
-@inject ILogger<LifeCycleAuthority>? Logger
+@inject IOptions<PhaseSetting>? Setting
+@inject ILogger<PhaseWrapper>? Logger
 @inject IToastService? Toast
 
 <LoadingComponent IsLoading="isDone==false" TurnSpinnerOff=TurnSpinnerOff>
 
-  @if (lifeCyclePhaseEnum == LifeCyclePhaseEnum.RegistrationOpen)
-  {
+  <p class="text-black-50 text-center m-1 p-1">phaseValue: @phaseValue</p>
+
+  @if (phaseValue == PhaseRegistrationOpen)
+  { 
     @OpenContent
   }
   else
   {
-    @if (lifeCyclePhaseEnum == LifeCyclePhaseEnum.GetReady)
+    @if (phaseValue == PhaseGetReady)
     {
       <div class="p-5 my-4 bg-warning rounded-3">
         <div class="container-fluid py-5">
@@ -30,7 +32,7 @@
     }
     else
     {
-      if (lifeCyclePhaseEnum == LifeCyclePhaseEnum.Over)
+      if (phaseValue == PhaseSukkotOver)
       {
         <div class="p-5 my-4 bg-danger rounded-3">
           <div class="container-fluid py-5">
@@ -54,25 +56,20 @@
 @code {
   [Parameter] public RenderFragment? OpenContent { get; set; }
 
-  protected int lifeCyclePhase;
-  protected LifeCyclePhaseEnum lifeCyclePhaseEnum;
-
+  protected int phaseValue;
 
   protected bool TurnSpinnerOff = false;
   protected bool isDone = false;
+
+  const int PhaseGetReady = 1;  
+  const int PhaseRegistrationOpen = 2;
+  const int PhaseSukkotOver = 3;  
 
   protected override void OnInitialized()
   {
     try
     {
-      lifeCyclePhase = Setting!.Value!.LifeCyclePhase;
-
-      if (lifeCyclePhase == 0)
-      {
-        throw new InvalidOperationException("lifeCyclePhase==0");
-      }
-      lifeCyclePhaseEnum = (LifeCyclePhaseEnum)Setting!.Value.LifeCyclePhase;
-
+      phaseValue = Setting!.Value!.Phase;
     }
     catch (Exception ex)
     {

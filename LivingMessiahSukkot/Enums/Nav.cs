@@ -1,6 +1,7 @@
-﻿namespace LivingMessiahSukkot.Enums;
+﻿using Ardalis.SmartEnum;
+using LivingMessiahSukkot.Security.Constants;
 
-using Ardalis.SmartEnum;
+namespace LivingMessiahSukkot.Enums;
 
 public abstract class Nav : SmartEnum<Nav>
 {
@@ -16,7 +17,8 @@ public abstract class Nav : SmartEnum<Nav>
 		//internal const int DeleteConfirmation = 7;  // ToDo: Not implemented yet
 		internal const int Profile = 8;
 		internal const int AuthCanceled = 9;
-
+		internal const int Login = 10;
+		internal const int Logout = 11;
 	}
 	#endregion
 
@@ -30,6 +32,9 @@ public abstract class Nav : SmartEnum<Nav>
 	//public static readonly Nav DeleteConfirmation = new DeleteConfirmationSE(); // ToDo: Not implemented yet
 	public static readonly Nav Profile = new ProfileSE();
 	public static readonly Nav AuthCanceled = new AuthCanceledSE();
+
+	public static readonly Nav Login = new LoginSE();
+	public static readonly Nav Logout = new LogoutSE();
 
 	// SE=SmartEnum
 	#endregion
@@ -123,11 +128,30 @@ public abstract class Nav : SmartEnum<Nav>
 	private sealed class AuthCanceledSE : Nav
 	{
 		public AuthCanceledSE() : base($"{nameof(Id.AuthCanceled)}", Id.AuthCanceled) { }
-		public override string Index => "/auth-failed";
+		public override string Index => AuthFailedRedirect.Url;   // This is resolved by AddAuth0Authentication
 		public override string Title => "Login Canceled";
 		public override string Icon => "far fa-window-close";  
 		public override bool IsOnToolbar => false;
-	}	
+	}
+
+	private sealed class LoginSE : Nav
+	{
+		public LoginSE() : base($"{nameof(Id.Login)}", Id.Login) { }
+		public override string Index => "/Account/Login";
+		public override string Title => "Login";  //Log in
+		public override string Icon => "fas fa-sign-in-alt";
+		public override bool IsOnToolbar => false;
+	}
+
+	private sealed class LogoutSE : Nav
+	{
+		public LogoutSE() : base($"{nameof(Id.Logout)}", Id.Logout) { }
+		public override string Index => "/Account/Logout";
+		public override string Title => "Log out";
+		public override string Icon => "fas fa-sign-in-alt";
+		public override bool IsOnToolbar => false;
+	}
+
 
 	// AuthCanceledSE
 

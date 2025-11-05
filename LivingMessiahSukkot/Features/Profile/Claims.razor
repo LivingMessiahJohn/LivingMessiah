@@ -1,7 +1,7 @@
 ﻿@using System.Security.Claims
+@using Security = LivingMessiahSukkot.Security.Constants
+@using LivingMessiahSukkot.Security.Constants
 @using Microsoft.AspNetCore.Components.Authorization
-
-@using static LivingMessiahSukkot.Constants.Auth0
 @using static LivingMessiahSukkot.Constants.Global
 
 @inject IToastService? Toast
@@ -78,10 +78,10 @@
 							_claims = state.User.Claims;
 
 							ClaimList = _claims.ToList();
-							RoleCount = ClaimList.Where(w => w.Type == MicrosoftSchemaIdentityClaimsRole).Count();
+							RoleCount = ClaimList.Where(w => w.Type == Configuration.MicrosoftSchemaIdentityClaimsRole).Count();
 							if (RoleCount > 0)
 							{
-								Roles = string.Join(", ", ClaimList.Where(w => w.Type == MicrosoftSchemaIdentityClaimsRole).Select(s => s.Value));
+								Roles = string.Join(", ", ClaimList.Where(w => w.Type == Configuration.MicrosoftSchemaIdentityClaimsRole).Select(s => s.Value));
 							}
 							ProfileImage = _claims.FirstOrDefault(c => c.Type == "picture")?.Value;
 						}
