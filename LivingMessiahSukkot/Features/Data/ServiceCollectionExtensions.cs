@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using LivingMessiahSukkot.Features.Components.RegistrationForm;
+using LivingMessiahSukkot.Security;
 
 namespace LivingMessiahSukkot.Features.Data;
 

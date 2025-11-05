@@ -1,10 +1,9 @@
-﻿@using AccountENum = LivingMessiahSukkot.Enums.Account;
-
+﻿
 @inject NavigationManager NavigationManager
 
 <button @onclick="@(() => RedirectToLoginClick())"
 				type="button" class="btn btn-primary btn-sm">
-	@AccountENum.Login.Title <i class='@AccountENum.Login.Icon'></i>
+	@Nav.Login.Title <i class='@Nav.Login.Icon'></i>
 </button>
 
 @code {
@@ -12,7 +11,7 @@
 
 	void RedirectToLoginClick()
 	{
-		NavigationManager!.NavigateTo($"{AccountENum.Login.Index}?returnUrl={ReturnUrl}", true);
+		NavigationManager!.NavigateTo($"{Nav.Login.Index}?returnUrl={ReturnUrl}", true);
 	}
 }
 

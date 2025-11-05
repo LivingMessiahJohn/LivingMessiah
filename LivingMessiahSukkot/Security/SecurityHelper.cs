@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using LivingMessiahSukkot.Security.Constants;
+using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
-using static LivingMessiahSukkot.Constants.Auth0;
 
-namespace LivingMessiahSukkot.Features;
+namespace LivingMessiahSukkot.Security;
 
 public interface ISecurityHelper
 {
@@ -32,16 +32,16 @@ public class SecurityHelper : ISecurityHelper
 		return authenticationState.User.FindFirst(ClaimTypes.Email)?.Value;
 	}
 
-	public async Task<(bool Passed, string ErrorMsg, bool SecurityOverride)> DoAuthentication(string email, string vwEmail)
+	public async Task<(bool Passed, string ErrorMsg, bool SecurityOverride)> DoAuthentication(string email, string queryEmail)
 	{
 		var authenticationState = await _authenticationStateProvider.GetAuthenticationStateAsync();
 		if (authenticationState is null) { return (false, "Authentication state is null.", false); }
 		if (authenticationState?.User?.Identity is null) { return (false, "User identity is null.", false); }
 
-		if (email == vwEmail) { return (true, string.Empty, false); }
+		if (email == queryEmail) { return (true, string.Empty, false); }
 
 		string[] _roles = authenticationState.User.Claims
-		.Where(c => c.Type == MicrosoftSchemaIdentityClaimsRole)
+		.Where(c => c.Type == Configuration.MicrosoftSchemaIdentityClaimsRole)
 		.Select(c => c.Value)
 		.ToArray();
 

@@ -1,15 +1,17 @@
 ﻿@page "/Steps"
 
-@using Microsoft.AspNetCore.Components.Authorization
-
+@using LivingMessiahSukkot.Security.Constants
 @using LivingMessiahSukkot.Features.Components
+@using LivingMessiahSukkot.Features.Components.LifeCycleAuthority
 @using LivingMessiahSukkot.Features.Components.RegistrationForm
 @using LivingMessiahSukkot.Features.Constants
 @using LivingMessiahSukkot.Features.Enums
 @using LivingMessiahSukkot.Features.Steps.Agreement
 @using LivingMessiahSukkot.Features.Steps.NotAuthorized
 @using LivingMessiahSukkot.Features.Steps.PaymentStep
-@using static LivingMessiahSukkot.Constants.Auth0
+@using LivingMessiahSukkot.Security
+@using Microsoft.AspNetCore.Components.Authorization
+s.Policy
 
 @inject ISecurityHelper? SecurityHelper
 @inject ILogger<Index>? Logger
@@ -18,7 +20,7 @@
 
 <PageHeader PageEnum="Nav.Steps" />
 
-<LifeCycleAuthority>
+<PhaseWrapper>
   <OpenContent>
 
     <AuthorizeView Policy=@Policy.Name>
@@ -118,7 +120,7 @@
       </NotAuthorized>
     </AuthorizeView>
   </OpenContent>
-</LifeCycleAuthority>
+</PhaseWrapper>
 
 @code {
 

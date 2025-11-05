@@ -1,12 +1,13 @@
 ﻿@page "/Print/{Id:int?}"
 
-@using Microsoft.AspNetCore.Components.Authorization
-
 @using LivingMessiahSukkot.Features.Components
+@using LivingMessiahSukkot.Features.Components.LifeCycleAuthority
 @using LivingMessiahSukkot.Features.Components.RegistrationForm
-@using LivingMessiahSukkot.Features.Enums
-@using static LivingMessiahSukkot.Constants.Auth0
 @using LivingMessiahSukkot.Features.Data
+@using LivingMessiahSukkot.Features.Enums
+@using LivingMessiahSukkot.Security
+@using LivingMessiahSukkot.Security.Constants
+@using Microsoft.AspNetCore.Components.Authorization
 
 @inject NavigationManager NavigationManager
 @inject ILogger<Index>? Logger
@@ -16,7 +17,7 @@
 
 <PageHeader PageEnum="Nav.Print" />
 
-<LifeCycleAuthority>
+<PhaseWrapper>
   <OpenContent>
 
     <AuthorizeView Policy=@Policy.Name>
@@ -44,7 +45,7 @@
     </AuthorizeView>
 
   </OpenContent>
-</LifeCycleAuthority>
+</PhaseWrapper>
 
 
 @code {
