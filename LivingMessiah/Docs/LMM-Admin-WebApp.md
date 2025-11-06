@@ -22,10 +22,6 @@ In my infinite wisdom, I have decided to port "Admin" related processing out fro
 This may already be done in MHB, so the dependency for `LivingMessiah.com` is probably going to be the RCL so I don't need to work about it.
 - /ParashaCalendar
 
-## Contacts
-Data gleaned from each Sukkot event
-- /Contact
-
 ## PsalmsAndProverbs
 I need to make this be ported to static content and remove the DB/Repository
 
@@ -99,10 +95,6 @@ Shavuot: Most of this can be found in the new calendar design I want to develop
 
 [see](C:\Source\LivingeMessiahBackup\Feature-Ideas\999-Calendar-based-on-Bootstrap-7-col-grid\999-Calendar-based-on-Bootstrap-7-col-grid.md)
 
-
-## SukkotAdmin
-This will be a big lift 
-- Leverage <mark>**`RegistrationSteps.rcl`**</mark> so I could mask my self as a user and create their registration for them.
 
 ### Other
 Not sure if this is needed until and if I go back to keeping track of the weekly videos.

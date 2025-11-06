@@ -1,11 +1,9 @@
 ﻿using Blazored.LocalStorage;
-//using LivingMessiah.Features.Sukkot;
 
 namespace LivingMessiah.State;
 
 public class AppState 
 {
-	//public Features.Sukkot.State? SukkotState { get; }
 	public Features.Liturgy.State? LiturgyState { get; }
 	public Features.Home.State? HomeState { get; }
 
@@ -17,7 +15,6 @@ public class AppState
 	{
 		Logger = logger;
 		this.localStorage = localStorage;
-		//SukkotState = new Features.Sukkot.State(localStorage, logger);
 		LiturgyState = new Features.Liturgy.State(localStorage, logger);
 		HomeState = new Features.Home.State(localStorage, logger);
 		//Logger!.LogInformation("ctor of {Project}!{Class}", nameof(LivingMessiah), nameof(AppState));
@@ -33,7 +30,6 @@ public class AppState
 		{
 			try
 			{
-				//await SukkotState!.Initialize();
 				await LiturgyState!.Initialize();
 				await HomeState!.Initialize();
 				//Logger!.LogWarning("{Method} ParashaState.Get: {ParashaState}", nameof(Initialize), ParashaState.Get());

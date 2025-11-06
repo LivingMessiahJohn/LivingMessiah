@@ -1,16 +1,12 @@
 ﻿using Ardalis.SmartEnum;
 using FeastDayType = LivingMessiah.Features.Calendar.Enums.FeastDay;
-using NavEnum = LivingMessiah.Enums.Nav;
 
 namespace LivingMessiah.Features.Feasts.Enums;
 
 /*
 Observations and what makes this SmartEnums unique from the others
 1. It's a annual event and therefore tied to KeyDate and Calendar
-2. Currently, if you have advanced autorization you can see these pages
-		- Maybe that's not necessary i.e. going forward it can be open to the public 
-		- If open to the public maybe have a PastDaysOld / FutureDaysUntil component
-3. These have special attributes or...
+2. These have special attributes or...
 		- string HomeFloatRightHebrew, string HomeTitleSuffix
 		- bool SitemapUsage, bool HomeSidebarUsage, 
 */
@@ -180,7 +176,7 @@ public abstract class Feast : SmartEnum<Feast>
 		public override FeastDayType? FeastDay => FeastDayType.Tabernacles;
 		public override string ListGroupItemColor => "list-group-item-warning";
 		public override Hebrew Hebrew => new() { TitleSuffix = "Sukkot", FloatRightHebrew = "סֻּכּוֹת", Strongs = "H5523" };
-		public override string SpecialEventIndex => NavEnum.Sukkot.Index;
+		public override string SpecialEventIndex => "";
 	}
 
 	#endregion

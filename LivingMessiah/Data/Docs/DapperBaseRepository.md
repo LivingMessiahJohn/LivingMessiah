@@ -2,11 +2,6 @@
 
 # ToDo create `BaseRepositoryMultiAsync` class
 
-`RepositoryNoBaseHierarchicalQuery.cs` needs to embrace the features in `BaseRepositoryAsync` but make it handle **hierarchical queries** 
-- Located at LivingMessiah.Web\Pages\Sukkot\ManageRegistration\Data\
-- I think I have examples of handling multiple queries
-- see `DetailAndDonationsHierarchicalQuery.cs` (LivingMessiah.Web\Pages\Sukkot\ManageRegistration\Detail\)
-
 #### `DetailAndDonationsHierarchicalQuery.cs`
 - used to be called `ReportVM.cs`
 
@@ -16,35 +11,6 @@
 	public IEnumerable<DonationDetailQuery>? Donations { get; set; } // = new();
 ```
 
-
-#### `RepositoryNoBaseHierarchicalQuery.cs`
-- Leverages **Dapper's** `QueryMultipleAsync` method
-
-```csharp
-MyParms = new DynamicParameters(new { Id = id });
-MySql = $@" "
-SELECT * FROM Sukkot.vwRegistration WHERE Id = @id;
-
-SELECT * FROM Sukkot.vwDonationDetail WHERE RegistrationId=@Id ORDER BY Detail
-";
-
-  Detail.DetailAndDonationsHierarchicalQuery qry = new();
-
-  using (var connection = new SqlConnection(connectionString))
-  {
-  	using (var multi = await connection.QueryMultipleAsync(MySql, MyParms))
-  	{
-    qry = await multi.ReadSingleOrDefaultAsync<Detail.DetailAndDonationsHierarchicalQuery>();
-    if (qry is not null)
-    {
-    	var childItems = await multi.ReadAsync<DonationDetailQuery>();
-    	qry.Donations = childItems.ToList();
-    }
-    return qry!;
-  	}
-  }
-}
-```
 
 ---
 
@@ -56,7 +22,7 @@ This was changed to be able to pass in the database configuration key.
 
 ## ToDo: maybe...
 1. maybe this region of code be a service, it could be an abstract base class where you have to pass 
-	`LM.IRepository` or `Sukkot.IRepository`
+	`LM.IRepository`
 2. maybe change the back-end to procs and return `DatabaseTuple`
 3. maybe split up DatabaseTuple into Queries and Commands
 

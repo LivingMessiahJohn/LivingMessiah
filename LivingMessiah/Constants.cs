@@ -56,17 +56,11 @@ public static class Blobs
 	private const string redBloodMoons = "https://livingmessiahstorage.blob.core.windows.net/images/redbloodmoons/";
 	private const string LearningHebrew = "https://livingmessiahstorage.blob.core.windows.net:443/pdfs/LearningHebrew.pdf";
 	private const string HebrewHandouts = "https://livingmessiahstorage.blob.core.windows.net:443/hebrewhandouts/";
-	private const string sukkot2017 = "https://livingmessiahstorage.blob.core.windows.net:443/sukkot2017/";
 	private const string importantlinks = "https://livingmessiahstorage.blob.core.windows.net/images/importantlinks/";
 	private const string shabbatService = "https://livingmessiahstorage.blob.core.windows.net/images/shabbatservice/";
 	private const string weeklyAnnouncements = "https://livingmessiahstorage.blob.core.windows.net/weeklyannouncements/";
 	private const string calendar = "https://livingmessiahstorage.blob.core.windows.net/images/calendar/";
 	private const string ruth_omer_count = "https://livingmessiahstorage.blob.core.windows.net/ruth-omer-count/";
-
-	public static string UrlSukkot2017(string blob)
-	{
-		return sukkot2017 + blob;
-	}
 
 	public static string UrlCalendar(string blob)
 	{

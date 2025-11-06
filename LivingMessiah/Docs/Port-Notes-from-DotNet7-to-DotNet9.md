@@ -48,7 +48,6 @@
 - [x] ShabbatService: This need a rewrite.
 - [ ] Shavuot: Only `OmerGematriaDictionary.cs` ported, need to move elsewhere.
 - [x] SiteMap
-- [ ] Sukkot: lots to think about here, 
 
 ## Not yet ported
 - [ ] AboutUs **The content of this page needs review**
@@ -58,7 +57,6 @@
 - [ ] TorahTuesday: Don't know what to do with this yet.
 - [ ] UpcomingEvents
 - [ ] Pages\Account: Auth0 
-- [ ] Sukkot AppState
 
 ## Not yet ported <mark>Other Folder<mark>
 - [ ] Announcements
@@ -86,7 +84,6 @@
 - [ ] SampleCode: What to do with this?  Maybe move to LivingMessiahSample project
 - [ ] SpecialEvents
 - [ ] Shavuot: Most of this can be found in the new calendar design I want [see](C:\Source\LivingeMessiahBackup\Feature-Ideas\999-Calendar-based-on-Bootstrap-7-col-grid\999-Calendar-based-on-Bootstrap-7-col-grid.md)
-- [ ] SukkotAdmin: This will be a big lift 
 - [ ] WindmillRanch:
 
 ## New features to add

@@ -11,14 +11,12 @@ public abstract class Donation : SmartEnum<Donation>
 	{
 		internal const int OneTime = 1;
 		internal const int Subscription = 2;
-		internal const int SukkotRegistration = 3;
 	}
 	#endregion
 
 	#region Declared Public Instances
 	public static readonly Donation OneTime = new OneTimeSE();
 	public static readonly Donation Subscription = new SubscriptionSE();
-	public static readonly Donation SukkotRegistration = new SukkotRegistrationSE();
 	#endregion
 
 
@@ -47,13 +45,6 @@ public abstract class Donation : SmartEnum<Donation>
 		public SubscriptionSE() : base($"{nameof(Id.Subscription)}", Id.Subscription) { }
 		public override string WebhookUrl => "/webhook/stripesubscription";
 		public override string Title => "Donate";
-	}
-
-	private sealed class SukkotRegistrationSE : Donation
-	{
-		public SukkotRegistrationSE() : base($"{nameof(Id.SukkotRegistration)}", Id.SukkotRegistration) { }
-		public override string WebhookUrl => "/webhook/stripesukkotdonation";
-		public override string Title => "Sukkot";
 	}
 
 	#endregion

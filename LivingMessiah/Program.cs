@@ -13,18 +13,7 @@ using static LivingMessiah.SecurityRoot.Auth0;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
-using Stripe;
-using LivingMessiah.Enums;
-//using OneTimeEndpoints = LivingMessiah.Features.OneTime.Endpoints;
-
-using SukkotSettings = LivingMessiah.Features.Sukkot.Settings;
-using SukkotEndpointsCheckoutSession = LivingMessiah.Features.Sukkot.Endpoints.CheckoutSession;
-using SukkotEndpointsWebhook = LivingMessiah.Features.Sukkot.Endpoints.Webhook;
-
 using AccountEnum = LivingMessiah.Enums.Account;
-using LivingMessiah.Features.Sukkot.Data;
-using LivingMessiah.Features.Sukkot.Endpoints;
-using LivingMessiah.Features.Sukkot.Endpoints.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
@@ -73,7 +62,6 @@ try
 				policy.RequireClaim(Policy.Claim, "true"));
 	builder.Services.AddScoped<AppState>(); // Scoped is more common for Blazor Server apps	
 	builder.Services.AddApplicationInsightsTelemetry();
-	builder.Services.AddSukkotData();
 	builder.Services.AddCalendar();
 	builder.Services.AddFeastDayPlanner();
 	builder.Services.AddAuth0WebAppAuthentication(options =>
@@ -91,22 +79,9 @@ try
 	builder.Services.Configure<AppSettings>(options => configuration.GetSection(nameof(AppSettings)).Bind(options));
 	//LivingMessiah.Helpers.LogHelper.DumpSectionConfiguration(builder.Configuration.GetSection("AppSettings"), "AppSettings");
 	
-	builder.Services.Configure<SukkotSettings>(options => configuration.GetSection(nameof(SukkotSettings)).Bind(options));
-	//LivingMessiah.Helpers.LogHelper.DumpSectionConfiguration(builder.Configuration.GetSection(nameof(SukkotSettings)), nameof(SukkotSettings));
-
-	builder.Services.Configure<StripeSettings>(options => configuration.GetSection(nameof(StripeSettings)).Bind(options));
 	builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 	builder.Services.AddSyncfusionBlazor();
 	builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
-
-	/*
-	 ToDo: this doesn't work but the code after it does.
-	 var sukkotStripeSettings = configuration.GetSection(nameof(Settings)).Get<Settings>();
-	 StripeConfiguration.ApiKey = sukkotStripeSettings?.ApiKey ?? "";
-  */
-	
-	var stripeApiKey = builder.Configuration[StripeConstants.ApiKey];
-	StripeConfiguration.ApiKey = stripeApiKey;
 
 	var app = builder.Build();
 	app.MapDefaultEndpoints();
@@ -148,12 +123,6 @@ try
 	#endregion
 
 	app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
-
-	//#region Sukkot Stripe Endpoints
-	//SukkotSettings? sukkotSettings = configuration.GetSection(nameof(SukkotSettings)).Get<SukkotSettings>();
-	//SukkotEndpointsCheckoutSession.CheckoutSessionConfig(app, Donation.SukkotRegistration.SessionUrl, sukkotSettings!.Domain!);
-	//SukkotEndpointsWebhook.WebhookConfig(app, Donation.SukkotRegistration.WebhookUrl);
-	//#endregion
 
 	app.Run();
 
