@@ -12,15 +12,19 @@
   <ItemGroup>
     <Compile Remove="Features\Calendar\ManageKeyDates\**" />
     <Compile Remove="Features\Calendar\ManageParashaCalendar\**" />
+    <Compile Remove="Features\Feasts\Header\**" />
     <Compile Remove="SecurityRoot\Components\**" />
     <Content Remove="Features\Calendar\ManageKeyDates\**" />
     <Content Remove="Features\Calendar\ManageParashaCalendar\**" />
+    <Content Remove="Features\Feasts\Header\**" />
     <Content Remove="SecurityRoot\Components\**" />
     <EmbeddedResource Remove="Features\Calendar\ManageKeyDates\**" />
     <EmbeddedResource Remove="Features\Calendar\ManageParashaCalendar\**" />
+    <EmbeddedResource Remove="Features\Feasts\Header\**" />
     <EmbeddedResource Remove="SecurityRoot\Components\**" />
     <None Remove="Features\Calendar\ManageKeyDates\**" />
     <None Remove="Features\Calendar\ManageParashaCalendar\**" />
+    <None Remove="Features\Feasts\Header\**" />
     <None Remove="SecurityRoot\Components\**" />
   </ItemGroup>
 
@@ -67,7 +71,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Feasts\Header\" />
     <Folder Include="Features\Welcome\Enums\" />
     <Folder Include="wwwroot\css\bootstrap\" />
     <Folder Include="wwwroot\js\" />

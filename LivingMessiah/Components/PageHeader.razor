@@ -9,12 +9,20 @@
 	}
 </PageTitle>
 
-<div class="pb-n1 mt-2 mb-3 @BorderCSS">
-	<h1 class=""><i class="@PageEnum.Icon"></i>&nbsp;&nbsp;@PageEnum.Title</h1> 
-</div>
+@if (ChildContent is null)
+{
+	<div class="pb-n1 mt-2 mb-3 @BorderCSS">
+		<h1 class=""><i class="@PageEnum.Icon"></i>&nbsp;&nbsp;@PageEnum.Title</h1>
+	</div>
+}
+else
+{
+	@ChildContent
+}
 
 @code {
 	[Parameter, EditorRequired] public Nav PageEnum { get; set; } = Nav.Home;
+	[Parameter] public RenderFragment? ChildContent { get; set; }
 	[Parameter] public string? PageTitle { get; set; }
 	[Parameter] public string? BorderCSS { get; set; } = "border-bottom border-info";
 }

@@ -1,16 +1,32 @@
 ﻿@page "/Feasts"
+@using static LivingMessiah.Features.Feasts.Enums.ColorConstants
 @using LivingMessiah.Features.Feasts.VerseReferenceCards
+@using LivingMessiah.Features.FeastDayPlanner
 @using LivingMessiah.Layout
 @using LivingMessiah.Layout.AlephBet
 @using Page = LivingMessiah.Enums.Nav
 
-<PageHeader PageEnum="Page.Feasts" />
+<PageHeader PageEnum="Page.Feasts">
+	<ChildContent>
+		<div class="d-flex justify-content-between align-items-center mt-2  mb-3 border-bottom border-info">
+			
+				<h2 class=""><i class="@Page.Feasts.Icon"></i>&nbsp;&nbsp;@Page.Feasts.Title</h2>
+			<span class="hebrew30">מוֹעֲדִים</span>
+		</div>
+	</ChildContent>
+</PageHeader>
 
-<Introduction />
 <ListGroup />
 
-<div class="card border-primary mt-5">
-	<Lev_23_01_02 />
+<div class="d-flex justify-content-center align-items-center mt-1">
+	<span>color code:&nbsp;&nbsp;</span>
+	<span class="text-black badge bg-@CssForMoadim-subtle">appointed times</span>&nbsp;&nbsp;
+	<span class="text-black badge bg-@CssForNonMoadim-subtle">other times </span>
 </div>
 
-<Wrapper /> 
+<div class="card border-primary mt-3"><Lev_23_01_02_04 /></div>
+
+
+<CommonHebrewWords /> 
+
+<Wrapper />
