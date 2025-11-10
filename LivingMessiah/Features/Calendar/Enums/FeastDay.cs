@@ -145,7 +145,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string TabTitle => $"{nameof(Id.Passover)}";
 		public override string PlannerTitle => $"{nameof(Id.Passover)} Week";
 		public override string Icon => "fas fa-door-open";
-		public override string VerseReferenceCard => "Lev_23_04_08";
+		public override string VerseReferenceCard => "Lev_23_05_08";
 		public override bool IsHighSabbath => true;
 		public override int EndOfWeekAddDays => 6;  // changed to 6 because I'm starting from 1st day of unleavened bread (before it was passover)
 		public override bool IsStartOfEdge => false;

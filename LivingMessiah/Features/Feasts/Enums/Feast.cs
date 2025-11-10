@@ -11,6 +11,12 @@ Observations and what makes this SmartEnums unique from the others
 		- bool SitemapUsage, bool HomeSidebarUsage, 
 */
 
+public static class ColorConstants
+{
+	public const string CssForMoadim = "warning";
+	public const string CssForNonMoadim = "success";
+}
+
 public record class Hebrew
 {
 	public string? FloatRightHebrew { get; set; }
@@ -56,9 +62,12 @@ public abstract class Feast : SmartEnum<Feast>
 	public abstract string Icon { get; }
 	public abstract string Image { get; }  
 	public abstract FeastDayType? FeastDay  { get; }
-	public abstract string ListGroupItemColor { get; }
 	public abstract Hebrew Hebrew { get; }
 	public abstract string SpecialEventIndex { get; }
+
+	//Properties
+	public bool IsMoadim => this.Value == Id.Hanukkah | this.Value == Id.Purim ? false : true;
+	public string MoadimColor => this.IsMoadim ? ColorConstants.CssForMoadim : ColorConstants.CssForNonMoadim;
 	#endregion
 
 	#region Private Instantiation
@@ -70,7 +79,6 @@ public abstract class Feast : SmartEnum<Feast>
 		public override string Icon => "far fa-hand-spock";
 		public override string Image => "/images/feasts/challah-400-319.jpg";
 		public override FeastDayType? FeastDay => null;
-		public override string ListGroupItemColor => "list-group-item-warning";
 		public override Hebrew Hebrew => new() { TitleSuffix = "Shabbat", FloatRightHebrew = "שַׁבָּת", Strongs = "H7676" };
 		public override string SpecialEventIndex => "";
 	}
@@ -83,7 +91,6 @@ public abstract class Feast : SmartEnum<Feast>
 		public override string Icon => "fas fa-hanukiah";
 		public override string Image => "/images/feasts/hanukkiah-400-x-400.jpg";
 		public override FeastDayType? FeastDay => FeastDayType.Hanukkah;
-		public override string ListGroupItemColor => "list-group-item-success";
 		public override Hebrew Hebrew => new() { TitleSuffix = "Hanukkah", FloatRightHebrew = "חֲנֻכָּה", Strongs = "H2598" };
 		public override string SpecialEventIndex => "";
 	}
@@ -96,7 +103,6 @@ public abstract class Feast : SmartEnum<Feast>
 		public override string Icon => "far fa-square";
 		public override string Image => "/images/feasts/purim-400-x-400.jpg";
 		public override FeastDayType? FeastDay => FeastDayType.Purim;
-		public override string ListGroupItemColor => "list-group-item-success";
 		public override Hebrew Hebrew => new() { TitleSuffix = "Purim", FloatRightHebrew = "פּוּר", Strongs = "H6332" };
 		public override string SpecialEventIndex => "";
 	}
@@ -109,7 +115,6 @@ public abstract class Feast : SmartEnum<Feast>
 		public override string Icon => "fas fa-door-open";
 		public override string Image => "/images/feasts/passover-crossover-400-x-308.jpg";  // passover-lamb-bread-400-302.jpg
 		public override FeastDayType? FeastDay => FeastDayType.Passover;
-		public override string ListGroupItemColor => "list-group-item-warning";
 		public override Hebrew Hebrew => new() { TitleSuffix = "Pesach", FloatRightHebrew = "פֶּסַח", Strongs = "H6453" };
 		public override string SpecialEventIndex => "";
 	}
@@ -121,7 +126,6 @@ public abstract class Feast : SmartEnum<Feast>
 	//  public override string Index => "/Omer";
 	//	public override string Title => "Omer";
 	//	public override string Icon => "far fa-calendar";
-	//	public override string ListGroupItemColor => "list-group-item-success";
 	//	public override Hebrew Hebrew => new() { TitleSuffix = "Omer", FloatRightHebrew = "עֹמֶר", Strongs = "H6016" };
 	//  public override SeasonEnum? Season => "Spring";
 	//	public override string SpecialEventIndex => "";
@@ -135,7 +139,6 @@ public abstract class Feast : SmartEnum<Feast>
 		public override string Icon => "fab fa-creative-commons-zero";
 		public override string Image => "/images/feasts/shavuot-moses-tablets-400-x-400.jpg"; // Weeks-400-x-400.jpg
 		public override FeastDayType? FeastDay => FeastDayType.Weeks;
-		public override string ListGroupItemColor => "list-group-item-warning";
 		public override Hebrew Hebrew => new() { TitleSuffix = "Shavu'ot", FloatRightHebrew = "שָׁבוּעוֹת", Strongs = "H7620" };
 		public override string SpecialEventIndex => "";
 	}
@@ -148,7 +151,6 @@ public abstract class Feast : SmartEnum<Feast>
 		public override string Icon => "fas fa-bullhorn";
 		public override string Image => "/images/feasts/yom-teruah-400-x-400.jpg";
 		public override FeastDayType? FeastDay => FeastDayType.Trumpets;
-		public override string ListGroupItemColor => "list-group-item-warning";
 		public override Hebrew Hebrew => new() { TitleSuffix = "Yom Teruah", FloatRightHebrew = "יוֹם תְּרוּעָה", Strongs = "H8643" };
 		public override string SpecialEventIndex => "";
 	}
@@ -161,7 +163,6 @@ public abstract class Feast : SmartEnum<Feast>
 		public override string Icon => "fas fa-hands-helping";
 		public override string Image => "/images/feasts/yom-kippur-400-400.jpg";
 		public override FeastDayType? FeastDay => FeastDayType.YomKippur;
-		public override string ListGroupItemColor => "list-group-item-warning";
 		public override Hebrew Hebrew => new() { TitleSuffix = "Yom Kippur", FloatRightHebrew = "יוֹם כִּיפּוּר", Strongs = "H3725" };
 		public override string SpecialEventIndex => "";
 	}
@@ -174,7 +175,6 @@ public abstract class Feast : SmartEnum<Feast>
 		public override string Icon => "fas fa-campground";
 		public override string Image => "/images/feasts/tabernacles-400-x-400.jpg";
 		public override FeastDayType? FeastDay => FeastDayType.Tabernacles;
-		public override string ListGroupItemColor => "list-group-item-warning";
 		public override Hebrew Hebrew => new() { TitleSuffix = "Sukkot", FloatRightHebrew = "סֻּכּוֹת", Strongs = "H5523" };
 		public override string SpecialEventIndex => "";
 	}

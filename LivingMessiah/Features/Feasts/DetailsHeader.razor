@@ -1,23 +1,34 @@
 ﻿
 <PageTitle>@FeastNav.Title</PageTitle>
 
-@* <div class="border-bottom border-dark-subtle"></div> *@
-
 <div class="d-flex justify-content-between align-items-center mt-2 @BorderCSS">
 	<h1 class=""><i class="@FeastNav.Icon"></i> @FeastNav.Title</h1>
+</div>
 
-	<a href="@Nav.Feasts.Index" title="@Nav.Feasts.Title">
-		<i class="far fa-arrow-alt-circle-left"></i>
-	</a>
-	
-	@* 
-	class="btn btn-info btn-sm"
-	Back to @Nav.Feasts.Title 
-	*@
+<div class="row mt-2 float-end">
+	<div class="col-12">
+		<div class="btn-group">
+			<a href="@Nav.Feasts.Index" title="@Nav.Feasts.Title"
+				 class="btn btn-secondary btn-sm">
+				<i class="far fa-arrow-alt-circle-left"></i>
+			</a>
 
+			@foreach (var item in Enums.Feast.List.OrderBy(o => o.Value).ToList())
+			{
+				<a href="@item.Index" title="@item.Hebrew.TitleSuffix" type="button"
+					 class="btn btn-@item.MoadimColor btn-sm">
+					<i class="@item.Icon" aria-hidden="true"></i>
+				</a>
+			}
+
+		</div>
+	</div>			
 </div>
 
 @code {
 	[Parameter, EditorRequired] public Enums.Feast FeastNav { get; set; }
 	[Parameter] public string? BorderCSS { get; set; } = "border-bottom border-dark-subtle";
+
+
+
 }
