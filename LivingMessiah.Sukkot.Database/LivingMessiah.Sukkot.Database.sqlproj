@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build">
+  <Sdk Name="Microsoft.Build.Sql" Version="0.2.3-preview" />
+  <PropertyGroup>
+    <Name>LivingMessiah.Sukkot.Database</Name>
+    <ProjectGuid>{8B3A9F5E-4D1C-4E8F-9A7B-2C5E6F8D9A1B}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
+    <ModelCollation>1033, CI</ModelCollation>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Tables\" />
+    <Folder Include="Views\" />
+    <Folder Include="StoredProcedures\" />
+    <Folder Include="Functions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Tables\ErrorLog.sql" />
+    <Build Include="Views\zvwErrorLog.sql" />
+    <Build Include="StoredProcedures\stpLogErrorTest.sql" />
+    <Build Include="StoredProcedures\stpLogErrorEmpty.sql" />
+  </ItemGroup>
+</Project>
