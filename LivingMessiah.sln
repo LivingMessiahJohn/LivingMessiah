@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivingMessiahAdmin", "Livin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivingMessiahSukkot", "LivingMessiahSukkot\LivingMessiahSukkot.csproj", "{0A81F1BD-A568-4A82-85FE-6EF6B9D81423}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SukkotDB", "SukkotDB\SukkotDB.sqlproj", "{7C671ACB-0B22-4C53-85D7-7EF485653790}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,24 @@ Global
 		{0A81F1BD-A568-4A82-85FE-6EF6B9D81423}.Release|x64.Build.0 = Release|Any CPU
 		{0A81F1BD-A568-4A82-85FE-6EF6B9D81423}.Release|x86.ActiveCfg = Release|Any CPU
 		{0A81F1BD-A568-4A82-85FE-6EF6B9D81423}.Release|x86.Build.0 = Release|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Debug|x64.Build.0 = Debug|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Debug|x64.Deploy.0 = Debug|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Debug|x86.Build.0 = Debug|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Debug|x86.Deploy.0 = Debug|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Release|x64.ActiveCfg = Release|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Release|x64.Build.0 = Release|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Release|x64.Deploy.0 = Release|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Release|x86.ActiveCfg = Release|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Release|x86.Build.0 = Release|Any CPU
+		{7C671ACB-0B22-4C53-85D7-7EF485653790}.Release|x86.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

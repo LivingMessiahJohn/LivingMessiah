@@ -1,0 +1,2 @@
+﻿CREATE USER [LmmAdmin]  WITHOUT LOGIN;
+
