@@ -1,0 +1,2 @@
+﻿CREATE USER [AzureLogicApp] WITHOUT LOGIN;
+

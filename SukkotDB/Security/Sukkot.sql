@@ -1,0 +1,3 @@
+﻿CREATE SCHEMA [Sukkot]
+    AUTHORIZATION [dbo];
+
