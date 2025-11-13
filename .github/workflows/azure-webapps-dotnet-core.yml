@@ -80,12 +80,6 @@ jobs:
       - name: Publish LivingMessiahAdmin
         run: dotnet publish LivingMessiahAdmin/LivingMessiahAdmin.csproj -c Release -o ${{ github.workspace }}/publish/LivingMessiahAdmin
 
-      - name: Build Sukkot Database
-        run: dotnet build LivingMessiah.Sukkot.Database/LivingMessiah.Sukkot.Database.sqlproj -c Release
-
-      - name: Publish Sukkot Database
-        run: dotnet publish LivingMessiah.Sukkot.Database/LivingMessiah.Sukkot.Database.sqlproj -c Release -o ${{ github.workspace }}/publish/SukkotDatabase
-
       - name: Debug - List all files and directories
         run: |
           echo "=== Current directory ==="
@@ -112,12 +106,6 @@ jobs:
         with:
           name: LivingMessiahAdmin
           path: ${{ github.workspace }}/publish/LivingMessiahAdmin
-
-      - name: Upload Sukkot Database artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: SukkotDatabase
-          path: ${{ github.workspace }}/publish/SukkotDatabase
 
   deploy:
     runs-on: ubuntu-latest
