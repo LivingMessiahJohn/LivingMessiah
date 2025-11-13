@@ -1,1 +1,17 @@
-﻿<Project Sdk="Microsoft.Build.Sql/1.*">`n <PropertyGroup>`n <Name>SukkotDB</Name>`n <ProjectGuid>{00000000-0000-0000-0000-000000000000}</ProjectGuid>`n <SuppressMissingRefWarning>true</SuppressMissingRefWarning>`n <OutputType>Library</OutputType>`n </PropertyGroup>`n`n <ItemGroup>`n <PackageReference Include="Microsoft.Build.Sql" Version="1.1.0" />`n </ItemGroup>`n`n <ItemGroup>`n <Build Include="**\\*.sql" />`n </ItemGroup>`n`n</Project>
+﻿<Project Sdk="Microsoft.Build.Sql/1.*">
+  <PropertyGroup>
+    <Name>SukkotDB</Name>
+    <ProjectGuid>{00000000-0000-0000-0000-000000000000}</ProjectGuid>
+    <SuppressMissingRefWarning>true</SuppressMissingRefWarning>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Sql" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Build Include="**\*.sql" />
+  </ItemGroup>
+
+</Project>
