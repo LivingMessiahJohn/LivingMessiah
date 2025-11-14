@@ -61,7 +61,7 @@ jobs:
         run: dotnet publish LivingMessiahAdmin/LivingMessiahAdmin.csproj -c Release -o ${{ github.workspace }}/publish/LivingMessiahAdmin
 
       - name: Publish LivingMessiahSukkot
-        run: dotnet publish LivingMessiahSukkot/LivingMessiahSukkot.csproj -c Release -o ${{ github.workspace }}/publish/LivingMessiahSukkot
+        run: dotnet publish LivingMessiahSukkot/LivingMessiahSukkot.csproj -c Release -o ${{ github.workspace }}/publish/LivingMessiahSukkot --self-contained true -r win-x64
 
       - name: Upload LivingMessiah artifact
         uses: actions/upload-artifact@v4
