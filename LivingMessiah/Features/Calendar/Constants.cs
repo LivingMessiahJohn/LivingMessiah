@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
-
-namespace LivingMessiah.Features.Calendar;
+﻿namespace LivingMessiah.Features.Calendar;
 
 
 public static class CalendarDates
