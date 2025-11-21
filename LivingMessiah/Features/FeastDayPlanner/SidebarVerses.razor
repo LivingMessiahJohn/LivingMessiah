@@ -1,8 +1,19 @@
-﻿@using FeastDayType = LivingMessiah.Features.Calendar.Enums.FeastDay
+﻿@using FeastDayType = RCL.Features.Calendar.Enums.FeastDay
+
 @using LivingMessiah.Features.FeastDayPlanner.VerseReferenceCards
 
+@inject IToastService? Toast
+@inject ILogger<SidebarVerses>? Logger
+
 <div class="d-print-none mb-2">
-	<DynamicComponent Type="SelectedVerseReferenceCard" />
+	@if (SelectedVerseReferenceCard is not null)
+	{ 
+		<DynamicComponent Type="SelectedVerseReferenceCard" />
+	}
+	else
+	{
+		<p>SelectedVerseReferenceCard is null; @nameof(SidebarVerses)</p>
+	}	
 </div>
 
 @code {
@@ -12,6 +23,30 @@
 
 	protected override void OnParametersSet()
 	{
-		SelectedVerseReferenceCard = Type.GetType($"{DynamicComponentPaths.VerseReferenceCards}{FeastDayType!.VerseReferenceCard}");
+		try
+		{
+			if (FeastDayType is null)
+			{
+				Toast!.ShowWarning("FeastDayType is null");
+				Logger!.LogWarning("{Method}: FeastDayType is null", nameof(OnParametersSet));
+			}
+			else
+			{
+				SelectedVerseReferenceCard = Type.GetType($"{DynamicComponentPaths.VerseReferenceCards}{FeastDayType!.VerseReferenceCard}");
+				if (SelectedVerseReferenceCard is null)
+				{
+					string msg = $"Could not find VerseReferenceCard for FeastDayType: {FeastDayType}. Tried to get type from {DynamicComponentPaths.VerseReferenceCards}{FeastDayType!.VerseReferenceCard}";	
+					Toast!.ShowWarning("SelectedVerseReferenceCard is null");
+					Logger!.LogWarning("{Method}, {Message}", nameof(OnParametersSet), msg);
+				}
+
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(OnParametersSet));
+			Toast!.ShowError($"{Global.ToastShowError}");
+		}
+
 	}
 }

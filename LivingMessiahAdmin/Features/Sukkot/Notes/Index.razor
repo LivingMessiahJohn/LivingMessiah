@@ -1,8 +1,8 @@
 ﻿@page "/Sukkot/Notes"
 
-@using LivingMessiahAdmin.Features.Sukkot.Enums
 @using Microsoft.AspNetCore.Components.Authorization
 @using LivingMessiahAdmin.SecurityRoot
+@using MenuBarEnums = LivingMessiahAdmin.Features.Sukkot.Enums.MenuBar;
 @using RoleGroup = LivingMessiahAdmin.Enums.RoleGroup;
 
 @inject ILogger<Index>? Logger
@@ -16,7 +16,7 @@
       <small>Authorized: Role Group Policy: @RoleGroup.Sukkot</small>
     </div>
 
-    <PageHeaderMenubar MenuBarEnum=MenuBar.Notes ShowPrintButton=true />
+    <PageHeaderMenubar MenuBarEnum=MenuBarEnums.Notes ShowPrintButton=true />
 
     <LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
       @if (ShowDetail)

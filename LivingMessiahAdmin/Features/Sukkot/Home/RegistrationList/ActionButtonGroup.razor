@@ -1,15 +1,15 @@
-﻿@using LivingMessiahAdmin.Features.Sukkot.Enums
+﻿
 @using LivingMessiahAdmin.Features.Sukkot.Home
 @using LivingMessiahAdmin.Features.Sukkot.Home.Enums
 @using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationList.Enums
-@using RegStatusEnums = LivingMessiahAdmin.Features.Sukkot.Enums
+@using StepEnums = RCL.Features.Sukkot.Enums.Step;
 
 @inject ILogger<ActionButtonGroup>? Logger
 @inject IToastService? Toast
 
 @* @if (StatusId == RegStatusEnums.Status.StartRegistration.Value) *@
 
-@if (StatusId == Step.Registration.Value)
+@if (StatusId == StepEnums.Registration.Value)
 {
 	@foreach (var item in Crud.List
 					.OrderBy(o => o.Sort)

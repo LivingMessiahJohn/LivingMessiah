@@ -1,7 +1,10 @@
 ﻿@page "/Sukkot"
 
 @using LivingMessiahAdmin.Features.Sukkot.Components.RegistrationForm
-@using LivingMessiahAdmin.Features.Sukkot.Enums
+@using MenuBarEnums = LivingMessiahAdmin.Features.Sukkot.Enums.MenuBar;
+
+@using StepEnums = RCL.Features.Sukkot.Enums.Step
+
 @using LivingMessiahAdmin.Features.Sukkot.Home.Data
 @using LivingMessiahAdmin.Features.Sukkot.Home.Donations
 @using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationList
@@ -22,7 +25,7 @@
 
     @if (VisibleComponent == Enums.VisibleComponent.RegistrationList)
     {
-      <PageHeaderMenubar MenuBarEnum=MenuBar.Home ShowPrintButton=true OnHraActionSelected="ReturnedShowAgreement" />
+      <PageHeaderMenubar MenuBarEnum=MenuBarEnums.Home ShowPrintButton=true OnHraActionSelected="ReturnedShowAgreement" />
 
       <LoadingComponent IsLoading="RegistrationList == null" TurnSpinnerOff=TurnSpinnerOff>
         <div class="@MediaQuery.XsOrSm.DivClass">
@@ -45,10 +48,10 @@
 
       @if (VisibleComponent == Enums.VisibleComponent.Registrant)
       {
-        <div class="card mt-0 mb-3 @Step.Registration.CardBodyCSS">
-          <div class="card-body @Step.Registration.CardBodyCSS">
+        <div class="card mt-0 mb-3 @StepEnums.Registration.CardBodyCSS">
+          <div class="card-body @StepEnums.Registration.CardBodyCSS">
             @*  OnAddCompleted="ReturnedRegistrationAddCompleted"  *@
-            <Form Email="@Email" Id="@Id"  CurrentStep="Step.Registration"/>
+            <Form Email="@Email" Id="@Id" CurrentStep="StepEnums.Registration" />
           </div>
         </div>
       }

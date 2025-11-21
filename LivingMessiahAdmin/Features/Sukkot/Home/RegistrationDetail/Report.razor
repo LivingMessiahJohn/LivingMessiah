@@ -1,7 +1,7 @@
-﻿@using LivingMessiahAdmin.Features.Sukkot.Enums
-@using LivingMessiahAdmin.Features.Sukkot.Enums.Helpers
-@using RootConstants = LivingMessiahAdmin.Features.Sukkot.Constants.CurrentYear
-
+﻿@using RootConstants = LivingMessiahAdmin.Features.Sukkot.Constants.CurrentYear
+@using RCL.Features.Sukkot.Enums
+@using StepEnums = RCL.Features.Sukkot.Enums.Step
+@using SukkotEnumsHelpers = RCL.Features.Sukkot.Enums.Helpers
 
 @inject ILogger<Report>? Logger
 @inject IToastService? Toast
@@ -24,7 +24,7 @@
     <div class="d-flex justify-content-around">
       <div><b>EMail / Phone</b>: @data!.EMail @Phone2</div>
 
-      <div class=" @Step.FromValue(data.StepId).CardBodyCSS"><b>Step</b>: @data.StepName</div>
+      <div class=" @StepEnums.FromValue(data.StepId).CardBodyCSS"><b>Step</b>: @data.StepName</div>
 
     </div>
 
@@ -152,7 +152,7 @@
       Fee = registrationFee!.CurrencyFormat;
     }
 
-    (DateTime[]? week1, DateTime[]? week2) = EntryFormHelper.GetAttendanceDatesArray(data!.AttendanceBitwise);
+    (DateTime[]? week1, DateTime[]? week2) = SukkotEnumsHelpers.EntryFormHelper.GetAttendanceDatesArray(data!.AttendanceBitwise);
     data.AttendanceDateList = week1;
     data.AttendanceDateList2ndMonth = week2!;
   }

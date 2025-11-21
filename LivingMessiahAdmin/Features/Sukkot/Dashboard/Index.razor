@@ -2,7 +2,7 @@
 
 @page "/SukkotDashboard"
 
-@using LivingMessiahAdmin.Features.Sukkot.Enums
+@using MenuBarEnums = LivingMessiahAdmin.Features.Sukkot.Enums.MenuBar;
 
 @using Microsoft.AspNetCore.Components.Authorization
 @using LivingMessiahAdmin.SecurityRoot
@@ -10,7 +10,7 @@
 
 <AuthorizeView Policy=@RoleGroup.Sukkot>
   <Authorized>
-    <PageHeaderMenubar MenuBarEnum=MenuBar.Dashboard />
+    <PageHeaderMenubar MenuBarEnum=MenuBarEnums.Dashboard />
     <Grid />
     <StripeTable />
   </Authorized>

@@ -1,7 +1,10 @@
-﻿using LivingMessiahAdmin.Helpers;
+﻿
 
-using StepEnums = LivingMessiahAdmin.Features.Sukkot.Enums.Step;
-using Attendance = LivingMessiahAdmin.Features.Sukkot.Enums.AttendanceDate;
+using StepEnums = RCL.Features.Sukkot.Enums.Step;
+
+//using SukkotEnumsHelpers = RCL.Features.Sukkot.Enums.Helpers;
+using SukkotHelper = RCL.Features.Sukkot.Enums.Helper;
+// ToDo: you have a class called Helper and a folder called Helpers.  Consider renaming one of them to avoid confusion.
 
 namespace LivingMessiahAdmin.Features.Sukkot.Dashboard.Data;
 
@@ -143,7 +146,9 @@ public class GridQuery
 	{
 		get
 		{
-			return LivingMessiahAdmin.Features.Sukkot.Enums.Helper.GetAttendanceDatesColumnValue(AttendanceBitwise);
+			return SukkotHelper.GetAttendanceDatesColumnValue(AttendanceBitwise);
+			//return RCL.Features.Sukkot.Enums.Helper.GetAttendanceDatesColumnValue(AttendanceBitwise);
+			//return SukkotEnumsHelpers.EntryFormHelper.GetAttendanceDatesColumnValue(AttendanceBitwise);
 		}
 	}
 

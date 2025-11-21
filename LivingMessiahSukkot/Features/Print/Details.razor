@@ -1,6 +1,7 @@
 ﻿@using LivingMessiahSukkot.Features.Components
 @using LivingMessiahSukkot.Features.Data
-@using LivingMessiahSukkot.Features.Enums
+@using StepEnums = RCL.Features.Sukkot.Enums.Step
+@using RegistrationFeeEnums = RCL.Features.Sukkot.Enums.RegistrationFee
 
 <h4 class="my-4 text-center border-bottom border-dark-subtle border-4">@Constants.Details.Title</h4>
 
@@ -15,7 +16,7 @@
   <div class="d-flex justify-content-around">
     <div><b>EMail / Phone</b>: @RegistrationQuery!.EMail @Phone2</div>
 
-    <div class=" @Step.FromValue(RegistrationQuery.StepId).CardBodyCSS"><b>Step</b>: @RegistrationQuery.StepName</div>
+    <div class=" @StepEnums.FromValue(RegistrationQuery.StepId).CardBodyCSS"><b>Step</b>: @RegistrationQuery.StepName</div>
 
   </div>
 
@@ -135,7 +136,7 @@
   {
     Phone2 = !String.IsNullOrEmpty(RegistrationQuery!.Phone) ? $" / Phone: {RegistrationQuery!.Phone} " : "";
 
-    if (RegistrationFee.TryFromValue(RegistrationQuery.FeeEnumValue, out var registrationFee))
+    if (RegistrationFeeEnums.TryFromValue(RegistrationQuery.FeeEnumValue, out var registrationFee))
     {
       Fee = registrationFee!.CurrencyFormat; 
     }

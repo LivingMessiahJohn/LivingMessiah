@@ -1,4 +1,4 @@
-﻿using LivingMessiahAdmin.Features.Sukkot.Enums;
+﻿using StepEnums = RCL.Features.Sukkot.Enums.Step;
 
 namespace LivingMessiahAdmin.Features.Sukkot.Components.RegistrationForm;
 
@@ -16,7 +16,7 @@ public class VM
 	public int ChildSmall { get; set; }
 
 	public int StepId { get; set; } // The ManageRegistration!EntryForm needs this
-	public Step? Step { get; set; }
+	public StepEnums? Step { get; set; }
 
 	public int AttendanceBitwise { get; set; } // does the VM need this?
 	public DateTime[]? AttendanceDateList { get; set; }

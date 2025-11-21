@@ -1,9 +1,9 @@
-﻿@using LivingMessiahAdmin.Features.Sukkot.Dashboard.Data
+﻿@using FilterEnums = LivingMessiahAdmin.Features.Sukkot.Dashboard.Enums.Filter
+@using LivingMessiahAdmin.Features.Sukkot.Dashboard.Data
 @using LivingMessiahAdmin.Features.Sukkot.Dashboard.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
-@using FilterEnums = LivingMessiahAdmin.Features.Sukkot.Dashboard.Enums.Filter
+@using RCL.Features.Sukkot.Enums.Helpers
 @using ShowColumnEnums = LivingMessiahAdmin.Features.Sukkot.Dashboard.Enums.ShowColumn
-@using SukkotEnumsHelpers = LivingMessiahAdmin.Features.Sukkot.Enums.Helpers
 
 @inject ILogger<Grid>? Logger
 @inject IRepository? db;
@@ -190,7 +190,7 @@
         , item!.OtherNames ?? ""
         , item!.AdminNotes ?? ""
         , item!.Notes ?? ""
-        , SukkotEnumsHelpers.RegistrationFeeHelper.AdultsToRegistrationFee(item.Adults));
+        , RegistrationFeeHelper.AdultsToRegistrationFee(item.Adults));
     }
   }
 

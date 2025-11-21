@@ -1,5 +1,6 @@
-﻿@using FeastEnums = LivingMessiah.Features.Feasts.Enums
-@using CalendarEnums = LivingMessiah.Features.Calendar.Enums
+﻿@using FeastEnums = RCL.Features.Feasts.Enums
+
+@using CalendarEnums = RCL.Features.Calendar.Enums
 @using LivingMessiah.Helpers
 @using NavEnums = LivingMessiah.Enums.Nav
 @using LivingMessiah.Features.FeastDayPlanner
@@ -97,7 +98,7 @@
       Logger!.LogDebug("{Method}, {Message}", $"{nameof(GetCurrentDate)} (just called)"
       , $"CurrentDate: {CurrentDate.ToShortDateString()}");
 
-      FeastList = (from feast in FeastEnums.Feast.List.ToList()
+      FeastList = (from feast in RCL.Features.Feasts.Enums.Feast.List.ToList()
                    join feastDay in CalendarEnums.FeastDay.List.ToList()
                        on feast.FeastDay?.Value equals feastDay.Value
                    where CurrentDate >= feastDay.StartShowingCard && CurrentDate <= feastDay.Range.Max

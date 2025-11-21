@@ -1,4 +1,5 @@
 ﻿@using LivingMessiahSukkot.Features.Enums
+@using StepEnums = RCL.Features.Sukkot.Enums.Step
 
 @* @inject ILogger<HorizontalStep>? Logger *@
 
@@ -20,8 +21,8 @@
 
 @code {
 
-	[Parameter, EditorRequired] public Step? EnumStep { get; set; }
-	[Parameter, EditorRequired] public Step CurrentStep { get; set; } //Step? CurrentStep { get; set; }
+	[Parameter, EditorRequired] public StepEnums? EnumStep { get; set; }
+	[Parameter, EditorRequired] public StepEnums CurrentStep { get; set; } //Step? CurrentStep { get; set; }
 	[Parameter, EditorRequired] public bool IsXs { get; set; }
 
 	protected string FontSize => $"{(IsXs ? " fs-4" : " fs-2")}";

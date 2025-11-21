@@ -5,13 +5,17 @@
 @using LivingMessiahSukkot.Features.Components.LifeCycleAuthority
 @using LivingMessiahSukkot.Features.Components.RegistrationForm
 @using LivingMessiahSukkot.Features.Constants
+
 @using LivingMessiahSukkot.Features.Enums
+@using RegistrationFeeEnums = RCL.Features.Sukkot.Enums.RegistrationFee
+@using SukkotEnumsHelpers = RCL.Features.Sukkot.Enums.Helpers
+
 @using LivingMessiahSukkot.Features.Steps.Agreement
 @using LivingMessiahSukkot.Features.Steps.NotAuthorized
 @using LivingMessiahSukkot.Features.Steps.PaymentStep
 @using LivingMessiahSukkot.Security
 @using Microsoft.AspNetCore.Components.Authorization
-s.Policy
+@using StepEnums = RCL.Features.Sukkot.Enums.Step
 
 @inject ISecurityHelper? SecurityHelper
 @inject ILogger<Index>? Logger
@@ -36,7 +40,7 @@ s.Policy
             @CurrentStep.Heading
           </p>
         }
-        @if (CurrentStep == Step.SignAgreement)
+        @if (CurrentStep == StepEnums.SignAgreement)
         {
           <div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
             <div class="card-body @CurrentStep!.CardBodyCSS">
@@ -49,10 +53,10 @@ s.Policy
 
           @* <DebugShowStepEnum UsersCurrentStep="vm!.Step" /> *@
 
-          <StepSkeleton CurrentStep="Step.FromValue(vm!.Step!.Value)">
+          <StepSkeleton CurrentStep="StepEnums.FromValue(vm!.Step!.Value)">
 
             <RegistrationFormRF>
-              @if (@vm.Step == Step.Registration)
+              @if (@vm.Step == StepEnums.Registration)
               {
                 <div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
                   <div class="card-body @CurrentStep!.CardBodyCSS">
@@ -65,7 +69,7 @@ s.Policy
             </RegistrationFormRF>
 
             <PaymentRF>
-              @if (@vm.Step == Step.Payment && CurrentRegistrationId != 0)
+              @if (@vm.Step == StepEnums.Payment && CurrentRegistrationId != 0)
               {
                 <div class="card my-2 @CurrentStep!.CardBodyCSS">
                   <div class="card-body">
@@ -89,7 +93,7 @@ s.Policy
             </PaymentRF>
 
             <CompleteRF>
-              @if (@vm.Step == Step.Complete)
+              @if (@vm.Step == StepEnums.Complete)
               {
                 <div class="card mt-0 mb-3 @CurrentStep!.CardBodyCSS">
                   <div class="card-body">
@@ -124,8 +128,8 @@ s.Policy
 
 @code {
 
-  protected Step? CurrentStep;
-  protected RegistrationFee? CurrentRegistrationFee;
+  protected StepEnums? CurrentStep;
+  protected RegistrationFeeEnums? CurrentRegistrationFee;
   protected int CurrentRegistrationId = 0;
 
   protected bool TurnSpinnerOff = false;
@@ -162,24 +166,24 @@ s.Policy
         if (vw.RegistrationId is not null)
         {
           vm!.RegistrationId = (int)vw.RegistrationId;
-          vm!.Step = Step.FromValue((int)vw.StepId!);
+          vm!.Step = StepEnums.FromValue((int)vw.StepId!);
           vm.Adults = vw.Adults ?? 0; // this can't be null if there is a RegistrationId
           vm.FeeEnumValue = (int)vw.FeeEnumValue!; // this can't be null if there is a RegistrationId
           CurrentRegistrationId = vm!.RegistrationId;
           CurrentStep = vm!.Step;
-          CurrentRegistrationFee = RegistrationFee.FromValue(vm.FeeEnumValue);
+          CurrentRegistrationFee = RegistrationFeeEnums.FromValue(vm.FeeEnumValue);
         }
         else
         {
-          vm!.Step = Step.Registration;
-          CurrentStep = Step.FromValue(vm.Step!.Value);
+          vm!.Step = StepEnums.Registration;
+          CurrentStep = StepEnums.FromValue(vm.Step!.Value);
           //CurrentRegistrationId = 0;  //ToDo: review.
         }
       }
       else
       {
-        vm!.Step = Step.SignAgreement;
-        CurrentStep = Step.FromValue(vm.Step!.Value);
+        vm!.Step = StepEnums.SignAgreement;
+        CurrentStep = StepEnums.FromValue(vm.Step!.Value);
       }
 
       Logger!.LogInformation("{Method} {Status} {Step}", nameof(ProcessRegistrationStep), vm.Step, CurrentStep);
@@ -195,7 +199,7 @@ s.Policy
     }
   }
 
-  private async Task ReturnedHraActionCompleted(Step nextStep)
+  private async Task ReturnedHraActionCompleted(StepEnums nextStep)
   {
     CurrentStep = nextStep;
     await ProcessRegistrationStep();
@@ -212,7 +216,7 @@ s.Policy
   private async Task ReturnedRegistrationUpdateCompleted(int adults)
   {
     //Logger!.LogDebug("{Method}, {Step}", nameof(ReturnedActionCompleted), nextStep);
-    CurrentRegistrationFee = RegistrationFeeHelper.AdultsToRegistrationFee(adults);
+    CurrentRegistrationFee = SukkotEnumsHelpers.RegistrationFeeHelper.AdultsToRegistrationFee(adults);
     await ProcessRegistrationStep();
   }
 

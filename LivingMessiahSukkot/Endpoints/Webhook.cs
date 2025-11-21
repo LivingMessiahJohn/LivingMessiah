@@ -3,7 +3,7 @@ using Stripe.Checkout;
 
 using LivingMessiahSukkot.Endpoints.Constants;
 using LivingMessiahSukkot.Features.Data;
-using RegistrationFeeEnums = LivingMessiahSukkot.Features.Enums.RegistrationFee;
+using RegistrationFeeEnums = RCL.Features.Sukkot.Enums.RegistrationFee;
 using static LivingMessiahSukkot.Features.Constants.FormFields;
 
 namespace LivingMessiahSukkot.Endpoints;

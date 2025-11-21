@@ -7,6 +7,15 @@ public static class Progress
 	public static string HeightSmall = "30px";
 }
 
+/*
+ Move to RCL
+ Used by LivingMessiah\LivingMessiah\Features\FeastDayPlanner\
+ - Enums\PlannerDetail.cs
+ - FeastDayPlanner\EveningAndDay.razor
+
+- [ ] Delete code found in RCL.Features.FeastDayPlanner.Constants
+ 
+
 public static class BarColor
 {
 	public static string HebrewExtraBGColor = "bg-secondary-subtle";
@@ -16,15 +25,20 @@ public static class BarColor
 	public static string HebrewTextColor = "text-dark"; 
 }
 
-public static class DynamicComponentPaths
-{
-	public static string VerseReferenceCards =  "LivingMessiah.Features.FeastDayPlanner.VerseReferenceCards.";
-}
 
 public static class HebrewYear
 {
 	public static bool IsLeapYear = true;
 }
+
+ */
+
+// Move to RCL
+public static class DynamicComponentPaths
+{
+	public static string VerseReferenceCards =  "LivingMessiah.Features.FeastDayPlanner.VerseReferenceCards.";
+}
+
 
 public static class Test
 {

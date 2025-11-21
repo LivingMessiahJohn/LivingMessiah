@@ -1,5 +1,5 @@
 ﻿using Stripe.Checkout;
-using LivingMessiahSukkot.Features.Enums;
+using RegistrationFeeEnums = RCL.Features.Sukkot.Enums.RegistrationFee;
 using LivingMessiahSukkot.Features.Constants;
 using LivingMessiahSukkot.Features.Data;
 
@@ -25,7 +25,7 @@ public static class CheckoutSession
 
 				IFormCollection form = await context.Request.ReadFormAsync();
 
-				var validationResult = CheckValidation(form, Logger, out int registrationId, out RegistrationFee registrationFee, out string email);
+				var validationResult = CheckValidation(form, Logger, out int registrationId, out RegistrationFeeEnums registrationFee, out string email);
 				if (validationResult != null)
 				{
 					return validationResult;
@@ -79,7 +79,7 @@ public static class CheckoutSession
 		return (string.Empty, registrationId);
 	}
 
-	private static (string ReturnMsg, RegistrationFee registrationFee) ValidateFeeEnumValue(IFormCollection form)
+	private static (string ReturnMsg, RegistrationFeeEnums registrationFee) ValidateFeeEnumValue(IFormCollection form)
 	{
 		if (!form.TryGetValue(FormFields.FeeEnumValue, out var feeEnumIdValue) || string.IsNullOrEmpty(feeEnumIdValue))
 		{
@@ -91,7 +91,7 @@ public static class CheckoutSession
 			return ("FeeEnumId must be a valid integer.", null!);
 		}
 
-		if (!RegistrationFee.TryFromValue(feeEnumId, out var registrationFee))
+		if (!RegistrationFeeEnums.TryFromValue(feeEnumId, out var registrationFee))
 		{
 			return ($"Registration donation, gotten by TryFromValue using feeEnumId: {feeEnumId} is unknown", null!);
 		}
@@ -129,7 +129,7 @@ public static class CheckoutSession
 		IFormCollection form,
 		ILogger Logger,
 		out int registrationId,
-		out RegistrationFee registrationFee,
+		out RegistrationFeeEnums registrationFee,
 		out string email)
 	{
 		registrationId = 0;
@@ -176,7 +176,7 @@ public static class CheckoutSession
 
 	private static SessionCreateOptions GetSessionOptions(
 		int registrationId,
-		RegistrationFee registrationFee,
+		RegistrationFeeEnums registrationFee,
 		string email,
 		string domain)
 	{

@@ -1,7 +1,16 @@
 ﻿using LivingMessiah.Helpers;
 using LivingMessiah.Features.Shavuot.Domain;
 
+using RCL.Features.Calendar.Enums;
+using RCL.Features.Calendar.Constants;
+
 namespace LivingMessiah.Features.Calendar;
+
+/*
+ToDo:
+1. Move this logic to RCL
+2. Can this Service be replaced with a simpler static class? or something?
+*/
 
 public interface IService
 {
@@ -44,8 +53,8 @@ public class Service(ILogger<Service> logger) : IService
 	{
 		int i = 0;
 
-		foreach (var fd in Enums.FeastDay.List
-												.Where(w => w.Value != Enums.FeastDay.Hanukkah & w.Value != Enums.FeastDay.Passover)
+		foreach (var fd in FeastDay.List
+												.Where(w => w.Value != FeastDay.Hanukkah & w.Value != FeastDay.Passover)
 												.OrderBy(o => o.Value).ToList())
 		{
 			i += 1;
@@ -56,7 +65,7 @@ public class Service(ILogger<Service> logger) : IService
 				Description = fd.Details,
 				StartTime = fd.Date,
 				EndTime = fd.Date,
-				CategoryColor = Enums.DateType.Feast.CalendarColor,
+				CategoryColor = DateType.Feast.CalendarColor,
 				IsAllDay = true,
 				IsReadonly = true
 			}
@@ -73,10 +82,10 @@ public class Service(ILogger<Service> logger) : IService
 		DateTime date;
 		int i = 0;
 
-		foreach (var item in Enums.FeastDayDetail.List.ToList())
+		foreach (var item in FeastDayDetail.List.ToList())
 		{
 			i += 1;
-			date = Enums.FeastDay.FromValue(item.ParentFeastDayId).Date;
+			date = FeastDay.FromValue(item.ParentFeastDayId).Date;
 			dataList!.Add(new ScheduleData.ReadonlyEventsData
 			{
 				Id = i + runningCount,
@@ -97,7 +106,7 @@ public class Service(ILogger<Service> logger) : IService
 	private static (int RunningCount, List<ScheduleData.ReadonlyEventsData> DataList)
 		 LoadOmerDates(int runningCount, List<ScheduleData.ReadonlyEventsData> dataList)
 	{
-		DateTime startDate = Enums.FeastDay.Passover.Date.AddDays(1);
+		DateTime startDate = FeastDay.Passover.Date.AddDays(1);
 
 		int i;
 		for (i = 1; i < 50; i++)
@@ -122,7 +131,7 @@ public class Service(ILogger<Service> logger) : IService
 	private static (int RunningCount, List<ScheduleData.ReadonlyEventsData> DataList)
 		LoadHanukkahDates(int runningCount, List<ScheduleData.ReadonlyEventsData> dataList)
 	{
-		DateTime startDate = Calendar.Enums.FeastDay.Hanukkah.Date.AddDays(0);
+		DateTime startDate = FeastDay.Hanukkah.Date.AddDays(0);
 		string candle = "🕯️";
 
 		int i;
@@ -135,7 +144,7 @@ public class Service(ILogger<Service> logger) : IService
 				Description = "8 Days of Hanukkah; dates determined by Rabbinic sources",
 				StartTime = startDate.AddDays(i),
 				EndTime = startDate.AddDays(i),
-				CategoryColor = Enums.DateType.Feast.CalendarColor,
+				CategoryColor = DateType.Feast.CalendarColor,
 				IsAllDay = true,
 				IsReadonly = true
 			}
@@ -150,7 +159,7 @@ public class Service(ILogger<Service> logger) : IService
 		string moon = "🌙";
 
 		int i = 0;
-		foreach (var month in Enums.LunarMonth.List.ToList())
+		foreach (var month in LunarMonth.List.ToList())
 		{
 			i += 1;
 			dataList!.Add(new ScheduleData.ReadonlyEventsData
@@ -160,7 +169,7 @@ public class Service(ILogger<Service> logger) : IService
 				Description = month.Description,
 				StartTime = month.Date,
 				EndTime = month.Date,
-				CategoryColor = Enums.DateType.Month.CalendarColor,
+				CategoryColor = DateType.Month.CalendarColor,
 				IsAllDay = true,
 				IsReadonly = true
 			}
@@ -173,7 +182,7 @@ public class Service(ILogger<Service> logger) : IService
 		LoadSeasons(int runningCount, List<ScheduleData.ReadonlyEventsData> dataList)
 	{
 		int i = 0;
-		foreach (var season in Enums.Season.List.ToList())
+		foreach (var season in Season.List.ToList())
 		{
 			i += 1;
 			dataList!.Add(new ScheduleData.ReadonlyEventsData

@@ -13,7 +13,7 @@
 				<i class="far fa-arrow-alt-circle-left"></i>
 			</a>
 
-			@foreach (var item in Enums.Feast.List.OrderBy(o => o.Value).ToList())
+			@foreach (var item in RCL.Features.Feasts.Enums.Feast.List.OrderBy(o => o.Value).ToList())
 			{
 				<a href="@item.Index" title="@item.Hebrew.TitleSuffix" type="button"
 					 class="btn btn-@item.MoadimColor btn-sm">
@@ -26,7 +26,7 @@
 </div>
 
 @code {
-	[Parameter, EditorRequired] public Enums.Feast FeastNav { get; set; }
+	[Parameter, EditorRequired] public RCL.Features.Feasts.Enums.Feast FeastNav { get; set; }
 	[Parameter] public string? BorderCSS { get; set; } = "border-bottom border-dark-subtle";
 
 

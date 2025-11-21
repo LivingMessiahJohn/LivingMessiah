@@ -1,4 +1,4 @@
-﻿using SukkotEnums = LivingMessiahAdmin.Features.Sukkot.Enums;
+﻿using RCL.Features.Sukkot.Enums;
 
 namespace LivingMessiahAdmin.Features.Sukkot.Dashboard;
 
@@ -8,4 +8,4 @@ string FullName,
 string OtherNames,
 string AdminNotes, 
 string UserNotes,
-SukkotEnums.RegistrationFee RegistrationFee);  // int FeeEnumValue RegistrationFee
+RegistrationFee RegistrationFee);  // int FeeEnumValue RegistrationFee

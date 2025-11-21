@@ -1,5 +1,5 @@
 ﻿using LivingMessiahSukkot.Constants;
-using LivingMessiahSukkot.Features.Enums;
+using StepEnums = RCL.Features.Sukkot.Enums.Step;
 
 namespace LivingMessiahSukkot.Features.Components.RegistrationForm;
 
@@ -19,7 +19,7 @@ public class VM
 	public int FeeEnumValue { get; set; }
 
 	public int StepId { get; set; } 
-	public Step? Step { get; set; }
+	public StepEnums? Step { get; set; }
 
 	public int AttendanceBitwise { get; set; } // does the VM need this?
 	public DateTime[]? AttendanceDateList { get; set; }

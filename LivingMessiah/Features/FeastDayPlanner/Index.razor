@@ -1,41 +1,97 @@
 ﻿@using LivingMessiah.Helpers
+@using Microsoft.AspNetCore.Components
+
+@using FeastDayType = RCL.Features.Calendar.Enums.FeastDay
+
+
+@inject ILogger<Index> Logger
+@inject IToastService? Toast
 
 <LearnMoreModal />
 
 <SecondRowDates />
 
-<div class="@MediaQuery.XsOrSm.DivClass">
-	<HeaderXsSm CurrentFilter="CurrentFilter"
-							OnFilterSelected="@ReturnedFilter" />
-	<Selector FeastDayType="CurrentFilter" IsXsOrSm=true />
-	<FooterVersesFDP FeastDayType="CurrentFilter" />
-</div>
+@if (CurrentFilter is not null)
+{
+	<div class="@MediaQuery.XsOrSm.DivClass">
+		<HeaderXsSm CurrentFilter="CurrentFilter"
+								OnFilterSelected="@ReturnedFilter" />
+		<Selector FeastDayType="CurrentFilter" IsXsOrSm=true />
+		<FooterVersesFDP FeastDayType="CurrentFilter" />
+	</div>
 
-<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-	<FilterPills CurrentFilter="@CurrentFilter"
-							 OnFilterSelected="@ReturnedFilter" />
-	<Header FeastDayType="CurrentFilter" />
-</div>
+	<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+		<FilterPills CurrentFilter="@CurrentFilter"
+								 OnFilterSelected="@ReturnedFilter" />
+		<Header FeastDayType="CurrentFilter" />
+	</div>
 
 
-<div class="@MediaQuery.Md.DivClass">
-	<div class="row mt-1">
-		<div class="col-6">
-			<Selector FeastDayType="CurrentFilter" IsXsOrSm=false />
-		</div>
-		<div class="col-6">
-			<SidebarVerses FeastDayType="CurrentFilter" />
+	<div class="@MediaQuery.Md.DivClass">
+		<div class="row mt-1">
+			<div class="col-6">
+				<Selector FeastDayType="CurrentFilter" IsXsOrSm=false />
+			</div>
+			<div class="col-6">
+				<SidebarVerses FeastDayType="CurrentFilter" />
+			</div>
 		</div>
 	</div>
-</div>
 
-<div class="@MediaQuery.LgOrXl.DivClass">
-	<div class="row mt-1">
-		<div class="col-4">
-			<Selector FeastDayType="CurrentFilter" IsXsOrSm=false />
-		</div>
-		<div class="col-8">
-			<SidebarVerses FeastDayType="CurrentFilter" />
+	<div class="@MediaQuery.LgOrXl.DivClass">
+		<div class="row mt-1">
+			<div class="col-4">
+				<Selector FeastDayType="CurrentFilter" IsXsOrSm=false />
+			</div>
+			<div class="col-8">
+				<SidebarVerses FeastDayType="CurrentFilter" />
+			</div>
 		</div>
 	</div>
-</div>
+
+}
+else
+{
+	<p>CurrentFilter is null</p>
+}
+
+@code {
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		//Logger!.LogDebug("{Method}}", nameof(OnInitialized));
+		GetDefaultFeastDayType();
+	}
+
+	public FeastDayType? CurrentFilter { get; set; }
+
+	private void GetDefaultFeastDayType()
+	{
+		DateTime dateTimeWithoutTime = DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(Test.AddDays).AddHours(Utc.ArizonaUtcMinus7));
+
+		CurrentFilter = FeastDayType.List
+											.Where(w => w.Range.Max >= dateTimeWithoutTime)
+											.OrderBy(o => o.Date)
+											.FirstOrDefault();
+
+		if (CurrentFilter is null)
+		{
+			Logger!.LogDebug("{Method}, is null, setting to {DefaultFilter}", nameof(CurrentFilter), nameof(FeastDayType.Hanukkah));
+			CurrentFilter = FeastDayType.Hanukkah;
+		}
+		Logger!.LogDebug("...CurrentFilter.Name: {CurrentFilter}; CurrentDate: {CurrentDate}; FirstAndLastDates: {FirstAndLastDates}"
+			, CurrentFilter.Name, dateTimeWithoutTime.ToString("dd MMM yyyy HH"), CurrentFilter.FirstAndLastDates);
+	}
+
+	private void ReturnedFilter(FeastDayType? filter)
+	{
+		if (filter is not null)
+		{
+			CurrentFilter = filter;
+		}
+		else
+		{
+			Toast!.ShowWarning("filter is null");
+		}
+	}
+}

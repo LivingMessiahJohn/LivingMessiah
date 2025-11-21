@@ -1,4 +1,4 @@
-﻿@using LivingMessiahSukkot.Features.Enums
+﻿@using StepEnums = RCL.Features.Sukkot.Enums.Step
 
 @if (Debug.ShowStatusEnum && UsersCurrentStep is not null)
 {
@@ -14,5 +14,5 @@
 }
 
 @code {
-	[Parameter, EditorRequired] public Step? UsersCurrentStep { get; set; }
+	[Parameter, EditorRequired] public StepEnums? UsersCurrentStep { get; set; }
 }

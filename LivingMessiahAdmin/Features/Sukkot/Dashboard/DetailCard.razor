@@ -1,5 +1,4 @@
 ﻿@using LivingMessiahAdmin.Features.Sukkot.Constants
-@using LivingMessiahAdmin.Features.Sukkot.Enums
 
 <div class="card border border-3 border-dark-subtle mt-2">
 
@@ -75,7 +74,7 @@
 @code {
   [Parameter, EditorRequired] public required DetailCardRecord rec { get; set; }
   [Parameter] public EventCallback OnClose { get; set; }
-  string Fee = "___";
+  //string Fee = "___";
 
 
   // protected override void OnParametersSet()

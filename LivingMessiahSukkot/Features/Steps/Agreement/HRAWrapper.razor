@@ -1,4 +1,5 @@
 ﻿@using LivingMessiahSukkot.Features.Enums
+@using StepEnums = RCL.Features.Sukkot.Enums.Step
 
 @inject ILogger<HRAWrapper>? Logger
 
@@ -18,9 +19,9 @@
 
 @code {
 	[Parameter, EditorRequired] public string? EmailParm { get; set; }
-	[Parameter, EditorRequired] public EventCallback<Step> OnActionCompleted { get; set; }
+	[Parameter, EditorRequired] public EventCallback<StepEnums> OnActionCompleted { get; set; }
 
-	private void ReturnedActionCompleted(Step nextStep)
+	private void ReturnedActionCompleted(StepEnums nextStep)
 	{
 		Logger!.LogDebug("{Method}, nextStep: {Status}", nameof(ReturnedActionCompleted), nextStep);
 		OnActionCompleted.InvokeAsync(nextStep);

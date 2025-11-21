@@ -1,5 +1,6 @@
-﻿@using LivingMessiah.Features.FeastDayPlanner
-@using CalendarEnums = LivingMessiah.Features.Calendar.Enums
+﻿@using CalendarEnums = LivingMessiah.Features.Calendar.Enums
+@using LivingMessiah.Features.FeastDayPlanner
+@using RCL.Features.Calendar.Enums
 
 <div class="progress-stacked">
   <div class="progress" role="progressbar" aria-label="moon age" aria-valuenow="@DaysOld" aria-valuemin="0" aria-valuemax="100"
@@ -83,7 +84,7 @@
 
 
 @code {
-  [Parameter, EditorRequired] public CalendarEnums.LunarMonth? LunarMonth { get; set; }
+  [Parameter, EditorRequired] public LunarMonth? LunarMonth { get; set; }
   [Parameter, EditorRequired] public ProgressBarVM? VM { get; set; }
 
   public int DaysOld { get; set; }

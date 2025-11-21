@@ -1,6 +1,7 @@
 ﻿using LivingMessiah.Helpers;
-using FeastDayType = LivingMessiah.Features.Calendar.Enums.FeastDay;
-using LunarMonthType = LivingMessiah.Features.Calendar.Enums.LunarMonth;
+using FeastDayType = RCL.Features.Calendar.Enums.FeastDay;
+
+using LunarMonthType = RCL.Features.Calendar.Enums.LunarMonth;
 
 namespace LivingMessiah.Features.FeastDayPlanner.Data;
 

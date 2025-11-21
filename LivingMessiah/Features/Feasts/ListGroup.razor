@@ -1,6 +1,6 @@
 ﻿
 <div class="list-group">
-	@foreach (var item in Enums.Feast.List.OrderBy(o => o.Value).ToList())
+	@foreach (var item in RCL.Features.Feasts.Enums.Feast.List.OrderBy(o => o.Value).ToList())
 	{
 		<a href="@item.Index" title="@item.Hebrew.TitleSuffix @item.Hebrew.Strongs"
 			 class="list-group-item list-group-item-@item.MoadimColor">
