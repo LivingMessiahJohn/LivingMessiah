@@ -1,4 +1,5 @@
-﻿using LivingMessiahAdmin.Features.Sukkot.Enums;
+﻿
+using StepEnums = RCL.Features.Sukkot.Enums.Step;
 using LivingMessiahAdmin.Features.Sukkot.Home.Data;
 
 namespace LivingMessiahAdmin.Features.Sukkot.Home.RegistrationDetail;
@@ -17,7 +18,7 @@ public class RegistrationQuery
 	public int ChildSmall { get; set; }
 	public int FeeEnumValue { get; set; }
 	public int StepId { get; set; }
-	public string? StepName => Step.FromValue(StepId).Name;
+	public string? StepName => StepEnums.FromValue(StepId).Name;
 	public string? Notes { get; set; }
 	public int AttendanceBitwise { get; set; }
 	public DateTime[]? AttendanceDateList { get; set; }

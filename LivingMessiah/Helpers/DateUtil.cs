@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using RCL.Features.Calendar.Enums;
+using System.Globalization;
 using CalendarEnums = LivingMessiah.Features.Calendar.Enums;
 
 namespace LivingMessiah.Helpers;
@@ -8,7 +9,7 @@ public static class DateUtil
 	public static string ToTransliteratedHebrewDateString(this DateTime date)
 	{
 		HebrewCalendar hc = new HebrewCalendar();
-		CalendarEnums.LunarMonth? lm = CalendarEnums.LunarMonth.List
+        LunarMonth? lm = LunarMonth.List
 		.Where(w => w.HebrewSort == hc.GetMonth(date))
 		.OrderBy(o => o.Date)
 		.FirstOrDefault();

@@ -1,7 +1,7 @@
-﻿@using LivingMessiahSukkot.Features.Enums
+﻿@using StepEnums = RCL.Features.Sukkot.Enums.Step
 
 <div class="row mb-2 gx-0">
-	@foreach (var item in Step.List.OrderBy(o => o.Value).ToList())
+	@foreach (var item in StepEnums.List.OrderBy(o => o.Value).ToList())
 	{
 		<div class="col-3">
 			<div class="@MediaQuery.Xs.DivClass">
@@ -16,5 +16,5 @@
 
 
 @code {
-	[Parameter, EditorRequired] public Step? CurrentStep { get; set; }
+	[Parameter, EditorRequired] public StepEnums? CurrentStep { get; set; }
 }

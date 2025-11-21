@@ -1,4 +1,7 @@
-﻿namespace LivingMessiahSukkot.Features.Components.RegistrationForm;
+﻿using StepEnums = RCL.Features.Sukkot.Enums.Step;
+using RegistrationFeeEnums = RCL.Features.Sukkot.Enums.RegistrationFee;
 
-public record StepAndRegFee(Enums.Step Step, Enums.RegistrationFee RegistrationFee);
+namespace LivingMessiahSukkot.Features.Components.RegistrationForm;
+
+public record StepAndRegFee(StepEnums Step, RegistrationFeeEnums RegistrationFee);
 

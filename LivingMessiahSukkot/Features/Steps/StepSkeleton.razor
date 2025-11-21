@@ -1,18 +1,18 @@
-﻿@using LivingMessiahSukkot.Features.Enums
+﻿@using StepEnums = RCL.Features.Sukkot.Enums.Step
 
 @* @inject ILogger<StepSkeleton>? Logger *@
 
 @switch (CurrentStep)
 {
-	case var item when item == Step.Registration:
+	case var item when item == StepEnums.Registration:
 		@RegistrationFormRF
 		break;
 
-	case var item when item == Step.Payment:
+	case var item when item == StepEnums.Payment:
 		@PaymentRF
 		break;
 
-	case var item when item == Step.Complete:
+	case var item when item == StepEnums.Complete:
 		@CompleteRF
 		break;
 
@@ -22,7 +22,7 @@
 }
 
 @code {
-	[Parameter, EditorRequired] public Step? CurrentStep { get; set; }
+	[Parameter, EditorRequired] public StepEnums? CurrentStep { get; set; }
 	[Parameter, EditorRequired] public RenderFragment? RegistrationFormRF { get; set; }
 	[Parameter, EditorRequired] public RenderFragment? PaymentRF { get; set; }
 	[Parameter, EditorRequired] public RenderFragment? CompleteRF { get; set; }

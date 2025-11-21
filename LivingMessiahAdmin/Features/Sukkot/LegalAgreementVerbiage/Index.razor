@@ -1,12 +1,14 @@
 ﻿@page "/Sukkot/LegalAgreementVerbiage/"
 
-@using LivingMessiahAdmin.Features.Sukkot.Enums
+
 @using Microsoft.AspNetCore.Components.Authorization
 @using LivingMessiahAdmin.SecurityRoot
+@using MenuBarEnums = LivingMessiahAdmin.Features.Sukkot.Enums.MenuBar;
+@using StepEnums = RCL.Features.Sukkot.Enums.Step
 
 <AuthorizeView Policy="@RoleGroup.EmailVerified.Name">
   <Authorized>
-    <PageHeaderMenubar MenuBarEnum=MenuBar.LegalAgreementVerbiage />
+    <PageHeaderMenubar MenuBarEnum=MenuBarEnums.LegalAgreementVerbiage />
 
     <div class="alert alert-secondary text-end" role="alert">
       <small>Policy: @RoleGroup.EmailVerified.Name</small>
@@ -16,7 +18,7 @@
       <div class="card-body border-info">
         <p>
           This is a mock-up of the legal verbiage that is shown to new registrants. This is
-          <b>Step @Enums.Step.SignAgreement.Value | <i class="@Enums.Step.SignAgreement.Icon"></i> @Enums.Step.SignAgreement.Text</b>
+          <b>Step @StepEnums.SignAgreement.Value | <i class="@StepEnums.SignAgreement.Icon"></i> @StepEnums.SignAgreement.Text</b>
           in the registration process.
           It also includes the buttons to show the full process of compliance.
           Note, clicking the buttons will not actually be recorded.

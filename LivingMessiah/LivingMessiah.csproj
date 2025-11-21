@@ -68,6 +68,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LivingMessiah.ServiceDefaults\LivingMessiah.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\RCL\RCL.csproj" />
   </ItemGroup>
 
   <ItemGroup>

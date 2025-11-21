@@ -1,5 +1,5 @@
 ﻿@using LivingMessiahSukkot.Features.Constants
-@using LivingMessiahSukkot.Features.Enums
+@using RegistrationFeeEnums = RCL.Features.Sukkot.Enums.RegistrationFee
 
 @inject ILogger<StripeCard>? Logger
 
@@ -19,7 +19,7 @@
 </form>
 
 @code {
-  [Parameter, EditorRequired] public RegistrationFee? RegistrationFee { get; set; }
+  [Parameter, EditorRequired] public RegistrationFeeEnums? RegistrationFee { get; set; }
   [Parameter, EditorRequired] public int RegistrationId { get; set; }
   [Parameter, EditorRequired] public string Email { get; set; }
 

@@ -1,9 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Components
-@using LivingMessiahSukkot.Features.Enums;
+@using AttendanceDateEnums = RCL.Features.Sukkot.Enums.AttendanceDate
 
 <div class="mt-0">
 	<ul style="list-style-type:none; padding-inline-start: 0px">
-		@foreach (var item in AttendanceDate.List.Where(w => w.Value != AttendanceDate.None).OrderBy(o => o.Value).ToList())
+		@foreach (var item in AttendanceDateEnums.List.Where(w => w.Value != AttendanceDateEnums.None).OrderBy(o => o.Value).ToList())
 		{
 			<li class="font-monospace @GetCSS(item.Date)">
 				<input type="checkbox"

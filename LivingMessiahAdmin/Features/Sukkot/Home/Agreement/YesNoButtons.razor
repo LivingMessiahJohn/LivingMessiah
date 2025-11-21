@@ -1,7 +1,5 @@
-﻿@* @using LivingMessiah.Features.Sukkot.Enums *@
-@* @using LivingMessiah.Features.Sukkot.LandingPage *@
-
-@using SukkotEnums = LivingMessiahAdmin.Features.Sukkot.Enums;
+﻿
+@using StepEnums = RCL.Features.Sukkot.Enums.Step
 
 @inject ILogger<YesNoButtons>? Logger
 @inject IToastService? Toast
@@ -26,7 +24,7 @@
 
 @code {
 	[Parameter, EditorRequired] public string? EmailParm { get; set; }
-	[Parameter, EditorRequired] public EventCallback<SukkotEnums.Step> OnActionCompleted { get; set; } //
+	[Parameter, EditorRequired] public EventCallback<StepEnums> OnActionCompleted { get; set; } //
 
 	void DoNotAgree_ButtonClick()
 	{
@@ -49,7 +47,7 @@
 			*/
 
 			Toast!.ShowInfo("Record updated for House Rules Agreement");
-			await OnActionCompleted.InvokeAsync(SukkotEnums.Step.Registration);
+			await OnActionCompleted.InvokeAsync(StepEnums.Registration);
 		}
 		catch (Exception ex)
 		{

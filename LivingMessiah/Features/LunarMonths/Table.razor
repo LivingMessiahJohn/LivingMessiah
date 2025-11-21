@@ -1,6 +1,7 @@
-﻿@using LivingMessiah.Helpers
-@using LivingMessiah.Features.Calendar.Constants
-@using CalendarEnums = LivingMessiah.Features.Calendar.Enums
+﻿@using CalendarEnums = RCL.Features.Calendar.Enums
+@* @using LivingMessiah.Helpers *@
+@using RCL.Features.Calendar.Constants
+@using RCL.Features.Calendar.Enums
 
 
 <div class="card mb-3 border-warning mt-2">
@@ -66,7 +67,7 @@
   private int RowCnt { get; set; } = 0;
   protected override void OnInitialized()
   {
-    RowCnt = CalendarEnums.LunarMonth.List.ToList().Count();
+    RowCnt = LunarMonth.List.ToList().Count();
   }
 
 }

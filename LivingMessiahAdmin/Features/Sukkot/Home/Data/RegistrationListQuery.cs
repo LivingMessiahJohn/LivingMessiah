@@ -1,6 +1,6 @@
 ﻿using LivingMessiahAdmin.Helpers;
 
-using LivingMessiahAdmin.Features.Sukkot.Enums;
+using StepEnums = RCL.Features.Sukkot.Enums.Step;
 
 namespace LivingMessiahAdmin.Features.Sukkot.Home.Data;
 
@@ -14,7 +14,7 @@ public class RegistrationListQuery
 	{
 		get
 		{
-			return StatusId == Step.Registration.Value ? "N/A" : FullName!;
+			return StatusId == StepEnums.Registration.Value ? "N/A" : FullName!;
 		}
 	}
 
@@ -22,7 +22,7 @@ public class RegistrationListQuery
 	{
 		get
 		{
-			return StatusId == Step.Registration.Value ? "bg-secondary-subtle text-black" : ""; // text-center
+			return StatusId == StepEnums.Registration.Value ? "bg-secondary-subtle text-black" : ""; // text-center
 		}
 	}
 
@@ -32,7 +32,7 @@ public class RegistrationListQuery
 	{
 		get
 		{
-			return $"{Step.FromValue(StatusId).Value}. {Step.FromValue(StatusId).Heading}"; // .Text
+			return $"{StepEnums.FromValue(StatusId).Value}. {StepEnums.FromValue(StatusId).Heading}"; // .Text
 		}
 	}
 
@@ -64,7 +64,7 @@ public class RegistrationListQuery
 	{
 		get
 		{
-			if (StatusId == Step.Registration.Value) return "N/A";
+			if (StatusId == StepEnums.Registration.Value) return "N/A";
 
 			return Adults == 1
 			 ? TotalDonation == 50.0m ? "✓" : GetTotalDonationFormatted(-50.0m)
@@ -76,7 +76,7 @@ public class RegistrationListQuery
 	{
 		get
 		{
-			if (StatusId == Step.Registration.Value)
+			if (StatusId == StepEnums.Registration.Value)
 			{
 				return "bg-secondary-subtle text-center text-black";
 			}
@@ -105,7 +105,7 @@ public class RegistrationListQuery
 	{
 		get
 		{
-			if (StatusId == Step.Registration.Value) return "badge bg-secondary text-white";
+			if (StatusId == StepEnums.Registration.Value) return "badge bg-secondary text-white";
 
 			if (GetRegistrationFee() == TotalDonation)
 			{

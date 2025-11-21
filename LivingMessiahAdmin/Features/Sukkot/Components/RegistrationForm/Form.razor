@@ -1,8 +1,10 @@
 ﻿@using Blazored.FluentValidation
-@using SukkotEnums = LivingMessiahAdmin.Features.Sukkot.Enums
 @using LivingMessiahAdmin.Features.Sukkot.Home.Data
 @using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationDetail
-@using SukkotEnumsHelpers = LivingMessiahAdmin.Features.Sukkot.Enums.Helpers
+
+@using StepEnums = RCL.Features.Sukkot.Enums.Step
+@using DateRangeTypeEnums = RCL.Features.Sukkot.Enums.DateRangeType
+@using SukkotEnumsHelpers = RCL.Features.Sukkot.Enums.Helpers
 
 @inject IRepository? db
 @inject ILogger<Form>? Logger
@@ -117,7 +119,7 @@
                          class="form-control"
                          @bind-Value="VM.Adults"
                          placeholder="Adult Count"
-                         disabled="@(CurrentStep?.Value == SukkotEnums.Step.Complete.Value)" />
+                         disabled="@(CurrentStep?.Value == StepEnums.Complete.Value)" />
             <label for="adults" class="form-label">Adults</label>
             <ValidationMessage For="@(() => VM.Adults)" />
 
@@ -172,12 +174,13 @@
 @code {
   [Parameter, EditorRequired] public int Id { get; set; }
   [Parameter, EditorRequired] public string? Email { get; set; }
-  [Parameter, EditorRequired] public SukkotEnums.Step? CurrentStep { get; set; }
+  [Parameter, EditorRequired] public StepEnums? CurrentStep { get; set; }
 
   protected VM? VM { get; set; } = new VM();
 
   private FluentValidationValidator? _fluentValidationValidator;
-  public SukkotEnums.DateRangeType DateRangeAttendance { get; set; } = SukkotEnums.DateRangeType.Attendance;
+  public DateRangeTypeEnums DateRangeAttendance { get; set; } = DateRangeTypeEnums.Attendance;
+
 
   bool TurnSpinnerOff = false;
   AddOrEditRecord? AddOrEditState;
@@ -220,7 +223,7 @@
     try
     {
       VM = await db!.Get(id);  
-      VM.Step = SukkotEnums.Step.FromValue(VM.StepId);
+      VM.Step = StepEnums.FromValue(VM.StepId);
       var (week1, week2) = SukkotEnumsHelpers.EntryFormHelper.GetAttendanceDatesArray(VM.AttendanceBitwise);
       VM.AttendanceDateList = week1;
       VM.AttendanceDateList2ndMonth = week2;
@@ -242,9 +245,9 @@
     {
       if (AddOrEditState!.IsAdd)
       {
-        VM!.Step = SukkotEnums.Step.Payment;
+        VM!.Step = StepEnums.Payment;
         VM.AttendanceBitwise = SukkotEnumsHelpers.EntryFormHelper.GetDaysBitwise(
-            VM.AttendanceDateList!, VM.AttendanceDateList2ndMonth!, SukkotEnums.DateRangeType.Attendance);
+            VM.AttendanceDateList!, VM.AttendanceDateList2ndMonth!, DateRangeTypeEnums.Attendance);
         var (newId, sprocReturnValue, returnMsg) = await db!.CreateRegistration(DTO_From_VM_To_DB(VM));
         if (newId == 0)
         {
@@ -290,7 +293,7 @@
       FeeEnumValue = SukkotEnumsHelpers.RegistrationFeeHelper.AdultsToRegistrationFee(vm.Adults),
       StatusId = vm.Step, //  StepId = vm.Step!.Value,
       AttendanceBitwise = SukkotEnumsHelpers.EntryFormHelper.GetDaysBitwise(
-        vm.AttendanceDateList!, vm.AttendanceDateList2ndMonth!, SukkotEnums.DateRangeType.Attendance),
+        vm.AttendanceDateList!, vm.AttendanceDateList2ndMonth!, DateRangeTypeEnums.Attendance),
       Notes = LivingMessiahAdmin.Data.Helper.Scrub(vm.Notes),
       Avatar = string.Empty
     };

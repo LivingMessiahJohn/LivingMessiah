@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using System.Data;
 
-using SukkotEnumsHelper = LivingMessiahAdmin.Features.Sukkot.Enums.Helper;
 using DataEnumsDatabase = LivingMessiahAdmin.Data.Enums.Database;
 using LivingMessiahAdmin.Data;
 using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationDetail;

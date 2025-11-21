@@ -1,4 +1,4 @@
-﻿@using LivingMessiahSukkot.Features.Enums
+﻿@using StepEnums = RCL.Features.Sukkot.Enums.Step
 @using static LivingMessiahSukkot.Constants.Global
 
 @* [Inject] AppState? AppState { get; set; } *@
@@ -26,7 +26,7 @@
 
 @code {
 	[Parameter, EditorRequired] public string? EmailParm { get; set; }
-	[Parameter, EditorRequired] public EventCallback<Step> OnActionCompleted { get; set; } //
+	[Parameter, EditorRequired] public EventCallback<StepEnums> OnActionCompleted { get; set; } //
 
 	void DoNotAgree_ButtonClick()
 	{
@@ -49,7 +49,7 @@
 			*/
 
 			Toast!.ShowInfo("Record updated for House Rules Agreement");
-			await OnActionCompleted.InvokeAsync(Step.Registration);
+			await OnActionCompleted.InvokeAsync(StepEnums.Registration);
 		}
 		catch (Exception ex)
 		{

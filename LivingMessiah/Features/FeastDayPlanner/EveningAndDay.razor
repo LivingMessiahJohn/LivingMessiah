@@ -1,6 +1,7 @@
-﻿@using FeastDayType = LivingMessiah.Features.Calendar.Enums.FeastDay
+﻿@using FeastDayType = RCL.Features.Calendar.Enums.FeastDay
+@using RCL.Features.FeastDayPlanner.Constants
 
-@foreach (var item in Enums.FeastDayDetail.List
+@foreach (var item in Enums.PlannerDetail.List
 	.Where(w => w.ParentFeastDayId == FeastDayType!.Value)
 	.OrderBy(o => o.Date))
 {

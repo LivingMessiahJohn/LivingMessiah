@@ -1,10 +1,15 @@
-﻿@using FeastDayType = LivingMessiah.Features.Calendar.Enums.FeastDay
+﻿@using FeastDayType = RCL.Features.Calendar.Enums.FeastDay
+
+@* ToDo: Waiting on Service Fix *@
 @using LivingMessiah.Features.FeastDayPlanner.Data
 
 @inject IService? Service
+@inject IToastService? Toast
+@inject ILogger<Header>? Logger
 
+@if (vm is not null)
+{
 <div class="row mt-3">
-
 	<div class="col-12 text-center">
 		<div class="card bg-primary text-white">
 			<div class="card-body">
@@ -12,11 +17,14 @@
 				<span class="badge @vm!.BadgeColor text-dark fw-bold fs-6">@vm!.DaysDifferentFormat</span> @vm!.SuffixDescription
 			</div>
 		</div>
-		
 	</div>
-
 </div>
 
+}
+else
+{
+	<p>vm Is Null</p>
+}
 
 @code {
 
@@ -25,7 +33,23 @@
 	HeaderServiceModel? vm = new();
 	protected override void OnParametersSet()
 	{
-		vm = Service!.GetHeaderServiceModel(FeastDayType!);
+		try
+		{
+			if (Service is null)
+			{
+				Toast!.ShowWarning("Service is null");
+				Logger!.LogWarning("{Method}: Service is null", nameof(OnParametersSet));
+			}
+			else
+			{
+				vm = Service!.GetHeaderServiceModel(FeastDayType!);
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(OnParametersSet));
+			Toast!.ShowError($"{Global.ToastShowError}");
+		}
 	}
 
 }

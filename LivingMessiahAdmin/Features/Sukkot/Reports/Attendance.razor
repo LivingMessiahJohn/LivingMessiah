@@ -1,6 +1,6 @@
 ﻿@page "/Sukkot/AttendanceAllFeastDays"
 
-@using LivingMessiahAdmin.Features.Sukkot.Enums
+@using MenuBarEnums = LivingMessiahAdmin.Features.Sukkot.Enums.MenuBar;
 @using LivingMessiahAdmin.SecurityRoot
 @using Microsoft.AspNetCore.Components.Authorization
 @using RoleGroup = LivingMessiahAdmin.Enums.RoleGroup;
@@ -25,7 +25,7 @@
 
 <AuthorizeView Policy=@RoleGroup.Sukkot>
   <Authorized>
-    <PageHeaderMenubar MenuBarEnum=MenuBar.Report ShowPrintButton=true />
+    <PageHeaderMenubar MenuBarEnum=MenuBarEnums.Report ShowPrintButton=true />
     <p class="text-center">The attendance for every day followed by a summary of people who attended regardless of which day(s).</p>
     <LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
 

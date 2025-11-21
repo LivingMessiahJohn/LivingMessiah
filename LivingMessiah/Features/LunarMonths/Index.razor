@@ -1,14 +1,13 @@
 ﻿@page "/LunarMonth"
 
-@using LivingMessiah.Features.FeastDayPlanner
-@using LivingMessiah.Helpers
-@using CalendarEnums = LivingMessiah.Features.Calendar.Enums
-
-
-@using Microsoft.Extensions.Logging
-@using Service = LivingMessiah.Features.FeastDayPlanner
 @using System.Text.Json
+@using CalendarEnums = LivingMessiah.Features.Calendar.Enums
+@using LivingMessiah.Features.FeastDayPlanner
 @using LivingMessiah.Features.LunarMonths
+@using LivingMessiah.Helpers
+@using Microsoft.Extensions.Logging
+@using RCL.Features.Calendar.Enums
+@using Service = LivingMessiah.Features.FeastDayPlanner
 
 @inject IToastService? Toast
 @inject ILogger<Index>? Logger
@@ -48,7 +47,7 @@
 		DateTime dateTimeWithoutTime = DateUtil.GetDateTimeWithoutTime(
 			DateTime.Now.AddDays(Test.AddDays).AddHours(Utc.ArizonaUtcMinus7));
 
-		CurrentFilter = CalendarEnums.LunarMonth.List
+		CurrentFilter = LunarMonth.List
 											.Where(w => w.Date >= dateTimeWithoutTime)
 											.OrderBy(o => o.Date)
 											.FirstOrDefault();
@@ -56,8 +55,8 @@
 		if (CurrentFilter is null)
 		{
 			Logger!.LogDebug("{Method}, CurrentFilter: {CurrentFilter} is null, setting to 1"
-			, nameof(GetDefaultLunarMonthType), nameof(CurrentFilter), nameof(CalendarEnums.LunarMonth.Nissan));
-			CurrentFilter = CalendarEnums.LunarMonth.Nissan;
+			, nameof(GetDefaultLunarMonthType), nameof(CurrentFilter), nameof(LunarMonth.Nissan));
+			CurrentFilter = LunarMonth.Nissan;
 		}
 
 		VM = svc!.GetHeaderServiceModelLunarMonth(CurrentFilter!);
@@ -66,8 +65,8 @@
 
 	}
 
-	public CalendarEnums.LunarMonth? CurrentFilter { get; set; }
+	public LunarMonth? CurrentFilter { get; set; }
 	protected LivingMessiah.Features.LunarMonths.ProgressBarVM? VM = new();
-	private string? MoonPhaseInfo;
+	//private string? MoonPhaseInfo;
 
 }

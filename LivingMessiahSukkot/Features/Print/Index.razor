@@ -9,6 +9,8 @@
 @using LivingMessiahSukkot.Security.Constants
 @using Microsoft.AspNetCore.Components.Authorization
 
+@using SukkotEnumsHelpers = RCL.Features.Sukkot.Enums.Helpers
+
 @inject NavigationManager NavigationManager
 @inject ILogger<Index>? Logger
 @inject IToastService? Toast
@@ -152,7 +154,7 @@
   private void DoPassed()
   {
     IsAuthorized = true;
-    (DateTime[]? week1, DateTime[]? week2) = FormHelper.GetAttendanceDatesArray(RegistrationQuery!.AttendanceBitwise);
+    (DateTime[]? week1, DateTime[]? week2) = SukkotEnumsHelpers.EntryFormHelper.GetAttendanceDatesArray(RegistrationQuery!.AttendanceBitwise);
     RegistrationQuery!.AttendanceDateList = week1;
     RegistrationQuery!.AttendanceDateList2ndMonth = week2!;
 

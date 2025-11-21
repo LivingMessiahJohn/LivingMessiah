@@ -13,7 +13,7 @@ namespace LivingMessiah.Features.Calendar;
 public partial class CalendarSfSchedule
 {
 	[Inject] public ILogger<CalendarSfSchedule>? Logger { get; set; }
-	[Inject] public IService? Service { get; set; }
+	[Inject] public IService? Service { get; set; } // Can this be gotten in RCL?
 	[Inject] public IToastService? Toast { get; set; }
 
 	[Parameter] public bool IsXsOrSm { get; set; }

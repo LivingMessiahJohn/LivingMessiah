@@ -9,9 +9,7 @@
 @inject IToastService? Toast
 
 <LoadingComponent IsLoading="isDone==false" TurnSpinnerOff=TurnSpinnerOff>
-
-  <p class="text-black-50 text-center m-1 p-1">phaseValue: @phaseValue</p>
-
+  
   @if (phaseValue == PhaseRegistrationOpen)
   { 
     @OpenContent

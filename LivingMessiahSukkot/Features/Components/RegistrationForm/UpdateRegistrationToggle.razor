@@ -1,4 +1,4 @@
-﻿@using LivingMessiahSukkot.Features.Enums
+﻿@using StepEnums = RCL.Features.Sukkot.Enums.Step
 
 @inject ILogger<UpdateRegistrationToggle>? Logger
 
@@ -32,7 +32,7 @@
 @code {
   [Parameter, EditorRequired] public int Id { get; set; }
   [Parameter, EditorRequired] public string? Email { get; set; }
-  [Parameter, EditorRequired] public Step? CurrentStep { get; set; }
+  [Parameter, EditorRequired] public StepEnums? CurrentStep { get; set; }
   //[Parameter, EditorRequired] public int Adults { get; set; }
   [Parameter] public EventCallback<int> OnUpdateCompleted { get; set; }
 

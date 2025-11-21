@@ -76,7 +76,7 @@
 
       if (user?.Identity is not null && user.Identity.IsAuthenticated)
       {
-        email = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+        email = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value ?? email;
       }
     }
   }
