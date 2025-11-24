@@ -1,14 +1,10 @@
-﻿//using Blazored.Toast.Services;
-
-using System;
-using Blazored.Toast.Services;
+﻿using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Schedule;
 
 using static LivingMessiah.Features.Calendar.ScheduleData;
 
 namespace LivingMessiah.Features.Calendar;
-
 
 public partial class CalendarSfSchedule
 {

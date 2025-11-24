@@ -1,4 +1,6 @@
-﻿<div class="card mt-1">
+﻿@using BibleBookEnums = RCL.Enums.BibleBook
+
+<div class="card mt-1">
 
 	<div class="card-header">
 		<h5 class="text-center"> Passover Bible References | Leviticus 23</h5>
@@ -54,6 +56,6 @@
 
 
 @code {
-	BibleBook book = BibleBook.Leviticus;
+	BibleBookEnums book = BibleBookEnums.Leviticus;
 	string refChapterVerse = "23:4–8";
 }

@@ -1,5 +1,5 @@
 ﻿@using LivingMessiah.Enums
-@using ParashaEnums = LivingMessiah.Features.Parasha.Enums
+
 
 <div class="pb-n1  mb-3 border-bottom border-info"></div>
 
@@ -16,7 +16,7 @@
 	</thead>
 	<tbody>
 
-		@foreach (var item in ParashaEnums.Triennial.List.ToList().OrderBy(o => o.Date))
+		@foreach (var item in RCL.Features.Parasha.Enums.Triennial.List.ToList().OrderBy(o => o.Date))
 		{
 			<tr>
 				<td>@item.Value</td>

@@ -20,8 +20,6 @@ public static class DateFormat
 
 /*
 
-Moved from LivingMessiah.Constants (class DateFormat only)
-
 ### XRef
 
 #### Features\

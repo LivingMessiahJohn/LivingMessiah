@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.QuickGrid
-@using LivingMessiah.Enums
-@using ParashaEnums = LivingMessiah.Features.Parasha.Enums
+
+@using TorahBookFilterEnums = RCL.Features.Parasha.Enums.TorahBookFilter
+@using ParashaEnums = RCL.Features.Parasha.Enums 
 
 <div class="card border-info">
 
@@ -50,7 +51,7 @@
 @code {
 	[Parameter, EditorRequired] public MediaQuery? MediaQuery { get; set; }
 
-	TorahBookFilter? CurrentFilter;
+	ParashaEnums.TorahBookFilter? CurrentFilter;
 
 	private string dateFormat => DateFormat.MMM_d;
 
@@ -63,13 +64,12 @@
 
 	protected override void OnInitialized()
 	{
-		//CurrentFilter = TorahBookFilter;
-		CurrentFilter = TorahBookFilter.Genesis;
+		CurrentFilter = ParashaEnums.TorahBookFilter.Genesis;
 		itemList = ParashaEnums.Triennial.List.ToList();
 		items = itemList.AsQueryable();
 	}
 
-	private void ReturnedFilter(TorahBookFilter filter)
+	private void ReturnedFilter(TorahBookFilterEnums filter)
 	{
 		CurrentFilter = filter;
 	}

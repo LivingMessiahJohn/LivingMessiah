@@ -1,5 +1,7 @@
 ﻿@using LivingMessiah.Enums
-@using ParashaEnums = LivingMessiah.Features.Parasha.Enums
+@using ParashaEnums = RCL.Features.Parasha.Enums
+@using ParashaHelpers = RCL.Features.Parasha.Helpers
+
 
 <table class="table @TableColor table-sm table-hover">
 	<thead>
@@ -36,7 +38,7 @@
 
 			<tr>
 
-				<td class="@ParashaEnums.Constants.CurrentReadDateTextFormat(item.Date)">
+				<td class="@ParashaHelpers.CurrentReadDateTextFormat(item.Date)">
 					@if (item.Date.Year != prevGregorianYear)
 					{
 						prevGregorianYear = item.Date.Year;

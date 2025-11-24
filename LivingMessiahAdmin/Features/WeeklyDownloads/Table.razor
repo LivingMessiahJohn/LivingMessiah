@@ -1,16 +1,29 @@
 ﻿@page "/WeeklyDownload"
 
-@using Page = LivingMessiah.Enums.Nav
+@using Page = LivingMessiahAdmin.Enums.Nav
 @using ParashaEnums = RCL.Features.Parasha.Enums
 @using ParashaHelpers = RCL.Features.Parasha.Helpers
 
+@inject BlobReplaceService BlobService
+
 <PageHeader PageEnum="Page.WeeklyDownload" />
+
+
+<input @bind="fileName" placeholder="Foo.pdf" />
+<button @onclick="Replace">Replace</button>
+
+@if (result != null)
+{
+	<p style="color: @(result.Success ? "green" : "red")">
+		@result.Message
+	</p>
+}
+
 
 <TableTemplate HeaderCSS="table table-sm table-warning table-hover" Items="ParashaEnums.Triennial.List.OrderBy(o => o.Value).ToList()">
 	<TableHeader>
 		<th>Id</th>
 		<th class="text-start"><i class="fas fa-file-download" aria-hidden="true"></i></th>
-		
 	</TableHeader>
 	<RowTemplate>
 		<td>@context.Value</td>
@@ -22,10 +35,23 @@
 	</RowTemplate>
 </TableTemplate>
 
-
 @code {
+
+
+
 	private string GetBlobPDF(ParashaEnums.Triennial item)
 	{
 		return $"{ParashaHelpers.TeachingBlobFolder}{item.Date.ToString("yyyy-MM-dd")}-{@item.WeeklyReadingParashaFile}.pdf";
+	}
+	
+	string fileName = "";
+	ReplaceBlobResult? result;
+
+	async Task Replace()
+	{
+		var target = fileName;                // Foo.pdf
+		var hold = Path.GetFileNameWithoutExtension(fileName) + "-HOLD" + Path.GetExtension(fileName);
+
+		result = await BlobService.ReplaceBlobAsync(target, hold);
 	}
 }

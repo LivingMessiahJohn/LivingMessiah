@@ -1,6 +1,7 @@
 using Ardalis.SmartEnum;
+using RCL.Enums;
 
-namespace LivingMessiah.Enums;
+namespace RCL.Features.Parasha.Enums;
 
 public abstract class TorahBookFilter : SmartEnum<TorahBookFilter>
 {

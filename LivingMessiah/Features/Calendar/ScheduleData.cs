@@ -1,13 +1,15 @@
-﻿
+﻿using Syncfusion.Blazor.Schedule;
+
 namespace LivingMessiah.Features.Calendar;
 
 public class ScheduleData
 {
 
-	public static Dictionary<string, object> ApplyCategoryColor(string CategoryColor, Dictionary<string, object> Attributes, Syncfusion.Blazor.Schedule.View CurrentView)
+	public static Dictionary<string, object> ApplyCategoryColor
+		(string CategoryColor, Dictionary<string, object> Attributes, View CurrentView)
 	{
 		Dictionary<string, object> attributes = new Dictionary<string, object>();
-		if (CurrentView == Syncfusion.Blazor.Schedule.View.Agenda)
+		if (CurrentView == View.Agenda)
 		{
 			attributes.Add("style", "border-start-color: " + CategoryColor);
 		}
@@ -17,6 +19,7 @@ public class ScheduleData
 		}
 		return attributes;
 	}
+
 
 	public class AppointmentData
 	{
