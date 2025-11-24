@@ -1,5 +1,6 @@
-﻿@using TriennialEnum = LivingMessiah.Features.Parasha.Enums.Triennial
-@using ParashaEnums = LivingMessiah.Features.Parasha.Enums
+﻿
+@using ParashaHelpers = RCL.Features.Parasha.Helpers
+@using ParashaEnums = RCL.Features.Parasha.Enums
 
 @inject IToastService? Toast
 
@@ -30,19 +31,18 @@
 		</div>
 
 	</div>
-
 }
 
 @code {
 
-	private TriennialEnum? CurrentReading = ParashaEnums.Constants.GetCurrentReading();
-	private List<TriennialEnum>? ReadingList { get; set; }
+	private ParashaEnums.Triennial? CurrentReading = ParashaHelpers.GetCurrentReading();
+	private List<ParashaEnums.Triennial>? ReadingList { get; set; }
 
 	protected override void OnInitialized()
 	{
 		if (CurrentReading is not null)
 		{
-			ReadingList = new List<TriennialEnum> { CurrentReading };
+			ReadingList = new List<ParashaEnums.Triennial> { CurrentReading };
 		}
 		else
 		{

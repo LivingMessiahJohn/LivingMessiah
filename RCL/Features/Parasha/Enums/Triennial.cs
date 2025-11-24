@@ -1,13 +1,22 @@
 ﻿// Ignore Spelling: Abrv Deu Tri YomKippur Yom Kippur Teruah BCV
 
 using Ardalis.SmartEnum;
-using LivingMessiah.Enums;
-using LivingMessiah.Features.Parasha.Toolbar;
+/*
+using LivingMessiah.Features.Parasha.Enums;
+using LivingMessiah;
+using LivingMessiah.Features;
+using LivingMessiah.Features.Parasha;
+*/
 
-namespace LivingMessiah.Features.Parasha.Enums;
+using RCL.Enums;
+using RCL.Features.Parasha.Toolbar;
+using RCL.Features.Parasha.Constants;
+using RCL.Constants;
+
+namespace RCL.Features.Parasha.Enums;
 
 
-public abstract class Triennial : SmartEnum<Triennial>
+public abstract class Triennial : SmartEnum<Enums.Triennial>
 {
 	#region Id's
 	private static class Id
@@ -171,164 +180,163 @@ public abstract class Triennial : SmartEnum<Triennial>
 	#endregion
 
 	#region Declared Public Instances
-	public static readonly Triennial Gen_01 = new Gen_01SE(); // 1
-	public static readonly Triennial Gen_02 = new Gen_02SE(); // 2
-	public static readonly Triennial Gen_04 = new Gen_04SE(); // 3
-	public static readonly Triennial Gen_05 = new Gen_05SE(); // 4
-	public static readonly Triennial Gen_06 = new Gen_06SE(); // 5
-	public static readonly Triennial Gen_08a = new Gen_08aSE(); // 6
-	public static readonly Triennial Gen_08b = new Gen_08bSE(); // 7
-	public static readonly Triennial Gen_09 = new Gen_09SE(); // 8
-	public static readonly Triennial Gen_11 = new Gen_11SE(); // 9
-	public static readonly Triennial Gen_12 = new Gen_12SE(); // 10
-	public static readonly Triennial Gen_14 = new Gen_14SE(); // 11
-	public static readonly Triennial Gen_15 = new Gen_15SE(); // 12
-	public static readonly Triennial Gen_16 = new Gen_16SE(); // 13
-	public static readonly Triennial Gen_17 = new Gen_17SE(); // 14
-	public static readonly Triennial Gen_18 = new Gen_18SE(); // 15
-	public static readonly Triennial Gen_19 = new Gen_19SE(); // 16
-	public static readonly Triennial Gen_20 = new Gen_20SE(); // 17
-	public static readonly Triennial Gen_21 = new Gen_21SE(); // 18
-	public static readonly Triennial Gen_22 = new Gen_22SE(); // 19
-	public static readonly Triennial Gen_23 = new Gen_23SE(); // 20
-	public static readonly Triennial Gen_24a = new Gen_24aSE(); // 21
-	public static readonly Triennial Gen_24b = new Gen_24bSE(); // 22
-	public static readonly Triennial Gen_25a = new Gen_25aSE(); // 23
-	public static readonly Triennial Gen_25b = new Gen_25bSE(); // 24
-	public static readonly Triennial Gen_26 = new Gen_26SE(); // 25
-	public static readonly Triennial Gen_27a = new Gen_27aSE(); // 26
-	public static readonly Triennial Gen_27b = new Gen_27bSE(); // 27
-	public static readonly Triennial Gen_28 = new Gen_28SE(); // 28
-	public static readonly Triennial Gen_29 = new Gen_29SE(); // 29
-	public static readonly Triennial Gen_30 = new Gen_30SE(); // 30
-	public static readonly Triennial Gen_31 = new Gen_31SE(); // 31
-	public static readonly Triennial Gen_32 = new Gen_32SE(); // 32
-	public static readonly Triennial Gen_33 = new Gen_33SE(); // 33
-	public static readonly Triennial Gen_35 = new Gen_35SE(); // 34
-	public static readonly Triennial Gen_37 = new Gen_37SE(); // 35
-	public static readonly Triennial Gen_38 = new Gen_38SE(); // 36
-	public static readonly Triennial Gen_39 = new Gen_39SE(); // 37
-	public static readonly Triennial Gen_40 = new Gen_40SE(); // 38
-	public static readonly Triennial Gen_41a = new Gen_41aSE(); // 39
-	public static readonly Triennial Gen_41b = new Gen_41bSE(); // 40
-	public static readonly Triennial Gen_42 = new Gen_42SE(); // 41
-	public static readonly Triennial Gen_43 = new Gen_43SE(); // 42
-	public static readonly Triennial Gen_44 = new Gen_44SE(); // 43
-	public static readonly Triennial Gen_46 = new Gen_46SE(); // 44
-	public static readonly Triennial Gen_48 = new Gen_48SE(); // 45
-	public static readonly Triennial Gen_49 = new Gen_49SE(); // 46
-	public static readonly Triennial Exo_01 = new Exo_01SE(); // 47
-	public static readonly Triennial Exo_03 = new Exo_03SE(); // 48
-	public static readonly Triennial Exo_04 = new Exo_04SE(); // 49
-	public static readonly Triennial Exo_06 = new Exo_06SE(); // 50
-	public static readonly Triennial Exo_07 = new Exo_07SE(); // 51
-	public static readonly Triennial Exo_08 = new Exo_08SE(); // 52
-	public static readonly Triennial Exo_10 = new Exo_10SE(); // 53
-	public static readonly Triennial Exo_11 = new Exo_11SE(); // 54
-	public static readonly Triennial Exo_12 = new Exo_12SE(); // 55
-	public static readonly Triennial Exo_13a = new Exo_13aSE(); // 56
-	public static readonly Triennial Exo_13b = new Exo_13bSE(); // 57
-	public static readonly Triennial Exo_15 = new Exo_15SE(); // 58
-	public static readonly Triennial Exo_16 = new Exo_16SE(); // 59
-	public static readonly Triennial Exo_18 = new Exo_18SE(); // 60
-	public static readonly Triennial Exo_19 = new Exo_19SE(); // 61
-	public static readonly Triennial Exo_21 = new Exo_21SE(); // 62
-	public static readonly Triennial Exo_22 = new Exo_22SE(); // 63
-	public static readonly Triennial Exo_24 = new Exo_24SE(); // 64
-	public static readonly Triennial Exo_25 = new Exo_25SE(); // 65
-	public static readonly Triennial Exo_27a = new Exo_27aSE(); // 66
-	public static readonly Triennial Exo_27b = new Exo_27bSE(); // 67
-	public static readonly Triennial Exo_29 = new Exo_29SE(); // 68
-	public static readonly Triennial Exo_30a = new Exo_30aSE(); // 69
-	public static readonly Triennial Exo_30b = new Exo_30bSE(); // 70
-	public static readonly Triennial Exo_31 = new Exo_31SE(); // 71
-	public static readonly Triennial Exo_32 = new Exo_32SE(); // 72
-	public static readonly Triennial Exo_34 = new Exo_34SE(); // 73
-	public static readonly Triennial Exo_37 = new Exo_37SE(); // 74
-	public static readonly Triennial Exo_38 = new Exo_38SE(); // 75
-	public static readonly Triennial Exo_39 = new Exo_39SE(); // 76
-	public static readonly Triennial Lev_01 = new Lev_01SE(); // 77
-	public static readonly Triennial Lev_03 = new Lev_03SE(); // 78
-	public static readonly Triennial Lev_04 = new Lev_04SE(); // 79
-	public static readonly Triennial Lev_05 = new Lev_05SE(); // 80
-	public static readonly Triennial Lev_06 = new Lev_06SE(); // 81
-	public static readonly Triennial Lev_07 = new Lev_07SE(); // 82
-	public static readonly Triennial Lev_08 = new Lev_08SE(); // 83
-	public static readonly Triennial Lev_09 = new Lev_09SE(); // 84
-	public static readonly Triennial Lev_12 = new Lev_12SE(); // 85
-	public static readonly Triennial Lev_13 = new Lev_13SE(); // 86
-	public static readonly Triennial Lev_14 = new Lev_14SE(); // 87
-	public static readonly Triennial Lev_15 = new Lev_15SE(); // 88
-	public static readonly Triennial Lev_16 = new Lev_16SE(); // 89
-	public static readonly Triennial Lev_17 = new Lev_17SE(); // 90
-	public static readonly Triennial Lev_18 = new Lev_18SE(); // 91
-	public static readonly Triennial Lev_19 = new Lev_19SE(); // 92
-	public static readonly Triennial Lev_21 = new Lev_21SE(); // 93
-	public static readonly Triennial Lev_22 = new Lev_22SE(); // 94
-	public static readonly Triennial Lev_24 = new Lev_24SE(); // 95
-	public static readonly Triennial Lev_25a = new Lev_25aSE(); // 96
-	public static readonly Triennial Lev_25b = new Lev_25bSE(); // 97
-	public static readonly Triennial Lev_26 = new Lev_26SE(); // 98
-	public static readonly Triennial Num_01 = new Num_01SE(); // 99
-	public static readonly Triennial Num_02 = new Num_02SE(); // 100
-	public static readonly Triennial Num_03 = new Num_03SE(); // 101
-	public static readonly Triennial Num_04 = new Num_04SE(); // 102
-	public static readonly Triennial Num_05 = new Num_05SE(); // 103
-	public static readonly Triennial Num_06a = new Num_06aSE(); // 104
-	public static readonly Triennial Num_06b = new Num_06bSE(); // 105
-	public static readonly Triennial Num_08 = new Num_08SE(); // 106
-	public static readonly Triennial Num_10 = new Num_10SE(); // 107
-	public static readonly Triennial Num_11 = new Num_11SE(); // 108
-	public static readonly Triennial Num_12 = new Num_12SE(); // 109
-	public static readonly Triennial Num_13 = new Num_13SE(); // 110
-	public static readonly Triennial Num_14 = new Num_14SE(); // 111
-	public static readonly Triennial Num_15 = new Num_15SE(); // 112
-	public static readonly Triennial Num_16 = new Num_16SE(); // 113
-	public static readonly Triennial Num_17 = new Num_17SE(); // 114
-	public static readonly Triennial Num_19 = new Num_19SE(); // 115
-	public static readonly Triennial Num_20 = new Num_20SE(); // 116
-	public static readonly Triennial Num_22 = new Num_22SE(); // 117
-	public static readonly Triennial Num_23 = new Num_23SE(); // 118
-	public static readonly Triennial Num_25 = new Num_25SE(); // 119
-	public static readonly Triennial Num_26 = new Num_26SE(); // 120
-	public static readonly Triennial Num_28 = new Num_28SE(); // 121
-	public static readonly Triennial Num_30 = new Num_30SE(); // 122
-	public static readonly Triennial Num_32 = new Num_32SE(); // 123
-	public static readonly Triennial Num_33 = new Num_33SE(); // 124
-	public static readonly Triennial Num_34 = new Num_34SE(); // 125
-	public static readonly Triennial Num_35 = new Num_35SE(); // 126
-	public static readonly Triennial Deu_01 = new Deu_01SE(); // 127
-	public static readonly Triennial Deu_02 = new Deu_02SE(); // 128
-	public static readonly Triennial Deu_03 = new Deu_03SE(); // 129
-	public static readonly Triennial Deu_04 = new Deu_04SE(); // 130
-	public static readonly Triennial Deu_05 = new Deu_05SE(); // 131
-	public static readonly Triennial Deu_06 = new Deu_06SE(); // 132
-	public static readonly Triennial Deu_08 = new Deu_08SE(); // 133
-	public static readonly Triennial Deu_09 = new Deu_09SE(); // 134
-	public static readonly Triennial Deu_10 = new Deu_10SE(); // 135
-	public static readonly Triennial Deu_11 = new Deu_11SE(); // 136
-	public static readonly Triennial Deu_12 = new Deu_12SE(); // 137
-	public static readonly Triennial Deu_15 = new Deu_15SE(); // 138
-	public static readonly Triennial Deu_16 = new Deu_16SE(); // 139
-	public static readonly Triennial Deu_17 = new Deu_17SE(); // 140
-	public static readonly Triennial Deu_18 = new Deu_18SE(); // 141
-	public static readonly Triennial Deu_20 = new Deu_20SE(); // 142
-	public static readonly Triennial Deu_21 = new Deu_21SE(); // 143
-	public static readonly Triennial Deu_22 = new Deu_22SE(); // 144
-	public static readonly Triennial Deu_23a = new Deu_23aSE(); // 145
-	public static readonly Triennial Deu_23b = new Deu_23bSE(); // 146
-	public static readonly Triennial Deu_24 = new Deu_24SE(); // 147
-	public static readonly Triennial Deu_26 = new Deu_26SE(); // 148
-	public static readonly Triennial Deu_28 = new Deu_28SE(); // 149
-	public static readonly Triennial Deu_29 = new Deu_29SE(); // 150
-	public static readonly Triennial Deu_30 = new Deu_30SE(); // 151
-	public static readonly Triennial Deu_31 = new Deu_31SE(); // 152
-	public static readonly Triennial Deu_32 = new Deu_32SE(); // 153
-	public static readonly Triennial Deu_33 = new Deu_33SE(); // 154
-	public static readonly Triennial Deu_34 = new Deu_34SE(); // 155
+	public static readonly Enums.Triennial Gen_01 = new Enums.Triennial.Gen_01SE(); // 1
+	public static readonly Enums.Triennial Gen_02 = new Enums.Triennial.Gen_02SE(); // 2
+	public static readonly Enums.Triennial Gen_04 = new Enums.Triennial.Gen_04SE(); // 3
+	public static readonly Enums.Triennial Gen_05 = new Enums.Triennial.Gen_05SE(); // 4
+	public static readonly Enums.Triennial Gen_06 = new Enums.Triennial.Gen_06SE(); // 5
+	public static readonly Enums.Triennial Gen_08a = new Enums.Triennial.Gen_08aSE(); // 6
+	public static readonly Enums.Triennial Gen_08b = new Enums.Triennial.Gen_08bSE(); // 7
+	public static readonly Enums.Triennial Gen_09 = new Enums.Triennial.Gen_09SE(); // 8
+	public static readonly Enums.Triennial Gen_11 = new Enums.Triennial.Gen_11SE(); // 9
+	public static readonly Enums.Triennial Gen_12 = new Enums.Triennial.Gen_12SE(); // 10
+	public static readonly Enums.Triennial Gen_14 = new Enums.Triennial.Gen_14SE(); // 11
+	public static readonly Enums.Triennial Gen_15 = new Enums.Triennial.Gen_15SE(); // 12
+	public static readonly Enums.Triennial Gen_16 = new Enums.Triennial.Gen_16SE(); // 13
+	public static readonly Enums.Triennial Gen_17 = new Enums.Triennial.Gen_17SE(); // 14
+	public static readonly Enums.Triennial Gen_18 = new Enums.Triennial.Gen_18SE(); // 15
+	public static readonly Enums.Triennial Gen_19 = new Enums.Triennial.Gen_19SE(); // 16
+	public static readonly Enums.Triennial Gen_20 = new Enums.Triennial.Gen_20SE(); // 17
+	public static readonly Enums.Triennial Gen_21 = new Enums.Triennial.Gen_21SE(); // 18
+	public static readonly Enums.Triennial Gen_22 = new Enums.Triennial.Gen_22SE(); // 19
+	public static readonly Enums.Triennial Gen_23 = new Enums.Triennial.Gen_23SE(); // 20
+	public static readonly Enums.Triennial Gen_24a = new Enums.Triennial.Gen_24aSE(); // 21
+	public static readonly Enums.Triennial Gen_24b = new Enums.Triennial.Gen_24bSE(); // 22
+	public static readonly Enums.Triennial Gen_25a = new Enums.Triennial.Gen_25aSE(); // 23
+	public static readonly Enums.Triennial Gen_25b = new Enums.Triennial.Gen_25bSE(); // 24
+	public static readonly Enums.Triennial Gen_26 = new Enums.Triennial.Gen_26SE(); // 25
+	public static readonly Enums.Triennial Gen_27a = new Enums.Triennial.Gen_27aSE(); // 26
+	public static readonly Enums.Triennial Gen_27b = new Enums.Triennial.Gen_27bSE(); // 27
+	public static readonly Enums.Triennial Gen_28 = new Enums.Triennial.Gen_28SE(); // 28
+	public static readonly Enums.Triennial Gen_29 = new Enums.Triennial.Gen_29SE(); // 29
+	public static readonly Enums.Triennial Gen_30 = new Enums.Triennial.Gen_30SE(); // 30
+	public static readonly Enums.Triennial Gen_31 = new Enums.Triennial.Gen_31SE(); // 31
+	public static readonly Enums.Triennial Gen_32 = new Enums.Triennial.Gen_32SE(); // 32
+	public static readonly Enums.Triennial Gen_33 = new Enums.Triennial.Gen_33SE(); // 33
+	public static readonly Enums.Triennial Gen_35 = new Enums.Triennial.Gen_35SE(); // 34
+	public static readonly Enums.Triennial Gen_37 = new Enums.Triennial.Gen_37SE(); // 35
+	public static readonly Enums.Triennial Gen_38 = new Enums.Triennial.Gen_38SE(); // 36
+	public static readonly Enums.Triennial Gen_39 = new Enums.Triennial.Gen_39SE(); // 37
+	public static readonly Enums.Triennial Gen_40 = new Enums.Triennial.Gen_40SE(); // 38
+	public static readonly Enums.Triennial Gen_41a = new Enums.Triennial.Gen_41aSE(); // 39
+	public static readonly Enums.Triennial Gen_41b = new Enums.Triennial.Gen_41bSE(); // 40
+	public static readonly Enums.Triennial Gen_42 = new Enums.Triennial.Gen_42SE(); // 41
+	public static readonly Enums.Triennial Gen_43 = new Enums.Triennial.Gen_43SE(); // 42
+	public static readonly Enums.Triennial Gen_44 = new Enums.Triennial.Gen_44SE(); // 43
+	public static readonly Enums.Triennial Gen_46 = new Enums.Triennial.Gen_46SE(); // 44
+	public static readonly Enums.Triennial Gen_48 = new Enums.Triennial.Gen_48SE(); // 45
+	public static readonly Enums.Triennial Gen_49 = new Enums.Triennial.Gen_49SE(); // 46
+	public static readonly Enums.Triennial Exo_01 = new Enums.Triennial.Exo_01SE(); // 47
+	public static readonly Enums.Triennial Exo_03 = new Enums.Triennial.Exo_03SE(); // 48
+	public static readonly Enums.Triennial Exo_04 = new Enums.Triennial.Exo_04SE(); // 49
+	public static readonly Enums.Triennial Exo_06 = new Enums.Triennial.Exo_06SE(); // 50
+	public static readonly Enums.Triennial Exo_07 = new Enums.Triennial.Exo_07SE(); // 51
+	public static readonly Enums.Triennial Exo_08 = new Enums.Triennial.Exo_08SE(); // 52
+	public static readonly Enums.Triennial Exo_10 = new Enums.Triennial.Exo_10SE(); // 53
+	public static readonly Enums.Triennial Exo_11 = new Enums.Triennial.Exo_11SE(); // 54
+	public static readonly Enums.Triennial Exo_12 = new Enums.Triennial.Exo_12SE(); // 55
+	public static readonly Enums.Triennial Exo_13a = new Enums.Triennial.Exo_13aSE(); // 56
+	public static readonly Enums.Triennial Exo_13b = new Enums.Triennial.Exo_13bSE(); // 57
+	public static readonly Enums.Triennial Exo_15 = new Enums.Triennial.Exo_15SE(); // 58
+	public static readonly Enums.Triennial Exo_16 = new Enums.Triennial.Exo_16SE(); // 59
+	public static readonly Enums.Triennial Exo_18 = new Enums.Triennial.Exo_18SE(); // 60
+	public static readonly Enums.Triennial Exo_19 = new Enums.Triennial.Exo_19SE(); // 61
+	public static readonly Enums.Triennial Exo_21 = new Enums.Triennial.Exo_21SE(); // 62
+	public static readonly Enums.Triennial Exo_22 = new Enums.Triennial.Exo_22SE(); // 63
+	public static readonly Enums.Triennial Exo_24 = new Enums.Triennial.Exo_24SE(); // 64
+	public static readonly Enums.Triennial Exo_25 = new Enums.Triennial.Exo_25SE(); // 65
+	public static readonly Enums.Triennial Exo_27a = new Enums.Triennial.Exo_27aSE(); // 66
+	public static readonly Enums.Triennial Exo_27b = new Enums.Triennial.Exo_27bSE(); // 67
+	public static readonly Enums.Triennial Exo_29 = new Enums.Triennial.Exo_29SE(); // 68
+	public static readonly Enums.Triennial Exo_30a = new Enums.Triennial.Exo_30aSE(); // 69
+	public static readonly Enums.Triennial Exo_30b = new Enums.Triennial.Exo_30bSE(); // 70
+	public static readonly Enums.Triennial Exo_31 = new Enums.Triennial.Exo_31SE(); // 71
+	public static readonly Enums.Triennial Exo_32 = new Enums.Triennial.Exo_32SE(); // 72
+	public static readonly Enums.Triennial Exo_34 = new Enums.Triennial.Exo_34SE(); // 73
+	public static readonly Enums.Triennial Exo_37 = new Enums.Triennial.Exo_37SE(); // 74
+	public static readonly Enums.Triennial Exo_38 = new Enums.Triennial.Exo_38SE(); // 75
+	public static readonly Enums.Triennial Exo_39 = new Enums.Triennial.Exo_39SE(); // 76
+	public static readonly Enums.Triennial Lev_01 = new Enums.Triennial.Lev_01SE(); // 77
+	public static readonly Enums.Triennial Lev_03 = new Enums.Triennial.Lev_03SE(); // 78
+	public static readonly Enums.Triennial Lev_04 = new Enums.Triennial.Lev_04SE(); // 79
+	public static readonly Enums.Triennial Lev_05 = new Enums.Triennial.Lev_05SE(); // 80
+	public static readonly Enums.Triennial Lev_06 = new Enums.Triennial.Lev_06SE(); // 81
+	public static readonly Enums.Triennial Lev_07 = new Enums.Triennial.Lev_07SE(); // 82
+	public static readonly Enums.Triennial Lev_08 = new Enums.Triennial.Lev_08SE(); // 83
+	public static readonly Enums.Triennial Lev_09 = new Enums.Triennial.Lev_09SE(); // 84
+	public static readonly Enums.Triennial Lev_12 = new Enums.Triennial.Lev_12SE(); // 85
+	public static readonly Enums.Triennial Lev_13 = new Enums.Triennial.Lev_13SE(); // 86
+	public static readonly Enums.Triennial Lev_14 = new Enums.Triennial.Lev_14SE(); // 87
+	public static readonly Enums.Triennial Lev_15 = new Enums.Triennial.Lev_15SE(); // 88
+	public static readonly Enums.Triennial Lev_16 = new Enums.Triennial.Lev_16SE(); // 89
+	public static readonly Enums.Triennial Lev_17 = new Enums.Triennial.Lev_17SE(); // 90
+	public static readonly Enums.Triennial Lev_18 = new Enums.Triennial.Lev_18SE(); // 91
+	public static readonly Enums.Triennial Lev_19 = new Enums.Triennial.Lev_19SE(); // 92
+	public static readonly Enums.Triennial Lev_21 = new Enums.Triennial.Lev_21SE(); // 93
+	public static readonly Enums.Triennial Lev_22 = new Enums.Triennial.Lev_22SE(); // 94
+	public static readonly Enums.Triennial Lev_24 = new Enums.Triennial.Lev_24SE(); // 95
+	public static readonly Enums.Triennial Lev_25a = new Enums.Triennial.Lev_25aSE(); // 96
+	public static readonly Enums.Triennial Lev_25b = new Enums.Triennial.Lev_25bSE(); // 97
+	public static readonly Enums.Triennial Lev_26 = new Enums.Triennial.Lev_26SE(); // 98
+	public static readonly Enums.Triennial Num_01 = new Enums.Triennial.Num_01SE(); // 99
+	public static readonly Enums.Triennial Num_02 = new Enums.Triennial.Num_02SE(); // 100
+	public static readonly Enums.Triennial Num_03 = new Enums.Triennial.Num_03SE(); // 101
+	public static readonly Enums.Triennial Num_04 = new Enums.Triennial.Num_04SE(); // 102
+	public static readonly Enums.Triennial Num_05 = new Enums.Triennial.Num_05SE(); // 103
+	public static readonly Enums.Triennial Num_06a = new Enums.Triennial.Num_06aSE(); // 104
+	public static readonly Enums.Triennial Num_06b = new Enums.Triennial.Num_06bSE(); // 105
+	public static readonly Enums.Triennial Num_08 = new Enums.Triennial.Num_08SE(); // 106
+	public static readonly Enums.Triennial Num_10 = new Enums.Triennial.Num_10SE(); // 107
+	public static readonly Enums.Triennial Num_11 = new Enums.Triennial.Num_11SE(); // 108
+	public static readonly Enums.Triennial Num_12 = new Enums.Triennial.Num_12SE(); // 109
+	public static readonly Enums.Triennial Num_13 = new Enums.Triennial.Num_13SE(); // 110
+	public static readonly Enums.Triennial Num_14 = new Enums.Triennial.Num_14SE(); // 111
+	public static readonly Enums.Triennial Num_15 = new Enums.Triennial.Num_15SE(); // 112
+	public static readonly Enums.Triennial Num_16 = new Enums.Triennial.Num_16SE(); // 113
+	public static readonly Enums.Triennial Num_17 = new Enums.Triennial.Num_17SE(); // 114
+	public static readonly Enums.Triennial Num_19 = new Enums.Triennial.Num_19SE(); // 115
+	public static readonly Enums.Triennial Num_20 = new Enums.Triennial.Num_20SE(); // 116
+	public static readonly Enums.Triennial Num_22 = new Enums.Triennial.Num_22SE(); // 117
+	public static readonly Enums.Triennial Num_23 = new Enums.Triennial.Num_23SE(); // 118
+	public static readonly Enums.Triennial Num_25 = new Enums.Triennial.Num_25SE(); // 119
+	public static readonly Enums.Triennial Num_26 = new Enums.Triennial.Num_26SE(); // 120
+	public static readonly Enums.Triennial Num_28 = new Enums.Triennial.Num_28SE(); // 121
+	public static readonly Enums.Triennial Num_30 = new Enums.Triennial.Num_30SE(); // 122
+	public static readonly Enums.Triennial Num_32 = new Enums.Triennial.Num_32SE(); // 123
+	public static readonly Enums.Triennial Num_33 = new Enums.Triennial.Num_33SE(); // 124
+	public static readonly Enums.Triennial Num_34 = new Enums.Triennial.Num_34SE(); // 125
+	public static readonly Enums.Triennial Num_35 = new Enums.Triennial.Num_35SE(); // 126
+	public static readonly Enums.Triennial Deu_01 = new Enums.Triennial.Deu_01SE(); // 127
+	public static readonly Enums.Triennial Deu_02 = new Enums.Triennial.Deu_02SE(); // 128
+	public static readonly Enums.Triennial Deu_03 = new Enums.Triennial.Deu_03SE(); // 129
+	public static readonly Enums.Triennial Deu_04 = new Enums.Triennial.Deu_04SE(); // 130
+	public static readonly Enums.Triennial Deu_05 = new Enums.Triennial.Deu_05SE(); // 131
+	public static readonly Enums.Triennial Deu_06 = new Enums.Triennial.Deu_06SE(); // 132
+	public static readonly Enums.Triennial Deu_08 = new Enums.Triennial.Deu_08SE(); // 133
+	public static readonly Enums.Triennial Deu_09 = new Enums.Triennial.Deu_09SE(); // 134
+	public static readonly Enums.Triennial Deu_10 = new Enums.Triennial.Deu_10SE(); // 135
+	public static readonly Enums.Triennial Deu_11 = new Enums.Triennial.Deu_11SE(); // 136
+	public static readonly Enums.Triennial Deu_12 = new Enums.Triennial.Deu_12SE(); // 137
+	public static readonly Enums.Triennial Deu_15 = new Enums.Triennial.Deu_15SE(); // 138
+	public static readonly Enums.Triennial Deu_16 = new Enums.Triennial.Deu_16SE(); // 139
+	public static readonly Enums.Triennial Deu_17 = new Enums.Triennial.Deu_17SE(); // 140
+	public static readonly Enums.Triennial Deu_18 = new Enums.Triennial.Deu_18SE(); // 141
+	public static readonly Enums.Triennial Deu_20 = new Enums.Triennial.Deu_20SE(); // 142
+	public static readonly Enums.Triennial Deu_21 = new Enums.Triennial.Deu_21SE(); // 143
+	public static readonly Enums.Triennial Deu_22 = new Enums.Triennial.Deu_22SE(); // 144
+	public static readonly Enums.Triennial Deu_23a = new Enums.Triennial.Deu_23aSE(); // 145
+	public static readonly Enums.Triennial Deu_23b = new Enums.Triennial.Deu_23bSE(); // 146
+	public static readonly Enums.Triennial Deu_24 = new Enums.Triennial.Deu_24SE(); // 147
+	public static readonly Enums.Triennial Deu_26 = new Enums.Triennial.Deu_26SE(); // 148
+	public static readonly Enums.Triennial Deu_28 = new Enums.Triennial.Deu_28SE(); // 149
+	public static readonly Enums.Triennial Deu_29 = new Enums.Triennial.Deu_29SE(); // 150
+	public static readonly Enums.Triennial Deu_30 = new Enums.Triennial.Deu_30SE(); // 151
+	public static readonly Enums.Triennial Deu_31 = new Enums.Triennial.Deu_31SE(); // 152
+	public static readonly Enums.Triennial Deu_32 = new Enums.Triennial.Deu_32SE(); // 153
+	public static readonly Enums.Triennial Deu_33 = new Enums.Triennial.Deu_33SE(); // 154
+	public static readonly Enums.Triennial Deu_34 = new Enums.Triennial.Deu_34SE(); // 155
 
 	#endregion
-
 
 
 	private Triennial(string name, int value) : base(name, value) { } // Constructor
@@ -361,8 +369,8 @@ public abstract class Triennial : SmartEnum<Triennial>
 		{
 			if (HasPrevious)
 			{
-				Triennial _prev = Triennial.FromValue(this.Value - 1);
-				return new PrevNextVM(_prev, Constants.PrevNextUrl(_prev), "fas fa-arrow-left");
+        Enums.Triennial _prev = Enums.Triennial.FromValue(this.Value - 1);
+				return new PrevNextVM(_prev, Helpers.PrevNextUrl(_prev), "fas fa-arrow-left");
 			}
 			else
 			{
@@ -377,8 +385,8 @@ public abstract class Triennial : SmartEnum<Triennial>
 		{
 			if (HasNext)
 			{
-				Triennial _next = Triennial.FromValue(this.Value + 1);
-				return new PrevNextVM(_next, Constants.PrevNextUrl(_next), "fas fa-arrow-right");
+        Enums.Triennial _next = Enums.Triennial.FromValue(this.Value + 1);
+				return new PrevNextVM(_next, Helpers.PrevNextUrl(_next), "fas fa-arrow-right");
 			}
 			else
 			{
@@ -392,7 +400,7 @@ public abstract class Triennial : SmartEnum<Triennial>
 		get
 		{
 			string slug = $"{BibleBook.FromValue(this.TorahVerse.BibleBook).Abrv}_{this.TorahVerse.ChapterVerse.Replace("-", "-to-").Replace(":", "-")}";
-			return ($"{Constants.BaseUrl}/{this.Value}/{slug}");
+			return ($"{Helpers.BaseUrl}/{this.Value}/{slug}");
 		}
 	}
 
@@ -404,7 +412,7 @@ public abstract class Triennial : SmartEnum<Triennial>
 	{
 		get
 		{
-			return Constants.TriennialSeedDate.AddDays(7 * (this.Value - 1));
+			return Helpers.TriennialSeedDate.AddDays(7 * (this.Value - 1));
 		}
 	}
 
@@ -436,7 +444,7 @@ public abstract class Triennial : SmartEnum<Triennial>
 	{
 		get
 		{
-			return $" {BibleBook.FromValue(this.TorahVerse.BibleBook).Name} {this.TorahVerse.ChapterVerse} {Enums.Constants.DaysFromOrToShabbat(this.Date).ToString()}";
+      return $" {BibleBook.FromValue(this.TorahVerse.BibleBook).Name} {this.TorahVerse.ChapterVerse} {Helpers.DaysFromOrToShabbat(this.Date).ToString()}";
 		}
 	}
 
@@ -486,9 +494,9 @@ public abstract class Triennial : SmartEnum<Triennial>
 
 	#region Private Instantiation
 
-	private sealed class Gen_01SE : Triennial
+	private sealed class Gen_01SE : Enums.Triennial
 	{
-		public Gen_01SE() : base($"{nameof(Id.Gen_01)}", Id.Gen_01) { }
+		public Gen_01SE() : base($"{nameof(Enums.Triennial.Id.Gen_01)}", Enums.Triennial.Id.Gen_01) { }
 		public override string TriNum => "1.1";
 		public override string ParashaName => "B'reisheet";
 		public override string NameUrl => NameUrl;
@@ -508,9 +516,9 @@ new VerseRange(BibleBook.Revelation, "22:6-21", 31087, 31102),];
 
 	}
 
-	private sealed class Gen_02SE : Triennial
+	private sealed class Gen_02SE : Enums.Triennial
 	{
-		public Gen_02SE() : base($"{nameof(Id.Gen_02)}", Id.Gen_02) { }
+		public Gen_02SE() : base($"{nameof(Enums.Triennial.Id.Gen_02)}", Enums.Triennial.Id.Gen_02) { }
 		public override string TriNum => "1.2";
 		public override string ParashaName => "Elleh toldot";
 		public override string NameUrl => NameUrl;
@@ -528,9 +536,9 @@ new VerseRange(BibleBook.Hebrews, "11:1-7", 30174, 30180),];
 
 	}
 
-	private sealed class Gen_04SE : Triennial
+	private sealed class Gen_04SE : Enums.Triennial
 	{
-		public Gen_04SE() : base($"{nameof(Id.Gen_04)}", Id.Gen_04) { }
+		public Gen_04SE() : base($"{nameof(Enums.Triennial.Id.Gen_04)}", Enums.Triennial.Id.Gen_04) { }
 		public override string TriNum => "1.3";
 		public override string ParashaName => "Adam Yada Hava";
 		public override string NameUrl => NameUrl;
@@ -547,9 +555,9 @@ new VerseRange(BibleBook.Romans, "3:1-24", 27993, 28016),];
 
 	}
 
-	private sealed class Gen_05SE : Triennial
+	private sealed class Gen_05SE : Enums.Triennial
 	{
-		public Gen_05SE() : base($"{nameof(Id.Gen_05)}", Id.Gen_05) { }
+		public Gen_05SE() : base($"{nameof(Enums.Triennial.Id.Gen_05)}", Enums.Triennial.Id.Gen_05) { }
 		public override string TriNum => "1.4";
 		public override string ParashaName => "Tol'dot Adahm";
 		public override string NameUrl => NameUrl;
@@ -565,9 +573,9 @@ new VerseRange(BibleBook.Romans, "3:1-24", 27993, 28016),];
 
 	}
 
-	private sealed class Gen_06SE : Triennial
+	private sealed class Gen_06SE : Enums.Triennial
 	{
-		public Gen_06SE() : base($"{nameof(Id.Gen_06)}", Id.Gen_06) { }
+		public Gen_06SE() : base($"{nameof(Enums.Triennial.Id.Gen_06)}", Enums.Triennial.Id.Gen_06) { }
 		public override string TriNum => "2.1";
 		public override string ParashaName => "Noach";
 		public override string NameUrl => NameUrl;
@@ -585,9 +593,9 @@ new VerseRange(BibleBook.John, "1:24-34", 26069, 26079),];
 
 	}
 
-	private sealed class Gen_08aSE : Triennial
+	private sealed class Gen_08aSE : Enums.Triennial
 	{
-		public Gen_08aSE() : base($"{nameof(Id.Gen_08a)}", Id.Gen_08a) { }
+		public Gen_08aSE() : base($"{nameof(Enums.Triennial.Id.Gen_08a)}", Enums.Triennial.Id.Gen_08a) { }
 		public override string TriNum => "2.2";
 		public override string ParashaName => "Vayizkor";
 		public override string NameUrl => NameUrl;
@@ -605,9 +613,9 @@ new VerseRange(BibleBook.Revelation, "1:9-20", 30707, 30718),];
 
 	}
 
-	private sealed class Gen_08bSE : Triennial
+	private sealed class Gen_08bSE : Enums.Triennial
 	{
-		public Gen_08bSE() : base($"{nameof(Id.Gen_08b)}", Id.Gen_08b) { }
+		public Gen_08bSE() : base($"{nameof(Enums.Triennial.Id.Gen_08b)}", Enums.Triennial.Id.Gen_08b) { }
 		public override string TriNum => "2.3";
 		public override string ParashaName => "Tzay meen hatayvah";
 		public override string NameUrl => NameUrl;
@@ -624,9 +632,9 @@ new VerseRange(BibleBook.SecondTimothy, "2:8-19", 29836, 29847),];
 
 	}
 
-	private sealed class Gen_09SE : Triennial
+	private sealed class Gen_09SE : Enums.Triennial
 	{
-		public Gen_09SE() : base($"{nameof(Id.Gen_09)}", Id.Gen_09) { }
+		public Gen_09SE() : base($"{nameof(Enums.Triennial.Id.Gen_09)}", Enums.Triennial.Id.Gen_09) { }
 		public override string TriNum => "2.4";
 		public override string ParashaName => "Venay Noach";
 		public override string NameUrl => NameUrl;
@@ -643,9 +651,9 @@ new VerseRange(BibleBook.Revelation, "5", 30781, 30794),];
 
 	}
 
-	private sealed class Gen_11SE : Triennial
+	private sealed class Gen_11SE : Enums.Triennial
 	{
-		public Gen_11SE() : base($"{nameof(Id.Gen_11)}", Id.Gen_11) { }
+		public Gen_11SE() : base($"{nameof(Enums.Triennial.Id.Gen_11)}", Enums.Triennial.Id.Gen_11) { }
 		public override string TriNum => "2.5";
 		public override string ParashaName => "Vayehee kol haaretz";
 		public override string NameUrl => NameUrl;
@@ -662,9 +670,9 @@ new VerseRange(BibleBook.Zephaniah, "3:9", 22830, 22830),];
 
 	}
 
-	private sealed class Gen_12SE : Triennial
+	private sealed class Gen_12SE : Enums.Triennial
 	{
-		public Gen_12SE() : base($"{nameof(Id.Gen_12)}", Id.Gen_12) { }
+		public Gen_12SE() : base($"{nameof(Enums.Triennial.Id.Gen_12)}", Enums.Triennial.Id.Gen_12) { }
 		public override string TriNum => "3.1";
 		public override string ParashaName => "Lech L'cha";
 		public override string NameUrl => NameUrl;
@@ -682,9 +690,9 @@ new VerseRange(BibleBook.Hebrews, "11:1-10", 30174, 30183),];
 
 	}
 
-	private sealed class Gen_14SE : Triennial
+	private sealed class Gen_14SE : Enums.Triennial
 	{
-		public Gen_14SE() : base($"{nameof(Id.Gen_14)}", Id.Gen_14) { }
+		public Gen_14SE() : base($"{nameof(Enums.Triennial.Id.Gen_14)}", Enums.Triennial.Id.Gen_14) { }
 		public override string TriNum => "3.2";
 		public override string ParashaName => "B'may Amraphel";
 		public override string NameUrl => NameUrl;
@@ -701,9 +709,9 @@ new VerseRange(BibleBook.Isaiah, "41:2-14", 18454, 18466),];
 
 	}
 
-	private sealed class Gen_15SE : Triennial
+	private sealed class Gen_15SE : Enums.Triennial
 	{
-		public Gen_15SE() : base($"{nameof(Id.Gen_15)}", Id.Gen_15) { }
+		public Gen_15SE() : base($"{nameof(Enums.Triennial.Id.Gen_15)}", Enums.Triennial.Id.Gen_15) { }
 		public override string TriNum => "3.3";
 		public override string ParashaName => "Bahmahchazeh";
 		public override string NameUrl => NameUrl;
@@ -720,9 +728,9 @@ new VerseRange(BibleBook.Zephaniah, "3:9-19", 22830, 22840),];
 
 	}
 
-	private sealed class Gen_16SE : Triennial
+	private sealed class Gen_16SE : Enums.Triennial
 	{
-		public Gen_16SE() : base($"{nameof(Id.Gen_16)}", Id.Gen_16) { }
+		public Gen_16SE() : base($"{nameof(Enums.Triennial.Id.Gen_16)}", Enums.Triennial.Id.Gen_16) { }
 		public override string TriNum => "3.4";
 		public override string ParashaName => "Sarai ayshet Avram";
 		public override string NameUrl => NameUrl;
@@ -738,9 +746,9 @@ new VerseRange(BibleBook.Zephaniah, "3:9-19", 22830, 22840),];
 
 	}
 
-	private sealed class Gen_17SE : Triennial
+	private sealed class Gen_17SE : Enums.Triennial
 	{
-		public Gen_17SE() : base($"{nameof(Id.Gen_17)}", Id.Gen_17) { }
+		public Gen_17SE() : base($"{nameof(Enums.Triennial.Id.Gen_17)}", Enums.Triennial.Id.Gen_17) { }
 		public override string TriNum => "3.5";
 		public override string ParashaName => "Vayhee Avram";
 		public override string NameUrl => NameUrl;
@@ -756,9 +764,9 @@ new VerseRange(BibleBook.Zephaniah, "3:9-19", 22830, 22840),];
 
 	}
 
-	private sealed class Gen_18SE : Triennial
+	private sealed class Gen_18SE : Enums.Triennial
 	{
-		public Gen_18SE() : base($"{nameof(Id.Gen_18)}", Id.Gen_18) { }
+		public Gen_18SE() : base($"{nameof(Enums.Triennial.Id.Gen_18)}", Enums.Triennial.Id.Gen_18) { }
 		public override string TriNum => "4.1";
 		public override string ParashaName => "Vayera";
 		public override string NameUrl => NameUrl;
@@ -776,9 +784,9 @@ new VerseRange(BibleBook.Hebrews, "11:8-18", 30181, 30191),];
 
 	}
 
-	private sealed class Gen_19SE : Triennial
+	private sealed class Gen_19SE : Enums.Triennial
 	{
-		public Gen_19SE() : base($"{nameof(Id.Gen_19)}", Id.Gen_19) { }
+		public Gen_19SE() : base($"{nameof(Enums.Triennial.Id.Gen_19)}", Enums.Triennial.Id.Gen_19) { }
 		public override string TriNum => "4.2";
 		public override string ParashaName => "Vayavo'u sh'ne";
 		public override string NameUrl => NameUrl;
@@ -794,9 +802,9 @@ new VerseRange(BibleBook.Hebrews, "11:8-18", 30181, 30191),];
 
 	}
 
-	private sealed class Gen_20SE : Triennial
+	private sealed class Gen_20SE : Enums.Triennial
 	{
-		public Gen_20SE() : base($"{nameof(Id.Gen_20)}", Id.Gen_20) { }
+		public Gen_20SE() : base($"{nameof(Enums.Triennial.Id.Gen_20)}", Enums.Triennial.Id.Gen_20) { }
 		public override string TriNum => "4.3";
 		public override string ParashaName => "VaYisa'a Misham";
 		public override string NameUrl => NameUrl;
@@ -814,9 +822,9 @@ new VerseRange(BibleBook.Galatians, "3:15-29", 29118, 29132),];
 
 	}
 
-	private sealed class Gen_21SE : Triennial
+	private sealed class Gen_21SE : Enums.Triennial
 	{
-		public Gen_21SE() : base($"{nameof(Id.Gen_21)}", Id.Gen_21) { }
+		public Gen_21SE() : base($"{nameof(Enums.Triennial.Id.Gen_21)}", Enums.Triennial.Id.Gen_21) { }
 		public override string TriNum => "4.4";
 		public override string ParashaName => "VaHa-Shem Paqad";
 		public override string NameUrl => NameUrl;
@@ -833,9 +841,9 @@ new VerseRange(BibleBook.Hebrews, "11:11", 30184, 30184),];
 
 	}
 
-	private sealed class Gen_22SE : Triennial
+	private sealed class Gen_22SE : Enums.Triennial
 	{
-		public Gen_22SE() : base($"{nameof(Id.Gen_22)}", Id.Gen_22) { }
+		public Gen_22SE() : base($"{nameof(Enums.Triennial.Id.Gen_22)}", Enums.Triennial.Id.Gen_22) { }
 		public override string TriNum => "4.5";
 		public override string ParashaName => "V'HaElohim Nisah";
 		public override string NameUrl => NameUrl;
@@ -852,9 +860,9 @@ new VerseRange(BibleBook.John, "19:16-17", 26842, 26843),];
 
 	}
 
-	private sealed class Gen_23SE : Triennial
+	private sealed class Gen_23SE : Enums.Triennial
 	{
-		public Gen_23SE() : base($"{nameof(Id.Gen_23)}", Id.Gen_23) { }
+		public Gen_23SE() : base($"{nameof(Enums.Triennial.Id.Gen_23)}", Enums.Triennial.Id.Gen_23) { }
 		public override string TriNum => "5.1";
 		public override string ParashaName => "Chaye Sarah";
 		public override string NameUrl => NameUrl;
@@ -873,9 +881,9 @@ new VerseRange(BibleBook.FirstCorinthians, "15:50-57", 28769, 28776),];
 
 	}
 
-	private sealed class Gen_24aSE : Triennial
+	private sealed class Gen_24aSE : Enums.Triennial
 	{
-		public Gen_24aSE() : base($"{nameof(Id.Gen_24a)}", Id.Gen_24a) { }
+		public Gen_24aSE() : base($"{nameof(Enums.Triennial.Id.Gen_24a)}", Enums.Triennial.Id.Gen_24a) { }
 		public override string TriNum => "5.2";
 		public override string ParashaName => "V'Avraham Zaken";
 		public override string NameUrl => NameUrl;
@@ -893,9 +901,9 @@ new VerseRange(BibleBook.Ephesians, "5:15-33", 29320, 29338),];
 
 	}
 
-	private sealed class Gen_24bSE : Triennial
+	private sealed class Gen_24bSE : Enums.Triennial
 	{
-		public Gen_24bSE() : base($"{nameof(Id.Gen_24b)}", Id.Gen_24b) { }
+		public Gen_24bSE() : base($"{nameof(Enums.Triennial.Id.Gen_24b)}", Enums.Triennial.Id.Gen_24b) { }
 		public override string TriNum => "5.3";
 		public override string ParashaName => "Va'Avo HaYom";
 		public override string NameUrl => NameUrl;
@@ -911,9 +919,9 @@ new VerseRange(BibleBook.Ephesians, "5:15-33", 29320, 29338),];
 
 	}
 
-	private sealed class Gen_25aSE : Triennial
+	private sealed class Gen_25aSE : Enums.Triennial
 	{
-		public Gen_25aSE() : base($"{nameof(Id.Gen_25a)}", Id.Gen_25a) { }
+		public Gen_25aSE() : base($"{nameof(Enums.Triennial.Id.Gen_25a)}", Enums.Triennial.Id.Gen_25a) { }
 		public override string TriNum => "5.4";
 		public override string ParashaName => "VaYosef Avraham";
 		public override string NameUrl => NameUrl;
@@ -929,9 +937,9 @@ new VerseRange(BibleBook.Ephesians, "5:15-33", 29320, 29338),];
 
 	}
 
-	private sealed class Gen_25bSE : Triennial
+	private sealed class Gen_25bSE : Enums.Triennial
 	{
-		public Gen_25bSE() : base($"{nameof(Id.Gen_25b)}", Id.Gen_25b) { }
+		public Gen_25bSE() : base($"{nameof(Enums.Triennial.Id.Gen_25b)}", Enums.Triennial.Id.Gen_25b) { }
 		public override string TriNum => "6.1";
 		public override string ParashaName => "Tole'dot";
 		public override string NameUrl => NameUrl;
@@ -949,9 +957,9 @@ new VerseRange(BibleBook.Hebrews, "12:14-29", 30227, 30242),];
 
 	}
 
-	private sealed class Gen_26SE : Triennial
+	private sealed class Gen_26SE : Enums.Triennial
 	{
-		public Gen_26SE() : base($"{nameof(Id.Gen_26)}", Id.Gen_26) { }
+		public Gen_26SE() : base($"{nameof(Enums.Triennial.Id.Gen_26)}", Enums.Triennial.Id.Gen_26) { }
 		public override string TriNum => "6.2";
 		public override string ParashaName => "Vauiz'ra Yitschaq";
 		public override string NameUrl => NameUrl;
@@ -968,9 +976,9 @@ new VerseRange(BibleBook.Romans, "9:1-8", 28157, 28164),];
 
 	}
 
-	private sealed class Gen_27aSE : Triennial
+	private sealed class Gen_27aSE : Enums.Triennial
 	{
-		public Gen_27aSE() : base($"{nameof(Id.Gen_27a)}", Id.Gen_27a) { }
+		public Gen_27aSE() : base($"{nameof(Enums.Triennial.Id.Gen_27a)}", Enums.Triennial.Id.Gen_27a) { }
 		public override string TriNum => "6.3";
 		public override string ParashaName => "Vay'hi Ki-Zeqen";
 		public override string NameUrl => NameUrl;
@@ -987,9 +995,9 @@ new VerseRange(BibleBook.Hebrews, "11:20", 30193, 30193),];
 
 	}
 
-	private sealed class Gen_27bSE : Triennial
+	private sealed class Gen_27bSE : Enums.Triennial
 	{
-		public Gen_27bSE() : base($"{nameof(Id.Gen_27b)}", Id.Gen_27b) { }
+		public Gen_27bSE() : base($"{nameof(Enums.Triennial.Id.Gen_27b)}", Enums.Triennial.Id.Gen_27b) { }
 		public override string TriNum => "6.4";
 		public override string ParashaName => "V'yitem L'kha";
 		public override string NameUrl => NameUrl;
@@ -1006,9 +1014,9 @@ new VerseRange(BibleBook.Micah, "5", 22635, 22649),];
 
 	}
 
-	private sealed class Gen_28SE : Triennial
+	private sealed class Gen_28SE : Enums.Triennial
 	{
-		public Gen_28SE() : base($"{nameof(Id.Gen_28)}", Id.Gen_28) { }
+		public Gen_28SE() : base($"{nameof(Enums.Triennial.Id.Gen_28)}", Enums.Triennial.Id.Gen_28) { }
 		public override string TriNum => "7.1";
 		public override string ParashaName => "Vayetse";
 		public override string NameUrl => NameUrl;
@@ -1027,9 +1035,9 @@ new VerseRange(BibleBook.Ephesians, "6:5-9", 29343, 29347),];
 
 	}
 
-	private sealed class Gen_29SE : Triennial
+	private sealed class Gen_29SE : Enums.Triennial
 	{
-		public Gen_29SE() : base($"{nameof(Id.Gen_29)}", Id.Gen_29) { }
+		public Gen_29SE() : base($"{nameof(Enums.Triennial.Id.Gen_29)}", Enums.Triennial.Id.Gen_29) { }
 		public override string TriNum => "7.2";
 		public override string ParashaName => "Vayara YHVH";
 		public override string NameUrl => NameUrl;
@@ -1047,9 +1055,9 @@ new VerseRange(BibleBook.Revelation, "19", 31019, 31039),];
 
 	}
 
-	private sealed class Gen_30SE : Triennial
+	private sealed class Gen_30SE : Enums.Triennial
 	{
-		public Gen_30SE() : base($"{nameof(Id.Gen_30)}", Id.Gen_30) { }
+		public Gen_30SE() : base($"{nameof(Enums.Triennial.Id.Gen_30)}", Enums.Triennial.Id.Gen_30) { }
 		public override string TriNum => "7.3";
 		public override string ParashaName => "Vayizchar Elohim";
 		public override string NameUrl => NameUrl;
@@ -1067,9 +1075,9 @@ new VerseRange(BibleBook.Revelation, "20:4-15", 31043, 31054),];
 
 	}
 
-	private sealed class Gen_31SE : Triennial
+	private sealed class Gen_31SE : Enums.Triennial
 	{
-		public Gen_31SE() : base($"{nameof(Id.Gen_31)}", Id.Gen_31) { }
+		public Gen_31SE() : base($"{nameof(Enums.Triennial.Id.Gen_31)}", Enums.Triennial.Id.Gen_31) { }
 		public override string TriNum => "7.4";
 		public override string ParashaName => "Shuv El Eretz";
 		public override string NameUrl => NameUrl;
@@ -1087,9 +1095,9 @@ new VerseRange(BibleBook.James, "4:1-12", 30339, 30350),];
 
 	}
 
-	private sealed class Gen_32SE : Triennial
+	private sealed class Gen_32SE : Enums.Triennial
 	{
-		public Gen_32SE() : base($"{nameof(Id.Gen_32)}", Id.Gen_32) { }
+		public Gen_32SE() : base($"{nameof(Enums.Triennial.Id.Gen_32)}", Enums.Triennial.Id.Gen_32) { }
 		public override string TriNum => "8.1";
 		public override string ParashaName => "Vayishlach";
 		public override string NameUrl => NameUrl;
@@ -1105,9 +1113,9 @@ new VerseRange(BibleBook.James, "4:1-12", 30339, 30350),];
 
 	}
 
-	private sealed class Gen_33SE : Triennial
+	private sealed class Gen_33SE : Enums.Triennial
 	{
-		public Gen_33SE() : base($"{nameof(Id.Gen_33)}", Id.Gen_33) { }
+		public Gen_33SE() : base($"{nameof(Enums.Triennial.Id.Gen_33)}", Enums.Triennial.Id.Gen_33) { }
 		public override string TriNum => "8.2";
 		public override string ParashaName => "Vayavo";
 		public override string NameUrl => NameUrl;
@@ -1123,9 +1131,9 @@ new VerseRange(BibleBook.James, "4:1-12", 30339, 30350),];
 
 	}
 
-	private sealed class Gen_35SE : Triennial
+	private sealed class Gen_35SE : Enums.Triennial
 	{
-		public Gen_35SE() : base($"{nameof(Id.Gen_35)}", Id.Gen_35) { }
+		public Gen_35SE() : base($"{nameof(Enums.Triennial.Id.Gen_35)}", Enums.Triennial.Id.Gen_35) { }
 		public override string TriNum => "8.3";
 		public override string ParashaName => "Vayrah Elohim el";
 		public override string NameUrl => NameUrl;
@@ -1141,9 +1149,9 @@ new VerseRange(BibleBook.James, "4:1-12", 30339, 30350),];
 
 	}
 
-	private sealed class Gen_37SE : Triennial
+	private sealed class Gen_37SE : Enums.Triennial
 	{
-		public Gen_37SE() : base($"{nameof(Id.Gen_37)}", Id.Gen_37) { }
+		public Gen_37SE() : base($"{nameof(Enums.Triennial.Id.Gen_37)}", Enums.Triennial.Id.Gen_37) { }
 		public override string TriNum => "9.1";
 		public override string ParashaName => "Vayeshev";
 		public override string NameUrl => NameUrl;
@@ -1159,9 +1167,9 @@ new VerseRange(BibleBook.James, "4:1-12", 30339, 30350),];
 
 	}
 
-	private sealed class Gen_38SE : Triennial
+	private sealed class Gen_38SE : Enums.Triennial
 	{
-		public Gen_38SE() : base($"{nameof(Id.Gen_38)}", Id.Gen_38) { }
+		public Gen_38SE() : base($"{nameof(Enums.Triennial.Id.Gen_38)}", Enums.Triennial.Id.Gen_38) { }
 		public override string TriNum => "9.2";
 		public override string ParashaName => "VaYered Yehudah";
 		public override string NameUrl => NameUrl;
@@ -1177,9 +1185,9 @@ new VerseRange(BibleBook.James, "4:1-12", 30339, 30350),];
 
 	}
 
-	private sealed class Gen_39SE : Triennial
+	private sealed class Gen_39SE : Enums.Triennial
 	{
-		public Gen_39SE() : base($"{nameof(Id.Gen_39)}", Id.Gen_39) { }
+		public Gen_39SE() : base($"{nameof(Enums.Triennial.Id.Gen_39)}", Enums.Triennial.Id.Gen_39) { }
 		public override string TriNum => "9.3";
 		public override string ParashaName => "VaYosheph";
 		public override string NameUrl => NameUrl;
@@ -1195,9 +1203,9 @@ new VerseRange(BibleBook.James, "4:1-12", 30339, 30350),];
 
 	}
 
-	private sealed class Gen_40SE : Triennial
+	private sealed class Gen_40SE : Enums.Triennial
 	{
-		public Gen_40SE() : base($"{nameof(Id.Gen_40)}", Id.Gen_40) { }
+		public Gen_40SE() : base($"{nameof(Enums.Triennial.Id.Gen_40)}", Enums.Triennial.Id.Gen_40) { }
 		public override string TriNum => "9.4";
 		public override string ParashaName => "Chateu";
 		public override string NameUrl => NameUrl;
@@ -1214,9 +1222,9 @@ new VerseRange(BibleBook.Amos, "2:6", 22386, 22386),];
 
 	}
 
-	private sealed class Gen_41aSE : Triennial
+	private sealed class Gen_41aSE : Enums.Triennial
 	{
-		public Gen_41aSE() : base($"{nameof(Id.Gen_41a)}", Id.Gen_41a) { }
+		public Gen_41aSE() : base($"{nameof(Enums.Triennial.Id.Gen_41a)}", Enums.Triennial.Id.Gen_41a) { }
 		public override string TriNum => "10.1";
 		public override string ParashaName => "Miketz";
 		public override string NameUrl => NameUrl;
@@ -1233,9 +1241,9 @@ new VerseRange(BibleBook.Isaiah, "29:8", 18202, 18202),];
 
 	}
 
-	private sealed class Gen_41bSE : Triennial
+	private sealed class Gen_41bSE : Enums.Triennial
 	{
-		public Gen_41bSE() : base($"{nameof(Id.Gen_41b)}", Id.Gen_41b) { }
+		public Gen_41bSE() : base($"{nameof(Enums.Triennial.Id.Gen_41b)}", Enums.Triennial.Id.Gen_41b) { }
 		public override string TriNum => "10.2";
 		public override string ParashaName => "Hanimtza";
 		public override string NameUrl => NameUrl;
@@ -1251,9 +1259,9 @@ new VerseRange(BibleBook.Isaiah, "29:8", 18202, 18202),];
 
 	}
 
-	private sealed class Gen_42SE : Triennial
+	private sealed class Gen_42SE : Enums.Triennial
 	{
-		public Gen_42SE() : base($"{nameof(Id.Gen_42)}", Id.Gen_42) { }
+		public Gen_42SE() : base($"{nameof(Enums.Triennial.Id.Gen_42)}", Enums.Triennial.Id.Gen_42) { }
 		public override string TriNum => "10.3";
 		public override string ParashaName => "Vayomer Eleichem";
 		public override string NameUrl => NameUrl;
@@ -1269,9 +1277,9 @@ new VerseRange(BibleBook.Isaiah, "29:8", 18202, 18202),];
 
 	}
 
-	private sealed class Gen_43SE : Triennial
+	private sealed class Gen_43SE : Enums.Triennial
 	{
-		public Gen_43SE() : base($"{nameof(Id.Gen_43)}", Id.Gen_43) { }
+		public Gen_43SE() : base($"{nameof(Enums.Triennial.Id.Gen_43)}", Enums.Triennial.Id.Gen_43) { }
 		public override string TriNum => "10.4";
 		public override string ParashaName => "Vayavei Ha-ish";
 		public override string NameUrl => NameUrl;
@@ -1288,9 +1296,9 @@ new VerseRange(BibleBook.Jeremiah, "43:12-13", 20010, 20011),];
 
 	}
 
-	private sealed class Gen_44SE : Triennial
+	private sealed class Gen_44SE : Enums.Triennial
 	{
-		public Gen_44SE() : base($"{nameof(Id.Gen_44)}", Id.Gen_44) { }
+		public Gen_44SE() : base($"{nameof(Enums.Triennial.Id.Gen_44)}", Enums.Triennial.Id.Gen_44) { }
 		public override string TriNum => "11.1";
 		public override string ParashaName => "Vayigash";
 		public override string NameUrl => NameUrl;
@@ -1310,9 +1318,9 @@ new VerseRange(BibleBook.Revelation, "12:1-6", 30893, 30898),];
 
 	}
 
-	private sealed class Gen_46SE : Triennial
+	private sealed class Gen_46SE : Enums.Triennial
 	{
-		public Gen_46SE() : base($"{nameof(Id.Gen_46)}", Id.Gen_46) { }
+		public Gen_46SE() : base($"{nameof(Enums.Triennial.Id.Gen_46)}", Enums.Triennial.Id.Gen_46) { }
 		public override string TriNum => "11.2";
 		public override string ParashaName => "Yehudah Shalach";
 		public override string NameUrl => NameUrl;
@@ -1330,9 +1338,9 @@ new VerseRange(BibleBook.Revelation, "22:1-10", 31082, 31091),];
 
 	}
 
-	private sealed class Gen_48SE : Triennial
+	private sealed class Gen_48SE : Enums.Triennial
 	{
-		public Gen_48SE() : base($"{nameof(Id.Gen_48)}", Id.Gen_48) { }
+		public Gen_48SE() : base($"{nameof(Enums.Triennial.Id.Gen_48)}", Enums.Triennial.Id.Gen_48) { }
 		public override string TriNum => "12.1";
 		public override string ParashaName => "Vay'chi";
 		public override string NameUrl => NameUrl;
@@ -1348,9 +1356,9 @@ new VerseRange(BibleBook.Revelation, "22:1-10", 31082, 31091),];
 
 	}
 
-	private sealed class Gen_49SE : Triennial
+	private sealed class Gen_49SE : Enums.Triennial
 	{
-		public Gen_49SE() : base($"{nameof(Id.Gen_49)}", Id.Gen_49) { }
+		public Gen_49SE() : base($"{nameof(Enums.Triennial.Id.Gen_49)}", Enums.Triennial.Id.Gen_49) { }
 		public override string TriNum => "12.2";
 		public override string ParashaName => "Shivtey Yisrael";
 		public override string NameUrl => NameUrl;
@@ -1367,9 +1375,9 @@ new VerseRange(BibleBook.Zechariah, "14:1", 23070, 23070),];
 
 	}
 
-	private sealed class Exo_01SE : Triennial
+	private sealed class Exo_01SE : Enums.Triennial
 	{
-		public Exo_01SE() : base($"{nameof(Id.Exo_01)}", Id.Exo_01) { }
+		public Exo_01SE() : base($"{nameof(Enums.Triennial.Id.Exo_01)}", Enums.Triennial.Id.Exo_01) { }
 		public override string TriNum => "13.1";
 		public override string ParashaName => "Shemot";
 		public override string NameUrl => NameUrl;
@@ -1388,9 +1396,9 @@ new VerseRange(BibleBook.SecondCorinthians, "6:1-10", 28900, 28909),];
 
 	}
 
-	private sealed class Exo_03SE : Triennial
+	private sealed class Exo_03SE : Enums.Triennial
 	{
-		public Exo_03SE() : base($"{nameof(Id.Exo_03)}", Id.Exo_03) { }
+		public Exo_03SE() : base($"{nameof(Enums.Triennial.Id.Exo_03)}", Enums.Triennial.Id.Exo_03) { }
 		public override string TriNum => "13.2";
 		public override string ParashaName => "Umoshe";
 		public override string NameUrl => NameUrl;
@@ -1409,9 +1417,9 @@ new VerseRange(BibleBook.Acts, "7:30", 27147, 27147),];
 
 	}
 
-	private sealed class Exo_04SE : Triennial
+	private sealed class Exo_04SE : Enums.Triennial
 	{
-		public Exo_04SE() : base($"{nameof(Id.Exo_04)}", Id.Exo_04) { }
+		public Exo_04SE() : base($"{nameof(Enums.Triennial.Id.Exo_04)}", Enums.Triennial.Id.Exo_04) { }
 		public override string TriNum => "13.3";
 		public override string ParashaName => "VaYeled Moshe";
 		public override string NameUrl => NameUrl;
@@ -1427,9 +1435,9 @@ new VerseRange(BibleBook.Acts, "7:30", 27147, 27147),];
 
 	}
 
-	private sealed class Exo_06SE : Triennial
+	private sealed class Exo_06SE : Enums.Triennial
 	{
-		public Exo_06SE() : base($"{nameof(Id.Exo_06)}", Id.Exo_06) { }
+		public Exo_06SE() : base($"{nameof(Enums.Triennial.Id.Exo_06)}", Enums.Triennial.Id.Exo_06) { }
 		public override string TriNum => "14.1";
 		public override string ParashaName => "Va'crya";
 		public override string NameUrl => NameUrl;
@@ -1446,9 +1454,9 @@ new VerseRange(BibleBook.Ezekiel, "28:25-29:21", 21183, 21205),];
 
 	}
 
-	private sealed class Exo_07SE : Triennial
+	private sealed class Exo_07SE : Enums.Triennial
 	{
-		public Exo_07SE() : base($"{nameof(Id.Exo_07)}", Id.Exo_07) { }
+		public Exo_07SE() : base($"{nameof(Enums.Triennial.Id.Exo_07)}", Enums.Triennial.Id.Exo_07) { }
 		public override string TriNum => "14.2";
 		public override string ParashaName => "Ki Y'daber";
 		public override string NameUrl => NameUrl;
@@ -1465,9 +1473,9 @@ new VerseRange(BibleBook.Joel, "3:1-7", 22345, 22351),];
 
 	}
 
-	private sealed class Exo_08SE : Triennial
+	private sealed class Exo_08SE : Enums.Triennial
 	{
-		public Exo_08SE() : base($"{nameof(Id.Exo_08)}", Id.Exo_08) { }
+		public Exo_08SE() : base($"{nameof(Enums.Triennial.Id.Exo_08)}", Enums.Triennial.Id.Exo_08) { }
 		public override string TriNum => "14.3";
 		public override string ParashaName => "Hash'kem Baboker";
 		public override string NameUrl => NameUrl;
@@ -1485,9 +1493,9 @@ new VerseRange(BibleBook.Revelation, "8:1-9:6", 30829, 30847),];
 
 	}
 
-	private sealed class Exo_10SE : Triennial
+	private sealed class Exo_10SE : Enums.Triennial
 	{
-		public Exo_10SE() : base($"{nameof(Id.Exo_10)}", Id.Exo_10) { }
+		public Exo_10SE() : base($"{nameof(Enums.Triennial.Id.Exo_10)}", Enums.Triennial.Id.Exo_10) { }
 		public override string TriNum => "15.1";
 		public override string ParashaName => "Bo";
 		public override string NameUrl => NameUrl;
@@ -1506,9 +1514,9 @@ new VerseRange(BibleBook.Matthew, "26:30", 24085, 24085),];
 
 	}
 
-	private sealed class Exo_11SE : Triennial
+	private sealed class Exo_11SE : Enums.Triennial
 	{
-		public Exo_11SE() : base($"{nameof(Id.Exo_11)}", Id.Exo_11) { }
+		public Exo_11SE() : base($"{nameof(Enums.Triennial.Id.Exo_11)}", Enums.Triennial.Id.Exo_11) { }
 		public override string TriNum => "15.2";
 		public override string ParashaName => "Od Nega Echad";
 		public override string NameUrl => NameUrl;
@@ -1525,9 +1533,9 @@ new VerseRange(BibleBook.Micah, "7:15", 22680, 22680),];
 
 	}
 
-	private sealed class Exo_12SE : Triennial
+	private sealed class Exo_12SE : Enums.Triennial
 	{
-		public Exo_12SE() : base($"{nameof(Id.Exo_12)}", Id.Exo_12) { }
+		public Exo_12SE() : base($"{nameof(Enums.Triennial.Id.Exo_12)}", Enums.Triennial.Id.Exo_12) { }
 		public override string TriNum => "15.3";
 		public override string ParashaName => "Vayhi-Bachatzi";
 		public override string NameUrl => NameUrl;
@@ -1545,9 +1553,9 @@ new VerseRange(BibleBook.Revelation, "18", 30995, 31018),];
 
 	}
 
-	private sealed class Exo_13aSE : Triennial
+	private sealed class Exo_13aSE : Enums.Triennial
 	{
-		public Exo_13aSE() : base($"{nameof(Id.Exo_13a)}", Id.Exo_13a) { }
+		public Exo_13aSE() : base($"{nameof(Enums.Triennial.Id.Exo_13a)}", Enums.Triennial.Id.Exo_13a) { }
 		public override string TriNum => "15.4";
 		public override string ParashaName => "Kadesh";
 		public override string NameUrl => NameUrl;
@@ -1564,9 +1572,9 @@ new VerseRange(BibleBook.Hebrews, "9:13-15", 30119, 30121),];
 
 	}
 
-	private sealed class Exo_13bSE : Triennial
+	private sealed class Exo_13bSE : Enums.Triennial
 	{
-		public Exo_13bSE() : base($"{nameof(Id.Exo_13b)}", Id.Exo_13b) { }
+		public Exo_13bSE() : base($"{nameof(Enums.Triennial.Id.Exo_13b)}", Enums.Triennial.Id.Exo_13b) { }
 		public override string TriNum => "16.1";
 		public override string ParashaName => "B'Shalach";
 		public override string NameUrl => NameUrl;
@@ -1584,9 +1592,9 @@ new VerseRange(BibleBook.Philippians, "4:4-23", 29447, 29466),];
 
 	}
 
-	private sealed class Exo_15SE : Triennial
+	private sealed class Exo_15SE : Enums.Triennial
 	{
-		public Exo_15SE() : base($"{nameof(Id.Exo_15)}", Id.Exo_15) { }
+		public Exo_15SE() : base($"{nameof(Enums.Triennial.Id.Exo_15)}", Enums.Triennial.Id.Exo_15) { }
 		public override string TriNum => "16.2";
 		public override string ParashaName => "Yasa Moshe";
 		public override string NameUrl => NameUrl;
@@ -1603,9 +1611,9 @@ new VerseRange(BibleBook.Isaiah, "49:8-14", 18645, 18651),];
 
 	}
 
-	private sealed class Exo_16SE : Triennial
+	private sealed class Exo_16SE : Enums.Triennial
 	{
-		public Exo_16SE() : base($"{nameof(Id.Exo_16)}", Id.Exo_16) { }
+		public Exo_16SE() : base($"{nameof(Enums.Triennial.Id.Exo_16)}", Enums.Triennial.Id.Exo_16) { }
 		public override string TriNum => "16.3";
 		public override string ParashaName => "Hayom ki-Shabbat";
 		public override string NameUrl => NameUrl;
@@ -1621,9 +1629,9 @@ new VerseRange(BibleBook.Isaiah, "49:8-14", 18645, 18651),];
 
 	}
 
-	private sealed class Exo_18SE : Triennial
+	private sealed class Exo_18SE : Enums.Triennial
 	{
-		public Exo_18SE() : base($"{nameof(Id.Exo_18)}", Id.Exo_18) { }
+		public Exo_18SE() : base($"{nameof(Enums.Triennial.Id.Exo_18)}", Enums.Triennial.Id.Exo_18) { }
 		public override string TriNum => "17.1";
 		public override string ParashaName => "Yithro";
 		public override string NameUrl => NameUrl;
@@ -1640,9 +1648,9 @@ new VerseRange(BibleBook.John, "6:60-71", 26318, 26329),];
 
 	}
 
-	private sealed class Exo_19SE : Triennial
+	private sealed class Exo_19SE : Enums.Triennial
 	{
-		public Exo_19SE() : base($"{nameof(Id.Exo_19)}", Id.Exo_19) { }
+		public Exo_19SE() : base($"{nameof(Enums.Triennial.Id.Exo_19)}", Enums.Triennial.Id.Exo_19) { }
 		public override string TriNum => "17.2";
 		public override string ParashaName => "T'daber";
 		public override string NameUrl => NameUrl;
@@ -1659,9 +1667,9 @@ new VerseRange(BibleBook.Hebrews, "12:29", 30242, 30242),];
 
 	}
 
-	private sealed class Exo_21SE : Triennial
+	private sealed class Exo_21SE : Enums.Triennial
 	{
-		public Exo_21SE() : base($"{nameof(Id.Exo_21)}", Id.Exo_21) { }
+		public Exo_21SE() : base($"{nameof(Enums.Triennial.Id.Exo_21)}", Enums.Triennial.Id.Exo_21) { }
 		public override string TriNum => "18.1";
 		public override string ParashaName => "Mishpatim";
 		public override string NameUrl => NameUrl;
@@ -1678,9 +1686,9 @@ new VerseRange(BibleBook.Jeremiah, "34", 19803, 19824),];
 
 	}
 
-	private sealed class Exo_22SE : Triennial
+	private sealed class Exo_22SE : Enums.Triennial
 	{
-		public Exo_22SE() : base($"{nameof(Id.Exo_22)}", Id.Exo_22) { }
+		public Exo_22SE() : base($"{nameof(Enums.Triennial.Id.Exo_22)}", Enums.Triennial.Id.Exo_22) { }
 		public override string TriNum => "18.2";
 		public override string ParashaName => "Im-kesef Talveh";
 		public override string NameUrl => NameUrl;
@@ -1699,9 +1707,9 @@ new VerseRange(BibleBook.Isaiah, "60:17-61:11", 18839, 18855),];
 
 	}
 
-	private sealed class Exo_24SE : Triennial
+	private sealed class Exo_24SE : Enums.Triennial
 	{
-		public Exo_24SE() : base($"{nameof(Id.Exo_24)}", Id.Exo_24) { }
+		public Exo_24SE() : base($"{nameof(Enums.Triennial.Id.Exo_24)}", Enums.Triennial.Id.Exo_24) { }
 		public override string TriNum => "18.3";
 		public override string ParashaName => "?";
 		public override string NameUrl => NameUrl;
@@ -1718,9 +1726,9 @@ new VerseRange(BibleBook.Isaiah, "60:17-61:9", 18839, 18853),];
 
 	}
 
-	private sealed class Exo_25SE : Triennial
+	private sealed class Exo_25SE : Enums.Triennial
 	{
-		public Exo_25SE() : base($"{nameof(Id.Exo_25)}", Id.Exo_25) { }
+		public Exo_25SE() : base($"{nameof(Enums.Triennial.Id.Exo_25)}", Enums.Triennial.Id.Exo_25) { }
 		public override string TriNum => "19.1";
 		public override string ParashaName => "T'rumah";
 		public override string NameUrl => NameUrl;
@@ -1737,9 +1745,9 @@ new VerseRange(BibleBook.Hebrews, "9", 30107, 30134),];
 
 	}
 
-	private sealed class Exo_27aSE : Triennial
+	private sealed class Exo_27aSE : Enums.Triennial
 	{
-		public Exo_27aSE() : base($"{nameof(Id.Exo_27a)}", Id.Exo_27a) { }
+		public Exo_27aSE() : base($"{nameof(Enums.Triennial.Id.Exo_27a)}", Enums.Triennial.Id.Exo_27a) { }
 		public override string TriNum => "19.2";
 		public override string ParashaName => "V'ashita Parochet";
 		public override string NameUrl => NameUrl;
@@ -1755,9 +1763,9 @@ new VerseRange(BibleBook.Hebrews, "9", 30107, 30134),];
 
 	}
 
-	private sealed class Exo_27bSE : Triennial
+	private sealed class Exo_27bSE : Enums.Triennial
 	{
-		public Exo_27bSE() : base($"{nameof(Id.Exo_27b)}", Id.Exo_27b) { }
+		public Exo_27bSE() : base($"{nameof(Enums.Triennial.Id.Exo_27b)}", Enums.Triennial.Id.Exo_27b) { }
 		public override string TriNum => "20.1";
 		public override string ParashaName => "T'tzaveh";
 		public override string NameUrl => NameUrl;
@@ -1774,9 +1782,9 @@ new VerseRange(BibleBook.Ezekiel, "43:10-12", 21583, 21585),];
 
 	}
 
-	private sealed class Exo_29SE : Triennial
+	private sealed class Exo_29SE : Enums.Triennial
 	{
-		public Exo_29SE() : base($"{nameof(Id.Exo_29)}", Id.Exo_29) { }
+		public Exo_29SE() : base($"{nameof(Enums.Triennial.Id.Exo_29)}", Enums.Triennial.Id.Exo_29) { }
 		public override string TriNum => "20.2";
 		public override string ParashaName => "V'tzeh haDabar";
 		public override string NameUrl => NameUrl;
@@ -1792,9 +1800,9 @@ new VerseRange(BibleBook.Ezekiel, "43:10-12", 21583, 21585),];
 
 	}
 
-	private sealed class Exo_30aSE : Triennial
+	private sealed class Exo_30aSE : Enums.Triennial
 	{
-		public Exo_30aSE() : base($"{nameof(Id.Exo_30a)}", Id.Exo_30a) { }
+		public Exo_30aSE() : base($"{nameof(Enums.Triennial.Id.Exo_30a)}", Enums.Triennial.Id.Exo_30a) { }
 		public override string TriNum => "20.3";
 		public override string ParashaName => "V'ashit Mizbe'ach";
 		public override string NameUrl => NameUrl;
@@ -1810,9 +1818,9 @@ new VerseRange(BibleBook.Ezekiel, "43:10-12", 21583, 21585),];
 
 	}
 
-	private sealed class Exo_30bSE : Triennial
+	private sealed class Exo_30bSE : Enums.Triennial
 	{
-		public Exo_30bSE() : base($"{nameof(Id.Exo_30b)}", Id.Exo_30b) { }
+		public Exo_30bSE() : base($"{nameof(Enums.Triennial.Id.Exo_30b)}", Enums.Triennial.Id.Exo_30b) { }
 		public override string TriNum => "21.1";
 		public override string ParashaName => "Ki Tisa";
 		public override string NameUrl => NameUrl;
@@ -1829,9 +1837,9 @@ new VerseRange(BibleBook.SecondKings, "12:5", 9856, 9856),];
 
 	}
 
-	private sealed class Exo_31SE : Triennial
+	private sealed class Exo_31SE : Enums.Triennial
 	{
-		public Exo_31SE() : base($"{nameof(Id.Exo_31)}", Id.Exo_31) { }
+		public Exo_31SE() : base($"{nameof(Enums.Triennial.Id.Exo_31)}", Enums.Triennial.Id.Exo_31) { }
 		public override string TriNum => "21.2";
 		public override string ParashaName => "R'eh Qaratiy";
 		public override string NameUrl => NameUrl;
@@ -1847,9 +1855,9 @@ new VerseRange(BibleBook.SecondKings, "12:5", 9856, 9856),];
 
 	}
 
-	private sealed class Exo_32SE : Triennial
+	private sealed class Exo_32SE : Enums.Triennial
 	{
-		public Exo_32SE() : base($"{nameof(Id.Exo_32)}", Id.Exo_32) { }
+		public Exo_32SE() : base($"{nameof(Enums.Triennial.Id.Exo_32)}", Enums.Triennial.Id.Exo_32) { }
 		public override string TriNum => "21.3";
 		public override string ParashaName => "Vayifen Vayered Moshe";
 		public override string NameUrl => NameUrl;
@@ -1865,9 +1873,9 @@ new VerseRange(BibleBook.SecondKings, "12:5", 9856, 9856),];
 
 	}
 
-	private sealed class Exo_34SE : Triennial
+	private sealed class Exo_34SE : Enums.Triennial
 	{
-		public Exo_34SE() : base($"{nameof(Id.Exo_34)}", Id.Exo_34) { }
+		public Exo_34SE() : base($"{nameof(Enums.Triennial.Id.Exo_34)}", Enums.Triennial.Id.Exo_34) { }
 		public override string TriNum => "22.1";
 		public override string ParashaName => "Vayakhel";
 		public override string NameUrl => NameUrl;
@@ -1884,9 +1892,9 @@ new VerseRange(BibleBook.Jeremiah, "31:31-40", 19723, 19732),];
 
 	}
 
-	private sealed class Exo_37SE : Triennial
+	private sealed class Exo_37SE : Enums.Triennial
 	{
-		public Exo_37SE() : base($"{nameof(Id.Exo_37)}", Id.Exo_37) { }
+		public Exo_37SE() : base($"{nameof(Enums.Triennial.Id.Exo_37)}", Enums.Triennial.Id.Exo_37) { }
 		public override string TriNum => "22.2";
 		public override string ParashaName => "Vaya'as B'tzal-el";
 		public override string NameUrl => NameUrl;
@@ -1903,9 +1911,9 @@ new VerseRange(BibleBook.FirstJohn, "1", 30542, 30551),];
 
 	}
 
-	private sealed class Exo_38SE : Triennial
+	private sealed class Exo_38SE : Enums.Triennial
 	{
-		public Exo_38SE() : base($"{nameof(Id.Exo_38)}", Id.Exo_38) { }
+		public Exo_38SE() : base($"{nameof(Enums.Triennial.Id.Exo_38)}", Enums.Triennial.Id.Exo_38) { }
 		public override string TriNum => "23.1";
 		public override string ParashaName => "Pekude";
 		public override string NameUrl => NameUrl;
@@ -1922,9 +1930,9 @@ new VerseRange(BibleBook.Jeremiah, "30:18-24", 19686, 19692),];
 
 	}
 
-	private sealed class Exo_39SE : Triennial
+	private sealed class Exo_39SE : Enums.Triennial
 	{
-		public Exo_39SE() : base($"{nameof(Id.Exo_39)}", Id.Exo_39) { }
+		public Exo_39SE() : base($"{nameof(Enums.Triennial.Id.Exo_39)}", Enums.Triennial.Id.Exo_39) { }
 		public override string TriNum => "23.2";
 		public override string ParashaName => "Vumin HaTechelet";
 		public override string NameUrl => NameUrl;
@@ -1942,9 +1950,9 @@ new VerseRange(BibleBook.Revelation, "15", 30948, 30955),];
 
 	}
 
-	private sealed class Lev_01SE : Triennial
+	private sealed class Lev_01SE : Enums.Triennial
 	{
-		public Lev_01SE() : base($"{nameof(Id.Lev_01)}", Id.Lev_01) { }
+		public Lev_01SE() : base($"{nameof(Enums.Triennial.Id.Lev_01)}", Enums.Triennial.Id.Lev_01) { }
 		public override string TriNum => "24.1";
 		public override string ParashaName => "Vayikra";
 		public override string NameUrl => NameUrl;
@@ -1961,9 +1969,9 @@ new VerseRange(BibleBook.Jeremiah, "31:15-20", 19707, 19712),];
 
 	}
 
-	private sealed class Lev_03SE : Triennial
+	private sealed class Lev_03SE : Enums.Triennial
 	{
-		public Lev_03SE() : base($"{nameof(Id.Lev_03)}", Id.Lev_03) { }
+		public Lev_03SE() : base($"{nameof(Enums.Triennial.Id.Lev_03)}", Enums.Triennial.Id.Lev_03) { }
 		public override string TriNum => "24.2";
 		public override string ParashaName => "Vayim tzevach shalamim karbani";
 		public override string NameUrl => NameUrl;
@@ -1980,9 +1988,9 @@ new VerseRange(BibleBook.Ezekiel, "44:10-14", 21610, 21614),];
 
 	}
 
-	private sealed class Lev_04SE : Triennial
+	private sealed class Lev_04SE : Enums.Triennial
 	{
-		public Lev_04SE() : base($"{nameof(Id.Lev_04)}", Id.Lev_04) { }
+		public Lev_04SE() : base($"{nameof(Enums.Triennial.Id.Lev_04)}", Enums.Triennial.Id.Lev_04) { }
 		public override string TriNum => "24.3";
 		public override string ParashaName => "Nephesh Ki-techeta Mi-shegagah";
 		public override string NameUrl => NameUrl;
@@ -1999,9 +2007,9 @@ new VerseRange(BibleBook.Hebrews, "10:1-18", 30135, 30152),];
 
 	}
 
-	private sealed class Lev_05SE : Triennial
+	private sealed class Lev_05SE : Enums.Triennial
 	{
-		public Lev_05SE() : base($"{nameof(Id.Lev_05)}", Id.Lev_05) { }
+		public Lev_05SE() : base($"{nameof(Enums.Triennial.Id.Lev_05)}", Enums.Triennial.Id.Lev_05) { }
 		public override string TriNum => "24.4";
 		public override string ParashaName => "V'nephesh Ki-techeta";
 		public override string NameUrl => NameUrl;
@@ -2018,9 +2026,9 @@ new VerseRange(BibleBook.Zechariah, "5 - 7", 22938, 22977),];
 
 	}
 
-	private sealed class Lev_06SE : Triennial
+	private sealed class Lev_06SE : Enums.Triennial
 	{
-		public Lev_06SE() : base($"{nameof(Id.Lev_06)}", Id.Lev_06) { }
+		public Lev_06SE() : base($"{nameof(Enums.Triennial.Id.Lev_06)}", Enums.Triennial.Id.Lev_06) { }
 		public override string TriNum => "25.1";
 		public override string ParashaName => "Tzav";
 		public override string NameUrl => NameUrl;
@@ -2037,9 +2045,9 @@ new VerseRange(BibleBook.Ezekiel, "36:16-36", 21376, 21396),];
 
 	}
 
-	private sealed class Lev_07SE : Triennial
+	private sealed class Lev_07SE : Enums.Triennial
 	{
-		public Lev_07SE() : base($"{nameof(Id.Lev_07)}", Id.Lev_07) { }
+		public Lev_07SE() : base($"{nameof(Enums.Triennial.Id.Lev_07)}", Enums.Triennial.Id.Lev_07) { }
 		public override string TriNum => "25.2";
 		public override string ParashaName => "Zeh Karban Aharon";
 		public override string NameUrl => NameUrl;
@@ -2056,9 +2064,9 @@ new VerseRange(BibleBook.John, "6:63-66", 26321, 26324),];
 
 	}
 
-	private sealed class Lev_08SE : Triennial
+	private sealed class Lev_08SE : Enums.Triennial
 	{
-		public Lev_08SE() : base($"{nameof(Id.Lev_08)}", Id.Lev_08) { }
+		public Lev_08SE() : base($"{nameof(Enums.Triennial.Id.Lev_08)}", Enums.Triennial.Id.Lev_08) { }
 		public override string TriNum => "25.3";
 		public override string ParashaName => "Qach et-Aharon";
 		public override string NameUrl => NameUrl;
@@ -2076,9 +2084,9 @@ new VerseRange(BibleBook.Matthew, "26:30", 24085, 24085),];
 
 	}
 
-	private sealed class Lev_09SE : Triennial
+	private sealed class Lev_09SE : Enums.Triennial
 	{
-		public Lev_09SE() : base($"{nameof(Id.Lev_09)}", Id.Lev_09) { }
+		public Lev_09SE() : base($"{nameof(Enums.Triennial.Id.Lev_09)}", Enums.Triennial.Id.Lev_09) { }
 		public override string TriNum => "26.1";
 		public override string ParashaName => "Shemeni";
 		public override string NameUrl => NameUrl;
@@ -2095,9 +2103,9 @@ new VerseRange(BibleBook.FirstKings, "8:54-61", 9040, 9047),];
 
 	}
 
-	private sealed class Lev_12SE : Triennial
+	private sealed class Lev_12SE : Enums.Triennial
 	{
-		public Lev_12SE() : base($"{nameof(Id.Lev_12)}", Id.Lev_12) { }
+		public Lev_12SE() : base($"{nameof(Enums.Triennial.Id.Lev_12)}", Enums.Triennial.Id.Lev_12) { }
 		public override string TriNum => "27.1";
 		public override string ParashaName => "Tazria";
 		public override string NameUrl => NameUrl;
@@ -2115,9 +2123,9 @@ new VerseRange(BibleBook.John, "7:37-44", 26366, 26373),];
 
 	}
 
-	private sealed class Lev_13SE : Triennial
+	private sealed class Lev_13SE : Enums.Triennial
 	{
-		public Lev_13SE() : base($"{nameof(Id.Lev_13)}", Id.Lev_13) { }
+		public Lev_13SE() : base($"{nameof(Enums.Triennial.Id.Lev_13)}", Enums.Triennial.Id.Lev_13) { }
 		public override string TriNum => "27.2";
 		public override string ParashaName => "B'rosh u B'tzaqan";
 		public override string NameUrl => NameUrl;
@@ -2131,9 +2139,9 @@ new VerseRange(BibleBook.John, "7:37-44", 26366, 26373),];
 
 	}
 
-	private sealed class Lev_14SE : Triennial
+	private sealed class Lev_14SE : Enums.Triennial
 	{
-		public Lev_14SE() : base($"{nameof(Id.Lev_14)}", Id.Lev_14) { }
+		public Lev_14SE() : base($"{nameof(Enums.Triennial.Id.Lev_14)}", Enums.Triennial.Id.Lev_14) { }
 		public override string TriNum => "28.1";
 		public override string ParashaName => "Metzorah";
 		public override string NameUrl => NameUrl;
@@ -2151,9 +2159,9 @@ new VerseRange(BibleBook.Ephesians, "4", 29274, 29305),];
 
 	}
 
-	private sealed class Lev_15SE : Triennial
+	private sealed class Lev_15SE : Enums.Triennial
 	{
-		public Lev_15SE() : base($"{nameof(Id.Lev_15)}", Id.Lev_15) { }
+		public Lev_15SE() : base($"{nameof(Enums.Triennial.Id.Lev_15)}", Enums.Triennial.Id.Lev_15) { }
 		public override string TriNum => "28.2";
 		public override string ParashaName => "Ish Ish Chai";
 		public override string NameUrl => NameUrl;
@@ -2169,9 +2177,9 @@ new VerseRange(BibleBook.Ephesians, "4", 29274, 29305),];
 
 	}
 
-	private sealed class Lev_16SE : Triennial
+	private sealed class Lev_16SE : Enums.Triennial
 	{
-		public Lev_16SE() : base($"{nameof(Id.Lev_16)}", Id.Lev_16) { }
+		public Lev_16SE() : base($"{nameof(Enums.Triennial.Id.Lev_16)}", Enums.Triennial.Id.Lev_16) { }
 		public override string TriNum => "30.1";
 		public override string ParashaName => "Achare Mot";
 		public override string NameUrl => NameUrl;
@@ -2187,9 +2195,9 @@ new VerseRange(BibleBook.Ephesians, "4", 29274, 29305),];
 
 	}
 
-	private sealed class Lev_17SE : Triennial
+	private sealed class Lev_17SE : Enums.Triennial
 	{
-		public Lev_17SE() : base($"{nameof(Id.Lev_17)}", Id.Lev_17) { }
+		public Lev_17SE() : base($"{nameof(Enums.Triennial.Id.Lev_17)}", Enums.Triennial.Id.Lev_17) { }
 		public override string TriNum => "30.2";
 		public override string ParashaName => "Asher Yishchat";
 		public override string NameUrl => NameUrl;
@@ -2205,9 +2213,9 @@ new VerseRange(BibleBook.Ephesians, "4", 29274, 29305),];
 
 	}
 
-	private sealed class Lev_18SE : Triennial
+	private sealed class Lev_18SE : Enums.Triennial
 	{
-		public Lev_18SE() : base($"{nameof(Id.Lev_18)}", Id.Lev_18) { }
+		public Lev_18SE() : base($"{nameof(Enums.Triennial.Id.Lev_18)}", Enums.Triennial.Id.Lev_18) { }
 		public override string TriNum => "30.3";
 		public override string ParashaName => "K'maaseh Eretz";
 		public override string NameUrl => NameUrl;
@@ -2223,9 +2231,9 @@ new VerseRange(BibleBook.Ephesians, "4", 29274, 29305),];
 
 	}
 
-	private sealed class Lev_19SE : Triennial
+	private sealed class Lev_19SE : Enums.Triennial
 	{
-		public Lev_19SE() : base($"{nameof(Id.Lev_19)}", Id.Lev_19) { }
+		public Lev_19SE() : base($"{nameof(Enums.Triennial.Id.Lev_19)}", Enums.Triennial.Id.Lev_19) { }
 		public override string TriNum => "31.1";
 		public override string ParashaName => "Kedoshim";
 		public override string NameUrl => NameUrl;
@@ -2242,9 +2250,9 @@ new VerseRange(BibleBook.Amos, "9", 22497, 22511),];
 
 	}
 
-	private sealed class Lev_21SE : Triennial
+	private sealed class Lev_21SE : Enums.Triennial
 	{
-		public Lev_21SE() : base($"{nameof(Id.Lev_21)}", Id.Lev_21) { }
+		public Lev_21SE() : base($"{nameof(Enums.Triennial.Id.Lev_21)}", Enums.Triennial.Id.Lev_21) { }
 		public override string TriNum => "32.1";
 		public override string ParashaName => "Emor";
 		public override string NameUrl => NameUrl;
@@ -2260,9 +2268,9 @@ new VerseRange(BibleBook.Amos, "9", 22497, 22511),];
 
 	}
 
-	private sealed class Lev_22SE : Triennial
+	private sealed class Lev_22SE : Enums.Triennial
 	{
-		public Lev_22SE() : base($"{nameof(Id.Lev_22)}", Id.Lev_22) { }
+		public Lev_22SE() : base($"{nameof(Enums.Triennial.Id.Lev_22)}", Enums.Triennial.Id.Lev_22) { }
 		public override string TriNum => "32.2";
 		public override string ParashaName => "Daber elAharon";
 		public override string NameUrl => NameUrl;
@@ -2278,9 +2286,9 @@ new VerseRange(BibleBook.Amos, "9", 22497, 22511),];
 
 	}
 
-	private sealed class Lev_24SE : Triennial
+	private sealed class Lev_24SE : Enums.Triennial
 	{
-		public Lev_24SE() : base($"{nameof(Id.Lev_24)}", Id.Lev_24) { }
+		public Lev_24SE() : base($"{nameof(Enums.Triennial.Id.Lev_24)}", Enums.Triennial.Id.Lev_24) { }
 		public override string TriNum => "32.3";
 		public override string ParashaName => "Shemen Zayot";
 		public override string NameUrl => NameUrl;
@@ -2296,9 +2304,9 @@ new VerseRange(BibleBook.Amos, "9", 22497, 22511),];
 
 	}
 
-	private sealed class Lev_25aSE : Triennial
+	private sealed class Lev_25aSE : Enums.Triennial
 	{
-		public Lev_25aSE() : base($"{nameof(Id.Lev_25a)}", Id.Lev_25a) { }
+		public Lev_25aSE() : base($"{nameof(Enums.Triennial.Id.Lev_25a)}", Enums.Triennial.Id.Lev_25a) { }
 		public override string TriNum => "33.1";
 		public override string ParashaName => "Behar";
 		public override string NameUrl => NameUrl;
@@ -2314,9 +2322,9 @@ new VerseRange(BibleBook.Amos, "9", 22497, 22511),];
 
 	}
 
-	private sealed class Lev_25bSE : Triennial
+	private sealed class Lev_25bSE : Enums.Triennial
 	{
-		public Lev_25bSE() : base($"{nameof(Id.Lev_25b)}", Id.Lev_25b) { }
+		public Lev_25bSE() : base($"{nameof(Enums.Triennial.Id.Lev_25b)}", Enums.Triennial.Id.Lev_25b) { }
 		public override string TriNum => "33.2";
 		public override string ParashaName => "V'ki Amuk";
 		public override string NameUrl => NameUrl;
@@ -2332,9 +2340,9 @@ new VerseRange(BibleBook.Amos, "9", 22497, 22511),];
 
 	}
 
-	private sealed class Lev_26SE : Triennial
+	private sealed class Lev_26SE : Enums.Triennial
 	{
-		public Lev_26SE() : base($"{nameof(Id.Lev_26)}", Id.Lev_26) { }
+		public Lev_26SE() : base($"{nameof(Enums.Triennial.Id.Lev_26)}", Enums.Triennial.Id.Lev_26) { }
 		public override string TriNum => "34.1";
 		public override string ParashaName => "B'chukkotal";
 		public override string NameUrl => NameUrl;
@@ -2350,9 +2358,9 @@ new VerseRange(BibleBook.Amos, "9", 22497, 22511),];
 
 	}
 
-	private sealed class Num_01SE : Triennial
+	private sealed class Num_01SE : Enums.Triennial
 	{
-		public Num_01SE() : base($"{nameof(Id.Num_01)}", Id.Num_01) { }
+		public Num_01SE() : base($"{nameof(Enums.Triennial.Id.Num_01)}", Enums.Triennial.Id.Num_01) { }
 		public override string TriNum => "35.1";
 		public override string ParashaName => "Bemidar";
 		public override string NameUrl => NameUrl;
@@ -2368,9 +2376,9 @@ new VerseRange(BibleBook.Amos, "9", 22497, 22511),];
 
 	}
 
-	private sealed class Num_02SE : Triennial
+	private sealed class Num_02SE : Enums.Triennial
 	{
-		public Num_02SE() : base($"{nameof(Id.Num_02)}", Id.Num_02) { }
+		public Num_02SE() : base($"{nameof(Enums.Triennial.Id.Num_02)}", Enums.Triennial.Id.Num_02) { }
 		public override string TriNum => "35.2";
 		public override string ParashaName => "Ish Al Diglo";
 		public override string NameUrl => NameUrl;
@@ -2386,9 +2394,9 @@ new VerseRange(BibleBook.Amos, "9", 22497, 22511),];
 
 	}
 
-	private sealed class Num_03SE : Triennial
+	private sealed class Num_03SE : Enums.Triennial
 	{
-		public Num_03SE() : base($"{nameof(Id.Num_03)}", Id.Num_03) { }
+		public Num_03SE() : base($"{nameof(Enums.Triennial.Id.Num_03)}", Enums.Triennial.Id.Num_03) { }
 		public override string TriNum => "35.3";
 		public override string ParashaName => "V'eleh Toldot";
 		public override string NameUrl => NameUrl;
@@ -2405,9 +2413,9 @@ new VerseRange(BibleBook.Hebrews, "12", 30214, 30242),];
 
 	}
 
-	private sealed class Num_04SE : Triennial
+	private sealed class Num_04SE : Enums.Triennial
 	{
-		public Num_04SE() : base($"{nameof(Id.Num_04)}", Id.Num_04) { }
+		public Num_04SE() : base($"{nameof(Enums.Triennial.Id.Num_04)}", Enums.Triennial.Id.Num_04) { }
 		public override string TriNum => "37.1";
 		public override string ParashaName => "Naso";
 		public override string NameUrl => NameUrl;
@@ -2424,9 +2432,9 @@ new VerseRange(BibleBook.FirstSamuel, "6:10-16", 7342, 7348),];
 
 	}
 
-	private sealed class Num_05SE : Triennial
+	private sealed class Num_05SE : Enums.Triennial
 	{
-		public Num_05SE() : base($"{nameof(Id.Num_05)}", Id.Num_05) { }
+		public Num_05SE() : base($"{nameof(Enums.Triennial.Id.Num_05)}", Enums.Triennial.Id.Num_05) { }
 		public override string TriNum => "37.2";
 		public override string ParashaName => "Ki Tisteh";
 		public override string NameUrl => NameUrl;
@@ -2442,9 +2450,9 @@ new VerseRange(BibleBook.FirstSamuel, "6:10-16", 7342, 7348),];
 
 	}
 
-	private sealed class Num_06aSE : Triennial
+	private sealed class Num_06aSE : Enums.Triennial
 	{
-		public Num_06aSE() : base($"{nameof(Id.Num_06a)}", Id.Num_06a) { }
+		public Num_06aSE() : base($"{nameof(Enums.Triennial.Id.Num_06a)}", Enums.Triennial.Id.Num_06a) { }
 		public override string TriNum => "37.3";
 		public override string ParashaName => "Ki Yafli Lindor";
 		public override string NameUrl => NameUrl;
@@ -2460,9 +2468,9 @@ new VerseRange(BibleBook.FirstSamuel, "6:10-16", 7342, 7348),];
 
 	}
 
-	private sealed class Num_06bSE : Triennial
+	private sealed class Num_06bSE : Enums.Triennial
 	{
-		public Num_06bSE() : base($"{nameof(Id.Num_06b)}", Id.Num_06b) { }
+		public Num_06bSE() : base($"{nameof(Enums.Triennial.Id.Num_06b)}", Enums.Triennial.Id.Num_06b) { }
 		public override string TriNum => "37.4";
 		public override string ParashaName => "Ko haBarchu";
 		public override string NameUrl => NameUrl;
@@ -2478,9 +2486,9 @@ new VerseRange(BibleBook.FirstSamuel, "6:10-16", 7342, 7348),];
 
 	}
 
-	private sealed class Num_08SE : Triennial
+	private sealed class Num_08SE : Enums.Triennial
 	{
-		public Num_08SE() : base($"{nameof(Id.Num_08)}", Id.Num_08) { }
+		public Num_08SE() : base($"{nameof(Enums.Triennial.Id.Num_08)}", Enums.Triennial.Id.Num_08) { }
 		public override string TriNum => "38.1";
 		public override string ParashaName => "B'ha'alot'cha";
 		public override string NameUrl => NameUrl;
@@ -2496,9 +2504,9 @@ new VerseRange(BibleBook.FirstSamuel, "6:10-16", 7342, 7348),];
 
 	}
 
-	private sealed class Num_10SE : Triennial
+	private sealed class Num_10SE : Enums.Triennial
 	{
-		public Num_10SE() : base($"{nameof(Id.Num_10)}", Id.Num_10) { }
+		public Num_10SE() : base($"{nameof(Enums.Triennial.Id.Num_10)}", Enums.Triennial.Id.Num_10) { }
 		public override string TriNum => "38.2";
 		public override string ParashaName => "Avo-yamaim vo-chodesh";
 		public override string NameUrl => NameUrl;
@@ -2514,9 +2522,9 @@ new VerseRange(BibleBook.FirstSamuel, "6:10-16", 7342, 7348),];
 
 	}
 
-	private sealed class Num_11SE : Triennial
+	private sealed class Num_11SE : Enums.Triennial
 	{
-		public Num_11SE() : base($"{nameof(Id.Num_11)}", Id.Num_11) { }
+		public Num_11SE() : base($"{nameof(Enums.Triennial.Id.Num_11)}", Enums.Triennial.Id.Num_11) { }
 		public override string TriNum => "38.3";
 		public override string ParashaName => "Ha'am Bemitun'nim";
 		public override string NameUrl => NameUrl;
@@ -2531,9 +2539,9 @@ new VerseRange(BibleBook.FirstCorinthians, "10", 28569, 28601),];
 
 	}
 
-	private sealed class Num_12SE : Triennial
+	private sealed class Num_12SE : Enums.Triennial
 	{
-		public Num_12SE() : base($"{nameof(Id.Num_12)}", Id.Num_12) { }
+		public Num_12SE() : base($"{nameof(Enums.Triennial.Id.Num_12)}", Enums.Triennial.Id.Num_12) { }
 		public override string TriNum => "38.4";
 		public override string ParashaName => "Vatdaber Miryam vAharon";
 		public override string NameUrl => NameUrl;
@@ -2548,9 +2556,9 @@ new VerseRange(BibleBook.Isaiah, "59:1-21", 18802, 18822),];
 
 	}
 
-	private sealed class Num_13SE : Triennial
+	private sealed class Num_13SE : Enums.Triennial
 	{
-		public Num_13SE() : base($"{nameof(Id.Num_13)}", Id.Num_13) { }
+		public Num_13SE() : base($"{nameof(Enums.Triennial.Id.Num_13)}", Enums.Triennial.Id.Num_13) { }
 		public override string TriNum => "39.1";
 		public override string ParashaName => "Shelah L'cha";
 		public override string NameUrl => NameUrl;
@@ -2567,9 +2575,9 @@ new VerseRange(BibleBook.Joshua, "18:1-2", 6295, 6296),];
 
 	}
 
-	private sealed class Num_14SE : Triennial
+	private sealed class Num_14SE : Enums.Triennial
 	{
-		public Num_14SE() : base($"{nameof(Id.Num_14)}", Id.Num_14) { }
+		public Num_14SE() : base($"{nameof(Enums.Triennial.Id.Num_14)}", Enums.Triennial.Id.Num_14) { }
 		public override string TriNum => "39.2";
 		public override string ParashaName => "Vayibchu haAm";
 		public override string NameUrl => NameUrl;
@@ -2585,9 +2593,9 @@ new VerseRange(BibleBook.Joshua, "18:1-2", 6295, 6296),];
 
 	}
 
-	private sealed class Num_15SE : Triennial
+	private sealed class Num_15SE : Enums.Triennial
 	{
-		public Num_15SE() : base($"{nameof(Id.Num_15)}", Id.Num_15) { }
+		public Num_15SE() : base($"{nameof(Enums.Triennial.Id.Num_15)}", Enums.Triennial.Id.Num_15) { }
 		public override string TriNum => "39.3";
 		public override string ParashaName => "Ki Tavo'u el Eretz";
 		public override string NameUrl => NameUrl;
@@ -2603,9 +2611,9 @@ new VerseRange(BibleBook.Joshua, "18:1-2", 6295, 6296),];
 
 	}
 
-	private sealed class Num_16SE : Triennial
+	private sealed class Num_16SE : Enums.Triennial
 	{
-		public Num_16SE() : base($"{nameof(Id.Num_16)}", Id.Num_16) { }
+		public Num_16SE() : base($"{nameof(Enums.Triennial.Id.Num_16)}", Enums.Triennial.Id.Num_16) { }
 		public override string TriNum => "40.1";
 		public override string ParashaName => "Korach";
 		public override string NameUrl => NameUrl;
@@ -2622,9 +2630,9 @@ new VerseRange(BibleBook.Jude, "1", 30674, 30698),];
 
 	}
 
-	private sealed class Num_17SE : Triennial
+	private sealed class Num_17SE : Enums.Triennial
 	{
-		public Num_17SE() : base($"{nameof(Id.Num_17)}", Id.Num_17) { }
+		public Num_17SE() : base($"{nameof(Enums.Triennial.Id.Num_17)}", Enums.Triennial.Id.Num_17) { }
 		public override string TriNum => "40.2";
 		public override string ParashaName => "V'qach Meitam Mattah";
 		public override string NameUrl => NameUrl;
@@ -2640,9 +2648,9 @@ new VerseRange(BibleBook.Jude, "1", 30674, 30698),];
 
 	}
 
-	private sealed class Num_19SE : Triennial
+	private sealed class Num_19SE : Enums.Triennial
 	{
-		public Num_19SE() : base($"{nameof(Id.Num_19)}", Id.Num_19) { }
+		public Num_19SE() : base($"{nameof(Enums.Triennial.Id.Num_19)}", Enums.Triennial.Id.Num_19) { }
 		public override string TriNum => "41.1";
 		public override string ParashaName => "Chukkat";
 		public override string NameUrl => NameUrl;
@@ -2658,9 +2666,9 @@ new VerseRange(BibleBook.Jude, "1", 30674, 30698),];
 
 	}
 
-	private sealed class Num_20SE : Triennial
+	private sealed class Num_20SE : Enums.Triennial
 	{
-		public Num_20SE() : base($"{nameof(Id.Num_20)}", Id.Num_20) { }
+		public Num_20SE() : base($"{nameof(Enums.Triennial.Id.Num_20)}", Enums.Triennial.Id.Num_20) { }
 		public override string TriNum => "41.2";
 		public override string ParashaName => "Malachim MiKadesh";
 		public override string NameUrl => NameUrl;
@@ -2676,9 +2684,9 @@ new VerseRange(BibleBook.Jude, "1", 30674, 30698),];
 
 	}
 
-	private sealed class Num_22SE : Triennial
+	private sealed class Num_22SE : Enums.Triennial
 	{
-		public Num_22SE() : base($"{nameof(Id.Num_22)}", Id.Num_22) { }
+		public Num_22SE() : base($"{nameof(Enums.Triennial.Id.Num_22)}", Enums.Triennial.Id.Num_22) { }
 		public override string TriNum => "42.1";
 		public override string ParashaName => "Balak";
 		public override string NameUrl => NameUrl;
@@ -2694,9 +2702,9 @@ new VerseRange(BibleBook.Jude, "1", 30674, 30698),];
 
 	}
 
-	private sealed class Num_23SE : Triennial
+	private sealed class Num_23SE : Enums.Triennial
 	{
-		public Num_23SE() : base($"{nameof(Id.Num_23)}", Id.Num_23) { }
+		public Num_23SE() : base($"{nameof(Enums.Triennial.Id.Num_23)}", Enums.Triennial.Id.Num_23) { }
 		public override string TriNum => "42.2";
 		public override string ParashaName => "V'yaas Balaq";
 		public override string NameUrl => NameUrl;
@@ -2712,9 +2720,9 @@ new VerseRange(BibleBook.Jude, "1", 30674, 30698),];
 
 	}
 
-	private sealed class Num_25SE : Triennial
+	private sealed class Num_25SE : Enums.Triennial
 	{
-		public Num_25SE() : base($"{nameof(Id.Num_25)}", Id.Num_25) { }
+		public Num_25SE() : base($"{nameof(Enums.Triennial.Id.Num_25)}", Enums.Triennial.Id.Num_25) { }
 		public override string TriNum => "43.1";
 		public override string ParashaName => "Pin'has";
 		public override string NameUrl => NameUrl;
@@ -2731,9 +2739,9 @@ new VerseRange(BibleBook.Ephesians, "4:1-16", 29274, 29289),];
 
 	}
 
-	private sealed class Num_26SE : Triennial
+	private sealed class Num_26SE : Enums.Triennial
 	{
-		public Num_26SE() : base($"{nameof(Id.Num_26)}", Id.Num_26) { }
+		public Num_26SE() : base($"{nameof(Enums.Triennial.Id.Num_26)}", Enums.Triennial.Id.Num_26) { }
 		public override string TriNum => "43.2";
 		public override string ParashaName => "L'eleh";
 		public override string NameUrl => NameUrl;
@@ -2749,9 +2757,9 @@ new VerseRange(BibleBook.Ephesians, "4:1-16", 29274, 29289),];
 
 	}
 
-	private sealed class Num_28SE : Triennial
+	private sealed class Num_28SE : Enums.Triennial
 	{
-		public Num_28SE() : base($"{nameof(Id.Num_28)}", Id.Num_28) { }
+		public Num_28SE() : base($"{nameof(Enums.Triennial.Id.Num_28)}", Enums.Triennial.Id.Num_28) { }
 		public override string TriNum => "43.3";
 		public override string ParashaName => "Qarbani";
 		public override string NameUrl => NameUrl;
@@ -2767,9 +2775,9 @@ new VerseRange(BibleBook.Ephesians, "4:1-16", 29274, 29289),];
 
 	}
 
-	private sealed class Num_30SE : Triennial
+	private sealed class Num_30SE : Enums.Triennial
 	{
-		public Num_30SE() : base($"{nameof(Id.Num_30)}", Id.Num_30) { }
+		public Num_30SE() : base($"{nameof(Enums.Triennial.Id.Num_30)}", Enums.Triennial.Id.Num_30) { }
 		public override string TriNum => "44.1";
 		public override string ParashaName => "Matot";
 		public override string NameUrl => NameUrl;
@@ -2785,9 +2793,9 @@ new VerseRange(BibleBook.Ephesians, "4:1-16", 29274, 29289),];
 
 	}
 
-	private sealed class Num_32SE : Triennial
+	private sealed class Num_32SE : Enums.Triennial
 	{
-		public Num_32SE() : base($"{nameof(Id.Num_32)}", Id.Num_32) { }
+		public Num_32SE() : base($"{nameof(Enums.Triennial.Id.Num_32)}", Enums.Triennial.Id.Num_32) { }
 		public override string TriNum => "44.2";
 		public override string ParashaName => "Umiqneh Rav";
 		public override string NameUrl => NameUrl;
@@ -2803,9 +2811,9 @@ new VerseRange(BibleBook.Ephesians, "4:1-16", 29274, 29289),];
 
 	}
 
-	private sealed class Num_33SE : Triennial
+	private sealed class Num_33SE : Enums.Triennial
 	{
-		public Num_33SE() : base($"{nameof(Id.Num_33)}", Id.Num_33) { }
+		public Num_33SE() : base($"{nameof(Enums.Triennial.Id.Num_33)}", Enums.Triennial.Id.Num_33) { }
 		public override string TriNum => "45.1";
 		public override string ParashaName => "Masa'ei";
 		public override string NameUrl => NameUrl;
@@ -2822,9 +2830,9 @@ new VerseRange(BibleBook.James, "4:1-12", 30339, 30350),];
 
 	}
 
-	private sealed class Num_34SE : Triennial
+	private sealed class Num_34SE : Enums.Triennial
 	{
-		public Num_34SE() : base($"{nameof(Id.Num_34)}", Id.Num_34) { }
+		public Num_34SE() : base($"{nameof(Enums.Triennial.Id.Num_34)}", Enums.Triennial.Id.Num_34) { }
 		public override string TriNum => "45.2";
 		public override string ParashaName => "Zot haAretz";
 		public override string NameUrl => NameUrl;
@@ -2841,9 +2849,9 @@ new VerseRange(BibleBook.Ezekiel, "45:1-8", 21632, 21639),];
 
 	}
 
-	private sealed class Num_35SE : Triennial
+	private sealed class Num_35SE : Enums.Triennial
 	{
-		public Num_35SE() : base($"{nameof(Id.Num_35)}", Id.Num_35) { }
+		public Num_35SE() : base($"{nameof(Enums.Triennial.Id.Num_35)}", Enums.Triennial.Id.Num_35) { }
 		public override string TriNum => "45.3";
 		public override string ParashaName => "Ki Atem Ovrim et haYarden";
 		public override string NameUrl => NameUrl;
@@ -2859,9 +2867,9 @@ new VerseRange(BibleBook.Ezekiel, "45:1-8", 21632, 21639),];
 
 	}
 
-	private sealed class Deu_01SE : Triennial
+	private sealed class Deu_01SE : Enums.Triennial
 	{
-		public Deu_01SE() : base($"{nameof(Id.Deu_01)}", Id.Deu_01) { }
+		public Deu_01SE() : base($"{nameof(Enums.Triennial.Id.Deu_01)}", Enums.Triennial.Id.Deu_01) { }
 		public override string TriNum => "46.1";
 		public override string ParashaName => "Devarim";
 		public override string NameUrl => NameUrl;
@@ -2878,9 +2886,9 @@ new VerseRange(BibleBook.Hebrews, "3", 29997, 30015),];
 
 	}
 
-	private sealed class Deu_02SE : Triennial
+	private sealed class Deu_02SE : Enums.Triennial
 	{
-		public Deu_02SE() : base($"{nameof(Id.Deu_02)}", Id.Deu_02) { }
+		public Deu_02SE() : base($"{nameof(Enums.Triennial.Id.Deu_02)}", Enums.Triennial.Id.Deu_02) { }
 		public override string TriNum => "46.2";
 		public override string ParashaName => "Vanephen";
 		public override string NameUrl => NameUrl;
@@ -2894,9 +2902,9 @@ new VerseRange(BibleBook.Hebrews, "3", 29997, 30015),];
 
 	}
 
-	private sealed class Deu_03SE : Triennial
+	private sealed class Deu_03SE : Enums.Triennial
 	{
-		public Deu_03SE() : base($"{nameof(Id.Deu_03)}", Id.Deu_03) { }
+		public Deu_03SE() : base($"{nameof(Enums.Triennial.Id.Deu_03)}", Enums.Triennial.Id.Deu_03) { }
 		public override string TriNum => "47.1";
 		public override string ParashaName => "Va’etchanan";
 		public override string NameUrl => NameUrl;
@@ -2913,9 +2921,9 @@ new VerseRange(BibleBook.Romans, "2:1-3:31", 27964, 28023),];
 
 	}
 
-	private sealed class Deu_04SE : Triennial
+	private sealed class Deu_04SE : Enums.Triennial
 	{
-		public Deu_04SE() : base($"{nameof(Id.Deu_04)}", Id.Deu_04) { }
+		public Deu_04SE() : base($"{nameof(Enums.Triennial.Id.Deu_04)}", Enums.Triennial.Id.Deu_04) { }
 		public override string TriNum => "47.2";
 		public override string ParashaName => "Yisrael, Sh'ma";
 		public override string NameUrl => NameUrl;
@@ -2931,9 +2939,9 @@ new VerseRange(BibleBook.Romans, "2:1-3:31", 27964, 28023),];
 
 	}
 
-	private sealed class Deu_05SE : Triennial
+	private sealed class Deu_05SE : Enums.Triennial
 	{
-		public Deu_05SE() : base($"{nameof(Id.Deu_05)}", Id.Deu_05) { }
+		public Deu_05SE() : base($"{nameof(Enums.Triennial.Id.Deu_05)}", Enums.Triennial.Id.Deu_05) { }
 		public override string TriNum => "47.3";
 		public override string ParashaName => "Vayiqra Moshe";
 		public override string NameUrl => NameUrl;
@@ -2949,9 +2957,9 @@ new VerseRange(BibleBook.Romans, "2:1-3:31", 27964, 28023),];
 
 	}
 
-	private sealed class Deu_06SE : Triennial
+	private sealed class Deu_06SE : Enums.Triennial
 	{
-		public Deu_06SE() : base($"{nameof(Id.Deu_06)}", Id.Deu_06) { }
+		public Deu_06SE() : base($"{nameof(Enums.Triennial.Id.Deu_06)}", Enums.Triennial.Id.Deu_06) { }
 		public override string TriNum => "47.4";
 		public override string ParashaName => "Vazot haMitzvot";
 		public override string NameUrl => NameUrl;
@@ -2965,9 +2973,9 @@ new VerseRange(BibleBook.Romans, "2:1-3:31", 27964, 28023),];
 
 	}
 
-	private sealed class Deu_08SE : Triennial
+	private sealed class Deu_08SE : Enums.Triennial
 	{
-		public Deu_08SE() : base($"{nameof(Id.Deu_08)}", Id.Deu_08) { }
+		public Deu_08SE() : base($"{nameof(Enums.Triennial.Id.Deu_08)}", Enums.Triennial.Id.Deu_08) { }
 		public override string TriNum => "48.1";
 		public override string ParashaName => "Ekev";
 		public override string NameUrl => NameUrl;
@@ -2984,9 +2992,9 @@ new VerseRange(BibleBook.Romans, "8:31-39", 28148, 28156),];
 
 	}
 
-	private sealed class Deu_09SE : Triennial
+	private sealed class Deu_09SE : Enums.Triennial
 	{
-		public Deu_09SE() : base($"{nameof(Id.Deu_09)}", Id.Deu_09) { }
+		public Deu_09SE() : base($"{nameof(Enums.Triennial.Id.Deu_09)}", Enums.Triennial.Id.Deu_09) { }
 		public override string TriNum => "48.2";
 		public override string ParashaName => "Atah Over Hayom";
 		public override string NameUrl => NameUrl;
@@ -3000,9 +3008,9 @@ new VerseRange(BibleBook.Romans, "8:31-39", 28148, 28156),];
 
 	}
 
-	private sealed class Deu_10SE : Triennial
+	private sealed class Deu_10SE : Enums.Triennial
 	{
-		public Deu_10SE() : base($"{nameof(Id.Deu_10)}", Id.Deu_10) { }
+		public Deu_10SE() : base($"{nameof(Enums.Triennial.Id.Deu_10)}", Enums.Triennial.Id.Deu_10) { }
 		public override string TriNum => "48.3";
 		public override string ParashaName => "Pesal Lecha";
 		public override string NameUrl => NameUrl;
@@ -3016,9 +3024,9 @@ new VerseRange(BibleBook.Romans, "8:31-39", 28148, 28156),];
 
 	}
 
-	private sealed class Deu_11SE : Triennial
+	private sealed class Deu_11SE : Enums.Triennial
 	{
-		public Deu_11SE() : base($"{nameof(Id.Deu_11)}", Id.Deu_11) { }
+		public Deu_11SE() : base($"{nameof(Enums.Triennial.Id.Deu_11)}", Enums.Triennial.Id.Deu_11) { }
 		public override string TriNum => "49.1";
 		public override string ParashaName => "Re'eh";
 		public override string NameUrl => NameUrl;
@@ -3035,9 +3043,9 @@ new VerseRange(BibleBook.FirstJohn, "4:1-6", 30605, 30610),];
 
 	}
 
-	private sealed class Deu_12SE : Triennial
+	private sealed class Deu_12SE : Enums.Triennial
 	{
-		public Deu_12SE() : base($"{nameof(Id.Deu_12)}", Id.Deu_12) { }
+		public Deu_12SE() : base($"{nameof(Enums.Triennial.Id.Deu_12)}", Enums.Triennial.Id.Deu_12) { }
 		public override string TriNum => "49.2";
 		public override string ParashaName => "Ki-Yarchiv";
 		public override string NameUrl => NameUrl;
@@ -3051,9 +3059,9 @@ new VerseRange(BibleBook.FirstJohn, "4:1-6", 30605, 30610),];
 
 	}
 
-	private sealed class Deu_15SE : Triennial
+	private sealed class Deu_15SE : Enums.Triennial
 	{
-		public Deu_15SE() : base($"{nameof(Id.Deu_15)}", Id.Deu_15) { }
+		public Deu_15SE() : base($"{nameof(Enums.Triennial.Id.Deu_15)}", Enums.Triennial.Id.Deu_15) { }
 		public override string TriNum => "49.3";
 		public override string ParashaName => "Ev-yon";
 		public override string NameUrl => NameUrl;
@@ -3067,9 +3075,9 @@ new VerseRange(BibleBook.FirstJohn, "4:1-6", 30605, 30610),];
 
 	}
 
-	private sealed class Deu_16SE : Triennial
+	private sealed class Deu_16SE : Enums.Triennial
 	{
-		public Deu_16SE() : base($"{nameof(Id.Deu_16)}", Id.Deu_16) { }
+		public Deu_16SE() : base($"{nameof(Enums.Triennial.Id.Deu_16)}", Enums.Triennial.Id.Deu_16) { }
 		public override string TriNum => "50.1";
 		public override string ParashaName => "Shoftim";
 		public override string NameUrl => NameUrl;
@@ -3086,9 +3094,9 @@ new VerseRange(BibleBook.FirstCorinthians, "5:9-13", 28464, 28468),];
 
 	}
 
-	private sealed class Deu_17SE : Triennial
+	private sealed class Deu_17SE : Enums.Triennial
 	{
-		public Deu_17SE() : base($"{nameof(Id.Deu_17)}", Id.Deu_17) { }
+		public Deu_17SE() : base($"{nameof(Enums.Triennial.Id.Deu_17)}", Enums.Triennial.Id.Deu_17) { }
 		public override string TriNum => "50.2";
 		public override string ParashaName => "Ki haBo";
 		public override string NameUrl => NameUrl;
@@ -3106,9 +3114,9 @@ new VerseRange(BibleBook.Acts, "13:13-44", 27376, 27407),];
 
 	}
 
-	private sealed class Deu_18SE : Triennial
+	private sealed class Deu_18SE : Enums.Triennial
 	{
-		public Deu_18SE() : base($"{nameof(Id.Deu_18)}", Id.Deu_18) { }
+		public Deu_18SE() : base($"{nameof(Enums.Triennial.Id.Deu_18)}", Enums.Triennial.Id.Deu_18) { }
 		public override string TriNum => "50.3";
 		public override string ParashaName => "Navi Miqirb'cha";
 		public override string NameUrl => NameUrl;
@@ -3124,9 +3132,9 @@ new VerseRange(BibleBook.Acts, "13:13-44", 27376, 27407),];
 
 	}
 
-	private sealed class Deu_20SE : Triennial
+	private sealed class Deu_20SE : Enums.Triennial
 	{
-		public Deu_20SE() : base($"{nameof(Id.Deu_20)}", Id.Deu_20) { }
+		public Deu_20SE() : base($"{nameof(Enums.Triennial.Id.Deu_20)}", Enums.Triennial.Id.Deu_20) { }
 		public override string TriNum => "50.4";
 		public override string ParashaName => "Ki Tiqrav el Iyr";
 		public override string NameUrl => NameUrl;
@@ -3142,9 +3150,9 @@ new VerseRange(BibleBook.Acts, "13:13-44", 27376, 27407),];
 
 	}
 
-	private sealed class Deu_21SE : Triennial
+	private sealed class Deu_21SE : Enums.Triennial
 	{
-		public Deu_21SE() : base($"{nameof(Id.Deu_21)}", Id.Deu_21) { }
+		public Deu_21SE() : base($"{nameof(Enums.Triennial.Id.Deu_21)}", Enums.Triennial.Id.Deu_21) { }
 		public override string TriNum => "51.1";
 		public override string ParashaName => "Ki Tetse";
 		public override string NameUrl => NameUrl;
@@ -3161,9 +3169,9 @@ new VerseRange(BibleBook.Galatians, "3:1-5:26", 29104, 29189),];
 
 	}
 
-	private sealed class Deu_22SE : Triennial
+	private sealed class Deu_22SE : Enums.Triennial
 	{
-		public Deu_22SE() : base($"{nameof(Id.Deu_22)}", Id.Deu_22) { }
+		public Deu_22SE() : base($"{nameof(Enums.Triennial.Id.Deu_22)}", Enums.Triennial.Id.Deu_22) { }
 		public override string TriNum => "51.2";
 		public override string ParashaName => "Kein Tzipor";
 		public override string NameUrl => NameUrl;
@@ -3179,9 +3187,9 @@ new VerseRange(BibleBook.Galatians, "3:1-5:26", 29104, 29189),];
 
 	}
 
-	private sealed class Deu_23aSE : Triennial
+	private sealed class Deu_23aSE : Enums.Triennial
 	{
-		public Deu_23aSE() : base($"{nameof(Id.Deu_23a)}", Id.Deu_23a) { }
+		public Deu_23aSE() : base($"{nameof(Enums.Triennial.Id.Deu_23a)}", Enums.Triennial.Id.Deu_23a) { }
 		public override string TriNum => "51.3";
 		public override string ParashaName => "Ki-tetzei Machaneh";
 		public override string NameUrl => NameUrl;
@@ -3197,9 +3205,9 @@ new VerseRange(BibleBook.Galatians, "3:1-5:26", 29104, 29189),];
 
 	}
 
-	private sealed class Deu_23bSE : Triennial
+	private sealed class Deu_23bSE : Enums.Triennial
 	{
-		public Deu_23bSE() : base($"{nameof(Id.Deu_23b)}", Id.Deu_23b) { }
+		public Deu_23bSE() : base($"{nameof(Enums.Triennial.Id.Deu_23b)}", Enums.Triennial.Id.Deu_23b) { }
 		public override string TriNum => "51.4";
 		public override string ParashaName => "Ki-chidor neder";
 		public override string NameUrl => NameUrl;
@@ -3215,9 +3223,9 @@ new VerseRange(BibleBook.Galatians, "3:1-5:26", 29104, 29189),];
 
 	}
 
-	private sealed class Deu_24SE : Triennial
+	private sealed class Deu_24SE : Enums.Triennial
 	{
-		public Deu_24SE() : base($"{nameof(Id.Deu_24)}", Id.Deu_24) { }
+		public Deu_24SE() : base($"{nameof(Enums.Triennial.Id.Deu_24)}", Enums.Triennial.Id.Deu_24) { }
 		public override string TriNum => "51.5";
 		public override string ParashaName => "Ki-tik'tzor";
 		public override string NameUrl => NameUrl;
@@ -3233,9 +3241,9 @@ new VerseRange(BibleBook.Galatians, "3:1-5:26", 29104, 29189),];
 
 	}
 
-	private sealed class Deu_26SE : Triennial
+	private sealed class Deu_26SE : Enums.Triennial
 	{
-		public Deu_26SE() : base($"{nameof(Id.Deu_26)}", Id.Deu_26) { }
+		public Deu_26SE() : base($"{nameof(Enums.Triennial.Id.Deu_26)}", Enums.Triennial.Id.Deu_26) { }
 		public override string TriNum => "52.1";
 		public override string ParashaName => "Ki Tavo";
 		public override string NameUrl => NameUrl;
@@ -3252,9 +3260,9 @@ new VerseRange(BibleBook.Revelation, "21:9-22:7", 31063, 31088),];
 
 	}
 
-	private sealed class Deu_28SE : Triennial
+	private sealed class Deu_28SE : Enums.Triennial
 	{
-		public Deu_28SE() : base($"{nameof(Id.Deu_28)}", Id.Deu_28) { }
+		public Deu_28SE() : base($"{nameof(Enums.Triennial.Id.Deu_28)}", Enums.Triennial.Id.Deu_28) { }
 		public override string TriNum => "52.2";
 		public override string ParashaName => "Im-Shamoa";
 		public override string NameUrl => NameUrl;
@@ -3270,9 +3278,9 @@ new VerseRange(BibleBook.Revelation, "21:9-22:7", 31063, 31088),];
 
 	}
 
-	private sealed class Deu_29SE : Triennial
+	private sealed class Deu_29SE : Enums.Triennial
 	{
-		public Deu_29SE() : base($"{nameof(Id.Deu_29)}", Id.Deu_29) { }
+		public Deu_29SE() : base($"{nameof(Enums.Triennial.Id.Deu_29)}", Enums.Triennial.Id.Deu_29) { }
 		public override string TriNum => "53.1";
 		public override string ParashaName => "Nitsavim";
 		public override string NameUrl => NameUrl;
@@ -3288,9 +3296,9 @@ new VerseRange(BibleBook.Revelation, "21:9-22:7", 31063, 31088),];
 
 	}
 
-	private sealed class Deu_30SE : Triennial
+	private sealed class Deu_30SE : Enums.Triennial
 	{
-		public Deu_30SE() : base($"{nameof(Id.Deu_30)}", Id.Deu_30) { }
+		public Deu_30SE() : base($"{nameof(Enums.Triennial.Id.Deu_30)}", Enums.Triennial.Id.Deu_30) { }
 		public override string TriNum => "53.2";
 		public override string ParashaName => "haMitzvah";
 		public override string NameUrl => NameUrl;
@@ -3306,9 +3314,9 @@ new VerseRange(BibleBook.Revelation, "21:9-22:7", 31063, 31088),];
 
 	}
 
-	private sealed class Deu_31SE : Triennial
+	private sealed class Deu_31SE : Enums.Triennial
 	{
-		public Deu_31SE() : base($"{nameof(Id.Deu_31)}", Id.Deu_31) { }
+		public Deu_31SE() : base($"{nameof(Enums.Triennial.Id.Deu_31)}", Enums.Triennial.Id.Deu_31) { }
 		public override string TriNum => "64.1";
 		public override string ParashaName => "Vayelekh";
 		public override string NameUrl => NameUrl;
@@ -3327,9 +3335,9 @@ new VerseRange(BibleBook.Hebrews, "13:5-8", 30247, 30250),];
 
 	}
 
-	private sealed class Deu_32SE : Triennial
+	private sealed class Deu_32SE : Enums.Triennial
 	{
-		public Deu_32SE() : base($"{nameof(Id.Deu_32)}", Id.Deu_32) { }
+		public Deu_32SE() : base($"{nameof(Enums.Triennial.Id.Deu_32)}", Enums.Triennial.Id.Deu_32) { }
 		public override string TriNum => "66.1";
 		public override string ParashaName => "Haazinu";
 		public override string NameUrl => NameUrl;
@@ -3345,9 +3353,9 @@ new VerseRange(BibleBook.Hebrews, "13:5-8", 30247, 30250),];
 
 	}
 
-	private sealed class Deu_33SE : Triennial
+	private sealed class Deu_33SE : Enums.Triennial
 	{
-		public Deu_33SE() : base($"{nameof(Id.Deu_33)}", Id.Deu_33) { }
+		public Deu_33SE() : base($"{nameof(Enums.Triennial.Id.Deu_33)}", Enums.Triennial.Id.Deu_33) { }
 		public override string TriNum => "67.1";
 		public override string ParashaName => "VeZot HaBracha";
 		public override string NameUrl => NameUrl;
@@ -3364,9 +3372,9 @@ new VerseRange(BibleBook.Jude, "1:8-9", 30681, 30682),];
 
 	}
 
-	private sealed class Deu_34SE : Triennial
+	private sealed class Deu_34SE : Enums.Triennial
 	{
-		public Deu_34SE() : base($"{nameof(Id.Deu_34)}", Id.Deu_34) { }
+		public Deu_34SE() : base($"{nameof(Enums.Triennial.Id.Deu_34)}", Enums.Triennial.Id.Deu_34) { }
 		public override string TriNum => "68.1";
 		public override string ParashaName => "Vayaal Moshe";
 		public override string NameUrl => NameUrl;

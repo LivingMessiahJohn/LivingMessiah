@@ -26,6 +26,7 @@ using LivingMessiahAdmin.Features.Sukkot.Home.Donations.Data;
 
 //using Stripe; 
 using HealthChecksSukkot = LivingMessiahAdmin.HealthChecks.Sukkot;
+using LivingMessiahAdmin.Features.WeeklyDownloads;
 
 
 
@@ -85,6 +86,11 @@ try
 		options.ClientSecret = builder.Configuration[Configuration.ClientSecret] ?? "";
 		options.Scope = "openid profile email roles";
 	});
+
+	builder.Services.AddSingleton<BlobReplaceService>(
+		sp => new BlobReplaceService(
+				builder.Configuration["AzureBlob:ConnectionString"],
+				builder.Configuration["AzureBlob:ContainerName"]));
 
 	var app = builder.Build();
 	app.MapDefaultEndpoints();

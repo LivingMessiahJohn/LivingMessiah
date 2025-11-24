@@ -1,5 +1,5 @@
-﻿@using TriennialEnum = LivingMessiah.Features.Parasha.Enums.Triennial
-@using ParashaEnums = LivingMessiah.Features.Parasha.Enums
+﻿@using TriennialEnum = RCL.Features.Parasha.Enums.Triennial
+@using ParashaHelpers = RCL.Features.Parasha.Helpers
 
 @inject IToastService? Toast
 
@@ -31,7 +31,7 @@
 
 @code {
 
-  private TriennialEnum? CurrentReading = ParashaEnums.Constants.GetCurrentReading();
+  private TriennialEnum? CurrentReading = ParashaHelpers.GetCurrentReading();
 
   protected override void OnInitialized()
   {
@@ -55,7 +55,7 @@
 
   private const string AnchorText = "Pdf Download";
 
-  private string GetCurrentTeachingPDF() => $"{Constants.TeachingBlobFolder}{ParashaDate}-{ParashaFile}.pdf";
+  private string GetCurrentTeachingPDF() => $"{ParashaHelpers.TeachingBlobFolder}{ParashaDate}-{ParashaFile}.pdf";
   private string GetCurrentTitle() => $"{ShabbatDate} | {ParashaTitle}";
   private string AnchorTitle() => $"{AnchorText} | {ParashaDate}-{ParashaFile}.pdf";
 }

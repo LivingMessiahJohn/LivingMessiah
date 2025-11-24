@@ -41,6 +41,7 @@ public abstract class Nav : SmartEnum<Nav>
 		//internal const int PsalmsAndProverbs = 8;
 		internal const int SpecialEvents = 9;
 		internal const int Profile = 10;
+		internal const int WeeklyDownload = 11;
 	}
 	#endregion
 
@@ -55,6 +56,7 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav Sukkot = new SukkotSE();
 	public static readonly Nav SukkotDashboard = new SukkotDashboardSE(); 
 	public static readonly Nav Profile = new ProfileSE();
+	public static readonly Nav WeeklyDownload = new WeeklyDownloadSE();
 	#endregion
 
 
@@ -224,6 +226,18 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int RequiredRoles => 0; // No specific role required
 	}
 
+	private sealed class WeeklyDownloadSE : Nav
+	{
+		public WeeklyDownloadSE() : base($"{nameof(Id.WeeklyDownload)}", Id.WeeklyDownload) { }
+		public override string Index => "/WeeklyDownload";
+		public override string Title => "Weekly Download";
+		public override string Icon => "fas fa-file-pdf";
+		public override int Sort => Id.WeeklyDownload;
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+		public override int RequiredRoles => Role.KeyDates.Value | Role.Admin.Value; // KeyDates or Admin role
+	}
 	#endregion
 
 }

@@ -1,4 +1,5 @@
-﻿
+﻿@using BibleBookEnums = RCL.Enums.BibleBook
+
 <div class="card-body">
 	<div class="bg-info-subtle">
 
@@ -23,7 +24,7 @@
 </div>
 
 @code {
-	[Parameter, EditorRequired] public BibleBook? Book { get; set; } // = BibleBook.Exodus;
+	[Parameter, EditorRequired] public BibleBookEnums? Book { get; set; } // = BibleBook.Exodus;
 	[Parameter, EditorRequired] public string? HrefSuffix { get; set; }  // exo/3/7-10/s_53007
 	[Parameter, EditorRequired] public string? ChapterVerse { get; set; }
 	[Parameter] public string SubTitle { get; set; } = "";

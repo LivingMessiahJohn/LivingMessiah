@@ -1,6 +1,6 @@
 ﻿@using LivingMessiah.Enums
-@using ParashaEnums = LivingMessiah.Features.Parasha.Enums
-@using TriennialEnum = LivingMessiah.Features.Parasha.Enums.Triennial
+@using ParashaHelpers = RCL.Features.Parasha.Helpers
+@using TriennialEnum = RCL.Features.Parasha.Enums.Triennial
 
 @inject IToastService? Toast
 
@@ -39,7 +39,7 @@
 @code {
 	[Parameter, EditorRequired] public MediaQuery? MediaQuery { get; set; }
 
-	private TriennialEnum? CurrentReading = ParashaEnums.Constants.GetCurrentReading();
+	private TriennialEnum? CurrentReading = ParashaHelpers.GetCurrentReading();
 	protected string? Colspan;
 
 	protected override void OnInitialized()
