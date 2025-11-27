@@ -10,15 +10,14 @@ namespace LivingMessiahAdmin.Features.Sukkot.Dashboard.Services;
 public class ExportCSV
 {
 	private readonly ILogger<ExportCSV> _logger;
-	private readonly IJSRuntime _jsRuntime;
 
-	public ExportCSV(ILogger<ExportCSV> logger, IJSRuntime jsRuntime)
+	public ExportCSV(ILogger<ExportCSV> logger)
 	{
 		_logger = logger;
-		_jsRuntime = jsRuntime;
 	}
 
-	public async Task DownloadCSV(List<GridQuery>? items)
+	// Accept IJSRuntime as a parameter so it's provided by the calling component at runtime.
+	public async Task DownloadCSV(List<GridQuery>? items, IJSRuntime jsRuntime)
 	{
 		if (items is not null)
 		{
@@ -31,7 +30,7 @@ public class ExportCSV
 				csv.WriteRecords(items);
 				await writer.FlushAsync();
 				var csvData = Encoding.UTF8.GetString(memoryStream.ToArray());
-				await _jsRuntime.InvokeVoidAsync(ExportCSVHelper.JavaScriptMethod, ExportCSVHelper.DownloadFileName, csvData);
+				await jsRuntime.InvokeVoidAsync(ExportCSVHelper.JavaScriptMethod, ExportCSVHelper.DownloadFileName, csvData);
 			}
 			catch (Exception ex)
 			{

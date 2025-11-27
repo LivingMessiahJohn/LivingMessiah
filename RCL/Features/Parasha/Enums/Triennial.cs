@@ -1,17 +1,12 @@
 ﻿// Ignore Spelling: Abrv Deu Tri YomKippur Yom Kippur Teruah BCV
 
 using Ardalis.SmartEnum;
-/*
-using LivingMessiah.Features.Parasha.Enums;
-using LivingMessiah;
-using LivingMessiah.Features;
-using LivingMessiah.Features.Parasha;
-*/
 
 using RCL.Enums;
 using RCL.Features.Parasha.Toolbar;
 using RCL.Features.Parasha.Constants;
 using RCL.Constants;
+using ParashaHelpers = RCL.Features.Parasha.Helpers;
 
 namespace RCL.Features.Parasha.Enums;
 
@@ -370,7 +365,7 @@ public abstract class Triennial : SmartEnum<Enums.Triennial>
 			if (HasPrevious)
 			{
         Enums.Triennial _prev = Enums.Triennial.FromValue(this.Value - 1);
-				return new PrevNextVM(_prev, Helpers.PrevNextUrl(_prev), "fas fa-arrow-left");
+				return new PrevNextVM(_prev, ParashaHelpers.PrevNextUrl(_prev), "fas fa-arrow-left");
 			}
 			else
 			{
@@ -386,7 +381,7 @@ public abstract class Triennial : SmartEnum<Enums.Triennial>
 			if (HasNext)
 			{
         Enums.Triennial _next = Enums.Triennial.FromValue(this.Value + 1);
-				return new PrevNextVM(_next, Helpers.PrevNextUrl(_next), "fas fa-arrow-right");
+				return new PrevNextVM(_next, ParashaHelpers.PrevNextUrl(_next), "fas fa-arrow-right");
 			}
 			else
 			{
@@ -400,15 +395,17 @@ public abstract class Triennial : SmartEnum<Enums.Triennial>
 		get
 		{
 			string slug = $"{BibleBook.FromValue(this.TorahVerse.BibleBook).Abrv}_{this.TorahVerse.ChapterVerse.Replace("-", "-to-").Replace(":", "-")}";
-			return ($"{Helpers.BaseUrl}/{this.Value}/{slug}");
+			return ($"{ParashaHelpers.BaseUrl}/{this.Value}/{slug}");
 		}
 	}
 
 	public string WeeklyReadingParashaFile => 
-		$"{BibleBook.FromValue(this.TorahVerse.BibleBook).Abrv}-{this.TorahVerse.ChapterVerse.Replace("-", "-to-")
-		.Replace(":", "-").Replace(" & ", "-and-")}";
+		$"{this.Date.ToString("yyyy-MM-dd")}-" +
+    $"{BibleBook.FromValue(this.TorahVerse.BibleBook).Abrv}-" +
+    $"{this.TorahVerse.ChapterVerse.Replace("-", "-to-").Replace(":", "-").Replace(" & ", "-and-")}.pdf";
 
-	public DateTime Date
+	
+  public DateTime Date
 	{
 		get
 		{
@@ -444,7 +441,7 @@ public abstract class Triennial : SmartEnum<Enums.Triennial>
 	{
 		get
 		{
-      return $" {BibleBook.FromValue(this.TorahVerse.BibleBook).Name} {this.TorahVerse.ChapterVerse} {Helpers.DaysFromOrToShabbat(this.Date).ToString()}";
+      return $" {BibleBook.FromValue(this.TorahVerse.BibleBook).Name} {this.TorahVerse.ChapterVerse} {ParashaHelpers.DaysFromOrToShabbat(this.Date).ToString()}";
 		}
 	}
 

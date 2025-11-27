@@ -1,0 +1,207 @@
+﻿@page "/WeeklyDownload"
+
+@using LivingMessiahAdmin.Features.WeeklyDownloads.Data
+@using Microsoft.AspNetCore.Components.Forms
+@using TriennialEnum = RCL.Features.Parasha.Enums.Triennial
+
+@using LivingMessiahAdmin.SecurityRoot
+@using Microsoft.AspNetCore.Components.Authorization
+@using DataTypeEnums = RCL.Features.Calendar.Enums.DateType;
+@using FeastDatEnum = RCL.Features.Calendar.Enums.FeastDay;
+
+@using Page = LivingMessiahAdmin.Enums.Nav
+
+@inject ILogger<Index>? Logger
+@inject IToastService? Toast
+@inject AzureBlobService BlobService
+
+<PageHeader PageEnum="Page.WeeklyDownload" />
+
+<div class="card shadow-sm mb-4">
+	<div class="card-header bg-warning text-dark">
+		<h5 class="mb-0">Upload Weekly Reading PDF</h5>
+	</div>
+
+	<div class="card-body">
+		<EditForm Model="this" OnValidSubmit="UploadToAzure">
+			<div class="row g-3 align-items-end">
+
+				<div class="col-md-6">
+					<label class="form-label mb-1">Choose target (defaults to current reading)</label>
+					<select class="form-select form-select-lg border-2"
+								 @bind="fileName">
+						<option value="">-- Select a target file name --</option>
+						@foreach (var p in TriennialEnum.List.OrderBy(o => o.Value))
+						{
+							<option value="@p.WeeklyReadingParashaFile" selected="@(p.WeeklyReadingParashaFile == currentWeeklyReadingParashaFile)">
+								@p.WeeklyReadingParashaFile
+							</option>
+						}
+					</select>
+					<div class="form-text">Selected target file name will be used for the blob</div>
+				</div>
+
+				<div class="col-md-4">
+					<label class="form-label mb-1">Choose local file</label>
+					<InputFile OnChange="OnInputFileChange" class="form-control" />
+					@if (selectedFile is not null)
+					{
+						@* <div class="small text-muted mt-1">@selectedFile.Name (@FormatBytes(selectedFileSize))</div> *@
+						<div class="small text-muted mt-1">FormatBytes disables</div>
+					}
+				</div>
+
+				<div class="col-md-2 text-end">
+					<button class="btn btn-primary btn-lg w-100" type="submit" disabled="@(isUploading || string.IsNullOrWhiteSpace(fileName) || selectedFile is null)">
+						@if (isUploading)
+						{
+							<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+							<span>&nbsp;Uploading</span>
+						}
+						else
+						{
+							<span class="fas fa-upload">&nbsp;Upload</span>
+						}
+					</button>
+				</div>
+			</div>
+		</EditForm>
+
+		<hr />
+
+		<div class="mb-3">
+			<label class="form-label mb-1">Upload progress</label>
+			<div class="progress" style="height: 1.5rem;">
+				<div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+						 role="progressbar"
+						 style="width:@($"{uploadProgress}%")"
+						 aria-valuenow="@uploadProgress"
+						 aria-valuemin="0"
+						 aria-valuemax="100">
+					@if (uploadProgress == 100)
+					{
+						<span>Complete</span>
+					}
+					else
+					{
+						<span>@uploadProgress% </span>
+						@* <small class="text-muted">(@(selectedFileSize > 0 ? FormatBytes((long)(selectedFileSize * uploadProgress / 100.0)) : "0 B") uploaded)</small> *@
+						<small class="text-muted"> FormatBytes disabled</small>
+					}
+				</div>
+			</div>
+		</div>
+
+		@if (result != null)
+		{
+			<div class="mt-3">
+				<div class="alert @(result.Success ? "alert-success" : "alert-danger")" role="alert">
+					<strong>@(result.Success ? "Success" : "Error"):</strong> @result.Message
+				</div>
+			</div>
+		}
+	</div>
+</div>
+
+@code {
+
+	protected string fileName = "";
+	protected FileUploadResultRecord? result;
+
+	protected RCL.Features.Parasha.Enums.Triennial? currentReading;
+	protected string currentWeeklyReadingParashaFile = string.Empty;
+
+	private IBrowserFile? selectedFile;
+	private long selectedFileSize;
+	private int uploadProgress = 0;
+	private bool isUploading = false;
+
+	protected override void OnInitialized()
+	{
+		currentReading = RCL.Features.Parasha.Helpers.GetCurrentReading();
+		currentWeeklyReadingParashaFile = currentReading?.WeeklyReadingParashaFile ?? string.Empty;
+
+		// Default select value
+		fileName = string.IsNullOrWhiteSpace(currentWeeklyReadingParashaFile) ? fileName : currentWeeklyReadingParashaFile;
+	}
+
+	private void OnInputFileChange(InputFileChangeEventArgs e)
+	{
+		selectedFile = e.File;
+		selectedFileSize = selectedFile.Size;
+		uploadProgress = 0;
+		StateHasChanged();
+	}
+
+	async Task UploadToAzure()
+	{
+		if (selectedFile is null)
+		{
+			Toast?.ShowWarning("Please choose a local file before uploading.");
+			return;
+		}
+		if (string.IsNullOrWhiteSpace(fileName))
+		{
+			Toast?.ShowWarning("Please choose a target from the dropdown.");
+			return;
+		}
+
+		isUploading = true;
+		uploadProgress = 0;
+		result = null;
+		StateHasChanged();
+
+		try
+		{
+			// Prepare target and hold values as per existing convention
+			var target = fileName; // e.g. "Exo-04-14-to-06-01"
+			Toast?.ShowInfo($"target: {target}");
+			var hold = Path.GetFileNameWithoutExtension(selectedFile.Name) + Path.GetExtension(selectedFile.Name);
+
+			// Start the upload task using existing BlobService API (keeps compatibility).
+			// While awaiting, animate progress to provide UI feedback for large files.
+			var uploadTask = BlobService.UploadAsync(target, hold);
+
+			// Animate progress while upload is running (visual nicety for large files).
+			while (!uploadTask.IsCompleted)
+			{
+				uploadProgress = Math.Min(95, uploadProgress + 5);
+				StateHasChanged();
+				await Task.Delay(200);
+			}
+
+			// Await final result
+			result = await uploadTask;
+			uploadProgress = result.Success ? 100 : uploadProgress;
+			if (result.Success)
+			{
+				Toast?.ShowSuccess("Upload finished.");
+			}
+			else
+			{
+				Toast?.ShowError("Upload failed.");
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger?.LogError(ex, "Upload failed");
+			result = new FileUploadResultRecord(false, $"Exception: {ex.Message}");
+		}
+		finally
+		{
+			isUploading = false;
+			StateHasChanged();
+		}
+	}
+
+	/*
+	private static string FormatBytes(long bytes)
+	{
+		if (bytes <= 0) return "0 B";
+		string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+		var order = (int)Math.Floor(Math.Log(bytes, 1024));
+		var adjusted = Math.Round(bytes / Math.Pow(1024, order), 2);
+		return $"{adjusted} {sizes[order]}";
+	}
+	*/
+}

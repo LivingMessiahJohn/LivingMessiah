@@ -77,7 +77,7 @@ try
 
 
 	builder.Services.Configure<AppSettings>(options => configuration.GetSection(nameof(AppSettings)).Bind(options));
-	//LivingMessiah.Helpers.LogHelper.DumpSectionConfiguration(builder.Configuration.GetSection("AppSettings"), "AppSettings");
+	//LivingMessiah.Helpers.StartupHelper.DumpSectionConfiguration(builder.Configuration.GetSection("AppSettings"), "AppSettings");
 	
 	builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 	builder.Services.AddSyncfusionBlazor();
