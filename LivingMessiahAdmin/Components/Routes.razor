@@ -1,8 +1,4 @@
-﻿@using LivingMessiahAdmin.State
-@using Microsoft.AspNetCore.Components.Authorization
-
-@inject AppState AppState
-@inject ILogger<Routes>? Logger
+﻿@using Microsoft.AspNetCore.Components.Authorization
 
 <CascadingAuthenticationState>
 		<LivingMessiahAdmin.CascadingAppState>
@@ -18,19 +14,5 @@
 </CascadingAuthenticationState>
 
 @code {
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		try
-		{
-			if (firstRender)
-			{
-				await AppState.Initialize();
-			}
-		}
-		catch (Exception ex)
-		{
-			Logger!.LogError(ex, "{Class}!{Method}; firstRender: {firstRender}"
-				, nameof(Routes), nameof(OnAfterRenderAsync), firstRender);
-		}
-	}
+
 }

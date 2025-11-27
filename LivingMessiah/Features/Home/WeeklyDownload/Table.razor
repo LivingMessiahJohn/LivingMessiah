@@ -15,8 +15,8 @@
 	<RowTemplate>
 		<td>@context.Value</td>
 		<td>
-			<a href="@GetBlobPDF(context)" target="_blank">
-				@context.Date.ToString("yyyy-MM-dd")-@context.WeeklyReadingParashaFile
+			<a href="@(ParashaHelpers.TeachingBlobFolder + context.WeeklyReadingParashaFile)" target="_blank">
+				@context.WeeklyReadingParashaFile
 			</a>
 		</td>
 	</RowTemplate>
@@ -24,8 +24,5 @@
 
 
 @code {
-	private string GetBlobPDF(ParashaEnums.Triennial item)
-	{
-		return $"{ParashaHelpers.TeachingBlobFolder}{item.Date.ToString("yyyy-MM-dd")}-{@item.WeeklyReadingParashaFile}.pdf";
-	}
+
 }

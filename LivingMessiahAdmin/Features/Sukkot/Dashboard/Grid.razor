@@ -9,6 +9,8 @@
 @inject IRepository? db;
 @inject IToastService? Toast
 @inject ExportCSV ExportCSV
+@inject IJSRuntime JS
+
 
 <TopRowButtons OnCommandDoExport="ReturnedOnCommandDoExport" />
 
@@ -205,7 +207,7 @@
     {
       try
       {
-        await ExportCSV.DownloadCSV(FilteredItems.ToList());
+        await ExportCSV.DownloadCSV(FilteredItems.ToList(), JS);
         Logger!.LogDebug("{Method} {Message}", nameof(ReturnedOnCommandDoExport), $"Download complete; Constants: {Constants.ExportCSVHelper.Dump()}");
       }
       catch (Exception ex)
