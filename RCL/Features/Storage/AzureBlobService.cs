@@ -1,15 +1,16 @@
-﻿namespace LivingMessiahAdmin.Features.WeeklyDownloads.Data;
-
-
-// Install-Package Azure.Storage.Blobs >= 12.20.0
 using Azure;
 using Azure.Storage.Blobs;
-using LivingMessiahAdmin.Features.WeeklyDownloads;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using System.IO;
 
+namespace RCL.Features.Storage;
 
+/// <summary>
+/// Lightweight, RCL-hosted Azure blob helper.
+/// Intended to be moved into the RCL project so other projects (Admin, Blazor) can reuse it.
+/// - Add NuGet: Azure.Storage.Blobs (>= 12.20.0) to the RCL project.
+/// - Register this service in DI (see note below).
+/// </summary>
 public class AzureBlobService
 {
 	private readonly BlobContainerClient _container;
@@ -21,6 +22,10 @@ public class AzureBlobService
 		Logger = logger ?? NullLogger<AzureBlobService>.Instance;
 	}
 
+	/// <summary>
+	/// Upload a local file to the blob container. Overwrites existing blob.
+	/// Returns a simple result record that is local to the RCL (avoid cross-project type coupling).
+	/// </summary>
 	public async Task<FileUploadResultRecord> UploadAsync(string sourceFilePath, string blobName, CancellationToken ct = default)
 	{
 		string message = string.Empty;
@@ -62,7 +67,32 @@ public class AzureBlobService
 		}
 	}
 
+	/// <summary>
+	/// Check if a blob exists in the configured container.
+	/// Useful for validating an anchor URL or showing/hiding a download button.
+	/// </summary>
+	public async Task<bool> ExistsAsync(string blobName, CancellationToken ct = default)
+	{
+		try
+		{
+			BlobClient blob = _container.GetBlobClient(blobName?.Trim() ?? string.Empty);
+			var resp = await blob.ExistsAsync(ct);
+			return resp.Value;
+		}
+		catch (Exception ex)
+		{
+			Logger.LogWarning(ex, "{Method} failed for blob '{BlobName}'", nameof(ExistsAsync), blobName);
+			return false;
+		}
+	}
+
+	/// <summary>
+	/// Get a public URL for the blob (container must allow public read or client must provide SAS).
+	/// </summary>
+	public string GetBlobUrl(string blobName)
+	{
+		return _container.GetBlobClient(blobName?.Trim() ?? string.Empty).Uri.ToString();
+	}
 }
 
-
-
+public record FileUploadResultRecord(bool Success, string Message);

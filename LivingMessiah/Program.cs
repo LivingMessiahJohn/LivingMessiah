@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 using AccountEnum = LivingMessiah.Enums.Account;
+using LivingMessiah.Features.Home;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
@@ -50,12 +51,16 @@ try
 
 	//Services.Add
 	builder.Services.AddBlazoredToast();
+
+	builder.Services.Configure<AzureBlob>(builder.Configuration.GetSection(nameof(AzureBlob)));
 	builder.Services.AddBlazoredLocalStorage();
 
 	/*
 	builder.Services.AddSingleton<AppState>(); 
 	==> Cannot consume scoped service 'Blazored.LocalStorage.ILocalStorageService' from singleton 'LivingMessiah.State.AppState'. 
 	 */
+
+	builder.Services.AddAzureBlobService();
 
 	builder.Services.AddAuthorizationBuilder()
 			.AddPolicy(Policy.Name, policy =>
