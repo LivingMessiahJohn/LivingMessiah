@@ -1,22 +1,45 @@
 ﻿@using TriennialEnum = RCL.Features.Parasha.Enums.Triennial
 @using ParashaHelpers = RCL.Features.Parasha.Helpers
-@using RCL.Features.Storage
+@* @using RCL.Features.Storage *@
 
 @inject IToastService? Toast
-@inject AzureBlobService BlobService
+@* @inject AzureBlobService BlobService *@
 
-  <div class="card border border-danger border-3 rounded-top text-center mb-3 mt-3">
+<div class="card border border-danger border-3 rounded-top text-center mb-3 mt-3">
 
-    <div class="card-header bg-danger">
-      <h2 class="text-center text-white ">Lyrics, Liturgy and Teaching</h2>
-    </div>
+	<div class="card-header bg-danger">
+		<h2 class="text-center text-white ">Lyrics, Liturgy and Teaching</h2>
+	</div>
 
-@if (CurrentReading is not null)
-  {
-    <div class="body my-2 fs-4">@CardTitle</div>
+	@* <p>blobName: @blobName</p>  *@
 
-    <div class="card-footer">
-      <div class="text-center">
+	@if (CurrentReading is not null)
+	{
+		<div class="body my-2 fs-4">@CardTitle</div>
+
+		<div class="card-footer">
+			<div class="text-center">
+
+
+				@if (string.IsNullOrWhiteSpace(blobName))
+				{
+					Toast?.ShowInfo($"blobName IsNullOrWhiteSpace");
+				}
+				else
+				{
+					@* Toast?.ShowInfo($"blobName: {blobName}"); *@
+					<a href="@_blobUrl"
+						 target="_blank" title="@AnchorTitle"
+						 class="btn btn-outline-danger btn-xl">
+						<i class="fas fa-file-pdf fa-fw fa-2x"></i>
+						<span class="fs-4"> @AnchorText</span>
+						<i class="fas fa-file-download fa-fw fa-2x" aria-hidden="true"></i>
+					</a>
+
+				}
+
+				@* 
+					
         @if (_blobExists)
         {
           <a href="@_blobUrl"
@@ -35,44 +58,64 @@
             <i class="fas fa-file-download fa-fw fa-2x" aria-hidden="true"></i>
           </button>
         }
-      </div>
-    </div>
 
-  }
-  else
-  {
-    <div class="alert alert-warning text-center" role="alert">
-      Current Reading is not found!
-    </div>
-  }
+ *@
 
-  </div>
+			</div>
+		</div>
+
+	}
+	else
+	{
+		<div class="alert alert-warning text-center" role="alert">
+			Current Reading is not found!
+		</div>
+	}
+
+</div>
 
 @code {
 
-  private TriennialEnum? CurrentReading = ParashaHelpers.GetCurrentReading();
+	private TriennialEnum? CurrentReading = ParashaHelpers.GetCurrentReading();
 
-  private string CardTitle = string.Empty;
-  private string AnchorTitle = string.Empty;
-  private const string AnchorText = "Pdf Download";
-  private string currentWeeklyReadingParashaFile() => CurrentReading?.WeeklyReadingParashaFile ?? string.Empty;
+	private string CardTitle = string.Empty;
+	private string AnchorTitle = string.Empty;
+	private const string AnchorText = "Pdf Download";
+	private string currentWeeklyReadingParashaFile() => CurrentReading?.WeeklyReadingParashaFile ?? string.Empty;
 
-  // New: blob-check state
-  private bool _blobExists = false;
-  private string _blobUrl = string.Empty;
+	//private bool _blobExists = false;
+	private string _blobUrl = string.Empty;
 
-  protected override async Task OnInitializedAsync()
-  {
-    if (CurrentReading is null)
-    {
-      Toast!.ShowWarning($"Parasha not found; inside: {nameof(LyricsLiturgyTeachingCard)}!{nameof(OnInitializedAsync)}");
-      return;
-    }
+	protected string blobName = string.Empty;
 
-    CardTitle = $"{CurrentReading.Date.ToString("yyyy MMMM dd")} | {CurrentReading.BCV}";
-    AnchorTitle = $"{AnchorText} | {CurrentReading.WeeklyReadingParashaFile}";
+	protected override async Task OnInitializedAsync()
+	{
+		if (CurrentReading is null)
+		{
+			Toast!.ShowWarning($"Parasha not found; inside: {nameof(LyricsLiturgyTeachingCard)}!{nameof(OnInitializedAsync)}");
+			return;
+		}
 
-    var blobName = "https://livingmessiahstorage.blob.core.windows.net/shabbat-service/" + CurrentReading.WeeklyReadingParashaFile?.Trim() ?? string.Empty;
+		CardTitle = $"{CurrentReading.Date.ToString("yyyy MMMM dd")} | {CurrentReading.BCV}";
+		AnchorTitle = $"{AnchorText} | {CurrentReading.WeeklyReadingParashaFile}";
+
+		//var blobName = "https://livingmessiahstorage.blob.core.windows.net/shabbat-service/" + CurrentReading.WeeklyReadingParashaFile?.Trim() ?? string.Empty;
+		blobName = "https://livingmessiahstorage.blob.core.windows.net/shabbat-service/" + CurrentReading.WeeklyReadingParashaFile?.Trim() ?? string.Empty;
+
+		if (string.IsNullOrWhiteSpace(blobName))
+		{
+			//_blobExists = false;
+			Toast?.ShowInfo($" {nameof(LyricsLiturgyTeachingCard)}: blobName IsNullOrWhiteSpace");
+			return;
+		}
+		else
+		{
+			_blobUrl = blobName; // BlobService.GetBlobUrl(blobName);
+		}
+
+
+		/*
+    I THINK THIKS IS WHERE THE APP IS BLOWING UP...WHICH I CAN'T FIGURE OUT WHY
     if (string.IsNullOrWhiteSpace(blobName))
     {
       _blobExists = false;
@@ -93,6 +136,13 @@
       Toast?.ShowError($"Error checking blob existence: {ex.Message}");
       _blobExists = false;
     }
-  }
+    */
+	}
 
+	/*
+	public string GetBlobUrl(string blobName)
+	{
+		return _container.GetBlobClient(blobName?.Trim() ?? string.Empty).Uri.ToString();
+	}
+	*/
 }
