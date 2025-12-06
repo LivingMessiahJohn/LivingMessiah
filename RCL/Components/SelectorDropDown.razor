@@ -1,0 +1,29 @@
+﻿<div class="mb-3">
+  <label for="selectorDropdown" class="form-label">@LabelText</label>
+  <select class="form-select" id="selectorDropdown" value="@SelectedOption" @onchange="OnSelectionChanged">
+    @if (Options != null)
+    {
+      @foreach (var option in Options)
+      {
+        <option value="@option">@option</option>
+      }
+    }
+  </select>
+</div>
+
+@code {
+  [Parameter] public string SelectedOption { get; set; } = string.Empty;
+  [Parameter] public EventCallback<string> SelectedOptionChanged { get; set; }
+  [Parameter] public IEnumerable<string>? Options { get; set; }
+  [Parameter] public string LabelText { get; set; } = "Select an option";
+
+  private async Task OnSelectionChanged(ChangeEventArgs e)
+  {
+    var newValue = e.Value?.ToString() ?? string.Empty;
+    if (newValue != SelectedOption)
+    {
+      SelectedOption = newValue;
+      await SelectedOptionChanged.InvokeAsync(SelectedOption);
+    }
+  }
+}

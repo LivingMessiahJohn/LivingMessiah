@@ -1,61 +1,98 @@
 ﻿@using TriennialEnum = RCL.Features.Parasha.Enums.Triennial
 @using ParashaHelpers = RCL.Features.Parasha.Helpers
+@using RCL.Features.Storage
 
 @inject IToastService? Toast
+@inject AzureBlobService BlobService
 
-@if (CurrentReading is not null)
-{
   <div class="card border border-danger border-3 rounded-top text-center mb-3 mt-3">
 
     <div class="card-header bg-danger">
       <h2 class="text-center text-white ">Lyrics, Liturgy and Teaching</h2>
     </div>
 
-    <div class="body my-2 fs-4">@GetCurrentTitle()</div>
-
-    @* <div class="body my-2 font-monospace text-center fs-2">@ParashaFile</div> *@
+@if (CurrentReading is not null)
+  {
+    <div class="body my-2 fs-4">@CardTitle</div>
 
     <div class="card-footer">
       <div class="text-center">
-        <a href="@GetCurrentTeachingPDF()" target="_blank" title="@AnchorTitle()"
-           class="btn btn-outline-danger btn-xl">
-          <i class="fas fa-file-pdf fa-fw fa-2x"></i>
-          <span class="fs-4"> @AnchorText</span>
-          <i class="fas fa-file-download fa-fw fa-2x" aria-hidden="true"></i>
-        </a>
+        @if (_blobExists)
+        {
+          <a href="@_blobUrl"
+             target="_blank" title="@AnchorTitle"
+             class="btn btn-outline-danger btn-xl">
+            <i class="fas fa-file-pdf fa-fw fa-2x"></i>
+            <span class="fs-4"> @AnchorText</span>
+            <i class="fas fa-file-download fa-fw fa-2x" aria-hidden="true"></i>
+          </a>
+        }
+        else
+        {
+          <button class="btn btn-outline-danger btn-xl" disabled title="File not available">
+            <i class="fas fa-file-pdf fa-fw fa-2x"></i>
+            <span class="fs-4"> @AnchorText</span>
+            <i class="fas fa-file-download fa-fw fa-2x" aria-hidden="true"></i>
+          </button>
+        }
       </div>
     </div>
 
+  }
+  else
+  {
+    <div class="alert alert-warning text-center" role="alert">
+      Current Reading is not found!
+    </div>
+  }
+
   </div>
-}
 
 @code {
 
   private TriennialEnum? CurrentReading = ParashaHelpers.GetCurrentReading();
 
-  protected override void OnInitialized()
+  private string CardTitle = string.Empty;
+  private string AnchorTitle = string.Empty;
+  private const string AnchorText = "Pdf Download";
+  private string currentWeeklyReadingParashaFile() => CurrentReading?.WeeklyReadingParashaFile ?? string.Empty;
+
+  // New: blob-check state
+  private bool _blobExists = false;
+  private string _blobUrl = string.Empty;
+
+  protected override async Task OnInitializedAsync()
   {
     if (CurrentReading is null)
     {
-      Toast!.ShowWarning($"Parasha not found; inside: {nameof(LyricsLiturgyTeachingCard)}!{nameof(OnInitialized)}");
+      Toast!.ShowWarning($"Parasha not found; inside: {nameof(LyricsLiturgyTeachingCard)}!{nameof(OnInitializedAsync)}");
+      return;
     }
-    else
+
+    CardTitle = $"{CurrentReading.Date.ToString("yyyy MMMM dd")} | {CurrentReading.BCV}";
+    AnchorTitle = $"{AnchorText} | {CurrentReading.WeeklyReadingParashaFile}";
+
+    var blobName = "https://livingmessiahstorage.blob.core.windows.net/shabbat-service/" + CurrentReading.WeeklyReadingParashaFile?.Trim() ?? string.Empty;
+    if (string.IsNullOrWhiteSpace(blobName))
     {
-      ShabbatDate = CurrentReading.Date.ToString("yyyy MMMM dd");
-      ParashaTitle = CurrentReading.BCV;
-      ParashaDate = CurrentReading.Date.ToString("yyyy-MM-dd");
-      ParashaFile = $"{CurrentReading.WeeklyReadingParashaFile}";
+      _blobExists = false;
+      return;
+    }
+
+    try
+    {
+      _blobExists = await BlobService.ExistsAsync(blobName);
+      if (_blobExists)
+      {
+        _blobUrl = BlobService.GetBlobUrl(blobName);
+      }
+    }
+    catch (Exception ex)
+    {
+      // Surface a non-blocking message; keep UI stable
+      Toast?.ShowError($"Error checking blob existence: {ex.Message}");
+      _blobExists = false;
     }
   }
 
-  private string ShabbatDate = string.Empty;  // "2025 September 27";
-  private string ParashaTitle = string.Empty; // "Exodus 4:14-6:1";
-  private string ParashaDate = string.Empty;  // "2025-09-27";
-  private string ParashaFile =  string.Empty; //"Exo-04-14-to-06-01";
-
-  private const string AnchorText = "Pdf Download";
-
-  private string GetCurrentTeachingPDF() => $"{ParashaHelpers.TeachingBlobFolder}{ParashaDate}-{ParashaFile}.pdf";
-  private string GetCurrentTitle() => $"{ShabbatDate} | {ParashaTitle}";
-  private string AnchorTitle() => $"{AnchorText} | {ParashaDate}-{ParashaFile}.pdf";
 }

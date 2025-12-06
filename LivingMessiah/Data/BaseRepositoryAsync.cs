@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 
 namespace LivingMessiah.Data;
 
+// ToDo: Delete this
 public abstract class BaseRepositoryAsync
 {
 	private readonly string ConnectionStringsKey;

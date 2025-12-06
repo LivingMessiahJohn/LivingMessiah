@@ -9,120 +9,161 @@
 @using DataTypeEnums = RCL.Features.Calendar.Enums.DateType;
 @using FeastDatEnum = RCL.Features.Calendar.Enums.FeastDay;
 
+@using RCL.Features.Storage
+@using RCL.Components
+
 @using Page = LivingMessiahAdmin.Enums.Nav
 
 @inject ILogger<Index>? Logger
 @inject IToastService? Toast
 @inject AzureBlobService BlobService
 
+
 <PageHeader PageEnum="Page.WeeklyDownload" />
 
-<div class="card shadow-sm mb-4">
-	<div class="card-header bg-warning text-dark">
-		<h5 class="mb-0">Upload Weekly Reading PDF</h5>
-	</div>
+<div class="row">
+	<div class="col-sm-6 my-1">
+		<InputFile OnChange="OnInputFileChange" class="form-control" />
+		@if (selectedFile is not null)
+		{
+			<div class="small text-muted mt-1">@selectedFile.Name (@FormatBytes(selectedFileSize))</div> 
+		}
 
-	<div class="card-body">
-		<EditForm Model="this" OnValidSubmit="UploadToAzure">
-			<div class="row g-3 align-items-end">
+		<div class="col-md-2 text-end">
 
-				<div class="col-md-6">
-					<label class="form-label mb-1">Choose target (defaults to current reading)</label>
-					<select class="form-select form-select-lg border-2"
-								 @bind="fileName">
-						<option value="">-- Select a target file name --</option>
-						@foreach (var p in TriennialEnum.List.OrderBy(o => o.Value))
-						{
-							<option value="@p.WeeklyReadingParashaFile" selected="@(p.WeeklyReadingParashaFile == currentWeeklyReadingParashaFile)">
-								@p.WeeklyReadingParashaFile
-							</option>
-						}
-					</select>
-					<div class="form-text">Selected target file name will be used for the blob</div>
-				</div>
-
-				<div class="col-md-4">
-					<label class="form-label mb-1">Choose local file</label>
-					<InputFile OnChange="OnInputFileChange" class="form-control" />
-					@if (selectedFile is not null)
+			@if(IsDisabled == true)
+			{
+				<button class="btn btn-primary btn-sm m-2" @onclick="UploadToAzure" disabled>
+					@if (isUploading)
 					{
-						@* <div class="small text-muted mt-1">@selectedFile.Name (@FormatBytes(selectedFileSize))</div> *@
-						<div class="small text-muted mt-1">FormatBytes disables</div>
-					}
-				</div>
-
-				<div class="col-md-2 text-end">
-					<button class="btn btn-primary btn-lg w-100" type="submit" disabled="@(isUploading || string.IsNullOrWhiteSpace(fileName) || selectedFile is null)">
-						@if (isUploading)
-						{
-							<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-							<span>&nbsp;Uploading</span>
-						}
-						else
-						{
-							<span class="fas fa-upload">&nbsp;Upload</span>
-						}
-					</button>
-				</div>
-			</div>
-		</EditForm>
-
-		<hr />
-
-		<div class="mb-3">
-			<label class="form-label mb-1">Upload progress</label>
-			<div class="progress" style="height: 1.5rem;">
-				<div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
-						 role="progressbar"
-						 style="width:@($"{uploadProgress}%")"
-						 aria-valuenow="@uploadProgress"
-						 aria-valuemin="0"
-						 aria-valuemax="100">
-					@if (uploadProgress == 100)
-					{
-						<span>Complete</span>
+						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+						<span>&nbsp;Uploading</span>
 					}
 					else
 					{
-						<span>@uploadProgress% </span>
-						@* <small class="text-muted">(@(selectedFileSize > 0 ? FormatBytes((long)(selectedFileSize * uploadProgress / 100.0)) : "0 B") uploaded)</small> *@
-						<small class="text-muted"> FormatBytes disabled</small>
+						<span class="fas fa-upload">&nbsp;Upload</span>
 					}
-				</div>
-			</div>
+				</button>
+			}
+			else
+			{
+				<button class="btn btn-primary btn-sm m-2" @onclick="UploadToAzure">
+					@if (isUploading)
+					{
+						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+						<span>&nbsp;Uploading</span>
+					}
+					else
+					{
+						<span class="fas fa-upload">&nbsp;Upload</span>
+					}
+				</button>
+			}
+
 		</div>
 
-		@if (result != null)
+	</div>
+	<div class="col-sm-6 my-1">
+		<SelectorDropDown SelectedOption="@fileName"
+											SelectedOptionChanged="ReturnedFilename"
+											Options="@GetStringArrays()" />
+
+	</div>
+</div>
+
+<hr />
+
+<div class="mb-3">
+	<label class="form-label mb-1">Upload progress</label>
+	<div class="progress" style="height: 1.5rem;">
+		<div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+				 role="progressbar"
+				 style="width:@($"{uploadProgress}%")"
+				 aria-valuenow="@uploadProgress"
+				 aria-valuemin="0"
+				 aria-valuemax="100">
+			@if (uploadProgress == 100)
+			{
+				<span>Complete</span>
+			}
+			else
+			{
+				<span>@uploadProgress% </span>
+				<small class="text-muted">(@(selectedFileSize > 0 ? FormatBytes((long)(selectedFileSize * uploadProgress / 100.0)) : "0 B") uploaded)</small>
+				<small class="text-muted"> FormatBytes disabled</small>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-12 my-1">
+		@if (!string.IsNullOrWhiteSpace(uploadedBlobUrl))
 		{
-			<div class="mt-3">
-				<div class="alert @(result.Success ? "alert-success" : "alert-danger")" role="alert">
-					<strong>@(result.Success ? "Success" : "Error"):</strong> @result.Message
-				</div>
-			</div>
+			<p>
+				Uploaded blob URL:
+				<a href="@uploadedBlobUrl" target="_blank" rel="noopener">@uploadedBlobUrl</a>
+			</p>
 		}
 	</div>
 </div>
 
+
+@* 
+<p>
+	IsDisabled: @IsDisabled <br />
+	isUploading: @isUploading <br />
+	filename: @fileName  <br />
+	selectedFile: @(selectedFile is null || string.IsNullOrEmpty(selectedFile.Name) ? "NULL" : selectedFile.Name)
+</p> 
+*@
+
 @code {
 
-	protected string fileName = "";
-	protected FileUploadResultRecord? result;
+	private bool IsDisabled { get; set; } = true;
 
-	protected RCL.Features.Parasha.Enums.Triennial? currentReading;
-	protected string currentWeeklyReadingParashaFile = string.Empty;
+	private bool isUploading = false;
+	private void ToggleDisabled()
+	{
+		if (isUploading || string.IsNullOrWhiteSpace(fileName) || selectedFile is null)
+		{
+			IsDisabled = true;
+		}	
+		else
+		{
+			IsDisabled = false;
+		}
+
+	}
+
+	protected string fileName = "";
+	private IEnumerable<string> GetStringArrays()
+	{
+		return RCL.Features.Parasha.Enums.Triennial.List
+		.OrderBy(o => o.Date)
+		.Select(triennial => triennial.WeeklyReadingParashaFile);
+	}
+
+	protected FileUploadResultRecord? result;
 
 	private IBrowserFile? selectedFile;
 	private long selectedFileSize;
 	private int uploadProgress = 0;
-	private bool isUploading = false;
+
+	private string uploadedBlobUrl = string.Empty;
 
 	protected override void OnInitialized()
 	{
-		currentReading = RCL.Features.Parasha.Helpers.GetCurrentReading();
-		currentWeeklyReadingParashaFile = currentReading?.WeeklyReadingParashaFile ?? string.Empty;
+		TriennialEnum? currentReading = RCL.Features.Parasha.Helpers.GetCurrentReading();
+		string? s = currentReading!.WeeklyReadingParashaFile;
+		fileName = string.IsNullOrWhiteSpace(s) ? "" : s;
+	}
 
-		// Default select value
-		fileName = string.IsNullOrWhiteSpace(currentWeeklyReadingParashaFile) ? fileName : currentWeeklyReadingParashaFile;
+	void ReturnedFilename(string returnFile)
+	{
+		Logger!.LogDebug("{Method} {Msg}", nameof(ReturnedFilename), $"returnFile: {returnFile}");
+		fileName = returnFile;
+		ToggleDisabled();
 	}
 
 	private void OnInputFileChange(InputFileChangeEventArgs e)
@@ -130,7 +171,8 @@
 		selectedFile = e.File;
 		selectedFileSize = selectedFile.Size;
 		uploadProgress = 0;
-		StateHasChanged();
+		ToggleDisabled();
+		StateHasChanged();  //
 	}
 
 	async Task UploadToAzure()
@@ -149,37 +191,57 @@
 		isUploading = true;
 		uploadProgress = 0;
 		result = null;
+		uploadedBlobUrl = string.Empty;
 		StateHasChanged();
 
 		try
 		{
-			// Prepare target and hold values as per existing convention
 			var target = fileName; // e.g. "Exo-04-14-to-06-01"
 			Toast?.ShowInfo($"target: {target}");
-			var hold = Path.GetFileNameWithoutExtension(selectedFile.Name) + Path.GetExtension(selectedFile.Name);
 
-			// Start the upload task using existing BlobService API (keeps compatibility).
-			// While awaiting, animate progress to provide UI feedback for large files.
-			var uploadTask = BlobService.UploadAsync(target, hold);
+			// Use a temporary path (safe, no hard-coded repo path). Use WebRootPath if you want
+			// files under wwwroot: var basePath = Env.WebRootPath;
+			var tempDir = Path.GetTempPath();
+			var tempFilePath = Path.Combine(tempDir, selectedFile.Name);
 
-			// Animate progress while upload is running (visual nicety for large files).
-			while (!uploadTask.IsCompleted)
+			try
 			{
-				uploadProgress = Math.Min(95, uploadProgress + 5);
-				StateHasChanged();
-				await Task.Delay(200);
+				// Save the uploaded browser file to a temp file
+				const long maxAllowedSize = 1024L * 1024L * 80; // 80 MB (adjust as needed)
+				await using (var fs = File.Create(tempFilePath))
+				await using (var stream = selectedFile.OpenReadStream(maxAllowedSize))
+				{
+					await stream.CopyToAsync(fs);
+				}
+
+				// Start the upload using your existing API that accepts a local path
+				var uploadTask = BlobService.UploadAsync(tempFilePath, target);
+
+				// Animate progress while upload is running
+				while (!uploadTask.IsCompleted)
+				{
+					uploadProgress = Math.Min(95, uploadProgress + 5);
+					StateHasChanged();
+					await Task.Delay(200);
+				}
+
+				// Await final result
+				result = await uploadTask;
+				uploadProgress = result!.Success ? 100 : uploadProgress;
+				if (result.Success)
+				{
+					uploadedBlobUrl = BlobService.GetBlobUrl(target);
+					Toast?.ShowSuccess("Upload finished.");
+				}
+				else
+				{
+					Toast?.ShowError("Upload failed.");
+				}
 			}
-
-			// Await final result
-			result = await uploadTask;
-			uploadProgress = result.Success ? 100 : uploadProgress;
-			if (result.Success)
+			finally
 			{
-				Toast?.ShowSuccess("Upload finished.");
-			}
-			else
-			{
-				Toast?.ShowError("Upload failed.");
+				// Clean up the temporary file if it exists
+				try { if (File.Exists(tempFilePath)) File.Delete(tempFilePath); } catch { /* swallow cleanup errors */ }
 			}
 		}
 		catch (Exception ex)
@@ -190,11 +252,11 @@
 		finally
 		{
 			isUploading = false;
+			ToggleDisabled();
 			StateHasChanged();
 		}
 	}
 
-	/*
 	private static string FormatBytes(long bytes)
 	{
 		if (bytes <= 0) return "0 B";
@@ -203,5 +265,5 @@
 		var adjusted = Math.Round(bytes / Math.Pow(1024, order), 2);
 		return $"{adjusted} {sizes[order]}";
 	}
-	*/
+	
 }
