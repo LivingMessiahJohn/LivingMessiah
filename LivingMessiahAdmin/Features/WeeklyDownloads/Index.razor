@@ -21,95 +21,100 @@
 
 <PageHeader PageEnum="Page.WeeklyDownload" />
 
-<div class="row">
-	<div class="col-sm-6 my-1">
-		<InputFile OnChange="OnInputFileChange" class="form-control" />
-		@if (selectedFile is not null)
-		{
-			<div class="small text-muted mt-1">@selectedFile.Name (@FormatBytes(selectedFileSize))</div> 
-		}
+@* ToDo: add different RoleGroup.UploadToBlo or something *@
+<AuthorizeView Policy=@RoleGroup.KeyDates>
+  <Authorized>
 
-		<div class="col-md-2 text-end">
 
-			@if(IsDisabled == true)
-			{
-				<button class="btn btn-primary btn-sm m-2" @onclick="UploadToAzure" disabled>
-					@if (isUploading)
+
+		<div class="row">
+			<div class="col-sm-6 my-1">
+				<InputFile OnChange="OnInputFileChange" class="form-control" />
+				@if (selectedFile is not null)
+				{
+					<div class="small text-muted mt-1">@selectedFile.Name (@FormatBytes(selectedFileSize))</div>
+				}
+
+				<div class="col-md-2 text-end">
+
+					@if (IsDisabled == true)
 					{
-						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-						<span>&nbsp;Uploading</span>
+						<button class="btn btn-primary btn-sm m-2" @onclick="UploadToAzure" disabled>
+							@if (isUploading)
+							{
+								<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+								<span>&nbsp;Uploading</span>
+							}
+							else
+							{
+								<span class="fas fa-upload">&nbsp;Upload</span>
+							}
+						</button>
 					}
 					else
 					{
-						<span class="fas fa-upload">&nbsp;Upload</span>
+						<button class="btn btn-primary btn-sm m-2" @onclick="UploadToAzure">
+							@if (isUploading)
+							{
+								<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+								<span>&nbsp;Uploading</span>
+							}
+							else
+							{
+								<span class="fas fa-upload">&nbsp;Upload</span>
+							}
+						</button>
 					}
-				</button>
-			}
-			else
-			{
-				<button class="btn btn-primary btn-sm m-2" @onclick="UploadToAzure">
-					@if (isUploading)
+
+				</div>
+
+			</div>
+			<div class="col-sm-6 my-1">
+				<SelectorDropDown SelectedOption="@fileName"
+													SelectedOptionChanged="ReturnedFilename"
+													Options="@GetStringArrays()" />
+
+			</div>
+		</div>
+
+		<hr />
+
+		<div class="mb-3">
+			<label class="form-label mb-1">Upload progress</label>
+			<div class="progress" style="height: 1.5rem;">
+				<div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+						 role="progressbar"
+						 style="width:@($"{uploadProgress}%")"
+						 aria-valuenow="@uploadProgress"
+						 aria-valuemin="0"
+						 aria-valuemax="100">
+					@if (uploadProgress == 100)
 					{
-						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-						<span>&nbsp;Uploading</span>
+						<span>Complete</span>
 					}
 					else
 					{
-						<span class="fas fa-upload">&nbsp;Upload</span>
+						<span>@uploadProgress% </span>
+						<small class="text-muted">(@(selectedFileSize > 0 ? FormatBytes((long)(selectedFileSize * uploadProgress / 100.0)) : "0 B") uploaded)</small>
+						<small class="text-muted"> FormatBytes disabled</small>
 					}
-				</button>
-			}
-
+				</div>
+			</div>
 		</div>
 
-	</div>
-	<div class="col-sm-6 my-1">
-		<SelectorDropDown SelectedOption="@fileName"
-											SelectedOptionChanged="ReturnedFilename"
-											Options="@GetStringArrays()" />
-
-	</div>
-</div>
-
-<hr />
-
-<div class="mb-3">
-	<label class="form-label mb-1">Upload progress</label>
-	<div class="progress" style="height: 1.5rem;">
-		<div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
-				 role="progressbar"
-				 style="width:@($"{uploadProgress}%")"
-				 aria-valuenow="@uploadProgress"
-				 aria-valuemin="0"
-				 aria-valuemax="100">
-			@if (uploadProgress == 100)
-			{
-				<span>Complete</span>
-			}
-			else
-			{
-				<span>@uploadProgress% </span>
-				<small class="text-muted">(@(selectedFileSize > 0 ? FormatBytes((long)(selectedFileSize * uploadProgress / 100.0)) : "0 B") uploaded)</small>
-				<small class="text-muted"> FormatBytes disabled</small>
-			}
+		<div class="row">
+			<div class="col-12 my-1">
+				@if (!string.IsNullOrWhiteSpace(uploadedBlobUrl))
+				{
+					<p>
+						Uploaded blob URL:
+						<a href="@uploadedBlobUrl" target="_blank" rel="noopener">@uploadedBlobUrl</a>
+					</p>
+				}
+			</div>
 		</div>
-	</div>
-</div>
 
-<div class="row">
-	<div class="col-12 my-1">
-		@if (!string.IsNullOrWhiteSpace(uploadedBlobUrl))
-		{
-			<p>
-				Uploaded blob URL:
-				<a href="@uploadedBlobUrl" target="_blank" rel="noopener">@uploadedBlobUrl</a>
-			</p>
-		}
-	</div>
-</div>
-
-
-@* 
+		@* 
 <p>
 	IsDisabled: @IsDisabled <br />
 	isUploading: @isUploading <br />
@@ -117,6 +122,18 @@
 	selectedFile: @(selectedFile is null || string.IsNullOrEmpty(selectedFile.Name) ? "NULL" : selectedFile.Name)
 </p> 
 *@
+
+	</Authorized>
+	<NotAuthorized>
+		<div class="alert alert-warning text-end" role="alert">
+			<small>Not Authorized; Role Group Policy: @RoleGroup.KeyDates</small>
+		</div>
+		<LoginRedirectCard Nav="Nav.KeyDates" ReturnUrl=@Nav.KeyDates.Index />
+	</NotAuthorized>
+</AuthorizeView>
+
+
+
 
 @code {
 
