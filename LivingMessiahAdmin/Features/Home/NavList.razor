@@ -31,12 +31,12 @@
 
 @code {
   [CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
-  
+
   private IEnumerable<Nav>? authorizedNavItems;
 
   protected override async Task OnInitializedAsync()
   {
-    authorizedNavItems = await GetAuthorizedNavItems();
+    //authorizedNavItems = await GetAuthorizedNavItems();
   }
 
   private void ButtonClicked(Nav nav)
@@ -44,6 +44,7 @@
     NavigationManager!.NavigateTo(nav.Index);
   }
 
+  /*
   private async Task<IEnumerable<Nav>> GetAuthorizedNavItems()
   {
     if (authenticationState == null)
@@ -60,6 +61,7 @@
       .Where(w => w.Value != Nav.Home.Value && w.Value != Nav.Profile.Value && HasRequiredRole(w.RequiredRoles, userRoles))
       .OrderBy(o => o.Value);
   }
+  */
 
   private int GetUserRoleBitmask(ClaimsPrincipal user)
   {
@@ -72,7 +74,8 @@
 
     // Check for each role claim and build the bitmask
     var roleClaims = user.Claims.Where(c => c.Type == Configuration.MicrosoftSchemaIdentityClaimsRole);
-    
+
+    /*
     foreach (var roleClaim in roleClaims)
     {
       if (roleClaim.Value == Role.Admin.Claim)
@@ -86,8 +89,8 @@
       else if (roleClaim.Value == Role.Announcements.Claim)
         userRoles |= Role.Announcements.Value;
     }
-
-    return userRoles;
+    */
+    return 0; // userRoles;
   }
 
   private bool HasRequiredRole(int requiredRoles, int userRoles)

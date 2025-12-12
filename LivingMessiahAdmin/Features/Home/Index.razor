@@ -1,7 +1,7 @@
 ﻿@page "/"
 
+@using LivingMessiahAdmin.Security.Constants
 @using Microsoft.AspNetCore.Components.Authorization
-
 @using Microsoft.Extensions.Options
 @using LivingMessiahAdmin.Settings
 
@@ -16,7 +16,9 @@
 <p>_containerName: @_containerName</p>
 *@
 
-<AuthorizeView Policy=@RoleGroup.EmailVerifiedWithAtLeastOneRole>
+
+@* <AuthorizeView Policy=@RoleGroup.EmailVerifiedWithAtLeastOneRole> *@
+<AuthorizeView Policy=@Policy.Name>
   <Authorized>
     <NavList />
   </Authorized>

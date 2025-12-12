@@ -43,7 +43,7 @@ try
 
 	builder.Services.AddBlazoredToast();
 
-	builder.Services.AddAuth0Authentication(builder.Configuration);
+	//builder.Services.AddAuth0Authentication(builder.Configuration);
 
 	//Services
 	builder.Services.AddDatabase();
@@ -69,14 +69,15 @@ try
 	builder.Services.AddAzureBlobService();
 
 	//ToDo: fix like with Sukkot
-	builder.Services.AddAuth0WebAppAuthentication(options =>
-	{
-		options.Domain = builder.Configuration[LivingMessiahAdmin.Security.Constants.Configuration.Domain] ?? string.Empty;
-		options.ClientId = builder.Configuration[LivingMessiahAdmin.Security.Constants.Configuration.ClientId] ?? string.Empty;
-		options.ClientSecret = builder.Configuration[LivingMessiahAdmin.Security.Constants.Configuration.ClientSecret] ?? string.Empty;
-		options.Scope = "openid profile email roles";
-	});
-
+	
+	//builder.Services.AddAuth0WebAppAuthentication(options =>
+	//{
+	//	options.Domain = builder.Configuration[LivingMessiahAdmin.Security.Constants.Configuration.Domain] ?? string.Empty;
+	//	options.ClientId = builder.Configuration[LivingMessiahAdmin.Security.Constants.Configuration.ClientId] ?? string.Empty;
+	//	options.ClientSecret = builder.Configuration[LivingMessiahAdmin.Security.Constants.Configuration.ClientSecret] ?? string.Empty;
+	//	options.Scope = "openid profile email roles";
+	//});
+	
 
 	var app = builder.Build();
 	app.MapDefaultEndpoints();

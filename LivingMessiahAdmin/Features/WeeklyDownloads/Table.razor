@@ -11,11 +11,10 @@
 	</TableHeader>
 	<RowTemplate>
 		<td>@context.Value</td>
+
 		<td>
-			<a href="@(ParashaHelpers.TeachingBlobFolder + context.WeeklyReadingParashaFile)" 
-				 title="@context.TorahPlusDaysFromOrToShabbat" target="_blank">
-				@context.WeeklyReadingParashaFile
-			</a>
+			@context.WeeklyReadingParashaFile
+			@* <a href="@(ParashaHelpers.TeachingBlobFolder + context.WeeklyReadingParashaFile)" target="_blank">@context.WeeklyReadingParashaFile</a> *@
 		</td>
 	</RowTemplate>
 </TableTemplate>

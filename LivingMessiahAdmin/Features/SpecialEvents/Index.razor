@@ -2,6 +2,7 @@
 
 @using Microsoft.AspNetCore.Components.Authorization
 @using Page = LivingMessiahAdmin.Enums.Nav
+@using LivingMessiahAdmin.Security.Constants
 
 <PageHeader PageEnum="Page.SpecialEvents" />
 
@@ -9,15 +10,18 @@
 	<b>Note:</b> This page has not yet been ported over from an older version
 </div>
 
-<AuthorizeView Policy=@RoleGroup.Announcements>
+@* <AuthorizeView Policy=@RoleGroup.Announcements> *@
+<AuthorizeView Policy=@Policy.Name>
   <Authorized>
     <div class="alert alert-success text-end" role="alert">
-      <small>Authorized: Role Group Policy: @RoleGroup.Announcements</small>
+      @* <small>Authorized: Role Group Policy: @RoleGroup.Announcements</small> *@
+      <small>Authorized: Role Group Policy: @Policy.Name</small>
     </div>
   </Authorized>
   <NotAuthorized>
     <div class="alert alert-warning text-end" role="alert">
-      <small>Not Authorized; Role Group Policy: @RoleGroup.Announcements</small>
+      @* <small>Authorized: Role Group Policy: @RoleGroup.Announcements</small> *@
+      <small>Not Authorized; Role Group Policy: @Policy.Name</small>
     </div>
     <LoginRedirectCard Nav="Nav.SpecialEvents" ReturnUrl=@Nav.SpecialEvents.Index />
   </NotAuthorized>
