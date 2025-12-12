@@ -1,0 +1,22 @@
+﻿@if (!String.IsNullOrWhiteSpace(CurrentReadingFilenameRecord.WithUrl))
+{
+  <a href="@CurrentReadingFilenameRecord.WithUrl"
+     target="_blank" title="Pdf Download @CurrentReadingFilenameRecord.NoUrl, size: @CurrentReadingFilenameRecord.Size"
+     class="btn btn-outline-danger btn-xl">
+    <i class="fas fa-file-pdf fa-fw fa-2x"></i>
+    <span class="fs-4"> Pdf Download</span>
+    <i class="fas fa-file-download fa-fw fa-2x" aria-hidden="true"></i>
+  </a>
+}
+else
+{
+  <button class="btn btn-outline-danger btn-xl" disabled title="File not available">
+    <i class="fas fa-file-pdf fa-fw fa-2x"></i>
+    <span class="fs-4">Pdf Download</span>
+    <i class="fas fa-file-download fa-fw fa-2x" aria-hidden="true"></i>
+  </button>
+}
+
+@code {
+  [Parameter, EditorRequired] public CurrentReadingFilenameRecord CurrentReadingFilenameRecord { get; set; }
+}

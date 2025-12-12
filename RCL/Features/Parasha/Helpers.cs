@@ -6,8 +6,6 @@ namespace RCL.Features.Parasha;
 
 public class Helpers
 {
-  public const string TeachingBlobFolder = "https://livingmessiahstorage.blob.core.windows.net/shabbat-service/";
-
   public const string BaseUrl = "Parasha";
 
   public static string PrevNextUrl(Triennial triennial)

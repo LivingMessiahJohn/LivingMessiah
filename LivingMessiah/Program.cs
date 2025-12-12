@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 using AccountEnum = LivingMessiah.Enums.Account;
 using LivingMessiah.Features.Home;
+using LivingMessiah.Features.Home.WeeklyDownload.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
@@ -60,7 +61,6 @@ try
 	==> Cannot consume scoped service 'Blazored.LocalStorage.ILocalStorageService' from singleton 'LivingMessiah.State.AppState'. 
 	 */
 
-	// WHEN REFERENCED, I THINK THIKS IS WHERE THE APP IS BLOWING UP...WHICH I CAN'T FIGURE OUT WHY 
 	builder.Services.AddAzureBlobService();
 
 	builder.Services.AddAuthorizationBuilder()

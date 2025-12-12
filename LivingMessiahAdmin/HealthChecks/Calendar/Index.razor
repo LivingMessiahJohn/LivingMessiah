@@ -1,8 +1,7 @@
 ﻿@page "/HealthCheck/Calendar"
 
-@using LivingMessiahAdmin.SecurityRoot
+@using LivingMessiahAdmin.Security.Constants
 @using Microsoft.AspNetCore.Components.Authorization
-@using RoleEnum = LivingMessiahAdmin.Enums.Role;
 @using Page = LivingMessiahAdmin.Enums.Nav
 
 <PageHeader PageEnum="Page.HealthCheckCalendar" />
@@ -11,16 +10,16 @@
 	<b>Note:</b> This page has not yet been ported over from an older version
 </div>
 
-<AuthorizeView Policy=@RoleEnum.Admin.Name>
+<AuthorizeView Policy=@Policy.Name>
   <Authorized>
     <div class="alert alert-success text-end" role="alert">
-      <small>Authorized: Policy: @RoleEnum.Admin.Name</small>
+      <small>Authorized: Policy: @Policy.Name</small>
       @* <Table /> *@
     </div>
   </Authorized>
   <NotAuthorized>
     <div class="alert alert-warning text-end" role="alert">
-      <small>Not Authorized; Policy: @RoleEnum.Admin.Name</small>
+      <small>Not Authorized; Policy: @Policy.Name</small>
     </div>
     <LoginRedirectCard Nav="Nav.HealthCheckCalendar" ReturnUrl=@Nav.HealthCheckCalendar.Index />
   </NotAuthorized>

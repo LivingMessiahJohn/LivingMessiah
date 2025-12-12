@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Authorization
 @using LivingMessiahAdmin.Enums
-@using LivingMessiahAdmin.SecurityRoot
+@using LivingMessiahAdmin.Security.Constants
 @using System.Security.Claims
 
 @inject NavigationManager NavigationManager
@@ -71,7 +71,7 @@
     int userRoles = 0;
 
     // Check for each role claim and build the bitmask
-    var roleClaims = user.Claims.Where(c => c.Type == Auth0.MicrosoftSchemaIdentityClaimsRole);
+    var roleClaims = user.Claims.Where(c => c.Type == Configuration.MicrosoftSchemaIdentityClaimsRole);
     
     foreach (var roleClaim in roleClaims)
     {

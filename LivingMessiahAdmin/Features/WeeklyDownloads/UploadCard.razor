@@ -1,0 +1,254 @@
+﻿@using TriennialEnum = RCL.Features.Parasha.Enums.Triennial
+@using RCL.Features.Storage
+@using RCL.Components
+
+@inject AzureBlobService BlobService
+@inject ILogger<UploadCard>? Logger
+@inject IToastService? Toast
+
+<div class="d-flex justify-content-center my-4">
+	<div class="card" style="width: 40rem;">
+
+		<div class="card-body bg-primary-subtle mb-1">
+			<h3 class="card-title text-center">Upload Parasha Teaching</h3>
+		</div>
+
+		<div class="card-body border border-3 border-warning mb-1">
+			<h5 class="text-center">Source</h5>
+			<InputFile OnChange="OnInputFileChange" class="form-control" />
+			@if (selectedFile is not null)
+			{
+				<div class="small text-muted mt-1">@selectedFile.Name (@FormatBytes(selectedFileSize))</div>
+			}
+		</div>
+
+		<div class="card-body border border-3 border-info mb-1">
+			<h5 class="text-center">Target</h5>
+			<SelectorDropDown SelectedOption="@fileName"
+												SelectedOptionChanged="ReturnedFilename"
+												Options="@GetStringArrays()" />
+		</div>
+
+		<div class="card-body border border-3 border-primary">
+			<h5 class="text-center">Upload progress</h5>
+
+			<div class="text-center mt-2">
+				<button class="btn btn-primary btn-sm m-2" @onclick="UploadToAzure" disabled="@IsDisabled">
+					@if (isUploading)
+					{
+						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+						<span>&nbsp;Uploading</span>
+					}
+					else
+					{
+						<span class="fas fa-upload">&nbsp;Upload</span>
+					}
+				</button>
+			</div>
+
+			<div class="progress" style="height: 1.5rem;">
+				<div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+						 role="progressbar"
+						 style=@($"width:{uploadProgress}%")
+						 aria-valuenow="@uploadProgress"
+						 aria-valuemin="0"
+						 aria-valuemax="100">
+					@if (uploadProgress == 100)
+					{
+						<span>Complete</span>
+					}
+					else
+					{
+						<span>@uploadProgress% </span>
+						<small class="text-muted">(@(selectedFileSize > 0 ? FormatBytes((long)(selectedFileSize * uploadProgress / 100.0)) : "0 B") uploaded)</small>
+						<small class="text-muted"> FormatBytes disabled</small>
+					}
+				</div>
+			</div>
+
+			@if (!string.IsNullOrWhiteSpace(uploadedBlobUrl))
+			{
+				<p class="mt-2 mb-0">
+					Uploaded blob URL:
+					<a href="@uploadedBlobUrl" target="_blank" rel="noopener">@uploadedBlobUrl</a>
+				</p>
+			}
+		</div>
+	</div>
+</div>
+
+
+@code {
+	private bool IsDisabled { get; set; } = true;
+
+	private bool isUploading = false;
+	private void ToggleDisabled()
+	{
+		if (isUploading || string.IsNullOrWhiteSpace(fileName) || selectedFile is null)
+		{
+			IsDisabled = true;
+		}
+		else
+		{
+			IsDisabled = false;
+		}
+
+	}
+
+	protected string fileName = "";
+	private IEnumerable<string> GetStringArrays()
+	{
+		return RCL.Features.Parasha.Enums.Triennial.List
+		.OrderBy(o => o.Date)
+		.Select(triennial => triennial.WeeklyReadingParashaFile);
+	}
+
+	protected FileUploadResultRecord? result;
+
+	private IBrowserFile? selectedFile;
+	private long selectedFileSize;
+	private int uploadProgress = 0;
+
+	private string uploadedBlobUrl = string.Empty;
+
+	protected override void OnInitialized()
+	{
+		TriennialEnum? currentReading = RCL.Features.Parasha.Helpers.GetCurrentReading();
+		string? s = currentReading!.WeeklyReadingParashaFile;
+		fileName = string.IsNullOrWhiteSpace(s) ? "" : s;
+	}
+
+	void ReturnedFilename(string returnFile)
+	{
+		Logger!.LogDebug("{Method} {Msg}", nameof(ReturnedFilename), $"returnFile: {returnFile}");
+		fileName = returnFile;
+		ToggleDisabled();
+	}
+
+	private void OnInputFileChange(InputFileChangeEventArgs e)
+	{
+		selectedFile = e.File;
+		selectedFileSize = selectedFile.Size;
+		uploadProgress = 0;
+		ToggleDisabled();
+		StateHasChanged();  //
+	}
+
+	async Task UploadToAzure()
+	{
+		if (selectedFile is null)
+		{
+			Toast?.ShowWarning("Please choose a local file before uploading.");
+			return;
+		}
+
+		if (string.IsNullOrWhiteSpace(fileName))
+		{
+			Toast?.ShowWarning("Please choose a target from the dropdown.");
+			return;
+		}
+
+		isUploading = true;
+		uploadProgress = 0;
+		result = null;
+		uploadedBlobUrl = string.Empty;
+		StateHasChanged();
+
+		try
+		{
+			var target = fileName; // e.g. "Exo-04-14-to-06-01"
+			Toast?.ShowInfo($"target: {target}");
+			var tempDir = Path.GetTempPath();
+			var tempFilePath = Path.Combine(tempDir, selectedFile.Name);
+
+			try
+			{
+				// Save the uploaded browser file to a temp file
+				const long maxAllowedSize = 1024L * 1024L * 80; // 80 MB (adjust as needed)
+				await using (var fs = File.Create(tempFilePath))
+				await using (var stream = selectedFile.OpenReadStream(maxAllowedSize))
+				{
+					await stream.CopyToAsync(fs);
+				}
+
+				// Start the upload using your existing API that accepts a local path
+				var uploadTask = BlobService.UploadAsync(tempFilePath, target);
+
+				// Animate progress while upload is running
+				while (!uploadTask.IsCompleted)
+				{
+					uploadProgress = Math.Min(95, uploadProgress + 5);
+					StateHasChanged();
+					await Task.Delay(200);
+				}
+
+				// Await final result
+				result = await uploadTask;
+
+				uploadProgress = result!.Success ? 100 : uploadProgress;
+
+				if (result.Success)
+				{
+					uploadedBlobUrl = BlobService.GetBlobUrl(target);
+					Toast?.ShowSuccess("Upload finished.");
+				}
+				else
+				{
+					Toast?.ShowError("Upload failed.");
+				}
+			}
+			finally
+			{
+				// Clean up the temporary file if it exists
+				try
+				{
+					if (File.Exists(tempFilePath))
+					{
+						Toast?.ShowInfo("Deleting tempFilePath");
+						File.Delete(tempFilePath);
+					}
+				}
+
+				catch (Exception ex)
+				{
+					Logger?.LogError(ex, "Deletion of tempFilePath failed");
+					Toast?.ShowInfo("Deletion of tempFilePath failed");
+					result = new FileUploadResultRecord(false, $"Exception: {ex.Message}");
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger?.LogError(ex, "Upload failed");
+			Toast?.ShowInfo("Upload failed");
+			result = new FileUploadResultRecord(false, $"Exception: {ex.Message}");
+		}
+		finally
+		{
+			isUploading = false;
+
+			// If upload succeeded, clear the selected file so ToggleDisabled() will disable the Upload button.
+			// Keeps fileName so the user can see the target; change as needed if you prefer clearing fileName too.
+			if (result?.Success == true)
+			{
+				selectedFile = null;
+				selectedFileSize = 0;
+			}
+
+			Toast?.ShowInfo($"result: {result}");
+
+			ToggleDisabled();
+			StateHasChanged();
+		}
+	}
+
+	private static string FormatBytes(long bytes)
+	{
+		if (bytes <= 0) return "0 B";
+		string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+		var order = (int)Math.Floor(Math.Log(bytes, 1024));
+		var adjusted = Math.Round(bytes / Math.Pow(1024, order), 2);
+		return $"{adjusted} {sizes[order]}";
+	}
+
+}

@@ -24,15 +24,20 @@
 
 <div class="@MediaQuery.XsOrSm.DivClass">
 	<div class="card bg-secondary text-white mb-0">
-		<CalendarSfSchedule IsXsOrSm="true" YearId="@YearId" />
+		@* <CalendarSfSchedule IsXsOrSm="true" YearId="@YearId" /> *@
+		<div class="alert alert-warning text-center" role="alert">
+			<p class="fs-2 bg-warning-subtle text-dark text-center">We are working on updating calendar 2026</p>
+		</div>
 	</div>
 </div>
 
 <div class="@MediaQuery.MdOrLgOrXl.DivClass">
-	<CalendarSfSchedule IsXsOrSm="false" YearId="@YearId" />
+	@* <CalendarSfSchedule IsXsOrSm="false" YearId="@YearId" /> *@
+	<p class="fs-2 bg-warning-subtle text-dark text-center">We are working on updating calendar 2026</p>
 </div>
 
-<LivingMessiah.Features.FeastDayPlanner.Index />
+
+@* <LivingMessiah.Features.FeastDayPlanner.Index /> *@
 
 @if (CarouselSettings.Display)
 {

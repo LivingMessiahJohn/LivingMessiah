@@ -11,13 +11,19 @@ using LivingMessiahAdmin.Features.Sukkot.Notes.Data;
 using LivingMessiahAdmin.Features.Sukkot.Reports.Data;
 
 using LivingMessiahAdmin.Features.WeeklyDownloads.Data;
-using LivingMessiahAdmin.SecurityRoot;
+using LivingMessiahAdmin.Security;
+
+
+// ToDo: fix like with Sukkot
+
 //using LivingMessiahAdmin.Features.FeastDayPlanner.Data;
 using LivingMessiahAdmin.Settings;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
-using static LivingMessiahAdmin.SecurityRoot.Auth0;
+
+//using static LivingMessiahAdmin.Security.Constants.Auth0;
+
 using AccountEnum = LivingMessiahAdmin.Enums.Account;
 
 using HealthChecksSukkot = LivingMessiahAdmin.HealthChecks.Sukkot;
@@ -36,7 +42,8 @@ try
 	builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(builder.Configuration));
 
 	builder.Services.AddBlazoredToast();
-	builder.Services.AddAuthorizationPolicies();
+
+	builder.Services.AddAuth0Authentication(builder.Configuration);
 
 	//Services
 	builder.Services.AddDatabase();
@@ -61,11 +68,12 @@ try
 	builder.Services.Configure<WeeklyDownloadsSettings.AzureBlob>(builder.Configuration.GetSection(nameof(WeeklyDownloadsSettings.AzureBlob)));
 	builder.Services.AddAzureBlobService();
 
+	//ToDo: fix like with Sukkot
 	builder.Services.AddAuth0WebAppAuthentication(options =>
 	{
-		options.Domain = builder.Configuration[Configuration.Domain] ?? string.Empty;
-		options.ClientId = builder.Configuration[Configuration.ClientId] ?? string.Empty;
-		options.ClientSecret = builder.Configuration[Configuration.ClientSecret] ?? string.Empty;
+		options.Domain = builder.Configuration[LivingMessiahAdmin.Security.Constants.Configuration.Domain] ?? string.Empty;
+		options.ClientId = builder.Configuration[LivingMessiahAdmin.Security.Constants.Configuration.ClientId] ?? string.Empty;
+		options.ClientSecret = builder.Configuration[LivingMessiahAdmin.Security.Constants.Configuration.ClientSecret] ?? string.Empty;
 		options.Scope = "openid profile email roles";
 	});
 

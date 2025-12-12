@@ -1,8 +1,6 @@
 ﻿@page "/PsalmsAndProverbs"
 
-@using LivingMessiahAdmin.SecurityRoot
 @using Microsoft.AspNetCore.Components.Authorization
-@using RoleEnum = LivingMessiahAdmin.Enums.Role;
 @using Page = LivingMessiahAdmin.Enums.Nav
 
 @* <PageHeader PageEnum="Page.PsalmsAndProverbs" /> *@
@@ -12,15 +10,15 @@
 </div>
 
 @* 
-<AuthorizeView Policy=@RoleEnum.Admin.Name>
+<AuthorizeView Policy=@Policy.Name>
   <Authorized>
     <div class="alert alert-success text-end" role="alert">
-      <small>Authorized: Policy: @RoleEnum.Admin.Name</small>
+      <small>Authorized: Policy: @Policy.Name</small>
     </div>
   </Authorized>
   <NotAuthorized>
     <div class="alert alert-warning text-end" role="alert">
-      <small>Not Authorized; Policy: @RoleEnum.Admin.Name</small>
+      <small>Not Authorized; Policy: @Policy.Name</small>
     </div>
     <LoginRedirectCard Nav="Nav.PsalmsAndProverbs" ReturnUrl=@Nav.PsalmsAndProverbs.Index />
   </NotAuthorized>
