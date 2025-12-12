@@ -1,15 +1,18 @@
 ﻿@page "/Sukkot/LegalAgreementVerbiage/"
 
+@using LivingMessiahAdmin.Security.Constants
 @using Microsoft.AspNetCore.Components.Authorization
 @using MenuBarEnums = LivingMessiahAdmin.Features.Sukkot.Enums.MenuBar;
 @using StepEnums = RCL.Features.Sukkot.Enums.Step
 
-<AuthorizeView Policy="@RoleGroup.EmailVerified.Name">
+@* <AuthorizeView Policy="@RoleGroup.EmailVerified.Name"> *@
+<AuthorizeView Policy="@Policy.Name">
   <Authorized>
     <PageHeaderMenubar MenuBarEnum=MenuBarEnums.LegalAgreementVerbiage />
 
     <div class="alert alert-secondary text-end" role="alert">
-      <small>Policy: @RoleGroup.EmailVerified.Name</small>
+      @* <small>Policy: @RoleGroup.EmailVerified.Name</small> *@
+      <small>Policy: @Policy.Name</small>
     </div>
 
     <div class="card mt-0 mb-3">

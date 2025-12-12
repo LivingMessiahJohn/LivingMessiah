@@ -1,5 +1,6 @@
 ﻿@page "/KeyDates"
 
+@using LivingMessiahAdmin.Security.Constants
 @using LivingMessiahAdmin.Settings
 @using Microsoft.Extensions.Options
 @using Microsoft.AspNetCore.Components.Authorization
@@ -15,310 +16,312 @@
 
 <PageHeader PageEnum="Page.KeyDates" />
 
-<AuthorizeView Policy=@RoleGroup.KeyDates>
-  <Authorized>
-    <KeyDateSettingsList />
+@* <AuthorizeView Policy=@RoleGroup.KeyDates> *@
+<AuthorizeView Policy=@Policy.Name>
+	<Authorized>
+		<KeyDateSettingsList />
 
-    <FilterButtons CurrentFilter="@CurrentFilter"
-                   OnFilterSelected="@ReturnedFilter" />
+		<FilterButtons CurrentFilter="@CurrentFilter"
+									 OnFilterSelected="@ReturnedFilter" />
 
 
-    <div class="row">
-      <div class="col-md-4">
-        @if (CalendarEntries is not null)
-        {
-          <div class="mt-4">
-            <EditQuickGrid ParamCalendarEntries="CalendarEntriesFiltered" Year="_currentYear" OnSave="ReturnedSaveAction" />
-          </div>
+		<div class="row">
+			<div class="col-md-4">
+				@if (CalendarEntries is not null)
+				{
+					<div class="mt-4">
+						<EditQuickGrid ParamCalendarEntries="CalendarEntriesFiltered" Year="_currentYear" OnSave="ReturnedSaveAction" />
+					</div>
 
-          @if (CurrentFilter == DataTypeEnums.Feast)
-          {
-            <p class="mt-2 fs-6">Feast dates are <span class="text-danger"><b>DAY OF</b></span></p>
-          }
+					@if (CurrentFilter == DataTypeEnums.Feast)
+					{
+						<p class="mt-2 fs-6">Feast dates are <span class="text-danger"><b>DAY OF</b></span></p>
+					}
 
-        }
-        else
-        {
-          <p>Calendar Entries is loading...</p>
-        }
-      </div>
-      <div class="col-md-8">
+				}
+				else
+				{
+					<p>Calendar Entries is loading...</p>
+				}
+			</div>
+			<div class="col-md-8">
 
-        @if (CurrentFilter! == DataTypeEnums.Feast)
-        {
-          <FeastAnalysisTable ParamFeastAnalysisList="@FeastAnalysisList" />
-        }
-        else
-        {
-          if (CurrentFilter! == DataTypeEnums.Month)
-          {
-            <MonthAnalysisTable ParamMonthAnalysisList="@MonthAnalysisList" />
-          }
-          else
-          {
-            if (CurrentFilter! == DataTypeEnums.Season)
-            {
-              <SeasonAnalysisTable ParamSeasonAnalysisList="@SeasonAnalysisList" />
-            }
-            else
-            {
-              <p>Ignoring CurrentFilter: @CurrentFilter!.Name ?? "null"</p>
-            }
-          }
-        }
+				@if (CurrentFilter! == DataTypeEnums.Feast)
+				{
+					<FeastAnalysisTable ParamFeastAnalysisList="@FeastAnalysisList" />
+				}
+				else
+				{
+					if (CurrentFilter! == DataTypeEnums.Month)
+					{
+						<MonthAnalysisTable ParamMonthAnalysisList="@MonthAnalysisList" />
+					}
+					else
+					{
+						if (CurrentFilter! == DataTypeEnums.Season)
+						{
+							<SeasonAnalysisTable ParamSeasonAnalysisList="@SeasonAnalysisList" />
+						}
+						else
+						{
+							<p>Ignoring CurrentFilter: @CurrentFilter!.Name ?? "null"</p>
+						}
+					}
+				}
 
-        @if (KeyDateConstants is not null)
-        {
-          <div class="card border-info  mt-3">
-            <div class="card-header">KeyDate.Constants</div>
+				@if (KeyDateConstants is not null)
+				{
+					<div class="card border-info  mt-3">
+						<div class="card-header">KeyDate.Constants</div>
 
-            <div class="card-body">
+						<div class="card-body">
 
-              <div class="row">
-                <div class="col-4">Previous Year</div>
-                <div class="col-4">Current Year</div>
-                <div class="col-4">Next Year</div>
-              </div>
+							<div class="row">
+								<div class="col-4">Previous Year</div>
+								<div class="col-4">Current Year</div>
+								<div class="col-4">Next Year</div>
+							</div>
 
-              <div class="row">
-                <div class="col-4">@KeyDateConstants.PreviousYear</div>
-                <div class="col-4">@KeyDateConstants.CurrentYear</div>
-                <div class="col-4">@KeyDateConstants.NextYear</div>
-              </div>
-            </div>
+							<div class="row">
+								<div class="col-4">@KeyDateConstants.PreviousYear</div>
+								<div class="col-4">@KeyDateConstants.CurrentYear</div>
+								<div class="col-4">@KeyDateConstants.NextYear</div>
+							</div>
+						</div>
 
-          </div>
-        }
+					</div>
+				}
 
-      </div>
-    </div> <!-- row -->
+			</div>
+		</div> <!-- row -->
 
-  </Authorized>
-  <NotAuthorized>
-    <div class="alert alert-warning text-end" role="alert">
-      <small>Not Authorized; Role Group Policy: @RoleGroup.KeyDates</small>
-    </div>
-    <LoginRedirectCard Nav="Nav.KeyDates" ReturnUrl=@Nav.KeyDates.Index />
-  </NotAuthorized>
+	</Authorized>
+	<NotAuthorized>
+		<div class="alert alert-warning text-end" role="alert">
+			@* <small>Not Authorized; Role Group Policy: @RoleGroup.KeyDates</small> *@
+			<small>Not Authorized; Role Group Policy: @Policy.Name</small>
+		</div>
+		<LoginRedirectCard Nav="Nav.KeyDates" ReturnUrl=@Nav.KeyDates.Index />
+	</NotAuthorized>
 </AuthorizeView>
 
 @code {
 
-  protected int _currentYear;
-  protected int _previousYear;
+	protected int _currentYear;
+	protected int _previousYear;
 
-  protected override async Task OnInitializedAsync()
-  {
-    _currentYear = AppSettings!.Value.YearId;
-    _previousYear = _currentYear - 1;
+	protected override async Task OnInitializedAsync()
+	{
+		_currentYear = AppSettings!.Value.YearId;
+		_previousYear = _currentYear - 1;
 
-    Logger!.LogDebug("{Method} {Message}", nameof(OnInitializedAsync), $"CurrentYear: {_currentYear}");
+		Logger!.LogDebug("{Method} {Message}", nameof(OnInitializedAsync), $"CurrentYear: {_currentYear}");
 
-    try
-    {
-      await PopulateCalendarEntries();
-      if (CalendarEntries is not null)
-      {
-        PopulateCalendarEntryFiltered();
-        Logger!.LogDebug("{Method} {Message}", nameof(OnInitializedAsync), $"CalendarEntries: {CalendarEntries.Count}");
-      }
+		try
+		{
+			await PopulateCalendarEntries();
+			if (CalendarEntries is not null)
+			{
+				PopulateCalendarEntryFiltered();
+				Logger!.LogDebug("{Method} {Message}", nameof(OnInitializedAsync), $"CalendarEntries: {CalendarEntries.Count}");
+			}
 
-      await PopulateCalendarAnalysisQuery();
-      if (CalendarAnalysis is not null)
-      {
-        Logger!.LogDebug("{Method} {Message}", nameof(OnInitializedAsync), $"CalendarAnalysis: {CalendarAnalysis.Count}");
-        PopulateCalendarEntryFiltered();
-        PopulateFeastAnalysisList();
-        PopulateMonthAnalysisList();
-        PopulateSeasonAnalysisList();
-      }
+			await PopulateCalendarAnalysisQuery();
+			if (CalendarAnalysis is not null)
+			{
+				Logger!.LogDebug("{Method} {Message}", nameof(OnInitializedAsync), $"CalendarAnalysis: {CalendarAnalysis.Count}");
+				PopulateCalendarEntryFiltered();
+				PopulateFeastAnalysisList();
+				PopulateMonthAnalysisList();
+				PopulateSeasonAnalysisList();
+			}
 
-      await PopulateKeyDateConstantsList();
+			await PopulateKeyDateConstantsList();
 
-    }
-    catch (Exception ex)
-    {
-      Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
-      Toast!.ShowError($"{Global.ToastShowError} | {nameof(OnInitializedAsync)}");
-    }
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+			Toast!.ShowError($"{Global.ToastShowError} | {nameof(OnInitializedAsync)}");
+		}
 
-    base.OnInitialized();
-  }
-
-
-  #region EventCallbacks
-  protected DataTypeEnums? CurrentFilter { get; set; } = Constants.Defaults.Filter;
-
-  private void ReturnedFilter(DataTypeEnums filter)
-  {
-    Logger!.LogDebug("{Method} {Message}", nameof(ReturnedFilter), filter.Name);
-    CurrentFilter = filter;
-    PopulateCalendarEntryFiltered();
-  }
+		base.OnInitialized();
+	}
 
 
-  private async Task ReturnedSaveAction()
-  {
-    Logger!.LogDebug("{Method} {Message}", nameof(ReturnedSaveAction));
-    await PopulateCalendarAnalysisQuery();
-    await Task.Delay(500);
-    CurrentFilter!
-      .When(DataTypeEnums.Month!).Then(() => PopulateMonthAnalysisList())
-      .When(DataTypeEnums.Feast).Then(() => PopulateFeastAnalysisList())
-      .When(DataTypeEnums.Season).Then(() => PopulateSeasonAnalysisList())
-      .Default(() => Logger!.LogDebug("{Method} {Message}", nameof(ReturnedSaveAction), $"ignored: {nameof(CurrentFilter)}"));
+	#region EventCallbacks
+	protected DataTypeEnums? CurrentFilter { get; set; } = Constants.Defaults.Filter;
 
-  }
-
-  #endregion
-
-  protected List<Data.CalendarEntryQuery>? CalendarEntries;
-  private async Task PopulateCalendarEntries()
-  {
-    Logger!.LogDebug("{Method} {Message}", nameof(PopulateCalendarEntries), $"CurrentYear: {_currentYear}");
-    try
-    {
-      //ToDo: need to change this
-      CalendarEntries = await db!.GetCalendarEntries(_currentYear, DataTypeEnums.Feast);
-    }
-    catch (Exception ex)
-    {
-      Logger!.LogError(ex, "{Method}", nameof(PopulateCalendarEntries));
-      Toast!.ShowError($"{Global.ToastShowError} | {nameof(PopulateCalendarEntries)}");
-    }
-  }
-
-  protected List<Data.CalendarEntryQuery>? CalendarEntriesFiltered;
-  private void PopulateCalendarEntryFiltered()
-  {
-    if (CalendarEntries is null || CurrentFilter is null)
-    {
-        CalendarEntriesFiltered = new List<Data.CalendarEntryQuery>();
-        return;
-    }
-    CalendarEntriesFiltered = CalendarEntries.Where(w => w.DateTypeId == CurrentFilter.Value).ToList();
-  }
-
-  protected List<Data.CalendarAnalysisQuery>? CalendarAnalysis;
-  private async Task PopulateCalendarAnalysisQuery()
-  {
-    Logger!.LogDebug("{Method} {Message}", nameof(PopulateCalendarAnalysisQuery), $"CurrentYear: {_currentYear}");
-    try
-    {
-      CalendarAnalysis = await db!.GetCalendarAnalysisQuery(_currentYear, DataTypeEnums.All);
-    }
-    catch (Exception ex)
-    {
-      Logger!.LogError(ex, "{Method}", nameof(PopulateCalendarAnalysisQuery));
-      Toast!.ShowError($"{Global.ToastShowError} | {nameof(PopulateCalendarEntries)}");
-    }
-  }
-
-  protected List<FeastAnalysisVM>? FeastAnalysisList;
-  private void PopulateFeastAnalysisList()
-  {
-    Logger!.LogDebug("{Method} {Message}", nameof(PopulateFeastAnalysisList), "");
-    FeastAnalysisList = new List<FeastAnalysisVM>();
-
-    foreach (var item in CalendarAnalysis!
-      .Where(w => DataTypeEnums.FromValue(w.DateTypeId) == DataTypeEnums.Feast.Value).ToList())
-    {
-      FeastDatEnum feastDay = FeastDatEnum.FromValue(item.EnumId);
-
-      if (feastDay.DaysFromPrevFeast is not null)
-      {
-        FeastAnalysisList!.Add
-        (
-          new FeastAnalysisVM
-          {
-            Event = item.EventDescr,
-            PreviousDate = item.PrevDateYMD,
-            Date = item.DateYMD,
-            ActualDifference = item.DiffFromPrevDate,
-            RequiredDifference = (int)feastDay.DaysFromPrevFeast
-          }
-        );
-      }
-
-    }
-  }
+	private void ReturnedFilter(DataTypeEnums filter)
+	{
+		Logger!.LogDebug("{Method} {Message}", nameof(ReturnedFilter), filter.Name);
+		CurrentFilter = filter;
+		PopulateCalendarEntryFiltered();
+	}
 
 
-  protected List<MonthAnalysisVM>? MonthAnalysisList;
-  private void PopulateMonthAnalysisList()
-  {
-    Logger!.LogDebug("{Method} {Message}", nameof(PopulateMonthAnalysisList), "");
-    MonthAnalysisList = new List<MonthAnalysisVM>();
+	private async Task ReturnedSaveAction()
+	{
+		Logger!.LogDebug("{Method} {Message}", nameof(ReturnedSaveAction));
+		await PopulateCalendarAnalysisQuery();
+		await Task.Delay(500);
+		CurrentFilter!
+			.When(DataTypeEnums.Month!).Then(() => PopulateMonthAnalysisList())
+			.When(DataTypeEnums.Feast).Then(() => PopulateFeastAnalysisList())
+			.When(DataTypeEnums.Season).Then(() => PopulateSeasonAnalysisList())
+			.Default(() => Logger!.LogDebug("{Method} {Message}", nameof(ReturnedSaveAction), $"ignored: {nameof(CurrentFilter)}"));
 
-    try
-    {
-      foreach (var item in CalendarAnalysis!
-        .Where(w => DataTypeEnums.FromValue(w.DateTypeId) == DataTypeEnums.Month.Value).ToList())
-      {
-        MonthAnalysisList!.Add
-        (
-          new MonthAnalysisVM
-          {
-            Month = item.EventDescr,
-            PreviousDate = item.PrevDateYMD,
-            Date = item.DateYMD,
-            ActualDifference = item.DiffFromPrevDate
-          }
-        );
-      }
-    }
-    catch (Exception ex)
-    {
-      Logger!.LogError(ex, "{Method}", nameof(PopulateMonthAnalysisList));
-      Toast!.ShowError($"{Global.ToastShowError} | {nameof(PopulateMonthAnalysisList)}");
-    }
-  }
+	}
 
-  protected List<SeasonAnalysisVM>? SeasonAnalysisList;
-  private void PopulateSeasonAnalysisList()
-  {
-    Logger!.LogDebug("{Method} {Message}", nameof(PopulateSeasonAnalysisList), "");
-    SeasonAnalysisList = new List<SeasonAnalysisVM>();
+	#endregion
 
-    try
-    {
-      foreach (var item in CalendarAnalysis!
-        .Where(w => DataTypeEnums.FromValue(w.DateTypeId) == DataTypeEnums.Season.Value).ToList())
-      {
-        SeasonAnalysisList!.Add
-        (
-          new SeasonAnalysisVM
-          {
-            Season = item.EventDescr,
-            PreviousDate = item.PrevDateYMD,
-            Date = item.DateYMD,
-            ActualDifference = item.DiffFromPrevDate
-          }
-        );
-      }
-    }
-    catch (Exception ex)
-    {
-      Logger!.LogError(ex, "{Method}", nameof(PopulateSeasonAnalysisList));
-      Toast!.ShowError($"{Global.ToastShowError} | {nameof(PopulateSeasonAnalysisList)}");
+	protected List<Data.CalendarEntryQuery>? CalendarEntries;
+	private async Task PopulateCalendarEntries()
+	{
+		Logger!.LogDebug("{Method} {Message}", nameof(PopulateCalendarEntries), $"CurrentYear: {_currentYear}");
+		try
+		{
+			//ToDo: need to change this
+			CalendarEntries = await db!.GetCalendarEntries(_currentYear, DataTypeEnums.Feast);
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(PopulateCalendarEntries));
+			Toast!.ShowError($"{Global.ToastShowError} | {nameof(PopulateCalendarEntries)}");
+		}
+	}
 
-    }
-  }
+	protected List<Data.CalendarEntryQuery>? CalendarEntriesFiltered;
+	private void PopulateCalendarEntryFiltered()
+	{
+		if (CalendarEntries is null || CurrentFilter is null)
+		{
+			CalendarEntriesFiltered = new List<Data.CalendarEntryQuery>();
+			return;
+		}
+		CalendarEntriesFiltered = CalendarEntries.Where(w => w.DateTypeId == CurrentFilter.Value).ToList();
+	}
 
-  protected Data.KeyDateConstantsQuery? KeyDateConstants;
-  private async Task PopulateKeyDateConstantsList()
-  {
-    Logger!.LogDebug("{Method} {Message}", nameof(PopulateKeyDateConstantsList), "");
-    try
-    {
-      KeyDateConstants = await db!.GetKeyDateConstants();
-    }
-    catch (Exception ex)
-    {
-      Logger!.LogError(ex, "{Method}", nameof(PopulateSeasonAnalysisList));
-      Toast!.ShowError($"{Global.ToastShowError} | {nameof(PopulateKeyDateConstantsList)}");
-    }
-  }
+	protected List<Data.CalendarAnalysisQuery>? CalendarAnalysis;
+	private async Task PopulateCalendarAnalysisQuery()
+	{
+		Logger!.LogDebug("{Method} {Message}", nameof(PopulateCalendarAnalysisQuery), $"CurrentYear: {_currentYear}");
+		try
+		{
+			CalendarAnalysis = await db!.GetCalendarAnalysisQuery(_currentYear, DataTypeEnums.All);
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(PopulateCalendarAnalysisQuery));
+			Toast!.ShowError($"{Global.ToastShowError} | {nameof(PopulateCalendarEntries)}");
+		}
+	}
+
+	protected List<FeastAnalysisVM>? FeastAnalysisList;
+	private void PopulateFeastAnalysisList()
+	{
+		Logger!.LogDebug("{Method} {Message}", nameof(PopulateFeastAnalysisList), "");
+		FeastAnalysisList = new List<FeastAnalysisVM>();
+
+		foreach (var item in CalendarAnalysis!
+			.Where(w => DataTypeEnums.FromValue(w.DateTypeId) == DataTypeEnums.Feast.Value).ToList())
+		{
+			FeastDatEnum feastDay = FeastDatEnum.FromValue(item.EnumId);
+
+			if (feastDay.DaysFromPrevFeast is not null)
+			{
+				FeastAnalysisList!.Add
+				(
+					new FeastAnalysisVM
+					{
+						Event = item.EventDescr,
+						PreviousDate = item.PrevDateYMD,
+						Date = item.DateYMD,
+						ActualDifference = item.DiffFromPrevDate,
+						RequiredDifference = (int)feastDay.DaysFromPrevFeast
+					}
+				);
+			}
+
+		}
+	}
+
+
+	protected List<MonthAnalysisVM>? MonthAnalysisList;
+	private void PopulateMonthAnalysisList()
+	{
+		Logger!.LogDebug("{Method} {Message}", nameof(PopulateMonthAnalysisList), "");
+		MonthAnalysisList = new List<MonthAnalysisVM>();
+
+		try
+		{
+			foreach (var item in CalendarAnalysis!
+				.Where(w => DataTypeEnums.FromValue(w.DateTypeId) == DataTypeEnums.Month.Value).ToList())
+			{
+				MonthAnalysisList!.Add
+				(
+					new MonthAnalysisVM
+					{
+						Month = item.EventDescr,
+						PreviousDate = item.PrevDateYMD,
+						Date = item.DateYMD,
+						ActualDifference = item.DiffFromPrevDate
+					}
+				);
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(PopulateMonthAnalysisList));
+			Toast!.ShowError($"{Global.ToastShowError} | {nameof(PopulateMonthAnalysisList)}");
+		}
+	}
+
+	protected List<SeasonAnalysisVM>? SeasonAnalysisList;
+	private void PopulateSeasonAnalysisList()
+	{
+		Logger!.LogDebug("{Method} {Message}", nameof(PopulateSeasonAnalysisList), "");
+		SeasonAnalysisList = new List<SeasonAnalysisVM>();
+
+		try
+		{
+			foreach (var item in CalendarAnalysis!
+				.Where(w => DataTypeEnums.FromValue(w.DateTypeId) == DataTypeEnums.Season.Value).ToList())
+			{
+				SeasonAnalysisList!.Add
+				(
+					new SeasonAnalysisVM
+					{
+						Season = item.EventDescr,
+						PreviousDate = item.PrevDateYMD,
+						Date = item.DateYMD,
+						ActualDifference = item.DiffFromPrevDate
+					}
+				);
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(PopulateSeasonAnalysisList));
+			Toast!.ShowError($"{Global.ToastShowError} | {nameof(PopulateSeasonAnalysisList)}");
+
+		}
+	}
+
+	protected Data.KeyDateConstantsQuery? KeyDateConstants;
+	private async Task PopulateKeyDateConstantsList()
+	{
+		Logger!.LogDebug("{Method} {Message}", nameof(PopulateKeyDateConstantsList), "");
+		try
+		{
+			KeyDateConstants = await db!.GetKeyDateConstants();
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(PopulateSeasonAnalysisList));
+			Toast!.ShowError($"{Global.ToastShowError} | {nameof(PopulateKeyDateConstantsList)}");
+		}
+	}
 
 
 }

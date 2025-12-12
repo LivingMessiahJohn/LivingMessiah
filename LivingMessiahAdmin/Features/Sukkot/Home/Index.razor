@@ -1,5 +1,6 @@
 ﻿@page "/Sukkot"
 
+@using LivingMessiahAdmin.Security.Constants
 @using LivingMessiahAdmin.Features.Sukkot.Components.RegistrationForm
 @using MenuBarEnums = LivingMessiahAdmin.Features.Sukkot.Enums.MenuBar;
 
@@ -11,15 +12,15 @@
 @using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationList.Enums
 @using LivingMessiahAdmin.Features.Sukkot.Home.RegistrationDetail
 @using LivingMessiahAdmin.Features.Sukkot.Home.Agreement
-
 @using Microsoft.AspNetCore.Components.Authorization
-@using RoleGroup = LivingMessiahAdmin.Enums.RoleGroup
+
 
 @inject ILogger<Index>? Logger
 @inject IRepository? db;
 @inject IToastService? Toast
 
-<AuthorizeView Policy=@RoleGroup.Sukkot>
+@* <AuthorizeView Policy=@RoleGroup.Sukkot> *@
+<AuthorizeView Policy=@Policy.Name>
   <Authorized>
 
     @if (VisibleComponent == Enums.VisibleComponent.RegistrationList)
@@ -92,7 +93,8 @@
   <NotAuthorized>
     <LoginRedirectCard Nav="Nav.Sukkot" ReturnUrl=@Nav.Sukkot.Index />
     <div class="alert alert-warning text-end" role="alert">
-      <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small>
+      @* <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small> *@
+      <small>Not Authorized; Role Group Policy: @Policy.Name</small>
     </div>
   </NotAuthorized>
 </AuthorizeView>
