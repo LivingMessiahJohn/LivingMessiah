@@ -5,19 +5,15 @@
 
 @using Microsoft.AspNetCore.Components.Authorization
 @using Page = LivingMessiahAdmin.Enums.Nav
+@using RoleGroup = LivingMessiahAdmin.Security.Enums.RoleGroup;
 
 <PageHeader PageEnum="Page.WeeklyDownload" />
 
 @* ToDo: add different RoleGroup.UploadToBlo or something *@
 
-@* 
 <AuthorizeView Policy=@RoleGroup.KeyDates>
   <Authorized>
-
 <UploadCard />
-
-@* 
-
 	</Authorized>
 	<NotAuthorized>
 		<div class="alert alert-warning text-end" role="alert">
@@ -27,9 +23,6 @@
 	</NotAuthorized>
 </AuthorizeView>
 
-*@
-
 @code {
-
 
 }

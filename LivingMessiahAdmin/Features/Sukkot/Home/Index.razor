@@ -5,6 +5,7 @@
 @using MenuBarEnums = LivingMessiahAdmin.Features.Sukkot.Enums.MenuBar;
 
 @using StepEnums = RCL.Features.Sukkot.Enums.Step
+@using RoleGroup = LivingMessiahAdmin.Security.Enums.RoleGroup;
 
 @using LivingMessiahAdmin.Features.Sukkot.Home.Data
 @using LivingMessiahAdmin.Features.Sukkot.Home.Donations
@@ -19,8 +20,7 @@
 @inject IRepository? db;
 @inject IToastService? Toast
 
-@* <AuthorizeView Policy=@RoleGroup.Sukkot> *@
-<AuthorizeView Policy=@Policy.Name>
+<AuthorizeView Policy=@RoleGroup.Sukkot>
   <Authorized>
 
     @if (VisibleComponent == Enums.VisibleComponent.RegistrationList)
@@ -93,8 +93,7 @@
   <NotAuthorized>
     <LoginRedirectCard Nav="Nav.Sukkot" ReturnUrl=@Nav.Sukkot.Index />
     <div class="alert alert-warning text-end" role="alert">
-      @* <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small> *@
-      <small>Not Authorized; Role Group Policy: @Policy.Name</small>
+      <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small>
     </div>
   </NotAuthorized>
 </AuthorizeView>

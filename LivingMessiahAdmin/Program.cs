@@ -1,4 +1,3 @@
-
 using Auth0.AspNetCore.Authentication;
 using Blazored.Toast;
 using LivingMessiahAdmin.Components;
@@ -12,17 +11,13 @@ using LivingMessiahAdmin.Features.Sukkot.Reports.Data;
 
 using LivingMessiahAdmin.Features.WeeklyDownloads.Data;
 using LivingMessiahAdmin.Security;
-
-
-// ToDo: fix like with Sukkot
+using LivingMessiahAdmin.SecurityRoot;  // Added for ServiceCollectionExtensions
 
 //using LivingMessiahAdmin.Features.FeastDayPlanner.Data;
 using LivingMessiahAdmin.Settings;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
-
-//using static LivingMessiahAdmin.Security.Constants.Auth0;
 
 using AccountEnum = LivingMessiahAdmin.Enums.Account;
 
@@ -43,8 +38,6 @@ try
 
 	builder.Services.AddBlazoredToast();
 
-	//builder.Services.AddAuth0Authentication(builder.Configuration);
-
 	//Services
 	builder.Services.AddDatabase();
 	builder.Services.AddSukkotGridData();
@@ -58,6 +51,8 @@ try
 
 	builder.Services.Configure<AppSettings>(builder.Configuration.GetSection(nameof(AppSettings)));
 
+	builder.Services.AddAuthorizationPolicies();  // Added: sets up authorization policies
+	builder.Services.AddAuth0Authentication(builder.Configuration);  // Added: configures Auth0 authentication
 
 	//builder.Services.AddFeastDayPlanner();
 	//builder.Services.AddApplicationInsightsTelemetry();
@@ -67,17 +62,6 @@ try
 
 	builder.Services.Configure<WeeklyDownloadsSettings.AzureBlob>(builder.Configuration.GetSection(nameof(WeeklyDownloadsSettings.AzureBlob)));
 	builder.Services.AddAzureBlobService();
-
-	//ToDo: fix like with Sukkot
-	
-	//builder.Services.AddAuth0WebAppAuthentication(options =>
-	//{
-	//	options.Domain = builder.Configuration[LivingMessiahAdmin.Security.Constants.Configuration.Domain] ?? string.Empty;
-	//	options.ClientId = builder.Configuration[LivingMessiahAdmin.Security.Constants.Configuration.ClientId] ?? string.Empty;
-	//	options.ClientSecret = builder.Configuration[LivingMessiahAdmin.Security.Constants.Configuration.ClientSecret] ?? string.Empty;
-	//	options.Scope = "openid profile email roles";
-	//});
-	
 
 	var app = builder.Build();
 	app.MapDefaultEndpoints();

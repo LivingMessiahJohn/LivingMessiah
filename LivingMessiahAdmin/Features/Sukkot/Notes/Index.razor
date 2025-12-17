@@ -1,20 +1,18 @@
 ﻿@page "/Sukkot/Notes"
 
-@using LivingMessiahAdmin.Security.Constants
 @using Microsoft.AspNetCore.Components.Authorization
 @using MenuBarEnums = LivingMessiahAdmin.Features.Sukkot.Enums.MenuBar;
+@using RoleGroup = LivingMessiahAdmin.Security.Enums.RoleGroup;
 
 @inject ILogger<Index>? Logger
 @inject IToastService? Toast
 @inject Data.IRepository? db
 
-@* <AuthorizeView Policy=@RoleGroup.Sukkot> *@
-<AuthorizeView Policy=@Policy.Name>
+<AuthorizeView Policy=@RoleGroup.Sukkot>
   <Authorized>
 
     <div class="alert alert-secondary text-end" role="alert">
-      @* <small>Authorized: Role Group Policy: @RoleGroup.Sukkot</small> *@
-      <small>Authorized: Role Group Policy: @Policy.Name</small>
+      <small>Authorized: Role Group Policy: @RoleGroup.Sukkot</small>
     </div>
 
     <PageHeaderMenubar MenuBarEnum=MenuBarEnums.Notes ShowPrintButton=true />

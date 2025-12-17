@@ -4,15 +4,14 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using MenuBarEnums = LivingMessiahAdmin.Features.Sukkot.Enums.MenuBar;
 @using StepEnums = RCL.Features.Sukkot.Enums.Step
+@using LivingMessiahAdmin.Security.Policies
 
-@* <AuthorizeView Policy="@RoleGroup.EmailVerified.Name"> *@
-<AuthorizeView Policy="@Policy.Name">
+<AuthorizeView Policy=@Authentication.Name>
   <Authorized>
     <PageHeaderMenubar MenuBarEnum=MenuBarEnums.LegalAgreementVerbiage />
 
     <div class="alert alert-secondary text-end" role="alert">
-      @* <small>Policy: @RoleGroup.EmailVerified.Name</small> *@
-      <small>Policy: @Policy.Name</small>
+      <small>Policy: @Authentication.Name</small>
     </div>
 
     <div class="card mt-0 mb-3">

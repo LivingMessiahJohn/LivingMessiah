@@ -1,5 +1,6 @@
 ﻿namespace LivingMessiahAdmin.Security.Constants;
 
+
 public static class Configuration
 {
 	public const string MicrosoftSchemaIdentityClaimsRole = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";

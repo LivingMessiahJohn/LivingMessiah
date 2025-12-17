@@ -1,6 +1,7 @@
 ﻿@using System.Security.Claims
 @using LivingMessiahAdmin.Helpers
 @using LivingMessiahAdmin.Security.Constants
+@using LivingMessiahAdmin.Security.Policies
 @using Microsoft.AspNetCore.Components.Authorization
 @using NavEnum = LivingMessiahAdmin.Enums.Nav
 
@@ -34,8 +35,7 @@
 				if (state.User.Identity.IsAuthenticated)
 				{
 					Email = state.User.FindFirst(ClaimTypes.Email)?.Value;
-					// IsEmailVerified = state.User.FindFirst(RoleGroup.EmailVerified.Claim)?.Value == "true";
-					IsEmailVerified = state.User.FindFirst(Policy.Claim)?.Value == "true";
+					IsEmailVerified = state.User.FindFirst(Authentication.Claim)?.Value == "true";
 					IsAuthenticated = true;
 					_claims = state.User.Claims;
 					Roles = string.Join(", ", _claims.Where(w => w.Type == Configuration.MicrosoftSchemaIdentityClaimsRole).Select(s => s.Value));
@@ -50,18 +50,6 @@
 
 		}
 	}
-
-	/*
-	IsAdmin: @IsAdmin
-	public bool IsAdmin
-	{
-		get
-		{
-			if (Roles is null) { return false; }
-			return Authenticated && Roles!.Contains(SecurityRoot.Auth0.Roles.Admin, StringComparison.InvariantCultureIgnoreCase);
-		}
-	}
-	*/
 
 	public string NameTiny =>
 	!string.IsNullOrEmpty(Username)

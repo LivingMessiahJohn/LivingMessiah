@@ -2,23 +2,12 @@
 
 @using LivingMessiahAdmin.Security.Constants
 @using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.Extensions.Options
-@using LivingMessiahAdmin.Settings
+@using RoleGroup = LivingMessiahAdmin.Security.Enums.RoleGroup;
 
 @using Page = LivingMessiahAdmin.Enums.Nav
 <PageHeader PageEnum="Page.Home" />
 
-@* 
-@inject IOptions<AppSettings>? AppSettings
-@inject IOptions<LivingMessiahAdmin.Features.WeeklyDownloads.Settings.AzureBlob>? AzureBlobSettings
-
-<p>_currentYear: @_currentYear</p>
-<p>_containerName: @_containerName</p>
-*@
-
-
-@* <AuthorizeView Policy=@RoleGroup.EmailVerifiedWithAtLeastOneRole> *@
-<AuthorizeView Policy=@Policy.Name>
+<AuthorizeView Policy=@RoleGroup.EmailVerifiedWithAtLeastOneRole>
   <Authorized>
     <NavList />
   </Authorized>
@@ -30,15 +19,5 @@
 </AuthorizeView>
 
 @code {
-  /*
-  protected int _currentYear;
-  protected string? _containerName;
-
-  protected override async Task OnInitializedAsync()
-  {
-    _currentYear = AppSettings!.Value.YearId;
-    _containerName = AzureBlobSettings?.Value.ContainerName;
-  }
   
-  */
 }

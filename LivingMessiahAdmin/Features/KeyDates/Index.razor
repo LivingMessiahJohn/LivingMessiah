@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using DataTypeEnums = RCL.Features.Calendar.Enums.DateType;
 @using FeastDatEnum = RCL.Features.Calendar.Enums.FeastDay;
+@using RoleGroup = LivingMessiahAdmin.Security.Enums.RoleGroup;
 
 @using Page = LivingMessiahAdmin.Enums.Nav
 
@@ -16,8 +17,7 @@
 
 <PageHeader PageEnum="Page.KeyDates" />
 
-@* <AuthorizeView Policy=@RoleGroup.KeyDates> *@
-<AuthorizeView Policy=@Policy.Name>
+<AuthorizeView Policy=@RoleGroup.KeyDates>
 	<Authorized>
 		<KeyDateSettingsList />
 
@@ -98,8 +98,7 @@
 	</Authorized>
 	<NotAuthorized>
 		<div class="alert alert-warning text-end" role="alert">
-			@* <small>Not Authorized; Role Group Policy: @RoleGroup.KeyDates</small> *@
-			<small>Not Authorized; Role Group Policy: @Policy.Name</small>
+			<small>Not Authorized; Role Group Policy: @RoleGroup.KeyDates</small>
 		</div>
 		<LoginRedirectCard Nav="Nav.KeyDates" ReturnUrl=@Nav.KeyDates.Index />
 	</NotAuthorized>

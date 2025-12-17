@@ -2,104 +2,121 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using LivingMessiahAdmin.Enums
 @using LivingMessiahAdmin.Security.Constants
+@using RoleEnum = LivingMessiahAdmin.Security.Enums.Role
+
 @using System.Security.Claims
 
+
 @inject NavigationManager NavigationManager
+@inject ILogger<NavList>? Logger
+@inject IToastService? Toast
 
 <div class="h5">
-  <ul class="fa-ul">
-    @if (authorizedNavItems != null)
-    {
-      @foreach (var item in authorizedNavItems)
-      {
-        <li class="py-1">
-          <span class="fa-li"><i class="@item.Icon"></i></span>
-          <a @onclick="@(e => ButtonClicked(item))"
-             title="@item.Title" class="@item.TextColor text-decoration-underline">
-            @item.Title
-          </a>
-          @if (item.Disabled)
-          {
-            <text>&nbsp;</text>
-            <span class="text-black-50"><i class="fas fa-ban"></i></span>
-          }
-        </li>
-      }
-    }
-  </ul>
+	<ul class="fa-ul">
+		@if (authorizedNavItems != null)
+		{
+			@foreach (var item in authorizedNavItems)
+			{
+				<li class="py-1">
+					<span class="fa-li"><i class="@item.Icon"></i></span>
+					<a @onclick="@(e => ButtonClicked(item))"
+						 title="@item.Title" class="@item.TextColor text-decoration-underline">
+						@item.Title
+					</a>
+					@if (item.Disabled)
+					{
+						<text>&nbsp;</text>
+						<span class="text-black-50"><i class="fas fa-ban"></i></span>
+					}
+				</li>
+			}
+		}
+	</ul>
 </div>
 
 @code {
-  [CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
 
-  private IEnumerable<Nav>? authorizedNavItems;
+	private IEnumerable<Nav>? authorizedNavItems;
 
-  protected override async Task OnInitializedAsync()
-  {
-    //authorizedNavItems = await GetAuthorizedNavItems();
-  }
+	protected override async Task OnInitializedAsync()
+	{
+		if (authenticationState is null)
+		{
+			Logger!.LogWarning("{Method} {Message}", nameof(GetUserRoleBitmask), "authenticationState is null");
+		}
 
-  private void ButtonClicked(Nav nav)
-  {
-    NavigationManager!.NavigateTo(nav.Index);
-  }
+		authorizedNavItems = await GetAuthorizedNavItems();
 
-  /*
-  private async Task<IEnumerable<Nav>> GetAuthorizedNavItems()
-  {
-    if (authenticationState == null)
-    {
-      return Nav.List.ToList()
-        .Where(w => w.Value != Nav.Home.Value && w.Value != Nav.Profile.Value && w.RequiredRoles == 0)
-        .OrderBy(o => o.Value);
-    }
+		if (authorizedNavItems is null)
+		{
+			Logger!.LogWarning("{Method} {Message}", nameof(OnInitializedAsync), $"{nameof(authorizedNavItems)} is null");
+		}
+		else if (!authorizedNavItems.Any())
+		{
+			Logger!.LogWarning("{Method} {Message}", nameof(OnInitializedAsync), $"{nameof(authorizedNavItems)} is empty");
+		}
 
-    var state = await authenticationState;
-    var userRoles = GetUserRoleBitmask(state.User);
+	}
 
-    return Nav.List.ToList()
-      .Where(w => w.Value != Nav.Home.Value && w.Value != Nav.Profile.Value && HasRequiredRole(w.RequiredRoles, userRoles))
-      .OrderBy(o => o.Value);
-  }
-  */
+	private void ButtonClicked(Nav nav)
+	{
+		NavigationManager!.NavigateTo(nav.Index);
+	}
 
-  private int GetUserRoleBitmask(ClaimsPrincipal user)
-  {
-    if (user == null || !user.Identity!.IsAuthenticated)
-    {
-      return 0;
-    }
+	private async Task<IEnumerable<Nav>> GetAuthorizedNavItems()
+	{
+		if (authenticationState == null)
+		{
+			return Nav.List.ToList()
+				.Where(w => w.Value != Nav.Home.Value && w.Value != Nav.Profile.Value && w.RequiredRoles == 0)
+				.OrderBy(o => o.Value);
+		}
 
-    int userRoles = 0;
+		var state = await authenticationState;
+		var userRoles = GetUserRoleBitmask(state.User);
 
-    // Check for each role claim and build the bitmask
-    var roleClaims = user.Claims.Where(c => c.Type == Configuration.MicrosoftSchemaIdentityClaimsRole);
+		return Nav.List.ToList()
+			.Where(w => w.Value != Nav.Home.Value && w.Value != Nav.Profile.Value && HasRequiredRole(w.RequiredRoles, userRoles))
+			.OrderBy(o => o.Value);
+	}
 
-    /*
-    foreach (var roleClaim in roleClaims)
-    {
-      if (roleClaim.Value == Role.Admin.Claim)
-        userRoles |= Role.Admin.Value;
-      else if (roleClaim.Value == Role.KeyDates.Claim)
-        userRoles |= Role.KeyDates.Value;
-      else if (roleClaim.Value == Role.Sukkot.Claim)
-        userRoles |= Role.Sukkot.Value;
-      else if (roleClaim.Value == Role.SukkotHost.Claim)
-        userRoles |= Role.SukkotHost.Value;
-      else if (roleClaim.Value == Role.Announcements.Claim)
-        userRoles |= Role.Announcements.Value;
-    }
-    */
-    return 0; // userRoles;
-  }
+	private int GetUserRoleBitmask(ClaimsPrincipal user)
+	{
+		if (user == null || !user.Identity!.IsAuthenticated) 
+		{
+			Logger!.LogWarning("{Method} {Message}", nameof(GetUserRoleBitmask), "user is null or not Authenticated, return 0;");
+			return 0;
+		}
 
-  private bool HasRequiredRole(int requiredRoles, int userRoles)
-  {
-    // If no roles are required (requiredRoles == 0), allow access
-    if (requiredRoles == 0)
-      return true;
+		int userRoles = 0;
 
-    // Check if user has any of the required roles using bitwise AND
-    return (userRoles & requiredRoles) != 0;
-  }
+		// Check for each role claim and build the bitmask
+		var roleClaims = user!.Claims.Where(c => c.Type == Configuration.MicrosoftSchemaIdentityClaimsRole);
+
+		foreach (var roleClaim in roleClaims)
+		{
+			if (roleClaim.Value == RoleEnum.Admin.Claim)
+				userRoles |= RoleEnum.Admin.Value;
+			else if (roleClaim.Value == RoleEnum.KeyDates.Claim)
+				userRoles |= RoleEnum.KeyDates.Value;
+			else if (roleClaim.Value == RoleEnum.Sukkot.Claim)
+				userRoles |= RoleEnum.Sukkot.Value;
+			else if (roleClaim.Value == RoleEnum.SukkotHost.Claim)
+				userRoles |= RoleEnum.SukkotHost.Value;
+			else if (roleClaim.Value == RoleEnum.Announcements.Claim)
+				userRoles |= RoleEnum.Announcements.Value;
+		}
+		return userRoles; 
+	}
+
+	private bool HasRequiredRole(int requiredRoles, int userRoles)
+	{
+		// If no roles are required (requiredRoles == 0), allow access
+		if (requiredRoles == 0)
+			return true;
+
+		// Check if user has any of the required roles using bitwise AND
+		return (userRoles & requiredRoles) != 0;
+	}
 }

@@ -2,31 +2,28 @@
 
 @using LivingMessiahAdmin.Security.Constants
 @using MenuBarEnums = LivingMessiahAdmin.Features.Sukkot.Enums.MenuBar;
+@using RoleGroup = LivingMessiahAdmin.Security.Enums.RoleGroup;
 @using Microsoft.AspNetCore.Components.Authorization
 
 @inject ILogger<Attendance>? Logger
 @inject IToastService? Toast
 @inject Data.IRepository? db
 
-@* <AuthorizeView Policy=@RoleGroup.Sukkot> *@
-<AuthorizeView Policy=@Policy.Name>
+<AuthorizeView Policy=@RoleGroup.Sukkot>
 	<Authorized>
 		<div class="alert alert-success text-end" role="alert">
-			@* <small>Authorized: Role Group Policy: @RoleGroup.Sukkot</small> *@
-			<small>Authorized: Role Group Policy: @Policy.Name</small>
+			<small>Authorized: Role Group Policy: @RoleGroup.Sukkot</small>
 		</div>
 	</Authorized>
 	<NotAuthorized>
 		<div class="alert alert-warning text-end" role="alert">
-			@* <small>Authorized: Role Group Policy: @RoleGroup.Sukkot</small> *@
-			<small>Authorized: Role Group Policy: @Policy.Name</small>
+			<small>Authorized: Role Group Policy: @RoleGroup.Sukkot</small>
 		</div>
 	</NotAuthorized>
 </AuthorizeView>
 
 
-@* <AuthorizeView Policy=@RoleGroup.Sukkot> *@
-<AuthorizeView Policy=@Policy.Name>
+<AuthorizeView Policy=@RoleGroup.Sukkot>
 	<Authorized>
 		<PageHeaderMenubar MenuBarEnum=MenuBarEnums.Report ShowPrintButton=true />
 		<p class="text-center">The attendance for every day followed by a summary of people who attended regardless of which day(s).</p>

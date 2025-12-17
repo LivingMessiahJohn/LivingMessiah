@@ -1,8 +1,8 @@
-﻿namespace LivingMessiahAdmin.Security.Constants;
+﻿namespace LivingMessiahAdmin.Security.Enums;
 
-// Copied from LivingMessiahSukkot, currently not being used, but will be after refactoring out Enums.Roles
-public static class Roles
+public static class RoleGroup
 {
+	public const string EmailVerifiedWithAtLeastOneRole = "EmailVerifiedWithAtLeastOneRole";
 	public const string User = "user";
 	public const string Admin = "admin";
 	public const string Announcements = "announcements";

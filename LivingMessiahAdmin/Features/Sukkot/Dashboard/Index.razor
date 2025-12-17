@@ -1,4 +1,4 @@
-﻿@using FilterEnums = LivingMessiahAdmin.Features.Sukkot.Dashboard.Enums.Filter
+﻿@using RoleGroup = LivingMessiahAdmin.Security.Enums.RoleGroup;
 
 @page "/SukkotDashboard"
 
@@ -6,8 +6,7 @@
 @using MenuBarEnums = LivingMessiahAdmin.Features.Sukkot.Enums.MenuBar;
 @using Microsoft.AspNetCore.Components.Authorization
 
-@* <AuthorizeView Policy=@RoleGroup.Sukkot> *@
-<AuthorizeView Policy=@Policy.Name>
+<AuthorizeView Policy=@RoleGroup.Sukkot>
   <Authorized>
     <PageHeaderMenubar MenuBarEnum=MenuBarEnums.Dashboard />
     <Grid />
@@ -16,13 +15,12 @@
   <NotAuthorized>
     <LoginRedirectCard Nav="Nav.SukkotDashboard" ReturnUrl=@Nav.SukkotDashboard.Index />
     <div class="alert alert-warning text-end" role="alert">
-      @* <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small> *@
-      <small>Not Authorized; Role Group Policy: @Policy.Name</small>
+      <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small> 
     </div>
   </NotAuthorized>
 </AuthorizeView>
 
 
 @code {
-// ToDo: Force a PR, what does this mean
+
 }

@@ -1,0 +1,149 @@
+﻿@inject ILogger<AuthorizedSection>? Logger
+@inject IToastService? Toast
+@inject Sukkot.IRepository? dbSukkot
+@inject LM.IRepository? dbLivingMessiah
+
+<div class="alert alert-info text-end" role="alert">
+  <small><b>ServerIdSukkot:</b> @ServerIdSukkot</small>
+  <small><b>ServerIdLivingMessiah:</b> @ServerIdLivingMessiah</small>
+</div>
+
+<DatabaseSelectorButton CurrentDatabase="CurrentDatabase" OnDatabaseSelected="ReturnedDatabase" />
+<ActionButtons CurrentDatabase="CurrentDatabase" OnActionSelected="@ReturnedAction" />
+
+<LoadingComponent IsLoading="ErrorLogs == null" TurnSpinnerOff=TurnSpinnerOff>
+  <Table ErrorLogs="ErrorLogs" />
+</LoadingComponent>
+
+@code {
+  protected Data.Enums.Database? CurrentDatabase { get; set; }
+  public List<zvwErrorLog>? ErrorLogs { get; set; }
+
+  private string? ServerIdSukkot => dbSukkot!.BaseServerId;
+  private string? ServerIdLivingMessiah => dbLivingMessiah!.BaseServerId;
+
+  protected override async Task OnInitializedAsync()
+  {
+    if (CurrentDatabase is null)
+    {
+      //CurrentDatabase = Data.Enums.Database.Sukkot;
+      CurrentDatabase = Data.Enums.Database.LivingMessiah;
+      Logger!.LogDebug("{Method}, {Database}", nameof(OnInitializedAsync), CurrentDatabase.Name);
+
+      await PopulateTable();
+    }
+  }
+
+
+  private async Task ReturnedDatabase(Data.Enums.Database database)
+  {
+    Logger!.LogDebug("{Method}, {Database}", nameof(ReturnedDatabase), database.Name);
+    CurrentDatabase = database;
+    await PopulateTable();
+  }
+
+  private async Task ReturnedAction(Enums.Action action)
+  {
+    Logger!.LogDebug("{Method}, {Action}", nameof(ReturnedAction), action.Name);
+    switch (action.Name)
+    {
+      case nameof(Enums.Action.EmptyLog):
+        await EmptyErrorLog();
+        Toast!.ShowInfo($"...just called {nameof(EmptyErrorLog)}, now calling {nameof(PopulateTable)}");
+        await PopulateTable();
+        break;
+
+      case nameof(Enums.Action.TestInsert):
+        await LogErrorTest();
+        Toast!.ShowInfo($"...just called {nameof(LogErrorTest)}, now calling {nameof(PopulateTable)}");
+        await PopulateTable();
+        break;
+
+      default:
+        break;
+    }
+
+  }
+
+  #region DatabaseAction
+
+  private int AffectedRows { get; set; } = 0;
+
+  private async Task LogErrorTest()
+  {
+    Logger!.LogDebug("{Method}", nameof(LogErrorTest));
+    try
+    {
+      if (CurrentDatabase == Data.Enums.Database.LivingMessiah)
+      {
+        AffectedRows = await dbLivingMessiah!.LogErrorTest();
+      }
+      else
+      {
+        AffectedRows = await dbSukkot!.LogErrorTest();
+        Toast!.ShowInfo($"Called {nameof(LogErrorTest)}, AffectedRows: {AffectedRows}");
+      }
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(LogErrorTest));
+      Toast!.ShowError($"{Global.ToastShowError} | {nameof(LogErrorTest)}");
+    }
+
+  }
+
+  private async Task EmptyErrorLog()
+  {
+    Logger!.LogDebug("{Method}", nameof(EmptyErrorLog));
+    Toast!.ShowInfo($"Called {nameof(EmptyErrorLog)}");
+
+    try
+    {
+      if (CurrentDatabase == Data.Enums.Database.LivingMessiah)
+      {
+        AffectedRows = await dbLivingMessiah!.EmptyErrorLog();
+      }
+      else
+      {
+        AffectedRows = await dbSukkot!.EmptyErrorLog();
+      }
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(EmptyErrorLog));
+      Toast!.ShowError($"{Global.ToastShowError} | {nameof(EmptyErrorLog)}");
+    }
+
+  }
+
+  bool TurnSpinnerOff = false;
+  private async Task PopulateTable()
+  {
+    Logger!.LogDebug("{Method}", nameof(PopulateTable));
+    await Task.Delay(200);
+    TurnSpinnerOff = false;
+    try
+    {
+      if (CurrentDatabase == Data.Enums.Database.LivingMessiah)
+      {
+        ErrorLogs = await dbLivingMessiah!.GetzvwErrorLog();
+      }
+      else
+      {
+        ErrorLogs = await dbSukkot!.GetzvwErrorLog();
+      }
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(PopulateTable));
+      Toast!.ShowError($"{Global.ToastShowError} | {nameof(PopulateTable)}");
+    }
+    finally
+    {
+      TurnSpinnerOff = true;
+		} 
+
+  }
+  #endregion
+
+}
