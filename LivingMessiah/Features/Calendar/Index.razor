@@ -1,12 +1,11 @@
 ﻿@page "/Calendar"
 @page "/KeyDates"
 
-@using LivingMessiah.Features.FeastDayPlanner
-@using LivingMessiah.Settings
 @using RCL.Features.Calendar
 @using RCL.Features.Calendar.Navigation
 @using RCLEnums = RCL.Features.Calendar.Navigation.Enums
- 
+@using CalendarEnumDateType = RCL.Features.Calendar.Enums.DateType
+
 @* IToastService? Toast *@
 
 <PageHeader PageEnum="LivingMessiah.Enums.Nav.Calendar" />
@@ -22,7 +21,7 @@
 	</PrevButtonDivRF>
 
 	<TitleRF>
-		<h4 class="text-center mb-0">@CurrentDateOnly.ToString(DateFormat.MMMM_YYYY)</h4>
+		<h5 class="text-center mb-0">@CurrentDateOnly.ToString(DateFormat.MMMM_YYYY)</h5>
 	</TitleRF>
 
 	<NextButtonDivRF>
@@ -35,22 +34,36 @@
 
 </NavSkeleton>
 
-<div class="border-bottom border-warning border-4 mb-1">
+<div class="border-bottom border-dark border-4 ">
 	<WeekdayHeader />
 </div>
 
 <Wrapper IsXsOrSm="false" CurrentDateOnly="CurrentDateOnly" />
 @* <Wrapper IsXsOrSm="false" CurrentDateOnly="CurrentDateOnly" CurrentDateOnlyOverride="CurrentDateOnlyOverride" /> *@
 
-<RawDataTable />
+<div class="row mt-2">
+	<div class="col-12">
+
+		<ToggleButton ButtonLabel="Raw Data">
+
+			<div class="card bg-warning-subtle p-1">
+				<RawDataTable CurrentFilter="CurrentFilter" OnFilterSelected="ReturnedRawDataFilter" />
+			</div>
+
+		</ToggleButton>
+
+	</div>
+</div>
+
+
 
 @code {
 	public DateOnly CurrentDateOnly = DateOnly.FromDateTime(DateTime.Today);
 	public DateOnly CurrentDateOnlyOverride = new DateOnly(2026, 1, 20);
+	protected CalendarEnumDateType? CurrentFilter = CalendarEnumDateType.All; 
 
 	protected override void OnInitialized()
 	{
-		//CurrentDateOnly = DateOnly.FromDateTime(CurrentDate);
 		//Logger!.LogDebug("{Method}, CurrentDateOnly: {CurrentDateOnly}", nameof(OnInitialized), CurrentDateOnly.ToShortDateString());
 	}
 
@@ -60,6 +73,12 @@
 	{
 		CurrentDateOnly = dateOnly;
 		//Toast!.ShowInfo($"Selected Date: {CurrentDateOnly.ToString("MMMM yyyy")}");
+	}
+
+	private void ReturnedRawDataFilter(CalendarEnumDateType filter)
+	{
+		//Logger!.LogDebug("{Method} {Message}", nameof(ReturnedRawDataFilter), filter.Name);
+		CurrentFilter = filter;
 	}
 
 	#endregion
