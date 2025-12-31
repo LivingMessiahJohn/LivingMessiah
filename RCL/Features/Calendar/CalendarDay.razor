@@ -4,20 +4,20 @@
 	if (Date == EffectiveCurrentDate)
 	{
 		<div class="calendar-day today">
-			<div class="">@Date.Day  X  </div>
+			<div class="day-number">@Date.Day</div>
 		</div>
 	}
 	else
 	{
 		<div class="calendar-day">
-			<div class="">@Date.Day</div>
+			<div class="day-number">@Date.Day</div>
 		</div>
 	}
 }
 else
 {
 	<div class="calendar-day other-month">
-		<div class="">@Date.Day</div>
+		<div class="day-number">@Date.Day</div>
 	</div>
 }
 

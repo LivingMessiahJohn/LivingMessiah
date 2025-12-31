@@ -13,7 +13,7 @@
 
 @if (DateOnlyRange is not null)
 {
-	<p>Date Range @DateOnlyRange.Start.ToString("MMM, yyyy") - @DateOnlyRange.End.ToString("MMM, yyyy")</p>
+	<p class="text-center"><b>Date Range</b> @DateOnlyRange.Start.ToString("MMM, yyyy") - @DateOnlyRange.End.ToString("MMM, yyyy")</p>
 }
 
 <TableTemplate HeaderCSS="table table-sm table-warning table-hover"
@@ -21,7 +21,7 @@
 	<TableHeader>
 		<th><br />Date</th>
 		<th><br />#</th>
-		<th>Has<br />Dupes</th>
+		@* <th>Has<br />Dupes</th> *@
 		<th>Dupe<br />Count</th>
 		<th><br />Type</th>
 		<th><br />Description</th>
@@ -30,7 +30,7 @@
 	<RowTemplate>
 		<td>@context.Date.ToString("MMM dd, yyyy")</td>
 		<td>@context.RowNumber</td>
-		<td>@context.HasDupes</td>
+		@* <td>@context.HasDupes</td> *@
 		<td>@context.DupeCount</td>
 		<td>
 			<span class="badge @context.DateType.BadgeColor text-dark fw-bold fs-6">@context.DateType.Name</span>
@@ -40,14 +40,15 @@
 </TableTemplate>
 
 @code {
-	private CalendarEnumDateType? CurrentFilter { get; set; } = CalendarEnumDateType.All;
+	[Parameter, EditorRequired] public CalendarEnumDateType? CurrentFilter { get; set; } // = CalendarEnumDateType.All;
+	[Parameter, EditorRequired] public EventCallback<CalendarEnumDateType> OnFilterSelected { get; set; }
 
 	private Data.DateOnlyRange? DateOnlyRange;
 	private List<Data.DtoCombined>? DtoCombinedList { get; set; }
 
-	protected override void OnInitialized()
-	{
-		Populate();
+	protected override void OnParametersSet() 
+	{ 
+		Populate(); 
 	}
 
 	private void Populate()
@@ -64,7 +65,7 @@
 	private void ReturnedFilter(CalendarEnumDateType filter)
 	{
 		//Logger!.LogDebug("{Method} {Message}", nameof(ReturnedFilter), filter.Name);
-		CurrentFilter = filter;
+		OnFilterSelected.InvokeAsync(filter);
 	}
 
 }
