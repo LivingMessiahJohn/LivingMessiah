@@ -3,64 +3,64 @@
 
 @using LivingMessiah.Features.FeastDayPlanner
 @using LivingMessiah.Settings
-@using Microsoft.Extensions.Options
-
-@inject IOptions<AppSettings>? AppSettings
-@inject ILogger<Index>? Logger
+@using RCL.Features.Calendar
+@using RCL.Features.Calendar.Navigation
+@using RCLEnums = RCL.Features.Calendar.Navigation.Enums
+ 
+@* IToastService? Toast *@
 
 <PageHeader PageEnum="LivingMessiah.Enums.Nav.Calendar" />
-@* 
 
-@if (printedCalendarEnum == PrintedCalendarEnum.ReadyForSale | printedCalendarEnum == PrintedCalendarEnum.OnlyShowCover)
-{
-	<div class="@MediaQuery.XsOrSm.DivClass">
-		<LmmCalendarAdvertisement IsXsOrSm="true" PrintedCalendarEnum="@printedCalendarEnum" Year="@YearId" />
-	</div>
-	<div class="d-none d-md-block">
-		<LmmCalendarAdvertisement IsXsOrSm="false" PrintedCalendarEnum="@printedCalendarEnum" Year="@YearId" />
-	</div>
-}
- *@
+<NavSkeleton>
 
-<div class="@MediaQuery.XsOrSm.DivClass">
-	<div class="card bg-secondary text-white mb-0">
-		@* <CalendarSfSchedule IsXsOrSm="true" YearId="@YearId" /> *@
-		<div class="alert alert-warning text-center" role="alert">
-			<p class="fs-2 bg-warning-subtle text-dark text-center">We are working on updating calendar 2026</p>
-		</div>
-	</div>
+	@* <JustifyStartRF><HomeButton /></JustifyStartRF> *@
+
+	<PrevButtonDivRF>
+		<PreviousOrNextButton CurrentDateOnly="CurrentDateOnly"
+													Direction=RCLEnums.Direction.Previous
+													OnDateOnlySelected="ReturnedDateOnlySelected" />
+	</PrevButtonDivRF>
+
+	<TitleRF>
+		<h4 class="text-center mb-0">@CurrentDateOnly.ToString(DateFormat.MMMM_YYYY)</h4>
+	</TitleRF>
+
+	<NextButtonDivRF>
+		<PreviousOrNextButton CurrentDateOnly="CurrentDateOnly"
+													Direction=RCLEnums.Direction.Next
+													OnDateOnlySelected="ReturnedDateOnlySelected" />
+	</NextButtonDivRF>
+
+	@* <JustifyEndRF><ModalMenuItemButtons OnModalSelected="ReturnedModalMenuItem" /></JustifyEndRF> *@
+
+</NavSkeleton>
+
+<div class="border-bottom border-warning border-4 mb-1">
+	<WeekdayHeader />
 </div>
 
-<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-	@* <CalendarSfSchedule IsXsOrSm="false" YearId="@YearId" /> *@
-	<p class="fs-2 bg-warning-subtle text-dark text-center">We are working on updating calendar 2026</p>
-</div>
+<Wrapper IsXsOrSm="false" CurrentDateOnly="CurrentDateOnly" />
+@* <Wrapper IsXsOrSm="false" CurrentDateOnly="CurrentDateOnly" CurrentDateOnlyOverride="CurrentDateOnlyOverride" /> *@
 
+<RawDataTable />
 
-@* <LivingMessiah.Features.FeastDayPlanner.Index /> *@
-
-@if (CarouselSettings.Display)
-{
-	<div class="@MediaQuery.Xs.DivClass">
-		<Carousel IsXs=true/>
-	</div>
-	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
-		<Carousel IsXs=false />
-	</div>
-}
-
-
-<CalendarExplanation /> 
-
- @code {
-	public int YearId { get; set; }
-	private PrintedCalendarEnum printedCalendarEnum { get; set; }
+@code {
+	public DateOnly CurrentDateOnly = DateOnly.FromDateTime(DateTime.Today);
+	public DateOnly CurrentDateOnlyOverride = new DateOnly(2026, 1, 20);
 
 	protected override void OnInitialized()
 	{
-		YearId = AppSettings!.Value.YearId;
-		Logger!.LogDebug("{Method}, YearId: {YearId}", nameof(OnInitialized), YearId);
-
-		printedCalendarEnum = PrintedCalendarEnum.OnlyShowCover;
+		//CurrentDateOnly = DateOnly.FromDateTime(CurrentDate);
+		//Logger!.LogDebug("{Method}, CurrentDateOnly: {CurrentDateOnly}", nameof(OnInitialized), CurrentDateOnly.ToShortDateString());
 	}
+
+	#region EventCallbacks
+
+	private async Task ReturnedDateOnlySelected(DateOnly dateOnly)
+	{
+		CurrentDateOnly = dateOnly;
+		//Toast!.ShowInfo($"Selected Date: {CurrentDateOnly.ToString("MMMM yyyy")}");
+	}
+
+	#endregion
 }

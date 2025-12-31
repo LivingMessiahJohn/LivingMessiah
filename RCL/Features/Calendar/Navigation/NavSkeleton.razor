@@ -1,0 +1,31 @@
+﻿<nav class="navbar navbar-expand bg-primary-subtle">
+
+
+	@* <div class="d-flex justify-content-start"><div class="px-1">@JustifyStartRF</div></div> *@
+
+	<div class="collapse navbar-collapse justify-content-between">
+
+		<div class="px-1">@PrevButtonDivRF</div>
+
+		<div class="col">
+			@TitleRF
+		</div>
+
+		<div class="px-1"> @NextButtonDivRF </div>
+
+	</div>
+
+	@* <div class="d-flex justify-content-end pe-1">@JustifyEndRF</div> *@
+
+</nav>
+<br />
+
+
+@code {
+	// [Parameter, EditorRequired] public RenderFragment? JustifyStartRF { get; set; }
+	[Parameter, EditorRequired] public RenderFragment? PrevButtonDivRF { get; set; }
+	[Parameter, EditorRequired] public RenderFragment? TitleRF { get; set; }
+	[Parameter, EditorRequired] public RenderFragment? NextButtonDivRF { get; set; }
+	// [Parameter, EditorRequired] public RenderFragment? JustifyEndRF { get; set; }
+	//[Parameter, EditorRequired] public int MonthId { get; set; }
+}

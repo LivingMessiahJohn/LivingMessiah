@@ -2,13 +2,13 @@
 
 public static class FeastDayDates
 {
-	public static readonly DateTime Hanukkah = Convert.ToDateTime("2024-12-25"); // EnumId: 1; Hanukkah
-	public static readonly DateTime Purim = Convert.ToDateTime("2025-03-14"); // EnumId: 2; Purim
-	public static readonly DateTime Passover = Convert.ToDateTime("2025-04-13"); // EnumId: 3; Passover
-	public static readonly DateTime Weeks = Convert.ToDateTime("2025-06-02"); // EnumId: 4; Weeks
-	public static readonly DateTime Trumpets = Convert.ToDateTime("2025-09-23"); // EnumId: 5; Trumpets
-	public static readonly DateTime YomKippur = Convert.ToDateTime("2025-10-02"); // EnumId: 6; Yom Kippur
-	public static readonly DateTime Tabernacles = Convert.ToDateTime("2025-10-06"); // EnumId: 7; Tabernacles
+  public static readonly DateTime Hanukkah = Convert.ToDateTime("2025-12-14");
+  public static readonly DateTime Purim = Convert.ToDateTime("2026-03-03");
+  public static readonly DateTime Passover = Convert.ToDateTime("2026-04-03");
+  public static readonly DateTime Weeks = Convert.ToDateTime("2026-05-23");
+  public static readonly DateTime Trumpets = Convert.ToDateTime("2026-09-12");
+  public static readonly DateTime YomKippur = Convert.ToDateTime("2026-09-21");
+  public static readonly DateTime Tabernacles = Convert.ToDateTime("2026-09-26");
 }
 
 /*

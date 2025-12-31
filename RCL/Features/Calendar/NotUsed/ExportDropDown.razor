@@ -1,0 +1,24 @@
+﻿
+<div class="dropdown d-inline-block">
+	<button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+		Export
+	</button>
+	<ul class="dropdown-menu">
+		<li>
+			<button class="dropdown-item" type="button" @onclick='() => OnExportSelected("Excel")'>	Excel</button>
+		</li>
+		<li>
+			<button class="dropdown-item" type="button" @onclick='() => OnExportSelected("iCalendar")'>	iCalendar</button>
+		</li>
+	</ul>
+</div>
+
+@code {
+	[Parameter] public EventCallback<string> SelectedOptionChanged { get; set; }
+
+	private async Task OnExportSelected(string format)
+	{
+		await SelectedOptionChanged.InvokeAsync(format);
+	}
+
+}

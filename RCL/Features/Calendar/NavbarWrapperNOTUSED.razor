@@ -1,0 +1,28 @@
+﻿@using RCL.Constants
+
+@*  <div class="d-print-none"> *@
+
+<nav class="navbar navbar-expand bg-primary-subtle">
+	<div class="collapse navbar-collapse justify-content-between">
+
+		<div class="px-1">@PrevButtonDivRF</div>
+
+		<div class="col">
+			@* @TitleRF *@
+			<h4 class="text-center mb-0">@CurrentDate.ToString(DateFormat.MMMM_YYYY)</h4>
+		</div>
+
+		<div class="px-1"> @NextButtonDivRF </div>
+
+	</div>
+
+</nav>
+
+@* 	</div> *@
+
+@code {
+	[Parameter, EditorRequired] public RenderFragment? PrevButtonDivRF { get; set; }
+	[Parameter, EditorRequired] public RenderFragment? NextButtonDivRF { get; set; }
+	[Parameter, EditorRequired] public DateTime CurrentDate { get; set; }
+	//[Parameter, EditorRequired] public RenderFragment? TitleRF { get; set; }
+}

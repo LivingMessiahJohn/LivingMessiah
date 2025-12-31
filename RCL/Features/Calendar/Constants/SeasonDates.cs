@@ -2,11 +2,11 @@
 
 public static class SeasonDates
 {
-	public static readonly DateTime Winter = Convert.ToDateTime("2024-12-20");
-	public static readonly DateTime Spring = Convert.ToDateTime("2025-03-17");
-	public static readonly DateTime Summer = Convert.ToDateTime("2025-06-20");
-	public static readonly DateTime Fall = Convert.ToDateTime("2025-09-26");
-	public static readonly DateTime WinterNextYear = Convert.ToDateTime("2025-12-20");
+  public static readonly DateTime Winter = Convert.ToDateTime("2025-12-21");
+  public static readonly DateTime Spring = Convert.ToDateTime("2026-03-17");
+  public static readonly DateTime Summer = Convert.ToDateTime("2026-06-20");
+  public static readonly DateTime Fall = Convert.ToDateTime("2026-09-26");
+  public static readonly DateTime WinterNextYear = Convert.ToDateTime("2026-12-20");
 }
 
 /*

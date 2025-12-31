@@ -76,15 +76,11 @@
 
 
 ## Porting elsewhere
-- [ ] ArchivedVideos
-- [ ] Calendar\ManageKeyDates
-- [ ] Calendar\ManageParashaCalendar
 - [ ] Contacts
 - [ ] PsalmsAndProverbs
 - [ ] SampleCode: What to do with this?  Maybe move to LivingMessiahSample project
 - [ ] SpecialEvents
 - [ ] Shavuot: Most of this can be found in the new calendar design I want [see](C:\Source\LivingeMessiahBackup\Feature-Ideas\999-Calendar-based-on-Bootstrap-7-col-grid\999-Calendar-based-on-Bootstrap-7-col-grid.md)
-- [ ] WindmillRanch:
 
 ## New features to add
 - [-] Sitemap: Navigation Search:

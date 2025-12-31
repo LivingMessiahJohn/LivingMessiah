@@ -26,6 +26,7 @@ public static class DateFormat
 	public const string YYYY_MM_DD = "yyyy-MM-dd";
 	public const string YYYY_MMMM_DD = "yyyy MMMM dd";
 	public const string FeastDayPlanner = "ddd, MMM dd";
+	public const string MMMM_YYYY = "MMMM yyyy";
 }
 
 public static class CurrencyFormat

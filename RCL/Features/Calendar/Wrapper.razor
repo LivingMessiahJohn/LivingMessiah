@@ -1,0 +1,45 @@
+﻿@* 
+ToDo: how to inject ILogger in a Razor Class Library component?
+ @inject ILogger<Wrapper>? Logger 
+*@
+
+<div class="hebrew-calendar">
+	@for (int row = 0; row < Dates.Count / 7; row++)
+	{
+		@for (int col = 0; col < 7; col++)
+		{
+			var date = Dates[row * 7 + col];
+			<CalendarDay Date="date" MonthId="CurrentDateOnly.Month" CurrentDateOverride="CurrentDateOnlyOverride" />
+		}
+	}
+</div>
+
+@code {
+	[Parameter, EditorRequired] public DateOnly CurrentDateOnly { get; set; }
+	[Parameter] public DateOnly? CurrentDateOnlyOverride { get; set; }
+	[Parameter] public bool IsXsOrSm { get; set; }
+
+	private List<DateOnly> Dates { get; set; } = new();
+
+	protected override void OnParametersSet()
+	{
+		try
+		{
+			int year = CurrentDateOnly.Year; // YearId;
+			int month = CurrentDateOnly.Month; // MonthId;
+			var firstDay = new DateOnly(year, month, 1);
+			var lastDay = new DateOnly(year, month, DateTime.DaysInMonth(year, month));
+			var start = firstDay.AddDays(-(int)firstDay.DayOfWeek); // Start from Sunday
+			var end = lastDay.AddDays(6 - (int)lastDay.DayOfWeek); // End on Saturday
+			Dates = new List<DateOnly>();
+			for (var date = start; date <= end; date = date.AddDays(1))
+			{
+				Dates.Add(date);
+			}
+		}
+		catch (Exception ex)
+		{
+			//Logger!.LogError(ex, "{Method} failed for CurrentDate: {CurrentDate}", nameof(OnParametersSet), CurrentDate.ToShortDateString());
+		}
+	}
+}

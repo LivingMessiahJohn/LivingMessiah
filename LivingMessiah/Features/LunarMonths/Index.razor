@@ -11,6 +11,7 @@
 
 @inject IToastService? Toast
 @inject ILogger<Index>? Logger
+@inject Service.Data.IService? svc
 
 <PageHeader PageEnum="LivingMessiah.Enums.Nav.LunarMonth" />
 
@@ -32,7 +33,6 @@
 
 <Table />
 
-@inject Service.Data.IService? svc
 
 @code {
 

@@ -2,29 +2,31 @@
 
 public static class LunarMonthDates // See FN1
 {
-	public static readonly DateTime HeshvanPrevGregYrMonth = Convert.ToDateTime("2024-10-31");
-	public static readonly DateTime KislevPrevGregYrMonth = Convert.ToDateTime("2024-11-30");
-	public static readonly DateTime TevetPrevGregYrMonth = Convert.ToDateTime("2025-01-01");
-	public static readonly DateTime Shevat = Convert.ToDateTime("2025-01-30");
-	public static readonly DateTime Adar = Convert.ToDateTime("2025-03-01");
+  public static readonly DateTime HeshvanPrevGregYrMonth = Convert.ToDateTime("2025-10-12"); // 2025-10-23 - Mo 8
+  public static readonly DateTime KislevPrevGregYrMonth = Convert.ToDateTime("2025-11-09"); //2025-11-21 - Mo 9
+  public static readonly DateTime TevetPrevGregYrMonth = Convert.ToDateTime("2025-12-10"); //2025-12-21 - Mo 10
+    public static readonly DateTime Shevat = Convert.ToDateTime("2026-01-09");  // 2025-01-30 - Mo 11
 
-	/*
+  public static readonly DateTime Adar = Convert.ToDateTime("2026-02-18");
+
+
+  /*
 	See FN2
 	public static readonly DateTime Adar2 = Adar;
 	public static readonly DateTime Adar2 = DateTime.MinValue;
 	*/
-	public static readonly DateTime Adar2 = Convert.ToDateTime("2025-03-02");
+  public static readonly DateTime Adar2 = Convert.ToDateTime("2026-02-19");
 
-	public static readonly DateTime Nissan = Convert.ToDateTime("2025-03-30");
-	public static readonly DateTime Iyar = Convert.ToDateTime("2025-04-29");
-	public static readonly DateTime Sivan = Convert.ToDateTime("2025-05-28");
-	public static readonly DateTime Tammuz = Convert.ToDateTime("2025-06-27");
-	public static readonly DateTime Av = Convert.ToDateTime("2025-07-26");
-	public static readonly DateTime Elul = Convert.ToDateTime("2025-08-25");
-	public static readonly DateTime Tishri = Convert.ToDateTime("2025-09-23");
-	public static readonly DateTime Heshvan = Convert.ToDateTime("2025-10-23");
-	public static readonly DateTime Kislev = Convert.ToDateTime("2025-11-21");
-	public static readonly DateTime Tevet = Convert.ToDateTime("2025-12-21");
+  public static readonly DateTime Nissan = Convert.ToDateTime("2026-03-20");
+  public static readonly DateTime Iyar = Convert.ToDateTime("2026-04-18");
+  public static readonly DateTime Sivan = Convert.ToDateTime("2026-05-18");
+  public static readonly DateTime Tammuz = Convert.ToDateTime("2026-06-16");
+  public static readonly DateTime Av = Convert.ToDateTime("2026-07-15");
+  public static readonly DateTime Elul = Convert.ToDateTime("2026-08-14");
+  public static readonly DateTime Tishri = Convert.ToDateTime("2026-09-12");
+  public static readonly DateTime Heshvan = Convert.ToDateTime("2026-10-12");
+  public static readonly DateTime Kislev = Convert.ToDateTime("2026-11-10");
+  public static readonly DateTime Tevet = Convert.ToDateTime("2026-12-10");
 }
 
 /* 

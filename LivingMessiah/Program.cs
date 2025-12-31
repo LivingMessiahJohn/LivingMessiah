@@ -3,7 +3,9 @@ using Syncfusion.Blazor;
 using Blazored.Toast;
 using Blazored.LocalStorage;
 using LivingMessiah.Components;
-using LivingMessiah.Features.Calendar;
+
+using RCL.Features.Calendar.Data;
+
 using LivingMessiah.Features.FeastDayPlanner.Data;
 using LivingMessiah.Settings;
 using LivingMessiah.State;
@@ -68,7 +70,9 @@ try
 				policy.RequireClaim(Policy.Claim, "true"));
 	builder.Services.AddScoped<AppState>(); // Scoped is more common for Blazor Server apps	
 	builder.Services.AddApplicationInsightsTelemetry();
-	builder.Services.AddCalendar();
+
+
+	builder.Services.AddCalendar(); // from RCL/Features/Calendar/Data/ServiceCollectionExtensions.cs
 	builder.Services.AddFeastDayPlanner();
 	builder.Services.AddAuth0WebAppAuthentication(options =>
 	{

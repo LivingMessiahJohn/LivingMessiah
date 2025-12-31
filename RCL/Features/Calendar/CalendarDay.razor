@@ -1,0 +1,32 @@
+﻿@if (Date.Month == MonthId)
+{
+
+	if (Date == EffectiveCurrentDate)
+	{
+		<div class="calendar-day today">
+			<div class="">@Date.Day  X  </div>
+		</div>
+	}
+	else
+	{
+		<div class="calendar-day">
+			<div class="">@Date.Day</div>
+		</div>
+	}
+}
+else
+{
+	<div class="calendar-day other-month">
+		<div class="">@Date.Day</div>
+	</div>
+}
+
+@code {
+	[Parameter, EditorRequired] public DateOnly Date { get; set; }
+	[Parameter] public int MonthId { get; set; }
+	[Parameter] public DateOnly? CurrentDateOverride { get; set; }
+
+	private DateOnly EffectiveCurrentDate => CurrentDateOverride ?? DateOnly.FromDateTime(DateTime.Today);
+
+	//[Parameter, EditorRequired] public DateOnly Date { get; set; } = new DateOnly(2026, 1, 20);
+}

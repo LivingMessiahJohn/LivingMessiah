@@ -41,19 +41,19 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int Parasha = 13;  // PageParasha.Archive
 		internal const int Welcome = 14;
 		internal const int Liturgy = 15; 
-		internal const int UpcomingEvents = 16; // ToDo: replace with SpecialEvents
-		internal const int WindmillRanch = 17;
-		internal const int TorahTuesday = 18;
-		internal const int IndepthStudy = 19;
-		internal const int About = 20;
-		internal const int BloodMoons = 21;
-		internal const int Articles = 22;
-		internal const int FurtherStudies = 23;	
-		internal const int ImportantLinks = 24;
-		internal const int ShabbatService = 25;
-		internal const int Profile = 26;
-		internal const int PasswordChanged = 27;
-		internal const int WeeklyDownload = 28;
+		internal const int TorahTuesday = 16;
+		internal const int About = 17;
+		internal const int BloodMoons = 18;
+		internal const int Articles = 19;
+		internal const int FurtherStudies = 20;	
+		internal const int ImportantLinks = 21;
+		internal const int ShabbatService = 22;
+		internal const int Profile = 23;
+		internal const int PasswordChanged = 24;
+		internal const int WeeklyDownload = 25;
+		//internal const int CalendarRawData = 26;
+		//internal const int UpcomingEvents = 27; // ToDo: replace with SpecialEvents
+		//internal const int IndepthStudy = 28;
 	}
 	#endregion
 
@@ -73,10 +73,7 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav Parasha = new ParashaSE();
 	public static readonly Nav Welcome = new WelcomeSE();
 	public static readonly Nav Liturgy = new LiturgySE();
-	public static readonly Nav UpcomingEvents = new UpcomingEventsSE();
-	public static readonly Nav WindmillRanch = new WindmillRanchSE();
 	public static readonly Nav TorahTuesday = new TorahTuesdaySE();
-	public static readonly Nav IndepthStudy = new IndepthStudySE();
 	public static readonly Nav About = new AboutSE();
 	public static readonly Nav BloodMoons = new BloodMoonsSE();
 	public static readonly Nav Articles = new ArticlesSE();
@@ -86,6 +83,9 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav Profile = new ProfileSE();
 	public static readonly Nav PasswordChanged = new PasswordChangedSE();
 	public static readonly Nav WeeklyDownload = new WeeklyDownloadSE();
+	//public static readonly Nav CalendarRawData = new CalendarRawDataSE();
+	//public static readonly Nav UpcomingEvents = new UpcomingEventsSE();
+	//public static readonly Nav IndepthStudy = new IndepthStudySE();
 
 	#endregion
 
@@ -337,57 +337,13 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false;
 	}
 
-	// ToDo Delete
-	private sealed class UpcomingEventsSE : Nav
-	{
-		public UpcomingEventsSE() : base($"{nameof(Id.UpcomingEvents)}", Id.UpcomingEvents) { }
-		public override string Index => "/UpcomingEvents";
-		public override string Title => "Upcoming Events";
-		public override string Icon => "far fa-clock";
-		public override int Sort => Id.UpcomingEvents;
-		public override string HomeTitleSuffix => "";
-		public override string HomeFloatRightHebrew => "";
-		public override PageListType PageListType => PageListType.SitemapPage; //  | PageListType.Layout
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => false;
-	}
-
-	private sealed class WindmillRanchSE : Nav
-	{
-		public WindmillRanchSE() : base($"{nameof(Id.WindmillRanch)}", Id.WindmillRanch) { }
-		public override string Index => "/WindmillRanch/";
-		public override string Title => "Windmill Ranch";
-		public override string Icon => "fas fa-dharmachakra";
-		//public override string Descr => "Landing page for the Windmill Ranch project";
-		public override int Sort => Id.WindmillRanch;
-		public override string HomeTitleSuffix => "";
-		public override string HomeFloatRightHebrew => "";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout; 
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => false;
-	}
-
 	private sealed class TorahTuesdaySE : Nav
 	{
 		public TorahTuesdaySE() : base($"{nameof(Id.TorahTuesday)}", Id.TorahTuesday) { }
 		public override string Index => "/TorahTuesday";
-		public override string Title => "Torah Tuesday";
+		public override string Title => "Tuesday Night Bible Study";
 		public override string Icon => "fas fa-torah";
 		public override int Sort => Id.TorahTuesday;
-		public override string HomeTitleSuffix => " Torah H8451";
-		public override string HomeFloatRightHebrew => "תּוֹרָה";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => false;
-	}
-
-	private sealed class IndepthStudySE : Nav
-	{
-		public IndepthStudySE() : base($"{nameof(Id.IndepthStudy)}", Id.IndepthStudy) { }
-		public override string Index => "/IndepthStudy";
-		public override string Title => "In-depth study";
-		public override string Icon => "fas fa-graduation-cap";
-		public override int Sort => Id.IndepthStudy;
 		public override string HomeTitleSuffix => " Torah H8451";
 		public override string HomeFloatRightHebrew => "תּוֹרָה";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
@@ -432,7 +388,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Articles;
 		public override string HomeTitleSuffix => " Ketuvim H3789";
 		public override string HomeFloatRightHebrew => "כְּתֻבִים";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override PageListType PageListType => PageListType.SitemapPage;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -529,8 +485,52 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
+	/*
 
-	
+	private sealed class CalendarRawDataSE : Nav
+	{
+		public CalendarRawDataSE() : base($"{nameof(Id.CalendarRawData)}", Id.CalendarRawData) { }
+		public override string Index => "/CalendarRawData";
+		public override string Title => "Calendar Raw Data";
+		public override string Icon => "fas fa-server";
+		public override int Sort => Id.CalendarRawData;
+		public override string HomeTitleSuffix => "";
+		public override string HomeFloatRightHebrew => "";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+
+	// ToDo Delete
+	private sealed class UpcomingEventsSE : Nav
+	{
+		public UpcomingEventsSE() : base($"{nameof(Id.UpcomingEvents)}", Id.UpcomingEvents) { }
+		public override string Index => "/UpcomingEvents";
+		public override string Title => "Upcoming Events";
+		public override string Icon => "far fa-clock";
+		public override int Sort => Id.UpcomingEvents;
+		public override string HomeTitleSuffix => "";
+		public override string HomeFloatRightHebrew => "";
+		public override PageListType PageListType => PageListType.SitemapPage; //  | PageListType.Layout
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	private sealed class IndepthStudySE : Nav
+	{
+		public IndepthStudySE() : base($"{nameof(Id.IndepthStudy)}", Id.IndepthStudy) { }
+		public override string Index => "/IndepthStudy";
+		public override string Title => "In-depth study";
+		public override string Icon => "fas fa-graduation-cap";
+		public override int Sort => Id.IndepthStudy;
+		public override string HomeTitleSuffix => " Torah H8451";
+		public override string HomeFloatRightHebrew => "תּוֹרָה";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => true;
+	}
+	 */
 
 	#endregion
 
