@@ -1,12 +1,16 @@
-﻿@page "/UpcomingEvents"
+```html
+@page "/IndepthStudy"
 
 @using Page = LivingMessiah.Enums.Nav
-<PageHeader PageEnum="Page.UpcomingEvents" />
+<PageHeader PageEnum="Page.IndepthStudy" />
 
 <div class="alert alert-warning text-center" role="alert">
 	<b>Note:</b> This page has not yet been ported over from an older version
 </div>
+```
 
+```csharp
 @code {
 
 }
+```
