@@ -45,18 +45,24 @@
 		);
 	}
 
+	/* Day number now positioned top-right and not circular */
 	.calendar-day .day-number {
-		position: relative;
+		position: absolute;
+		top: 8px;
+		right: 8px;
 		z-index: 2;
-		background: rgba(255, 255, 255, 0.85);
-		border-radius: 50%;
-		width: 40px;
-		height: 40px;
-		display: flex;
+		background: rgba(255, 255, 255, 0.85); /* subtle background so it reads over the overlay */
+		border-radius: 4px; /*  small corner radius (not circular) */
+		padding: 4px 8px; 
+		min-width: 28px;
+		height: auto;
+		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		font-size: .8em;
-		flex-shrink: 0; /* Keeps size consistent */
+		font-size: 0.9em;
+		font-weight: 600;
+		color: #333;
+		box-sizing: border-box;
 	}
 
 	/* Optional: Space for events/notes below the number */
@@ -80,10 +86,11 @@
 			opacity: 0.4;
 		}
 
-	/* Today highlight */
+	/* Today highlight (adapted to rectangular badge) */
 	.calendar-day.today .day-number {
 		background: #ffe066;
 		color: #333;
 		font-weight: bold;
+		border-radius: 4px;
 		box-shadow: 0 0 10px rgba(255, 224, 102, 0.7);
 	}

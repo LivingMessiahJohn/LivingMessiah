@@ -5,15 +5,16 @@ namespace RCL.Features.Calendar.Data;
 
 public interface IService
 {
-  List<DtoCombined> GetData();
+  List<DtoCombined>? GetData();
   DateOnlyRange? GetDateRange();
+  public List<DtoCombined>? GetByMonth(DateOnly date);
 }
 
 
-public class Service () : IService
+public class Service : IService
 {
 
-	public List<DtoCombined> GetData()
+	public List<DtoCombined>? GetData()
 	{
     //return new List<DtoCombined>(); 
     List<Dto> LunarMonthList = new();
@@ -103,7 +104,7 @@ public class Service () : IService
 
   //private DateOnlyRange? _dateOnlyRange;
 
-  public DateOnlyRange GetDateRange()
+  public DateOnlyRange? GetDateRange()
   {
     List<DtoCombined>? _DtoCombinedList = GetData();  
 
@@ -121,13 +122,21 @@ public class Service () : IService
       return null;
     }
 
-    
-
-    /* 
-    if (_dateOnlyRange is not null) {  return _dateOnlyRange;  }
-        
-
-
-    */
+    /*  if (_dateOnlyRange is not null) {  return _dateOnlyRange;  }  */
   }
+
+  public List<DtoCombined>? GetByMonth(DateOnly date)
+  {
+    List<DtoCombined>? _DtoCombinedList = GetData();
+
+    if (_DtoCombinedList is null || _DtoCombinedList.Count == 0) { return null;  }
+
+    return _DtoCombinedList
+      .Where(d => d.Date.Year == date.Year && d.Date.Month == date.Month)
+      .OrderBy(d => d.Date)
+      .ThenByDescending(d => d.DateType)
+      .ToList();
+  }
+
+
 }

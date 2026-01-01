@@ -3,13 +3,18 @@ ToDo: how to inject ILogger in a Razor Class Library component?
  @inject ILogger<Wrapper>? Logger 
 *@
 
+@inject Data.IService? Service
+
 <div class="hebrew-calendar">
 	@for (int row = 0; row < Dates.Count / 7; row++)
 	{
 		@for (int col = 0; col < 7; col++)
 		{
 			var date = Dates[row * 7 + col];
-			<CalendarDay Date="date" MonthId="CurrentDateOnly.Month" CurrentDateOverride="CurrentDateOnlyOverride" />
+			<CalendarDay Date="date"
+									 MonthId="CurrentDateOnly.Month"
+									 SpecialDatesList="Service!.GetByMonth(CurrentDateOnly)"
+									 CurrentDateOverride="CurrentDateOnlyOverride" />
 		}
 	}
 </div>
