@@ -1,5 +1,4 @@
-﻿
-@using CalendarEnumDateType = RCL.Features.Calendar.Enums.DateType
+﻿@using CalendarEnumDateType = RCL.Features.Calendar.Enums.DateType
 @using RCL.Features.Calendar.Enums
 
 @inject Data.IService? Service
@@ -16,28 +15,36 @@
 	<p class="text-center"><b>Date Range</b> @DateOnlyRange.Start.ToString("MMM, yyyy") - @DateOnlyRange.End.ToString("MMM, yyyy")</p>
 }
 
-<TableTemplate HeaderCSS="table table-sm table-warning table-hover"
-							 Items="DtoCombinedList">
-	<TableHeader>
-		<th><br />Date</th>
-		<th><br />#</th>
-		@* <th>Has<br />Dupes</th> *@
-		<th>Dupe<br />Count</th>
-		<th><br />Type</th>
-		<th><br />Description</th>
+@if (DtoCombinedList is null || !DtoCombinedList.Any())
+{
+	<p class="text-center text-muted">No data available for the selected filter.</p>
+	return;
+}
+else
+{
+	<TableTemplate HeaderCSS="table table-sm table-warning table-hover"
+								 Items="DtoCombinedList">
+		<TableHeader>
+			<th><br />Date</th>
+			<th><br />#</th>
+			@* <th>Has<br />Dupes</th> *@
+			<th>Dupe<br />Count</th>
+			<th><br />Type</th>
+			<th><br />Description</th>
 
-	</TableHeader>
-	<RowTemplate>
-		<td>@context.Date.ToString("MMM dd, yyyy")</td>
-		<td>@context.RowNumber</td>
-		@* <td>@context.HasDupes</td> *@
-		<td>@context.DupeCount</td>
-		<td>
-			<span class="badge @context.DateType.BadgeColor text-dark fw-bold fs-6">@context.DateType.Name</span>
-		</td>
-		<td>@context.Description</td>
-	</RowTemplate>
-</TableTemplate>
+		</TableHeader>
+		<RowTemplate>
+			<td>@context.Date.ToString("MMM dd, yyyy")</td>
+			<td>@context.RowNumber</td>
+			@* <td>@context.HasDupes</td> *@
+			<td>@context.DupeCount</td>
+			<td>
+				<span class="badge @context.DateType.BadgeColor text-dark fw-bold fs-6">@context.DateType.Name</span>
+			</td>
+			<td>@context.Description</td>
+		</RowTemplate>
+	</TableTemplate>
+}
 
 @code {
 	[Parameter, EditorRequired] public CalendarEnumDateType? CurrentFilter { get; set; } // = CalendarEnumDateType.All;
@@ -46,9 +53,9 @@
 	private Data.DateOnlyRange? DateOnlyRange;
 	private List<Data.DtoCombined>? DtoCombinedList { get; set; }
 
-	protected override void OnParametersSet() 
-	{ 
-		Populate(); 
+	protected override void OnParametersSet()
+	{
+		Populate();
 	}
 
 	private void Populate()
@@ -58,7 +65,7 @@
 
 		if (CurrentFilter != CalendarEnumDateType.All)
 		{
-			DtoCombinedList =  DtoCombinedList!.Where(w => w.DateType == CurrentFilter).ToList();
+			DtoCombinedList = DtoCombinedList!.Where(w => w.DateType == CurrentFilter).ToList();
 		}
 	}
 

@@ -1,16 +1,19 @@
 ﻿@if (Date.Month == MonthId)
 {
-
 	if (Date == EffectiveCurrentDate)
 	{
 		<div class="calendar-day today">
 			<div class="day-number">@Date.Day</div>
+			<br />
+			<div>@GetSpecialDateDescriptions()</div>
 		</div>
 	}
 	else
 	{
 		<div class="calendar-day">
 			<div class="day-number">@Date.Day</div>
+			<br />
+			<div>@GetSpecialDateDescriptions()</div>
 		</div>
 	}
 }
@@ -23,10 +26,27 @@ else
 
 @code {
 	[Parameter, EditorRequired] public DateOnly Date { get; set; }
-	[Parameter] public int MonthId { get; set; }
-	[Parameter] public DateOnly? CurrentDateOverride { get; set; }
+	[Parameter, EditorRequired] public int MonthId { get; set; }
+	[Parameter, EditorRequired] public List<Data.DtoCombined>? SpecialDatesList { get; set; }
+	[Parameter] public DateOnly? CurrentDateOverride { get; set; } // For testing purposes
 
 	private DateOnly EffectiveCurrentDate => CurrentDateOverride ?? DateOnly.FromDateTime(DateTime.Today);
+
+	private string? GetSpecialDateDescriptions()
+	{
+		if (SpecialDatesList is null || !SpecialDatesList.Any())
+		{
+			return null;
+		}
+		return string.Join(", ", SpecialDatesList.Where(w => w.Date == Date).Select(d => d.Description));
+	}
+
+	/*
+	protected override void OnParametersSet()
+	{
+		SpecialDatesList.Select(d => d.Description).ToList();
+	}
+	*/
 
 	//[Parameter, EditorRequired] public DateOnly Date { get; set; } = new DateOnly(2026, 1, 20);
 }
