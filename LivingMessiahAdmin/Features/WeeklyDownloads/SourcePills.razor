@@ -1,0 +1,36 @@
+﻿
+<div class="d-flex justify-content-center mb-3">
+	<span class="fs-4 me-3">Source:</span>
+	
+	@foreach (var item in Enums.Source.List.OrderBy(o => o.Value))
+	{
+		<button @onclick="@(e => OnButtonClicked(item))"
+						title="@item.Description"
+						class="btn btn-outline-secondary btn-sm me-2 @ActiveFilter(item)">
+			@item.Title &nbsp;<i class="@item.Icon"></i>
+		</button>
+
+		@if(item == Enums.Source.Url)
+		{
+			<span class="fs-4 mx-2"> or </span>
+		}
+	}
+	
+</div>
+
+
+@code {
+	[Parameter, EditorRequired] public Enums.Source CurrentSource { get; set; }
+	[Parameter, EditorRequired] public EventCallback<Enums.Source> OnSourceSelected { get; set; }
+
+	public string ActiveFilter(Enums.Source source)
+	{
+		return source == CurrentSource ? " active" : "";
+	}
+
+	protected void OnButtonClicked(Enums.Source source)
+	{
+		OnSourceSelected.InvokeAsync(source);
+	}
+
+}

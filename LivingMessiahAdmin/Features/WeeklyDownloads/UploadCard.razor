@@ -5,6 +5,7 @@
 @inject AzureBlobService BlobService
 @inject ILogger<UploadCard>? Logger
 @inject IToastService? Toast
+@inject HttpClient HttpClient
 
 <div class="d-flex justify-content-center my-4">
 	<div class="card" style="width: 40rem;">
@@ -14,26 +15,36 @@
 		</div>
 
 		<div class="card-body border border-3 border-warning mb-1">
-			<h5 class="text-center">Source</h5>
-			<InputFile OnChange="OnInputFileChange" class="form-control" />
-			@if (selectedFile is not null)
+			<SourcePills CurrentSource="CurrentSourceType" OnSourceSelected="ReturnedSource" />
+
+			@if (CurrentSourceType == Enums.Source.Url)
 			{
-				<div class="small text-muted mt-1">@selectedFile.Name (@FormatBytes(selectedFileSize))</div>
+				<InputText @bind-Value="AttachmentUrl" Placeholder="Paste iCloud attachment URL here" class="form-control" />
+			}
+			else
+			{
+				<InputFile OnChange="OnInputFileChange" class="form-control" />
+				@if (selectedFile is not null)
+				{
+					<div class="small text-muted mt-1">@selectedFile.Name (@FormatBytes(selectedFileSize))</div>
+				}
 			}
 		</div>
 
 		<div class="card-body border border-3 border-info mb-1">
-			<h5 class="text-center">Target</h5>
+			<div class="fs-4 text-center">Target</div>
 			<SelectorDropDown SelectedOption="@fileName"
 												SelectedOptionChanged="ReturnedFilename"
 												Options="@GetStringArrays()" />
 		</div>
 
 		<div class="card-body border border-3 border-primary">
-			<h5 class="text-center">Upload progress</h5>
-
+			<div class="fs-4 text-center">Upload progress</div>
 			<div class="text-center mt-2">
-				<button class="btn btn-primary btn-sm m-2" @onclick="UploadToAzure" disabled="@IsDisabled">
+
+
+				<button @onclick="@(e => OnButtonClicked(CurrentSourceType))" 
+								class="btn btn-primary m-2" disabled="@IsDisabled">
 					@if (isUploading)
 					{
 						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -43,8 +54,12 @@
 					{
 						<span class="fas fa-upload">&nbsp;Upload</span>
 					}
+
 				</button>
+
 			</div>
+
+
 
 			<div class="progress" style="height: 1.5rem;">
 				<div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
@@ -134,7 +149,84 @@
 		StateHasChanged();  //
 	}
 
-	async Task UploadToAzure()
+	private Enums.Source CurrentSourceType = Enums.Source.Url;
+	void ReturnedSource(Enums.Source source)
+	{
+		CurrentSourceType = source;
+	}
+
+	private static string FormatBytes(long bytes)
+	{
+		if (bytes <= 0) return "0 B";
+		string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+		var order = (int)Math.Floor(Math.Log(bytes, 1024));
+		var adjusted = Math.Round(bytes / Math.Pow(1024, order), 2);
+		return $"{adjusted} {sizes[order]}";
+	}
+
+	private string AttachmentUrl { get; set; } = string.Empty;
+
+	private async Task OnButtonClicked(Enums.Source source)
+	{
+		if (CurrentSourceType == Enums.Source.Url){
+			await UploadFromUrlToAzure();
+		}
+		else
+		{
+			await UploadFromFileToAzure();
+		}	
+	}
+
+	private async Task UploadFromUrlToAzure()
+	{
+		if (string.IsNullOrWhiteSpace(AttachmentUrl))
+		{
+			Toast?.ShowWarning("Missing url. Upload process stopped");
+			return;
+		}
+
+		try
+		{
+			// Optional: Mimic a browser to help trigger direct download
+			var request = new HttpRequestMessage(HttpMethod.Get, AttachmentUrl);
+			request.Headers.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36");
+
+			// Stream response to avoid loading full file in memory
+			using var response = await HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+			response.EnsureSuccessStatusCode();
+
+			// Get filename (preferred from header, fallback to URL parsing)
+			string fileName = response.Content.Headers.ContentDisposition?.FileNameStar ??
+								response.Content.Headers.ContentDisposition?.FileName ??
+								Path.GetFileName(new Uri(AttachmentUrl).LocalPath) ??
+								"downloaded_file";
+
+			// Optional: Detect if it's a landing page
+			var contentType = response.Content.Headers.ContentType?.MediaType;
+			if (contentType?.StartsWith("text/html") == true)
+			{
+				// Handle rare case: read HTML, parse for actual download link (advanced, test first)
+				// Most attachment links should give direct file here
+			}
+
+			await using var stream = await response.Content.ReadAsStreamAsync();
+
+			// Upload stream to Azure Blob (reuse/adapt your existing upload logic)
+			await BlobService.UploadStreamAsync(stream, fileName, response.Content.Headers.ContentType?.MediaType);
+		}
+		catch (Exception ex)
+		{
+			// Handle errors (e.g., invalid URL, network issues, expired link)
+			// Show user-friendly message
+			Logger?.LogError(ex, "{Method}", nameof(UploadFromUrlToAzure));
+
+			// "Failed to download PDF: invalid/expired link or network issue"
+			Toast!.ShowError($"{Global.ToastShowError}; Inside {nameof(UploadFromUrlToAzure)}");
+			result = new FileUploadResultRecord(false, $"Exception: {ex.Message}");
+		}
+	}
+
+	private async Task UploadFromFileToAzure()
 	{
 		if (selectedFile is null)
 		{
@@ -240,15 +332,6 @@
 			ToggleDisabled();
 			StateHasChanged();
 		}
-	}
-
-	private static string FormatBytes(long bytes)
-	{
-		if (bytes <= 0) return "0 B";
-		string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-		var order = (int)Math.Floor(Math.Log(bytes, 1024));
-		var adjusted = Math.Round(bytes / Math.Pow(1024, order), 2);
-		return $"{adjusted} {sizes[order]}";
 	}
 
 }
