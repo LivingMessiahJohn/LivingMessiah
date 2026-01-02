@@ -17,6 +17,12 @@ public class AzureBlobService
     Logger = logger ?? NullLogger<AzureBlobService>.Instance;
   }
 
+  public async Task UploadStreamAsync(Stream stream, string fileName, string? contentType = null)
+  {
+    var blobClient = _container.GetBlobClient(fileName);  // _containerClient
+    var headers = new BlobHttpHeaders { ContentType = contentType ?? "application/octet-stream" };
+    await blobClient.UploadAsync(stream, new BlobUploadOptions { HttpHeaders = headers });
+  }
 
   public async Task<FileUploadResultRecord> UploadAsync(string sourceFilePath, string blobName, CancellationToken ct = default)
   {
