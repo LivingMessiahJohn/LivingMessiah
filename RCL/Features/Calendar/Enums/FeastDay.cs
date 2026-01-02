@@ -51,10 +51,11 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	public abstract bool HasCalendarDetails { get; }
 	public abstract DateTime Date { get; }  
 	public abstract DateRange Range { get; }
+  //public abstract MarkupString TitleHtml { get; }
 
-	// This is a sanity check based on the idea for some feast days you can determine how many days are in between the dates
-	// E.g. There's 9 days between Trumpets and Yom Kippur, so if the difference between those dates is off then one of the dates is wrong.
-	public abstract int? DaysFromPrevFeast { get; }
+  // This is a sanity check based on the idea for some feast days you can determine how many days are in between the dates
+  // E.g. There's 9 days between Trumpets and Yom Kippur, so if the difference between those dates is off then one of the dates is wrong.
+  public abstract int? DaysFromPrevFeast { get; }
 	#endregion
 
 
@@ -106,9 +107,10 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override int? DaysFromPrevFeast => null;  // This is the beginning of the year
 		public override DateRange Range => new (Date, PlannerDetailEnum.HanukkahDay8.Date);
 		public override DateTime Date => FeastDayDates.Hanukkah;
-	}
+    //public override MarkupString TitleHtml => new($"<i class='fas fa-hanukiah fa-2x'></i>{Type}");
+  }
 
-	private sealed class PurimSE : FeastDay
+  private sealed class PurimSE : FeastDay
 	{
 		public PurimSE() : base($"{nameof(Id.Purim)}", Id.Purim) { }
 		public override string Translation => "Lots";
