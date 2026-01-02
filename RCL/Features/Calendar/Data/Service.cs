@@ -47,9 +47,12 @@ public class Service : IService
     }
 
     List<Dto> HanukkahList = new();
+    string chanukiah = "🕎";
+    string candle = "🕯️"; 
     for (i = 1; i < 9; i++)
     {
-      HanukkahList.Add(new Dto(DateOnly.FromDateTime(FeastDay.Hanukkah.Date).AddDays(i - 1), DateType.Feast, $"Hanukkah Day {i}"));
+      var candles = string.Concat(Enumerable.Repeat(candle, i));
+      HanukkahList.Add(new Dto(DateOnly.FromDateTime(FeastDay.Hanukkah.Date).AddDays(i - 1), DateType.Feast, $"{chanukiah} {candles}"));
     }
 
     List<Dto> FeastDayDetailList = new();
@@ -108,14 +111,14 @@ public class Service : IService
   {
     List<DtoCombined>? _DtoCombinedList = GetData();  
 
-    DateOnlyRange? _dateOnlyRange;
+    DateOnlyRange? _dateOnlyrange;
 
     if (_DtoCombinedList is not null && _DtoCombinedList.Any())
     {
       var minDate = _DtoCombinedList.Min(d => d.Date);
       var maxDate = _DtoCombinedList.Max(d => d.Date);
-      _dateOnlyRange = new DateOnlyRange(minDate, maxDate);
-      return _dateOnlyRange;
+      _dateOnlyrange = new DateOnlyRange(minDate, maxDate);
+      return _dateOnlyrange;
     }
     else
     {

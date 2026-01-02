@@ -1,5 +1,6 @@
 ﻿using Ardalis.SmartEnum;
 using RCL.Features.Calendar.Constants;
+using Microsoft.AspNetCore.Components;
 
 namespace RCL.Features.Calendar.Enums;
 
@@ -33,11 +34,13 @@ public abstract class Season : SmartEnum<Season>
 	public abstract string Emoji { get; }  // https://www.dotnetcatch.com/2019/06/04/visual-studio-quicktip-add-emoji-to-your-source-code/
 	public abstract string CalendarColor { get; }
 	public abstract DateRange Range { get; }
+  //public abstract MarkupString TitleHtml { get; }
+  
 
-	#endregion
+  #endregion
 
-	#region Private Instantiation
-	private sealed class WinterSE : Season
+  #region Private Instantiation
+  private sealed class WinterSE : Season
 	{
 		public WinterSE() : base($"{nameof(Id.Winter)}", Id.Winter) { }
 		public override string Type => "Solstice";
@@ -46,7 +49,8 @@ public abstract class Season : SmartEnum<Season>
 		public override string Emoji => "❄";
 		public override string CalendarColor => CalendarColors.Primary;
 		public override DateRange Range => new(SeasonDates.Winter, SeasonDates.Spring.AddDays(-1));
-	}
+    //public override MarkupString TitleHtml => new($"<i class='fas fa-hanukiah'></i>{Type}");
+  }
 	private sealed class SpringSE : Season
 	{
 		public SpringSE() : base($"{nameof(Id.Spring)}", Id.Spring) { }
