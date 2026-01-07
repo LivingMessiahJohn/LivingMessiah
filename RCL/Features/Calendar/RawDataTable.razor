@@ -69,6 +69,18 @@ else
 		}
 	}
 
+	private MarkupString? GetCalendarDayHtml(Enums.DateType dateType)
+	{
+		if (dateType == Enums.DateType.Feast)
+		{
+			return Enums.FeastDay.FromValue(dateType.Value).CalendarDayHtml;
+		}
+		else
+		{
+			return null;
+		}
+	}
+
 	private void ReturnedFilter(CalendarEnumDateType filter)
 	{
 		//Logger!.LogDebug("{Method} {Message}", nameof(ReturnedFilter), filter.Name);

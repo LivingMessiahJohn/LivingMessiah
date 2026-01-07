@@ -1,6 +1,7 @@
 ﻿using Ardalis.SmartEnum;
 using RCL.Features.Calendar.Constants;
 using RCL.Constants;
+using Microsoft.AspNetCore.Components;
 
 namespace RCL.Features.Calendar.Enums;
 
@@ -39,21 +40,27 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
 	public abstract int AddDays { get;  }
 	public abstract string Description { get;  }
 	public abstract string Title { get; }
-	public abstract string CalendarColor { get; }
+  public abstract string Icon { get; }
+  public abstract string CalendarColor { get; }
 	public abstract string ParentDate { get; }
+  #endregion
 
-	#endregion
+  #region Extra Properties
+  // <i class='{Icon}'></i>
+  public MarkupString CalendarDayHtml => (MarkupString)$"<span class='badge bg-primary fs-5 text-white'><i class='{Icon}'></i> {Title}</span>";
+  #endregion
 
-	#region Private Instantiation
+  #region Private Instantiation
 
-	private sealed class PassoverDaySE : FeastDayDetail
+  private sealed class PassoverDaySE : FeastDayDetail
 	{
 		public PassoverDaySE() : base($"{nameof(Id.PassoverDay)}", Id.PassoverDay) { }
 		public override int ParentFeastDayId => FeastDay.Passover.Value;
 		public override int AddDays => -1;  // PassoverDay
 		public override string Description => "Passover Seder Meal";
 		public override string Title => "Passover";
-		public override string CalendarColor => CalendarColors.Purple;
+    public override string Icon => "fas fa-door-open";
+    public override string CalendarColor => CalendarColors.Purple;
 		public override string ParentDate => FeastDay.FromValue(ParentFeastDayId).Date.AddDays(AddDays).ToString(DateFormat.ddd_mm_dd_yyyy);
 	}
 
@@ -63,8 +70,9 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
 		public override int ParentFeastDayId => FeastDay.Passover.Value;
 		public override int AddDays => 0;  // UnleavenedBreadDay1
 		public override string Description => "First day of Unleavened Bread";
-		public override string Title => "Unleavened Bread day 1";
-		public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
+    public override string Title => "Matzah day 1"; //  "Unleavened Bread day 1";
+    public override string Icon => "fas fa-times-circle";  // ToDo: need a better icon
+    public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
 		public override string ParentDate => FeastDay.FromValue(ParentFeastDayId).Date.AddDays(AddDays).ToString(DateFormat.ddd_mm_dd_yyyy);
 	}
 
@@ -74,8 +82,9 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
 		public override int ParentFeastDayId => FeastDay.Passover.Value;
 		public override int AddDays => 6; // UnleavenedBreadDay1 + 6
 		public override string Description => "Last day of Unleavened Bread";
-		public override string Title => "Unleavened Bread day 7";
-		public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
+		public override string Title => "Matzah day 7"; //  "Unleavened Bread day 7";
+    public override string Icon => "fas fa-times-circle";  // ToDo: need a better icon
+    public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
 		public override string ParentDate => FeastDay.FromValue(ParentFeastDayId).Date.AddDays(AddDays).ToString(DateFormat.ddd_mm_dd_yyyy);
 	}
 
@@ -83,10 +92,11 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
 	{
 		public TrumpetsErevSE() : base($"{nameof(Id.TrumpetsErev)}", Id.TrumpetsErev) { }
 		public override int ParentFeastDayId => FeastDay.Trumpets.Value;
-		public override int AddDays => -1; // TrumpetsErev
-		public override string Description => "We blow thhe trumpets at sunset";
-		public override string Title => "🎺 Erev Trumpets";
-		public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
+		public override int AddDays => -1; // TrumpetsErev 
+    public override string Description => "We blow thhe trumpets at sunset";
+		public override string Title => "Erev Trumpets";  // "🎺 Erev Trumpets";
+    public override string Icon => "fas fa-bullhorn";  // ToDo: need a better icon
+    public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
 		public override string ParentDate => FeastDay.FromValue(ParentFeastDayId).Date.AddDays(AddDays).ToString(DateFormat.ddd_mm_dd_yyyy);
 	}
 
@@ -96,8 +106,9 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
 		public override int ParentFeastDayId => FeastDay.YomKippur.Value;
 		public override int AddDays => -1;  // YomKippurErev
 		public override string Description => "at evening we afflict our souls";
-		public override string Title => "Erev Yom Kippur"; 
-		public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
+		public override string Title => "Erev Yom Kippur";
+    public override string Icon => "fas fa-hands-helping";
+    public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
 		public override string ParentDate => FeastDay.FromValue(ParentFeastDayId).Date.AddDays(AddDays).ToString(DateFormat.ddd_mm_dd_yyyy);
 	}
 
@@ -108,7 +119,8 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
 		public override int AddDays => -1; // SukkotDay0
 		public override string Description => "Preparation Day, High Sabbath begins at sunset";
 		public override string Title => "Preparation Day 🎪 ⬆";
-		public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
+    public override string Icon => "fas fa-campground";
+    public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
 		public override string ParentDate => FeastDay.FromValue(ParentFeastDayId).Date.AddDays(AddDays).ToString(DateFormat.ddd_mm_dd_yyyy);
 	}
 
@@ -119,7 +131,8 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
 		public override int AddDays => 7;  // SukkotLastGreatDay
 		public override string Description => "Last Day (Great Day), Sabbath";
 		public override string Title => "Sukkot | Day 7";
-		public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
+    public override string Icon => "fas fa-campground";
+    public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
 		public override string ParentDate => FeastDay.FromValue(ParentFeastDayId).Date.AddDays(AddDays).ToString(DateFormat.ddd_mm_dd_yyyy);
 	}
 
@@ -130,7 +143,8 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
 		public override int AddDays => 8;  // SukkotEndsAtSundown
 		public override string Description => "Sukkot ended previous night; tear down camp";
 		public override string Title => "Camp tear down  🎪 ⬇";
-		public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
+    public override string Icon => "fas fa-campground";
+    public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
 		public override string ParentDate => FeastDay.FromValue(ParentFeastDayId).Date.AddDays(AddDays).ToString(DateFormat.ddd_mm_dd_yyyy);
 	}
 
