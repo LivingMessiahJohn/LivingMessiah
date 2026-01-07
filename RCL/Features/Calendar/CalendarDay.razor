@@ -1,20 +1,33 @@
-﻿@if (Date.Month == MonthId)
+﻿@* @inject ILogger<CalendarDay>? Logger *@
+
+@if (Date.Month == MonthId)
 {
 	if (Date == EffectiveCurrentDate)
 	{
 		<div class="calendar-day today">
 			<div class="day-number">@Date.Day</div>
 			<br />
-			<div>@GetSpecialDateDescriptions()</div>
+			@* ToDo: Fist this <div>@GetSpecialDateDescriptions()</div> *@
+			<div class="day-number">@Date.Day</div>
 		</div>
 	}
 	else
 	{
-		<div class="calendar-day">
-			<div class="day-number">@Date.Day</div>
-			<br />
-			<div>@GetSpecialDateDescriptions()</div>
-		</div>
+		if (specialDates is null || !specialDates.Any())
+		{
+			<div class="calendar-day other-month">
+				<div class="day-number">@Date.Day</div>
+			</div>
+		}
+		else
+		{
+			<div class="calendar-day special-date">
+				<div class="day-number">@Date.Day</div>
+				<br />
+				<div>@GetSpecialDateDescriptions()</div>
+			</div>
+		}
+
 	}
 }
 else
@@ -32,21 +45,32 @@ else
 
 	private DateOnly EffectiveCurrentDate => CurrentDateOverride ?? DateOnly.FromDateTime(DateTime.Today);
 
-	private string? GetSpecialDateDescriptions()
+	private List<Data.DtoCombined>? specialDates;
+
+	protected override void OnParametersSet()
+	{
+		specialDates = GetSpecialDate();
+	}
+
+	private MarkupString? GetSpecialDateDescriptions()
 	{
 		if (SpecialDatesList is null || !SpecialDatesList.Any())
 		{
 			return null;
 		}
-		return string.Join(", ", SpecialDatesList.Where(w => w.Date == Date).Select(d => d.Description));
+
+		MarkupString result = new MarkupString();	
+		foreach (var item in SpecialDatesList.Where(w => w.Date == Date))
+		{
+			result = item.Description ?? default(MarkupString);
+		}
+		return result;
 	}
 
-	/*
-	protected override void OnParametersSet()
+	private List<Data.DtoCombined>? GetSpecialDate()
 	{
-		SpecialDatesList.Select(d => d.Description).ToList();
+		if (SpecialDatesList is null || !SpecialDatesList.Any()) { return null;	}
+		return SpecialDatesList.Where(w => w.Date == Date).ToList();
 	}
-	*/
 
-	//[Parameter, EditorRequired] public DateOnly Date { get; set; } = new DateOnly(2026, 1, 20);
 }

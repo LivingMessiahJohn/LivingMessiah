@@ -1,5 +1,7 @@
-﻿namespace RCL.Features.Calendar.Data;
+﻿using Microsoft.AspNetCore.Components;
 
-public record Dto(DateOnly Date, Enums.DateType DateType, string? Description);
+namespace RCL.Features.Calendar.Data;
+
+public record Dto(DateOnly Date, Enums.DateType DateType, MarkupString? Description);
 
 // Ignore Spelling: Dto

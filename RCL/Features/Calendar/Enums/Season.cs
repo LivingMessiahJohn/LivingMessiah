@@ -34,8 +34,9 @@ public abstract class Season : SmartEnum<Season>
 	public abstract string Emoji { get; }  // https://www.dotnetcatch.com/2019/06/04/visual-studio-quicktip-add-emoji-to-your-source-code/
 	public abstract string CalendarColor { get; }
 	public abstract DateRange Range { get; }
-  //public abstract MarkupString TitleHtml { get; }
   
+  public MarkupString CalendarDayHtml => (MarkupString)$"<span class='badge {BadgeColor} fs-5 text-white'><i class='{Icon}'></i> {Type}</span>";
+
 
   #endregion
 
@@ -44,8 +45,8 @@ public abstract class Season : SmartEnum<Season>
 	{
 		public WinterSE() : base($"{nameof(Id.Winter)}", Id.Winter) { }
 		public override string Type => "Solstice";
-		public override string BadgeColor => "bg-primary";
-		public override string Icon => "fas fa-snowflake";
+		public override string BadgeColor => "bg-info";  // bg-primary
+    public override string Icon => "fas fa-snowflake";
 		public override string Emoji => "❄";
 		public override string CalendarColor => CalendarColors.Primary;
 		public override DateRange Range => new(SeasonDates.Winter, SeasonDates.Spring.AddDays(-1));

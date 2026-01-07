@@ -34,24 +34,19 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	private FeastDay(string name, int value) : base(name, value) { } // Constructor
 
 	#region Extra Fields
-	public abstract string Translation { get; }
-	public abstract string Transliteration { get; }
-	public abstract string Hebrew { get; }
-	public abstract string Details { get; }
-	public abstract string CalendarTitle { get; }
-	public abstract string TabTitle { get; }
-	public abstract string PlannerTitle { get; }
-	public abstract string Icon { get; }
-	public abstract string VerseReferenceCard { get; }
-	public abstract bool IsHighSabbath { get; } // Deprecated; only used by PlannerComponent!Header
-	public abstract int EndOfWeekAddDays { get; } // Deprecated; only used by PlannerComponent!Header & PlannerComponent!Index
-	public abstract bool IsStartOfEdge { get; }
-	public abstract bool IsEndOfEdge { get; }
+	public abstract string Hebrew { get; }              // used by LivingMessiah\Features\FeastDayPlanner\Header.razor
+  public abstract string Details { get; }             // used by LivingMessiah\RCL\Features\Calendar\FeastTable.razor
+  public abstract string CalendarTitle { get; }
+	public abstract string TabTitle { get; }            
+  public abstract string PlannerTitle { get; }
+	public abstract string Icon { get; }                // used by LivingMessiah\Features\FeastDayPlanner\Header.razor
+  public abstract string VerseReferenceCard { get; }
+	public abstract bool IsStartOfEdge { get; }         // used by LivingMessiah\Features\FeastDayPlanner\HeaderXsSm.razor
+  public abstract bool IsEndOfEdge { get; }           // used by LivingMessiah\Features\FeastDayPlanner\HeaderXsSm.razor
 
-	public abstract bool HasCalendarDetails { get; }
+  public abstract bool HasCalendarDetails { get; }
 	public abstract DateTime Date { get; }  
 	public abstract DateRange Range { get; }
-  //public abstract MarkupString TitleHtml { get; }
 
   // This is a sanity check based on the idea for some feast days you can determine how many days are in between the dates
   // E.g. There's 9 days between Trumpets and Yom Kippur, so if the difference between those dates is off then one of the dates is wrong.
@@ -72,24 +67,19 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	// Using `Range.Min:dd MMM yyyy HH` instead of Range.Min.ToString("dd MMM yyyy HH")`
 	public string FirstAndLastDates => $"DateRange: {Range.Min:dd MMM yyyy HH} - {Range.Max:dd MMM yyyy HH}";
 
-	public MarkupString HasCalendarDetailsFormatted
-	{
-		get
-		{
-			return HasCalendarDetails ? (MarkupString)"<mark><b><span>&#10003;</span></b></mark>" : (MarkupString)string.Empty;
-		}
-	}
-	#endregion
+  public MarkupString CalendarDayHtml => (MarkupString)$"<span class='badge bg-primary fs-5 text-white'><i class='{Icon}'></i> {CalendarTitle}</span>";
+
+  public MarkupString HasCalendarDetailsFormatted => HasCalendarDetails 
+    ? (MarkupString)"<mark><b><span>&#10003;</span></b></mark>" 
+    : (MarkupString)string.Empty;
+  #endregion
 
 
+  #region Private Instantiation
 
-	#region Private Instantiation
-
-	private sealed class HanukkahSE : FeastDay
+  private sealed class HanukkahSE : FeastDay
 	{
 		public HanukkahSE() : base($"{nameof(Id.Hanukkah)}", Id.Hanukkah) { }
-		public override string Translation => "Feast of Lights";
-		public override string Transliteration => "Hanukkah";
 		public override string Hebrew => "חֲנֻכָּה";
 		public override string Details => "First day of Hanukkah; Date determined by Rabbinic sources";
 		public override string CalendarTitle => nameof(Id.Hanukkah);
@@ -97,8 +87,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string PlannerTitle => $"{nameof(Id.Hanukkah)} Week";
 		public override string Icon => "fas fa-hanukiah";
 		public override string VerseReferenceCard => "Joh_10_22";
-		public override bool IsHighSabbath => false;
-		public override int EndOfWeekAddDays => 7;
 
 		public override bool IsStartOfEdge => true;
 		public override bool IsEndOfEdge => false;
@@ -107,24 +95,18 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override int? DaysFromPrevFeast => null;  // This is the beginning of the year
 		public override DateRange Range => new (Date, PlannerDetailEnum.HanukkahDay8.Date);
 		public override DateTime Date => FeastDayDates.Hanukkah;
-    //public override MarkupString TitleHtml => new($"<i class='fas fa-hanukiah fa-2x'></i>{Type}");
   }
 
   private sealed class PurimSE : FeastDay
 	{
 		public PurimSE() : base($"{nameof(Id.Purim)}", Id.Purim) { }
-		public override string Translation => "Lots";
-		public override string Transliteration => "Purim";
 		public override string Hebrew => "פוּרִים";
 		public override string Details => "Tradition is to read the book of Esther; date determined by Rabbinic sources";
 		public override string CalendarTitle => nameof(Id.Purim);
 		public override string TabTitle => $"{nameof(Id.Purim)}";
 		public override string PlannerTitle => nameof(Id.Purim);
-		public override string Icon => "far fa-square";
-		public override string VerseReferenceCard => "Est_9_24_32";
-		public override bool IsHighSabbath => false;
-		public override int EndOfWeekAddDays => 0;
-
+		public override string Icon => "fas fa-dice";  // far fa-square
+    public override string VerseReferenceCard => "Est_9_24_32";
 		public override bool IsStartOfEdge => false;
 		public override bool IsEndOfEdge => false;
 
@@ -139,8 +121,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	private sealed class PassoverSE : FeastDay
 	{
 		public PassoverSE() : base($"{nameof(Id.Passover)}", Id.Passover) { }
-		public override string Translation => "Passover";
-		public override string Transliteration => "Pesach";
 		public override string Hebrew => "פֶּסַח";
 		public override string Details => "The Seder Meal is prepared on the 14th of Aviv. As evening starts, the meal is eaten. Also, this becomes the first day of Unleavened bread";
 		public override string CalendarTitle => nameof(Id.Passover);
@@ -148,8 +128,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string PlannerTitle => $"{nameof(Id.Passover)} Week";
 		public override string Icon => "fas fa-door-open";
 		public override string VerseReferenceCard => "Lev_23_04_08";
-		public override bool IsHighSabbath => true;
-		public override int EndOfWeekAddDays => 6;  // changed to 6 because I'm starting from 1st day of unleavened bread (before it was passover)
 		public override bool IsStartOfEdge => false;
 		public override bool IsEndOfEdge => false;
 
@@ -162,8 +140,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	private sealed class WeeksSE : FeastDay
 	{
 		public WeeksSE() : base($"{nameof(Id.Weeks)}", Id.Weeks) { }
-		public override string Translation => "Weeks";
-		public override string Transliteration => "Shavu'ot";
 		public override string Hebrew => "שָׁבוּעוֹת";
 		public override string Details => "The hight sabbath begins the evening before; This is also called Pentecost";
 		public override string CalendarTitle => nameof(Id.Weeks);
@@ -171,8 +147,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string PlannerTitle => nameof(Id.Weeks);
 		public override string Icon => "fab fa-creative-commons-zero";
 		public override string VerseReferenceCard => "Lev_23_15_21"; //  "Lev_23_10_11_and_15_21";
-		public override bool IsHighSabbath => true;
-		public override int EndOfWeekAddDays => 0;
 		public override bool IsStartOfEdge => false;
 		public override bool IsEndOfEdge => false;
 
@@ -185,8 +159,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	private sealed class TrumpetsSE : FeastDay
 	{
 		public TrumpetsSE() : base($"{nameof(Id.Trumpets)}", Id.Trumpets) { }
-		public override string Translation => "Trumpets";
-		public override string Transliteration => "Yom Teruah";
 		public override string Hebrew => "יוֹם תְּרוּעָה";
 		public override string Details => "A high holy day sabbath";
 		public override string CalendarTitle => nameof(Id.Trumpets);
@@ -194,8 +166,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string PlannerTitle => nameof(Id.Trumpets);
 		public override string Icon => "fas fa-bullhorn";
 		public override string VerseReferenceCard => "Lev_23_23_25";
-		public override bool IsHighSabbath => true;
-		public override int EndOfWeekAddDays => 0;
 		public override bool IsStartOfEdge => false;
 		public override bool IsEndOfEdge => false;
 
@@ -208,8 +178,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	private sealed class YomKippurSE : FeastDay
 	{
 		public YomKippurSE() : base($"{nameof(Id.YomKippur)}", Id.YomKippur) { }
-		public override string Translation => "Day of Atonements";
-		public override string Transliteration => "Yom Kippur";
 		public override string Hebrew => "יוֹם כִּיפּוּר";
 		public override string Details => "In the afternoon we have our Yom Kippur service and break the fast after the sun sets";
 		public override string CalendarTitle => "Yom Kippur";
@@ -217,8 +185,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string PlannerTitle => CalendarTitle;
 		public override string Icon => "fas fa-hands-helping";
 		public override string VerseReferenceCard => "Lev_23_26_32";
-		public override bool IsHighSabbath => true;
-		public override int EndOfWeekAddDays => 0;
 		public override bool IsStartOfEdge => false;
 		public override bool IsEndOfEdge => false;
 
@@ -231,8 +197,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	private sealed class TabernaclesSE : FeastDay
 	{
 		public TabernaclesSE() : base($"{nameof(Id.Tabernacles)}", Id.Tabernacles) { }
-		public override string Translation => "Booths"; // Tabernacle is latin and it comes from tavern
-		public override string Transliteration => "Sukkot";
 		public override string Hebrew => "סֻּכּוֹת";
 		public override string Details => "Preparation Day, High Sabbath begins at sunset";
 		public override string CalendarTitle => "Sukkot | Day 1";
@@ -240,8 +204,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string PlannerTitle => $"Tabernacle Week";
 		public override string Icon => "fas fa-campground";
 		public override string VerseReferenceCard => "Lev_23_33_44";
-		public override bool IsHighSabbath => true;
-		public override int EndOfWeekAddDays => 7;
 		public override bool IsStartOfEdge => false;
 		public override bool IsEndOfEdge => true;
 
