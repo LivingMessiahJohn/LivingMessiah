@@ -86,8 +86,20 @@ public abstract class LunarMonth : SmartEnum<LunarMonth>
   #endregion
 
   #region Extra Properties
+  // Safe DateOnly properties — avoid DateTime underflow when Date == DateTime.MinValue
+public DateOnly ErevDate => Date == DateTime.MinValue
+  ? DateOnly.MinValue
+  : DateOnly.FromDateTime(Date.AddDays(-1));
+
+public DateOnly DayTimeDate => Date == DateTime.MinValue
+  ? DateOnly.MinValue
+  : DateOnly.FromDateTime(Date);
+
+  //text-white
+  public MarkupString CalendarDayErevHtml => (MarkupString)$"<span class='badge bg-info fs-6 text-black float-end'><i class='far fa-moon'></i></span>";
+  public MarkupString CalendarDayDayTimeHtml => (MarkupString)$"<span class='badge bg-info fs-6 text-black'>{FullName}</span>";
+
   public MarkupString CalendarDayHtml => (MarkupString)$"<span class='badge bg-info fs-5 text-white'><i class='far fa-moon'></i> {FullName}</span>";
-  //public MarkupString CalendarDayHtml => (MarkupString)$"{FullName}";
   
   public string FullNameCSS
 	{

@@ -6,6 +6,7 @@ using CalendarEnumsFeastDay = RCL.Features.Calendar.Enums.FeastDay;
 namespace RCL.Features.FeastDayPlanner.Enums;
 
 // Compare with Calendar\Enums\FeastDayDetail.cs
+// ToDo: Can I get rid of this
 public abstract class PlannerDetail : SmartEnum<PlannerDetail>
 {
 	#region Id's
@@ -61,34 +62,43 @@ public abstract class PlannerDetail : SmartEnum<PlannerDetail>
 	#region Extra Fields
 	public abstract int ParentFeastDayId { get; }
 	public abstract DateTime Date { get; }
-	public abstract string Description { get; }
+  public abstract DateOnly DateOnly { get; }
+  //public abstract DateOnlyRange DateOnlyRange { get; } // Can I get rid of Date and rename this as Date?
+  public abstract string Description { get; }
 	public abstract string HebrewDate { get; }
 	public abstract string HebrewBGColor { get; }
 	public abstract string HebrewTextColor { get; }
 	public abstract string PreHebrewDate { get; }
-	#endregion
+  #endregion
 
-	#region Private Instantiation
+  #region Extra Properties
+  public DateOnly ErevDate => DateOnly.FromDateTime(Date.AddDays(-1));  // ToDo: Remove DateOnly.FromDateTime
+  public DateOnly DayTimeDate => DateOnly.FromDateTime(Date);           // ToDo: Remove DateOnly.FromDateTime
+  #endregion
+
+  #region Private Instantiation
 
 
-	private sealed class HanukkahDay1SE : PlannerDetail
+  private sealed class HanukkahDay1SE : PlannerDetail
 	{
 		public HanukkahDay1SE() : base($"{nameof(Id.HanukkahDay1)}", Id.HanukkahDay1) { }
 		public override int ParentFeastDayId => CalendarEnumsFeastDay.Hanukkah.Value;
 		public override DateTime Date => CalendarEnumsFeastDay.Hanukkah.Date;
+    public override DateOnly DateOnly => DateOnly.FromDateTime(CalendarEnumsFeastDay.Hanukkah.Date);
 		public override string Description => "Day 1";
 		public override string HebrewDate => "Kislev 25th";
 		public override string HebrewBGColor => BarColor.HebrewBGColor;
 		public override string HebrewTextColor => BarColor.HebrewTextColor;
 		public override string PreHebrewDate => "";
-	}
+  }
 
 	private sealed class HanukkahDay8SE : PlannerDetail
 	{
 		public HanukkahDay8SE() : base($"{nameof(Id.HanukkahDay8)}", Id.HanukkahDay8) { }
 		public override int ParentFeastDayId => CalendarEnumsFeastDay.Hanukkah.Value;
 		public override DateTime Date => CalendarEnumsFeastDay.Hanukkah.Date.AddDays(8);
-		public override string Description => "Day 8";
+    public override DateOnly DateOnly => DateOnly.FromDateTime(CalendarEnumsFeastDay.Hanukkah.Date.AddDays(8));
+    public override string Description => "Day 8";
 		public override string HebrewDate => "Tevet 2nd";
 		public override string HebrewBGColor => BarColor.HebrewBGColor;
 		public override string HebrewTextColor => BarColor.HebrewTextColor;
@@ -100,7 +110,8 @@ public abstract class PlannerDetail : SmartEnum<PlannerDetail>
 		public PurimSE() : base($"{nameof(Id.Purim)}", Id.Purim) { }
 		public override int ParentFeastDayId => CalendarEnumsFeastDay.Purim.Value;
 		public override DateTime Date => CalendarEnumsFeastDay.Purim.Date;
-		public override string Description => "Purim";
+    public override DateOnly DateOnly => DateOnly.FromDateTime(CalendarEnumsFeastDay.Purim.Date);
+    public override string Description => "Purim";
 		public override string HebrewDate => HebrewYear.IsLeapYear ? "Adar II 14" : "Adar I 14";
 		public override string HebrewBGColor => BarColor.HebrewBGColor;
 		public override string HebrewTextColor => BarColor.HebrewTextColor;
@@ -112,7 +123,8 @@ public abstract class PlannerDetail : SmartEnum<PlannerDetail>
 		public UnleavenedBreadDay1SE() : base($"{nameof(Id.UnleavenedBreadDay1)}", Id.UnleavenedBreadDay1) { }
 		public override int ParentFeastDayId => CalendarEnumsFeastDay.Passover.Value;
 		public override DateTime Date => CalendarEnumsFeastDay.Passover.Date;
-		public override string Description => "Unleavened Bread Day 1";
+    public override DateOnly DateOnly => DateOnly.FromDateTime(CalendarEnumsFeastDay.Passover.Date);
+    public override string Description => "Unleavened Bread Day 1";
 		public override string HebrewDate => "Nissan 15";
 		public override string HebrewBGColor => BarColor.HebrewSabbathBGColor;
 		public override string HebrewTextColor => BarColor.HebrewSabbathTextColor;
@@ -123,8 +135,12 @@ public abstract class PlannerDetail : SmartEnum<PlannerDetail>
 	{
 		public StartOmerSE() : base($"{nameof(Id.StartOmer)}", Id.StartOmer) { }
 		public override int ParentFeastDayId => CalendarEnumsFeastDay.Passover.Value;
-		public override DateTime Date => CalendarEnumsFeastDay.Passover.Date.AddDays(1);
-		public override string Description => "Start Omer Count";
+
+    // ToDo: this isn't right, it's the first Sunday after Passover
+    public override DateTime Date => CalendarEnumsFeastDay.Passover.Date.AddDays(1);
+    public override DateOnly DateOnly => DateOnly.FromDateTime(CalendarEnumsFeastDay.Passover.Date.AddDays(1));
+    
+    public override string Description => "Start Omer Count";
 		public override string HebrewDate => "Nissan 16";
 		public override string HebrewBGColor => BarColor.HebrewBGColor;
 		public override string HebrewTextColor => BarColor.HebrewTextColor;
@@ -136,7 +152,8 @@ public abstract class PlannerDetail : SmartEnum<PlannerDetail>
 		public UnleavenedBreadDay7SE() : base($"{nameof(Id.UnleavenedBreadDay7)}", Id.UnleavenedBreadDay7) { }
 		public override int ParentFeastDayId => CalendarEnumsFeastDay.Passover.Value;
 		public override DateTime Date => CalendarEnumsFeastDay.Passover.Date.AddDays(6);
-		public override string Description => "Unleavened Bread Day 7";
+    public override DateOnly DateOnly => DateOnly.FromDateTime(CalendarEnumsFeastDay.Passover.Date.AddDays(6));
+    public override string Description => "Unleavened Bread Day 7";
 		public override string HebrewDate => "Nissan 21";
 		public override string HebrewBGColor => BarColor.HebrewSabbathBGColor;
 		public override string HebrewTextColor => BarColor.HebrewSabbathTextColor;
@@ -148,7 +165,8 @@ public abstract class PlannerDetail : SmartEnum<PlannerDetail>
 		public StopOmerSE() : base($"{nameof(Id.StopOmer)}", Id.StopOmer) { }
 		public override int ParentFeastDayId => CalendarEnumsFeastDay.Weeks.Value;
 		public override DateTime Date => CalendarEnumsFeastDay.Weeks.Date.AddDays(-1);
-		public override string Description => "Finish Omer Count";
+    public override DateOnly DateOnly => DateOnly.FromDateTime(CalendarEnumsFeastDay.Weeks.Date.AddDays(-1));
+    public override string Description => "Finish Omer Count";
 		public override string HebrewDate => "Sivan 6";
 		public override string HebrewBGColor => BarColor.HebrewBGColor;
 		public override string HebrewTextColor => BarColor.HebrewTextColor;
@@ -160,7 +178,8 @@ public abstract class PlannerDetail : SmartEnum<PlannerDetail>
 		public WeeksSE() : base($"{nameof(Id.Weeks)}", Id.Weeks) { }
 		public override int ParentFeastDayId => CalendarEnumsFeastDay.Weeks.Value;
 		public override DateTime Date => CalendarEnumsFeastDay.Weeks.Date;
-		public override string Description => "Weeks | Shavuot";
+    public override DateOnly DateOnly => DateOnly.FromDateTime(CalendarEnumsFeastDay.Weeks.Date);
+    public override string Description => "Weeks | Shavuot";
 		public override string HebrewDate => "Sivan 7";
 		public override string HebrewBGColor => BarColor.HebrewSabbathBGColor;
 		public override string HebrewTextColor => BarColor.HebrewSabbathTextColor;
@@ -172,7 +191,8 @@ public abstract class PlannerDetail : SmartEnum<PlannerDetail>
 		public TrumpetsSE() : base($"{nameof(Id.Trumpets)}", Id.Trumpets) { }
 		public override int ParentFeastDayId => CalendarEnumsFeastDay.Trumpets.Value;
 		public override DateTime Date => CalendarEnumsFeastDay.Trumpets.Date;
-		public override string Description => "Yom Teruah";
+    public override DateOnly DateOnly => DateOnly.FromDateTime(CalendarEnumsFeastDay.Trumpets.Date);
+    public override string Description => "Yom Teruah";
 		public override string HebrewDate => "Tishrei 1";
 		public override string HebrewBGColor => BarColor.HebrewSabbathBGColor;
 		public override string HebrewTextColor => BarColor.HebrewSabbathTextColor;
@@ -184,7 +204,8 @@ public abstract class PlannerDetail : SmartEnum<PlannerDetail>
 		public YomKippurSE() : base($"{nameof(Id.YomKippur)}", Id.YomKippur) { }
 		public override int ParentFeastDayId => CalendarEnumsFeastDay.YomKippur.Value;
 		public override DateTime Date => CalendarEnumsFeastDay.YomKippur.Date;
-		public override string Description => "Day of Atonements";
+    public override DateOnly DateOnly => DateOnly.FromDateTime(CalendarEnumsFeastDay.YomKippur.Date);
+    public override string Description => "Day of Atonements";
 		public override string HebrewDate => "Tishrei 10";
 		public override string HebrewBGColor => BarColor.HebrewSabbathBGColor;
 		public override string HebrewTextColor => BarColor.HebrewSabbathTextColor;
@@ -196,7 +217,8 @@ public abstract class PlannerDetail : SmartEnum<PlannerDetail>
 		public SukkotDay1SE() : base($"{nameof(Id.SukkotDay1)}", Id.SukkotDay1) { }
 		public override int ParentFeastDayId => CalendarEnumsFeastDay.Tabernacles.Value;
 		public override DateTime Date => CalendarEnumsFeastDay.Tabernacles.Date;
-		public override string Description => "Day 1";
+    public override DateOnly DateOnly => DateOnly.FromDateTime(CalendarEnumsFeastDay.Tabernacles.Date);
+    public override string Description => "Sukkot 1";
 		public override string HebrewDate => "Tishrei 15";
 		public override string HebrewBGColor => BarColor.HebrewSabbathBGColor;
 		public override string HebrewTextColor => BarColor.HebrewSabbathTextColor;
@@ -208,7 +230,8 @@ public abstract class PlannerDetail : SmartEnum<PlannerDetail>
 		public SukkotDay8SE() : base($"{nameof(Id.SukkotDay8)}", Id.SukkotDay8) { }
 		public override int ParentFeastDayId => CalendarEnumsFeastDay.Tabernacles.Value;
 		public override DateTime Date => CalendarEnumsFeastDay.Tabernacles.Date.AddDays(7);
-		public override string Description => "Day 8";
+    public override DateOnly DateOnly => DateOnly.FromDateTime(CalendarEnumsFeastDay.Tabernacles.Date.AddDays(7));
+    public override string Description => "Sukkot 8";
 		public override string HebrewDate => "Tishrei 22";
 		public override string HebrewBGColor => BarColor.HebrewSabbathBGColor;
 		public override string HebrewTextColor => BarColor.HebrewSabbathTextColor;
@@ -220,7 +243,8 @@ public abstract class PlannerDetail : SmartEnum<PlannerDetail>
 		public SukkotCampTearDownSE() : base($"{nameof(Id.SukkotCampTearDown)}", Id.SukkotCampTearDown) { }
 		public override int ParentFeastDayId => CalendarEnumsFeastDay.Tabernacles.Value;
 		public override DateTime Date => CalendarEnumsFeastDay.Tabernacles.Date.AddDays(8);
-		public override string Description => "Camp Tear Down";
+    public override DateOnly DateOnly => DateOnly.FromDateTime(CalendarEnumsFeastDay.Tabernacles.Date.AddDays(8));  
+    public override string Description => "Camp Tear Down";
 		public override string HebrewDate => "Tishrei 23";
 		public override string HebrewBGColor => BarColor.HebrewBGColor;
 		public override string HebrewTextColor => BarColor.HebrewTextColor;

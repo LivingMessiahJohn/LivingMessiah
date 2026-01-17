@@ -1,7 +1,8 @@
 ﻿@using FeastDayType = RCL.Features.Calendar.Enums.FeastDay
 @using RCL.Features.FeastDayPlanner.Constants
+@using PlannerDetailEnums = RCL.Features.FeastDayPlanner.Enums.PlannerDetail
 
-@foreach (var item in Enums.PlannerDetail.List
+@foreach (var item in PlannerDetailEnums.List
 	.Where(w => w.ParentFeastDayId == FeastDayType!.Value)
 	.OrderBy(o => o.Date))
 {

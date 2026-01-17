@@ -1,0 +1,63 @@
+﻿@inject Data.IService? Service
+
+<div class="hebrew-calendar">
+
+	@for (int row = 0; row < Dates.Count / 7; row++)
+	{
+		@for (int col = 0; col < 7; col++)
+		{
+			var date = Dates[row * 7 + col];
+
+			@* @DayCellRF *@
+
+			<DayCell Date="date"
+							 MonthId="CurrentDate.Month"
+							 DayCellList="Service!.GetByDate(date)" />
+
+
+		}
+	}
+
+</div>
+
+@code {
+	[Parameter, EditorRequired] public DateOnly CurrentDate { get; set; }
+	[Parameter] public bool IsXsOrSm { get; set; }
+
+	private List<DateOnly> Dates { get; set; } = new();
+
+	protected override void OnParametersSet()
+	{
+		Dates = Helpers.MonthView.GetDates(CurrentDate);
+	}
+
+	// protected override void OnInitialized()
+	// {
+	// 	Dates = Helpers.MonthView.GetDates(CurrentDate);
+	// }
+
+	//[Parameter, EditorRequired] public RenderFragment? DayCellRF { get; set; }
+	//[Parameter, EditorRequired] public EventCallback<CalendarEnumDateType> OnFilterSelected { get; set; }
+
+
+	/*
+	@DumpGetByDate()
+
+	string DumpGetByDate()
+	{
+		string results = string.Empty;
+
+		List<Data.DayCellRecord>? dcr = Service!.GetByDate(CurrentDate);
+
+		if (dcr is null || !dcr.Any())
+		{
+			//results = "no dcr";
+			return results;
+		}
+		else
+		{
+			return $"dcr: {dcr.Count.ToString()}";
+		}
+	}
+	*/
+}

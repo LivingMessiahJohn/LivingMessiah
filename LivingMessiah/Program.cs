@@ -4,7 +4,8 @@ using Blazored.Toast;
 using Blazored.LocalStorage;
 using LivingMessiah.Components;
 
-using RCL.Features.Calendar.Data;
+using static RCL.Features.Calendar.Data.ServiceCollectionExtensions;
+using RclCalendarData =  RCL.Features.Calendar.Data;
 
 using LivingMessiah.Features.FeastDayPlanner.Data;
 using LivingMessiah.Settings;
@@ -72,7 +73,7 @@ try
 	builder.Services.AddApplicationInsightsTelemetry();
 
 
-	builder.Services.AddCalendar(); // from RCL/Features/Calendar/Data/ServiceCollectionExtensions.cs
+	builder.Services.AddCalendar(); // using static RCL.Features.Calendar.Data.ServiceCollectionExtensions;
 	builder.Services.AddFeastDayPlanner();
 	builder.Services.AddAuth0WebAppAuthentication(options =>
 	{
@@ -92,6 +93,7 @@ try
 	builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 	builder.Services.AddSyncfusionBlazor();
 	builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+	builder.Services.AddSingleton<RclCalendarData.IService, RclCalendarData.Service>();
 
 	var app = builder.Build();
 	app.MapDefaultEndpoints();

@@ -1,0 +1,36 @@
+.weekday-header {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr); /* Matches 7 calendar columns */
+	gap: 0;
+	align-items: center;
+	/* Expose the same CSS variables used by calendar-day for consistent gradient math */
+	--day-start: 25%;
+	--day-end: 75%;
+	--transition: 8%; /* reduced from 12% for subtler edges */
+	--header-overlay-opacity: 0.65; /* overall overlay opacity for further tuning */
+}
+
+.weekday-header .weekday {
+	position: relative;
+	z-index: 2; /* Text above the gradient overlay */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px 6px;
+	font-weight: 600;
+	color: #222;
+	box-sizing: border-box;
+	min-height: 44px; /* lightweight visual parity with calendar cells (adjust if needed) */
+}
+
+/* Reuse same gradient style (applied as overlay via pseudo-element so text stays readable) */
+.weekday-header .weekday::before {
+	content: '';
+	pointer-events: none;
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	/* Subtler color stops: lower alpha values and a slightly narrower transition */
+	background: linear-gradient( to right, rgba(20, 20, 40, 0.28) 0%, rgba(20, 20, 40, 0.28) calc(var(--day-start, 25%) - var(--transition, 8%)), rgba(80, 80, 120, 0.12) var(--day-start, 25%), rgba(180, 180, 200, 0.02) calc(var(--day-start, 25%) + var(--transition, 8%)), transparent calc(var(--day-start, 25%) + var(--transition, 8%)), transparent calc(var(--day-end, 75%) - var(--transition, 8%)), rgba(180, 180, 200, 0.02) calc(var(--day-end, 75%) - var(--transition, 8%)), rgba(80, 80, 120, 0.12) var(--day-end, 75%), rgba(20, 20, 40, 0.28) calc(var(--day-end, 75%) + var(--transition, 8%)), rgba(20, 20, 40, 0.28) 100% );
+	opacity: var(--header-overlay-opacity, 0.65);
+}

@@ -1,0 +1,105 @@
+﻿
+@using ConstantsCSS =  RCL.Features.Calendar.Constants.CSS.DayCell
+@using ConstantsCSSTextAlign =  RCL.Features.Calendar.Constants.CSS.TextAlign
+
+
+@* @inject ILogger<DayCell>? Logger  *@
+
+@if (Date.Month == MonthId)
+{
+	if (Date == CurrentDate)
+	{
+		<div class="calendar-day @ConstantsCSS.Today">
+			<div class="day-number">@Date.Day</div>
+			@* ToDo: fix this <div>@GetSpecialDateDescriptions()</div> *@
+		</div>
+	}
+	else
+	{
+		if (specialDateFirst is not null)
+		{
+			@if (@specialDateFirst.CssClass == ConstantsCSSTextAlign.Center)
+				{
+				<div class="text-center">
+					@specialDateFirst.Description
+				</div>
+				}
+				else
+				{
+					<div class="">
+						@specialDateFirst.Description
+					</div>
+				} 
+		}
+		else
+		{
+			<div class="calendar-day @ConstantsCSS.CurrentMonth">
+				<div class="day-number">@Date.Day</div>
+			</div>
+		}
+	}
+}
+else
+{
+	<div class="calendar-day other-month">
+		<div class="day-number">@Date.Day</div>
+	</div>
+}
+
+@code {
+	[Parameter, EditorRequired] public DateOnly Date { get; set; }
+	[Parameter, EditorRequired] public int MonthId { get; set; }
+	[Parameter, EditorRequired] public List<Data.DayCellRecord>? DayCellList { get; set; }
+
+	//private DateOnly EffectiveCurrentDate => CurrentDateOverride ?? DateOnly.FromDateTime(DateTime.Today);
+	private DateOnly CurrentDate => DateOnly.FromDateTime(DateTime.Today);
+	
+	private List<Data.DayCellRecord>? specialDates;
+	private Data.DayCellRecord? specialDateFirst;
+
+	protected override void OnParametersSet()
+	{
+		specialDates = GetSpecialDates();
+		specialDateFirst = GetSpecialDateFirst();	
+	}
+
+	private List<Data.DayCellRecord>? GetSpecialDates()
+	{
+		if (DayCellList is null || !DayCellList.Any()) { return null; }
+		return DayCellList.Where(w => w.Date == Date).ToList();
+	}
+
+	private Data.DayCellRecord? GetSpecialDateFirst()
+	{
+		if (DayCellList is null || !DayCellList.Any()) { return null; }
+		return DayCellList.Where(w => w.Date == Date).FirstOrDefault();
+	}
+
+
+	private MarkupString? GetSpecialDateDescriptions()
+	{
+		if (DayCellList is null || !DayCellList.Any()) { return null; }
+
+		MarkupString result = new MarkupString();
+		foreach (var item in DayCellList.Where(w => w.Date == Date))
+		{
+			result = item.Description ?? default(MarkupString);
+		}
+		return result;
+	}
+
+	private string ShowTitle
+	{
+		get
+		{
+			string title = "";
+			return title;
+		}
+	}		
+
+	void ShowModal()
+	{
+		//modalOpen = true; ModalIsNotShownToggle = false; 	modalClass += " show";
+		StateHasChanged();
+	}
+}

@@ -54,10 +54,7 @@ else
 
 	private MarkupString? GetSpecialDateDescriptions()
 	{
-		if (SpecialDatesList is null || !SpecialDatesList.Any())
-		{
-			return null;
-		}
+		if (SpecialDatesList is null || !SpecialDatesList.Any()) { return null; }
 
 		MarkupString result = new MarkupString();	
 		foreach (var item in SpecialDatesList.Where(w => w.Date == Date))
