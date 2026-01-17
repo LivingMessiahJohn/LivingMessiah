@@ -40,7 +40,7 @@ else
 	protected override void OnParametersSet()
 	{
 		//Populate();
-		DateOnlyRange = Service!.GetDateRange();
+		DateOnlyRange = Service!.GetDateRange2();
 
 		IsEdge = false;
 		if (DateOnlyRange is null) { return; }
@@ -60,8 +60,6 @@ else
 			IsEdge = true;
 		}
 	}
-
-
 
 	private IJSObjectReference? jsModule;
 	private DotNetObjectReference<PreviousOrNextButton>? _dotNetRef;

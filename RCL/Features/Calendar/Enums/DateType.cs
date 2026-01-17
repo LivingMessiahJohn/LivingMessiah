@@ -3,7 +3,6 @@ using RCL.Features.Calendar.Constants;
 
 namespace RCL.Features.Calendar.Enums;
 
-
 public abstract class DateType : SmartEnum<DateType>
 {
 	#region Id's

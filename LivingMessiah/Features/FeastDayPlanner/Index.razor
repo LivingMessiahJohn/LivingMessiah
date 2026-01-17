@@ -1,11 +1,23 @@
-﻿@using LivingMessiah.Helpers
+﻿@page "/Planner"
+
+@* 
+ToDo:   
+- Port this to RCL without the `@page` directive.	
+- 
+*@
+
+@using LivingMessiah.Helpers
 @using Microsoft.AspNetCore.Components
-
 @using FeastDayType = RCL.Features.Calendar.Enums.FeastDay
-
 
 @inject ILogger<Index> Logger
 @inject IToastService? Toast
+
+<PageHeader PageEnum="LivingMessiah.Enums.Nav.Planner" />
+
+<div class="alert alert-warning text-center fs-2  " role="alert">
+	<b>Note:</b> Port of Feast Day Planner coming soon...
+</div>
 
 <LearnMoreModal />
 

@@ -33,9 +33,17 @@ public abstract class Season : SmartEnum<Season>
 	public abstract string Icon { get; }
 	public abstract string Emoji { get; }  // https://www.dotnetcatch.com/2019/06/04/visual-studio-quicktip-add-emoji-to-your-source-code/
 	public abstract string CalendarColor { get; }
-	public abstract DateRange Range { get; }
+  public abstract DateOnly Date { get; }
+  public abstract DateRange Range { get; }
   
-  public MarkupString CalendarDayHtml => (MarkupString)$"<span class='badge {BadgeColor} fs-5 text-white'><i class='{Icon}'></i> {Type}</span>";
+  public MarkupString CalendarDayHtml =>   (MarkupString)$"<span class='badge {BadgeColor} fs-6 text-black text-center'><i class='{Icon}'></i> {this.Name}</span>";
+
+  /*
+   
+   <div class="text-center my-3">
+  <span class="badge bg-info fs-6 text-white">Foo</span>
+</div>
+   */
 
 
   #endregion
@@ -49,7 +57,8 @@ public abstract class Season : SmartEnum<Season>
     public override string Icon => "fas fa-snowflake";
 		public override string Emoji => "❄";
 		public override string CalendarColor => CalendarColors.Primary;
-		public override DateRange Range => new(SeasonDates.Winter, SeasonDates.Spring.AddDays(-1));
+    public override DateOnly Date => DateOnly.FromDateTime(SeasonDates.Winter); 
+    public override DateRange Range => new(SeasonDates.Winter, SeasonDates.Spring.AddDays(-1));
     //public override MarkupString TitleHtml => new($"<i class='fas fa-hanukiah'></i>{Type}");
   }
 	private sealed class SpringSE : Season
@@ -60,7 +69,8 @@ public abstract class Season : SmartEnum<Season>
 		public override string Icon => "fas fa-cloud-sun-rain";
 		public override string Emoji => "🌨";
 		public override string CalendarColor => CalendarColors.Success;
-		public override DateRange Range => new(SeasonDates.Spring, SeasonDates.Summer.AddDays(-1));
+    public override DateOnly Date => DateOnly.FromDateTime(SeasonDates.Spring);
+    public override DateRange Range => new(SeasonDates.Spring, SeasonDates.Summer.AddDays(-1));
 	}
 	private sealed class SummerSE : Season
 	{
@@ -70,7 +80,8 @@ public abstract class Season : SmartEnum<Season>
 		public override string Icon => "far fa-sun";
 		public override string Emoji => "☀";
 		public override string CalendarColor => CalendarColors.Danger;
-		public override DateRange Range => new(SeasonDates.Summer, SeasonDates.Fall.AddDays(-1));
+    public override DateOnly Date => DateOnly.FromDateTime(SeasonDates.Summer); 
+    public override DateRange Range => new(SeasonDates.Summer, SeasonDates.Fall.AddDays(-1));
 
 	}
 	private sealed class FallSE : Season
@@ -81,7 +92,8 @@ public abstract class Season : SmartEnum<Season>
 		public override string Icon => "fab fa-canadian-maple-leaf";
 		public override string Emoji => "🍁";
 		public override string CalendarColor => CalendarColors.Warning;
-		public override DateRange Range => new(SeasonDates.Fall, SeasonDates.WinterNextYear.AddDays(-1));
+    public override DateOnly Date => DateOnly.FromDateTime(SeasonDates.Fall); 
+    public override DateRange Range => new(SeasonDates.Fall, SeasonDates.WinterNextYear.AddDays(-1));
 	}
 	#endregion
 

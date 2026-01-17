@@ -14,8 +14,16 @@
 {
 	<p class="text-center"><b>Date Range</b> @DateOnlyRange.Start.ToString("MMM, yyyy") - @DateOnlyRange.End.ToString("MMM, yyyy")</p>
 }
+else
+{
+	<div class="alert alert-warning text-center" role="alert">
+		<small>Date Range is null (◡︵◡)</small>
+		@* //Emoji.Sad = @"(◡︵◡)"; *@
+	</div>
+}
+	
 
-@if (DtoCombinedList is null || !DtoCombinedList.Any())
+@if (DayCellRecordList is null || !DayCellRecordList.Any())
 {
 	<p class="text-center text-muted">No data available for the selected filter.</p>
 	return;
@@ -23,21 +31,19 @@
 else
 {
 	<TableTemplate HeaderCSS="table table-sm table-warning table-hover"
-								 Items="DtoCombinedList">
+								 Items="DayCellRecordList">
 		<TableHeader>
 			<th><br />Date</th>
-			<th><br />#</th>
-			@* <th>Has<br />Dupes</th> *@
-			<th>Dupe<br />Count</th>
+			<th><br />CssClass</th>
+			<th><br />IsErev</th>
 			<th><br />Type</th>
 			<th><br />Description</th>
 
 		</TableHeader>
 		<RowTemplate>
 			<td>@context.Date.ToString("MMM dd, yyyy")</td>
-			<td>@context.RowNumber</td>
-			@* <td>@context.HasDupes</td> *@
-			<td>@context.DupeCount</td>
+			<td>@context.CssClass</td>
+			<td>@context.IsErev</td>
 			<td>
 				<span class="badge @context.DateType.BadgeColor text-dark fw-bold fs-6">@context.DateType.Name</span>
 			</td>
@@ -51,7 +57,7 @@ else
 	[Parameter, EditorRequired] public EventCallback<CalendarEnumDateType> OnFilterSelected { get; set; }
 
 	private Data.DateOnlyRange? DateOnlyRange;
-	private List<Data.DtoCombined>? DtoCombinedList { get; set; }
+	private List<Data.DayCellRecord>? DayCellRecordList { get; set; }
 
 	protected override void OnParametersSet()
 	{
@@ -60,12 +66,12 @@ else
 
 	private void Populate()
 	{
-		DtoCombinedList = Service!.GetData();
-		DateOnlyRange = Service!.GetDateRange();
+		DayCellRecordList = Service!.GetAll();
+		DateOnlyRange = Service!.GetDateRange2();
 
 		if (CurrentFilter != CalendarEnumDateType.All)
 		{
-			DtoCombinedList = DtoCombinedList!.Where(w => w.DateType == CurrentFilter).ToList();
+			DayCellRecordList = DayCellRecordList!.Where(w => w.DateType == CurrentFilter).ToList();
 		}
 	}
 
@@ -87,4 +93,11 @@ else
 		OnFilterSelected.InvokeAsync(filter);
 	}
 
+    // Assuming you have a DateOnly value to pass as an argument.
+    // Replace 'someDate' with the appropriate DateOnly value.
+
+    // protected override void OnInitialized()
+    // {
+    //     DayCellRecordList = Service!.GetByDate(someDate);
+    // }
 }

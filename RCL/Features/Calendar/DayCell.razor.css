@@ -1,0 +1,105 @@
+﻿/* CalendarDayNightEffectHorizontal.css - Updated for taller/square cells */
+
+.calendar-day {
+	position: relative;
+	background-color: #ffffff; /* Light day base */
+	border: 1px solid #ddd;
+	overflow: hidden;
+	color: #333;
+	font-weight: 500;
+	/* Make cells square (or taller) for better visibility of horizontal (left→right) effect */
+	aspect-ratio: 4 / 3; /* Square cells - taller than typical flat calendar cells + good width for smooth transitions */
+	/* Alternative for taller-than-wide cells: aspect-ratio: 4 / 5;  (experiment: 3/5 for very tall) */
+	/* Layout inside the cell */
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start; /* content starts at top; day number is absolutely positioned */
+	align-items: center;
+	padding: 12px 8px 8px;
+	box-sizing: border-box;
+}
+
+	.calendar-day::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		z-index: 1;
+		/* Gradient removed per request */
+		background: none;
+	}
+
+	/* Day number now positioned bottom-left and not circular */
+	.calendar-day .day-number {
+		position: absolute;
+		bottom: 8px;
+		left: 8px;
+		z-index: 2;
+		background: rgba(255, 255, 255, 0.85); /* subtle background so it reads over the overlay */
+		border-radius: 4px; /*  small corner radius (not circular) */
+		padding: 4px 8px;
+		min-width: 28px;
+		height: auto;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.7em;
+		font-weight: 600;
+		color: #333;
+		box-sizing: border-box;
+	}
+
+	/* Utility: align text/content to the logical "end" (respects LTR/RTL).
+	   Use by adding the class -end to any child inside .calendar-day.
+	   Example: <div class="-end">...</div> or <div class="day-number -end">...</div> */
+	.calendar-day .end {
+		text-align: end; /* logical end (right for LTR, left for RTL) */
+	}
+
+
+	/* Optional: Space for events/notes below the number */
+	.calendar-day .day-content {
+		position: relative;
+		z-index: 2;
+		width: 100%;
+		flex: 1;
+		overflow: hidden;
+		font-size: 0.85em;
+		/* Add your event list styling here */
+	}
+
+	/* Other-month days */
+	.calendar-day.other-month {
+		opacity: 0.5;
+		background-color: #f5f5f5;
+	}
+
+		/*.calendar-day.other-month::before {			opacity: 0.4;		}*/
+
+
+	/* Current-month days font-size: 0.7em; */
+	.calendar-day.current-month {
+		background-color: #f5f5f5;
+	}
+
+
+	/* Today highlight (adapted to rectangular badge)  */
+	.calendar-day.today .day-number {
+		background: #ffe066;
+		color: #333;
+		font-weight: bold;
+		border-radius: 4px;
+		box-shadow: 0 0 10px rgba(255, 224, 102, 0.7);
+	}
+
+.hebrew16 {
+	font-size: 16.0pt;
+	font-family: david;
+	direction: rtl;
+}
+
+.hebrew {
+	font-size: 22.0pt;
+	font-family: david;
+	direction: rtl;
+}

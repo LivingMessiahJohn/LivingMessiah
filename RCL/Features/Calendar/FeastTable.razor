@@ -4,13 +4,13 @@ Used by FeastTableWrapper.razor	(LivingMessiah.csproj)
 *@
 
 @using RCL.Helpers
-@using CalendarEnumDataType = RCL.Features.Calendar.Enums.DateType
+@using FeastDayPlannerEnums = RCL.Features.FeastDayPlanner.Enums.PlannerDetail
+
 <div class="card mb-3 border-warning">
 	<div class="card-header">
-		<h4 class="card-title text-center"><code>Calendar.Enums.FeastDay.List</code></h4>
+		<h4 class="card-title text-center"><code>RCL.Features.Calendar.Enums.FeastDay.List</code></h4>
 	</div>
 	<div class="card-body">
-		@* <TableTemplate Items="Calendar.Enums.FeastDay.List.OrderBy(o => o.Value).ToList()"> *@
 		<TableTemplate Items="Calendar.Enums.FeastDay.List.OrderBy(o => o.Value).ToList()">
 			<TableHeader>
 				<th class="text-info">Id</th>
@@ -49,9 +49,9 @@ Used by FeastTableWrapper.razor	(LivingMessiah.csproj)
 
 </div>
 
-<div class="card mb-3 border-warning">
+<div class="card mb-3 border-info">
 	<div class="card-header">
-		<h4 class="card-title text-center"><code>Calendar.Enums.FeastDayDetail.List</code></h4>
+		<h4 class="card-title text-center"><code>RCL.Features.Calendar.Enums.FeastDayDetail.List</code></h4>
 	</div>
 	<div class="card-body">
 		<TableTemplate Items="Calendar.Enums.FeastDayDetail.List.OrderBy(o => o.Value).ToList()">
@@ -72,6 +72,40 @@ Used by FeastTableWrapper.razor	(LivingMessiah.csproj)
 				<td class="text-center">@context.AddDays</td>
 				<td><small>@context.Description</small></td>
 				<td>@context.ParentDate</td>
+			</RowTemplate>
+		</TableTemplate>
+	</div>
+
+	<div class="card-footer">
+		<h6 class="card-title float-end">&Dagger; PFD Id: ParentFeastDayId</h6>
+	</div>
+
+</div>
+
+<div class="card mb-3 border-danger">
+	<div class="card-header">
+		<h4 class="card-title text-center"><code>RCL.Features.FeastDayPlanner.Enums.FeastDayDetail.List</code></h4>
+	</div>
+	<div class="card-body">
+		<TableTemplate Items="FeastDayPlanner.Enums.PlannerDetail.List.OrderBy(o => o.Value).ToList()">
+			<TableHeader>
+				<th class="text-info"><br />Id</th>
+				<th class="text-info"><br />Name</th>
+				<th class="text-info"><br />PFD Id <sup>&Dagger;</sup></th>
+				<th class="text-info"><br />Date</th>
+				<th class="text-info"><br />Hebrew Date</th>
+				<th class="text-info"><br />Hebrew Text Color</th>
+				<th class="text-info"><br />Pre Hebrew Date</th>
+			</TableHeader>
+			<RowTemplate>
+				<td>@context.Value</td>
+				<td>@context.Name</td>
+				<td>@context.ParentFeastDayId</td>
+				<td>@context.Date.ToShortDateString()</td> 
+				<td>@context.HebrewDate</td>
+				<td>@context.HebrewTextColor</td>
+				<td>@context.PreHebrewDate</td>
+
 			</RowTemplate>
 		</TableTemplate>
 	</div>

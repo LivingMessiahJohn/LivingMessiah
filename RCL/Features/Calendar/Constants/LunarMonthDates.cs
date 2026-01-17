@@ -1,6 +1,6 @@
 ﻿namespace RCL.Features.Calendar.Constants;
 
-public static class LunarMonthDates // See FN1
+public static class LunarMonthDates // See FN1 
 {
   public static readonly DateTime HeshvanPrevGregYrMonth = Convert.ToDateTime("2025-10-12"); // 2025-10-23 - Mo 8
   public static readonly DateTime KislevPrevGregYrMonth = Convert.ToDateTime("2025-11-09"); //2025-11-21 - Mo 9
@@ -18,6 +18,36 @@ public static class LunarMonthDates // See FN1
   public static readonly DateTime Heshvan = Convert.ToDateTime("2026-10-12");
   public static readonly DateTime Kislev = Convert.ToDateTime("2026-11-10");
   public static readonly DateTime Tevet = Convert.ToDateTime("2026-12-10");
+
+  public static IReadOnlyList<DateTime> List(bool includeMinValue = false)
+  {
+    var items = new List<DateTime>
+    {
+      HeshvanPrevGregYrMonth,
+      KislevPrevGregYrMonth,
+      TevetPrevGregYrMonth,
+      Shevat,
+      Adar,
+      Adar2,
+      Nissan,
+      Iyar,
+      Sivan,
+      Tammuz,
+      Av,
+      Elul,
+      Tishri,
+      Heshvan,
+      Kislev,
+      Tevet
+    };
+
+    if (!includeMinValue)
+    {
+      items.RemoveAll(d => d == DateTime.MinValue);
+    }
+
+    return items;
+  }
 }
 
 /* 
