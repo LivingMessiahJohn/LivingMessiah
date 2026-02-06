@@ -44,7 +44,7 @@
 
 	private void GetDefaultLunarMonthType()
 	{
-		DateTime dateTimeWithoutTime = DateUtil.GetDateTimeWithoutTime(
+		DateOnly dateTimeWithoutTime = DateUtil.GetDateTimeWithoutTime(
 			DateTime.Now.AddDays(Test.AddDays).AddHours(Utc.ArizonaUtcMinus7));
 
 		CurrentFilter = LunarMonth.List
@@ -61,7 +61,7 @@
 
 		VM = svc!.GetHeaderServiceModelLunarMonth(CurrentFilter!);
 		Logger!.LogDebug("{Method}, CurrentFilter: {CurrentFilter}; dateTimeWithoutTime: {DateOnly}; Date: {DateAndTime}"
-		, CurrentFilter.Name, dateTimeWithoutTime.ToString("dd MMM yyyy HH"), CurrentFilter.Date);
+		, CurrentFilter.Name, dateTimeWithoutTime.ToString("dd MMM yyyy"), CurrentFilter.Date);
 
 	}
 

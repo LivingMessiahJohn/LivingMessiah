@@ -12,22 +12,19 @@
 	<div class="pb-n1 mt-2 mb-3 ">
 		<h1 class=""><i class="@Nav.Calendar.Icon"></i>&nbsp;&nbsp;@Nav.Calendar.Title</h1>
 
-		<div class="alert alert-danger text-center fs-4" role="alert">
-			Work in Progress!
-		</div>
+		@* <div class="alert alert-danger text-center fs-4" role="alert">Work in Progress!</div> *@
+
 	</div>
 </PageHeader>
 
-
 <nav class="navbar navbar-expand bg-primary-subtle">
 	@* <div class="d-flex justify-content-start"><div class="px-1"><HomeButton /></div></div> *@
-
 	<div class="collapse navbar-collapse justify-content-between">
 
 		<div class="px-1">
-			<PreviousOrNextButton CurrentDateOnly="CurrentDate"
+			<PreviousOrNextButton CurrentDate="CurrentDate"
 														Direction=RCLEnums.Direction.Previous
-														OnDateOnlySelected="ReturnedDateOnlySelected" />
+														OnDateSelected="ReturnedDateSelected" />
 		</div>
 
 
@@ -36,9 +33,9 @@
 		</div>
 
 		<div class="px-1">
-			<PreviousOrNextButton CurrentDateOnly="CurrentDate"
+			<PreviousOrNextButton CurrentDate="CurrentDate"
 														Direction=RCLEnums.Direction.Next
-														OnDateOnlySelected="ReturnedDateOnlySelected" />
+														OnDateSelected="ReturnedDateSelected" />
 		</div>
 	</div>
 
@@ -50,21 +47,27 @@
 <div class="border-bottom border-dark border-4 ">
 	<MonthHeader />
 </div>
+
 <div class="border-bottom border-dark border-4 ">
-	<RowsAndColumnsArray CurrentDate="CurrentDate" IsXsOrSm="false" />
+	<div class="@MediaQuery.XsOrSm.DivClass">
+		<RowsAndColumnsArray CurrentDate="CurrentDate" IsXsOrSm="true" />
+	</div>
+	<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+		<RowsAndColumnsArray CurrentDate="CurrentDate" IsXsOrSm="false" />
+	</div>
 </div>
+
+
 
 <div class="row mt-2">
 	<div class="col-12">
-
 		<ToggleButton ButtonLabel="Raw Data">
 
 			<div class="card bg-warning-subtle p-1">
-				<RawDataTable CurrentFilter="CurrentFilter" OnFilterSelected="ReturnedRawDataFilter" />
+				<EventsTable CurrentFilter="CurrentFilter" OnFilterSelected="ReturnedRawDataFilter" />
 			</div>
 
 		</ToggleButton>
-
 	</div>
 </div>
 
@@ -75,10 +78,10 @@
 
 	#region EventCallbacks
 
-	private async Task ReturnedDateOnlySelected(DateOnly dateOnly)
+	private async Task ReturnedDateSelected(DateOnly date)
 	{
-		CurrentDate = dateOnly;
-		Logger!.LogDebug("{Method} {Message}", nameof(ReturnedDateOnlySelected), dateOnly.ToShortDateString());
+		CurrentDate = date;
+		Logger!.LogDebug("{Method} {Message}", nameof(ReturnedDateSelected), date.ToShortDateString());
 	}
 
 	private void ReturnedRawDataFilter(CalendarEnumDateType filter)

@@ -79,10 +79,10 @@ else
 
 	private void GetDefaultFeastDayType()
 	{
-		DateTime dateTimeWithoutTime = DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(Test.AddDays).AddHours(Utc.ArizonaUtcMinus7));
+		DateOnly dateTimeWithoutTime = DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(Test.AddDays).AddHours(Utc.ArizonaUtcMinus7));
 
 		CurrentFilter = FeastDayType.List
-											.Where(w => w.Range.Max >= dateTimeWithoutTime)
+											.Where(w => w.DateOnlyRange.Max >= dateTimeWithoutTime)
 											.OrderBy(o => o.Date)
 											.FirstOrDefault();
 
@@ -92,7 +92,7 @@ else
 			CurrentFilter = FeastDayType.Hanukkah;
 		}
 		Logger!.LogDebug("...CurrentFilter.Name: {CurrentFilter}; CurrentDate: {CurrentDate}; FirstAndLastDates: {FirstAndLastDates}"
-			, CurrentFilter.Name, dateTimeWithoutTime.ToString("dd MMM yyyy HH"), CurrentFilter.FirstAndLastDates);
+			, CurrentFilter.Name, dateTimeWithoutTime.ToString("dd MMM yyyy"), CurrentFilter.FirstAndLastDates);
 	}
 
 	private void ReturnedFilter(FeastDayType? filter)

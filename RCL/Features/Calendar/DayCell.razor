@@ -1,92 +1,42 @@
-﻿
-@using ConstantsCSS =  RCL.Features.Calendar.Constants.CSS.DayCell
-@using ConstantsCSSTextAlign =  RCL.Features.Calendar.Constants.CSS.TextAlign
-
+﻿@using CalendarEnumDateType = RCL.Features.Calendar.Enums.DateType
+@using ConstantsCSS = RCL.Features.Calendar.Constants.CSS.DayCell
+@using Microsoft.AspNetCore.Components
 
 @* @inject ILogger<DayCell>? Logger  *@
 
-@if (Date.Month == MonthId)
-{
-	if (Date == CurrentDate)
+<div class="calendar-day @CSSToday @CSSMonth">
+	@if (DayCellList is not null && DayCellList.Any())
 	{
-		<div class="calendar-day @ConstantsCSS.Today">
-			<div class="day-number">@Date.Day</div>
-			@* ToDo: fix this <div>@GetSpecialDateDescriptions()</div> *@
+		<div class="day-content">
+			@foreach (var item in DayCellList!)
+			{
+				<div class="d-flex @item.JustifyContentSuffix @FontSize" title="@GetTitle(@item)">
+					@((MarkupString)item.Span)
+				</div>
+			}
 		</div>
 	}
 	else
 	{
-		if (specialDateFirst is not null)
-		{
-			@if (@specialDateFirst.CssClass == ConstantsCSSTextAlign.Center)
-				{
-				<div class="text-center">
-					@specialDateFirst.Description
-				</div>
-				}
-				else
-				{
-					<div class="">
-						@specialDateFirst.Description
-					</div>
-				} 
-		}
-		else
-		{
-			<div class="calendar-day @ConstantsCSS.CurrentMonth">
-				<div class="day-number">@Date.Day</div>
-			</div>
-		}
-	}
-}
-else
-{
-	<div class="calendar-day other-month">
-		<div class="day-number">@Date.Day</div>
-	</div>
-}
+		<div class="">&nbsp;</div>
+	}	
+	<div class="day-number">@Date.Day</div>
+</div>
 
 @code {
 	[Parameter, EditorRequired] public DateOnly Date { get; set; }
-	[Parameter, EditorRequired] public int MonthId { get; set; }
-	[Parameter, EditorRequired] public List<Data.DayCellRecord>? DayCellList { get; set; }
+	[Parameter, EditorRequired] public int MonthNumber { get; set; }
+	[Parameter, EditorRequired] public List<Enums.EventRecord>? DayCellList { get; set; }
+	[Parameter, EditorRequired] public string FontSize { get; set; }
 
-	//private DateOnly EffectiveCurrentDate => CurrentDateOverride ?? DateOnly.FromDateTime(DateTime.Today);
-	private DateOnly CurrentDate => DateOnly.FromDateTime(DateTime.Today);
-	
-	private List<Data.DayCellRecord>? specialDates;
-	private Data.DayCellRecord? specialDateFirst;
+	private string CSSToday => Date == DateOnly.FromDateTime(DateTime.Today) ? ConstantsCSS.Today : string.Empty;
+	private string CSSMonth => Date.Month == MonthNumber ? ConstantsCSS.CurrentMonth : ConstantsCSS.OtherMonth;
 
-	protected override void OnParametersSet()
+	private string GetTitle(Enums.EventRecord item)
 	{
-		specialDates = GetSpecialDates();
-		specialDateFirst = GetSpecialDateFirst();	
-	}
-
-	private List<Data.DayCellRecord>? GetSpecialDates()
-	{
-		if (DayCellList is null || !DayCellList.Any()) { return null; }
-		return DayCellList.Where(w => w.Date == Date).ToList();
-	}
-
-	private Data.DayCellRecord? GetSpecialDateFirst()
-	{
-		if (DayCellList is null || !DayCellList.Any()) { return null; }
-		return DayCellList.Where(w => w.Date == Date).FirstOrDefault();
-	}
-
-
-	private MarkupString? GetSpecialDateDescriptions()
-	{
-		if (DayCellList is null || !DayCellList.Any()) { return null; }
-
-		MarkupString result = new MarkupString();
-		foreach (var item in DayCellList.Where(w => w.Date == Date))
-		{
-			result = item.Description ?? default(MarkupString);
-		}
-		return result;
-	}
+		//return $"JCS: {item.JustifyContentSuffix}, Span: {item.Span}, Sorts: {item.Sort1}|{item.Sort2}";
+		return string.Empty;
+	}	
 
 	private string ShowTitle
 	{
@@ -95,7 +45,7 @@ else
 			string title = "";
 			return title;
 		}
-	}		
+	}
 
 	void ShowModal()
 	{

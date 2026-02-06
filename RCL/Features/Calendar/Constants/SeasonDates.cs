@@ -2,16 +2,16 @@
 
 public static class SeasonDates 
 {
-  //public static readonly DateTime Winter = Convert.ToDateTime("2025-12-21");
-  public static readonly DateTime Spring = Convert.ToDateTime("2026-03-17");
-  public static readonly DateTime Summer = Convert.ToDateTime("2026-06-20");
-  public static readonly DateTime Fall = Convert.ToDateTime("2026-09-22");  //2026-09-26
-  public static readonly DateTime Winter = Convert.ToDateTime("2026-12-21");
-  public static readonly DateTime WinterNextYear = Convert.ToDateTime("2027-12-20");
+  //public static readonly DateOnly Winter = DateOnly.Parse("2025-12-21");
+  public static readonly DateOnly Spring = DateOnly.Parse("2026-03-17");
+  public static readonly DateOnly Summer = DateOnly.Parse("2026-06-20");
+  public static readonly DateOnly Fall = DateOnly.Parse("2026-09-22");  //2026-09-26
+  public static readonly DateOnly Winter = DateOnly.Parse("2026-12-21");
+  public static readonly DateOnly WinterNextYear = DateOnly.Parse("2027-12-20");
 
-  public static IReadOnlyList<DateTime> List(bool includeMinValue = false)
+  public static IReadOnlyList<DateOnly> List(bool includeMinValue = false)
   {
-    var items = new List<DateTime>
+    var items = new List<DateOnly>
     {
       Spring,
       Summer,
@@ -22,7 +22,7 @@ public static class SeasonDates
 
     if (!includeMinValue)
     {
-      items.RemoveAll(d => d == DateTime.MinValue);
+      items.RemoveAll(d => d == DateOnly.MinValue);
     }
 
     return items;

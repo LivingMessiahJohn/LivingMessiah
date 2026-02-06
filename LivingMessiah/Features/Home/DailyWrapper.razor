@@ -5,52 +5,96 @@
 @inject ILogger<DailyWrapper>? Logger
 
 <div class="@MediaQuery.Xs.DivClass">
-  <ShabbatMeter />
-  <div class="d-flex justify-content-center">
-    <LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" DaysOld="DaysOld" />
-  </div>
+	<ShabbatMeter />
+
+	@if (!String.IsNullOrEmpty(ImageFile))
+	{
+		<div class="d-flex justify-content-center">
+			<LunarMoonCard LunarMonth="LunarMonth" ImageFile="@ImageFile" DaysToGoText="@DaysToGoText" />
+		</div>
+	}
 </div>
 
 <div class="@MediaQuery.Sm.DivClass">
-  <div class="d-flex justify-content-evenly">
-    <ShabbatMeter />
-    <LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" DaysOld="DaysOld" MaxWidth="max-width: 250px;" />
-  </div>
+	<div class="d-flex justify-content-evenly">
+		<ShabbatMeter />
+		@if (!String.IsNullOrEmpty(ImageFile))
+		{
+			<LunarMoonCard LunarMonth="LunarMonth" ImageFile="@ImageFile" DaysToGoText="@DaysToGoText" MaxWidth="max-width: 250px;" />
+		}
+
+	</div>
 </div>
-  
+
 <div class="@MediaQuery.MdOrLgOrXl.DivClass">
-  <div class="d-flex justify-content-evenly">
-    <ShabbatMeter />
-    <LunarMoonCard LunarMonth="LunarMonth" DaysToGo="DaysToGo" DaysOld="DaysOld" />
-  </div>
+	<div class="d-flex justify-content-evenly">
+		<ShabbatMeter />
+		@if (!String.IsNullOrEmpty(ImageFile))
+		{
+			<LunarMoonCard LunarMonth="LunarMonth" ImageFile="@ImageFile" DaysToGoText="@DaysToGoText" />
+		}
+
+	</div>
 </div>
 
 @code {
-  LunarMonthEnum? LunarMonth = null;
-  int DaysToGo = 0;
-  int DaysOld = 0;
+	LunarMonthEnum? LunarMonth = null;
+	int DaysToGo = 0;
+	int DaysOld = 0;
+	private string ImageFile = string.Empty;
+	string DaysToGoText = string.Empty;
+	private string DaysOldMessage = string.Empty;
 
-  protected override void OnInitialized()
-  {
-    DateTime dateTimeWithoutTime = DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(0).AddHours(Utc.ArizonaUtcMinus7));
+	protected override void OnInitialized()
+	{
+		DateOnly dateAzUTC = DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(0).AddHours(Utc.ArizonaUtcMinus7));
 
-    LunarMonth = LunarMonthEnum.List
-      .Where(w => w.Date >= dateTimeWithoutTime)
-      .OrderBy(o => o.Date)
-      .FirstOrDefault();
-    if (LunarMonth != null)
-    {
-      DaysToGo = (LunarMonth.Date - dateTimeWithoutTime).Days;
-      DaysOld = 30 - (LunarMonth.Date - dateTimeWithoutTime).Days;
-    }
+		Logger!.LogDebug("{Method}, {Message}", nameof(OnInitialized), $"dateAzUTC: {dateAzUTC}");
 
-    if (LunarMonth is not null)
-    {
-      Logger!.LogDebug("{Method}, {Message}, {DayCalc}", nameof(OnInitialized)
-          , $"Lunar Month: {LunarMonth!.Name} {LunarMonth!.Date.ToShortDateString()}"
-          , $"ToGo: {DaysToGo}, Old: {DaysOld}");
-    }
+		LunarMonth = LunarMonthEnum.List
+			.Where(w => w.Date >= dateAzUTC)
+			.OrderBy(o => o.Date)
+			.FirstOrDefault();
 
-  }
+		if (LunarMonth is not null)
+		{
+			DaysToGo = LunarMonth.Date.DayNumber - dateAzUTC.DayNumber;
 
+			int lmDateDN = LunarMonth.Date.DayNumber;
+			int azUtcDN = dateAzUTC.DayNumber;
+
+			DaysOld = lmDateDN - azUtcDN - 30; // 28
+
+			if (DaysOld < 0)
+			{
+				DaysOld = 1;
+			}	
+
+			if (DaysOld == 0)
+			{
+				DaysToGoText = "New Moon";
+				ImageFile = "/images/moons/01.jpg";
+			}
+			else
+			{
+				DaysToGoText = $"{DaysToGo} days";
+			}
+
+			if (DaysOld >= 0 && DaysOld <= 30)
+			{
+				var fileName = FormatDaysOld(DaysOld) + ".jpg";
+				ImageFile = $"/images/moons/{fileName}";
+			}
+
+			Logger!.LogDebug("{Method}, {Message}, {DayCalc}", nameof(OnInitialized)
+				, $"Lunar Month: {LunarMonth!.Name} {LunarMonth!.Date.ToShortDateString()}"
+				, $"ToGo: {DaysToGo}, Old: {DaysOld}");
+
+		}
+	}
+
+	private static string FormatDaysOld(int days)
+	{
+		return Math.Abs(days).ToString("D2");
+	}
 }

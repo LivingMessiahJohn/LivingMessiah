@@ -48,7 +48,7 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
 
   // <i class='{Icon}'></i>
   //                                        spanPrimary = "<span class='badge bg-primary fs-6 text-white'>";
-  //public MarkupString CalendarDayHtml => (MarkupString)$"<span class='badge bg-primary fs-5 text-white'><i class='{Icon}'></i> {Title}</span>";
+  //public MarkupString DayCellHtml => (MarkupString)$"<span class='badge bg-primary fs-5 text-white'><i class='{Icon}'></i> {Title}</span>";
   public virtual string ParentDate => FeastDay.FromValue(ParentFeastDayId).Date.AddDays(AddDays).ToString(DateFormat.ddd_mm_dd_yyyy);
 
   #endregion

@@ -1,41 +1,56 @@
-﻿@using RCL.Features.Calendar.Enums
+﻿@using System.Linq
+@using RCL.Features.Calendar.Enums
 @using CalendarEnumDateType = RCL.Features.Calendar.Enums.DateType
 @using CSS = RCL.Features.Calendar.Constants.CSS.JustifyContentSuffix
 
-<div class="hebrew-calendar">
 
-	@for (int row = 0; row < MonthDays.Count / 7; row++)
-	{
-		@for (int col = 0; col < 7; col++)
-		{
-			var date = MonthDays[row * 7 + col];
-
-			<DayCell Date="date" 
-				MonthNumber="CurrentDate.Month" 
-				DayCellList="GetDayCellList(date)" 
-				FontSize="@FS" />
-		}
-	}
-
+<div class="row">
+	<div class="col-sm-6">
+		<h5>Events</h5>
+	</div>
+	<div class="col-sm-6">
+		<FilterButtons CurrentFilter="@CurrentFilter" OnFilterSelected="@ReturnedFilter" />
+	</div>
 </div>
 
+<div class="row mt-2">
+	<div class="col-12">
+
+		<TableTemplate HeaderCSS="table table-sm table-warning table-hover"
+									 Items="data">
+			<TableHeader>
+				<th class="text-info">Date</th>
+				<th class="text-info">Category</th>
+				<th class="text-info">Justify Markup</th>
+				<th class="text-info">Span Markup</th>
+				<th class="text-info">Sort</th>
+			</TableHeader>
+			<RowTemplate>
+				<td>@context.Date</td>
+				<td>@context.Category.Value - @context.Category.Name</td>
+				<td><code>@context.JustifyContentSuffix</code></td>
+				<td><code>@context.Span</code></td>
+				<td>@context.Sort1 | @context.Sort2 </td>
+			</RowTemplate>
+		</TableTemplate>
+
+	</div>
+</div>
+
+
 @code {
-	[Parameter, EditorRequired] public DateOnly CurrentDate { get; set; }
-	[Parameter] public bool IsXsOrSm { get; set; }
+	[Parameter, EditorRequired] public CalendarEnumDateType? CurrentFilter { get; set; } // = CalendarEnumDateType.All;
+	[Parameter, EditorRequired] public EventCallback<CalendarEnumDateType> OnFilterSelected { get; set; }
 
+	private List<Enums.EventRecord>? data { get; set; }
 
-	protected string FS => IsXsOrSm ? "" : "fs-6";
-
-	private List<DateOnly> MonthDays { get; set; } = new();
 	protected override void OnParametersSet()
 	{
-		MonthDays = Helpers.MonthView.GetDates(CurrentDate);
+		Populate();
 	}
 
-	// Each DayCell component can have None, One, or Many special dates.
-	private List<Enums.EventRecord>? GetDayCellList(DateOnly date)
+	private void Populate()
 	{
-		List<Enums.EventRecord>? data;
 		data = Enums.EventFeast.List
 		.Where(f => f.IsSplit)
 		.Select(f => new Enums.EventRecord(f.ErevDate, DateType.Feast, GetJustifyContent(CSS.End), f.SpanIcon, f.Category.Value, f.EventSort))
@@ -62,16 +77,25 @@
 			.Where(m => m.DayTimeDate is not null)
 			.Select(m => new Enums.EventRecord(m.Date ?? default, DateType.Month, GetJustifyContent(CSS.Start), m.SpanText, DateType.Month.Value, m.EventSort)))
 
-		.Where(w => w.Date == date)
 		.OrderBy(r => r.Date)
-		.ThenBy(r => r.Sort1).ThenBy(r => r.Sort2)  // .ThenBy(r => r.Category.Value).ThenBy(r => r.Sort2)
+		.ThenBy(r => r.Sort1).ThenBy(r => r.Sort2)  
 		.ToList();
 
-		return data;
+		if (CurrentFilter != CalendarEnumDateType.All)
+		{
+			data = data!.Where(w => w.Category == CurrentFilter).ToList();
+		}
+
 	}
 
 	private string GetJustifyContent(string css)
 	{
-		return $"justify-content-{css}"; 
+		return $"justify-content-{css}";
+	}
+
+	private void ReturnedFilter(CalendarEnumDateType filter)
+	{
+		//Logger!.LogDebug("{Method} {Message}", nameof(ReturnedFilter), filter.Name);
+		OnFilterSelected.InvokeAsync(filter);
 	}
 }
