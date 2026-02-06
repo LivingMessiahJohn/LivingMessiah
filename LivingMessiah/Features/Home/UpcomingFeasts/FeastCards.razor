@@ -80,14 +80,14 @@
 
 @code {
   [Parameter, EditorRequired] public bool IsXs { get; set; }
-  [Parameter] public DateTime? CurrentDateOverride { get; set; }
+  [Parameter] public DateOnly? CurrentDateOverride { get; set; }
 
   protected string FontSize => IsXs ? " fs-5" : " fs-2";
   protected string HebrewCSS => IsXs ? " hebrew" : "  hebrew44";
 
   protected List<FeastCardDTO>? FeastList;
 
-  DateTime CurrentDate;
+  DateOnly CurrentDate;
 
   protected override void OnParametersSet()
   {
@@ -101,7 +101,7 @@
       FeastList = (from feast in RCL.Features.Feasts.Enums.Feast.List.ToList()
                    join feastDay in CalendarEnums.FeastDay.List.ToList()
                        on feast.FeastDay?.Value equals feastDay.Value
-                   where CurrentDate >= feastDay.StartShowingCard && CurrentDate <= feastDay.Range.Max
+                   where CurrentDate >= feastDay.StartShowingCard && CurrentDate <= feastDay.DateOnlyRange.Max
                    orderby feast.Value
                    select new FeastCardDTO
                    {
@@ -110,7 +110,7 @@
                      Image = feast.Image,
                      FloatRightHebrew = feast.Hebrew.FloatRightHebrew ?? "",
                      RangeFormatted = feastDay.RangeFormatted, 
-                     DaysAway = (feastDay.Date - CurrentDate).Days
+                     DaysAway = feastDay.Date.DayNumber - CurrentDate.DayNumber
                    }).ToList();
     }
     catch (Exception ex)
@@ -121,7 +121,7 @@
 
   }
 
-  private DateTime GetCurrentDate()
+  private DateOnly GetCurrentDate()
   {
     return DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(Test.AddDays).AddHours(Utc.ArizonaUtcMinus7));
   }

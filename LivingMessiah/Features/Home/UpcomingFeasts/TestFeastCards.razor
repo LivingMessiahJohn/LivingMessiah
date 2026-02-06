@@ -51,12 +51,12 @@
 }
 
 @code {
-  private DateTime? currentDateTime;
+  private DateOnly? currentDateTime;
 
   //CalendarEnums.FeastDay feastDay
-  private void OnButtonClicked(DateTime dateTime)
+  private void OnButtonClicked(DateOnly date)
   {
-    currentDateTime = dateTime;
+    currentDateTime = date;
     //currentDateTime = feastDay.StartShowingCard;
     //StateHasChanged();
   }

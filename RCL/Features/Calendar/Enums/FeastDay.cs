@@ -45,8 +45,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
   public abstract bool IsEndOfEdge { get; }           // used by LivingMessiah\Features\FeastDayPlanner\HeaderXsSm.razor
 
   public abstract bool HasCalendarDetails { get; }
-	public abstract DateTime Date { get; }  
-	public abstract DateRange Range { get; }
+	public abstract DateOnly Date { get; }  
   public abstract DateOnlyRange DateOnlyRange { get; } // Can I get rid of Date and rename this as Date?
 
   // This is a sanity check based on the idea for some feast days you can determine how many days are in between the dates
@@ -57,21 +56,22 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
   #region Extra Properties
 
-  public DateOnly ErevDate => DateOnly.FromDateTime(Date.AddDays(-1));  // ToDo: Remove DateOnly.FromDateTime
-  public DateOnly DayTimeDate => DateOnly.FromDateTime(Date);           // ToDo: Remove DateOnly.FromDateTime
+  public DateOnly ErevDate => Date.AddDays(-1);  
+  public DateOnly DayTimeDate => Date;           
 
   public string RangeFormatted =>
-	Range.Min != Range.Max
-		? $"{Range.Min.ToShortDateString()} - {Range.Max.ToShortDateString()}"
+  DateOnlyRange.Min != DateOnlyRange.Max
+		? $"{DateOnlyRange.Min.ToShortDateString()} - {DateOnlyRange.Max.ToShortDateString()}"
 		: Date.ToShortDateString();
 
 
-	public DateTime StartShowingCard => Range.Min.AddDays(-45);
+	public DateOnly StartShowingCard => DateOnlyRange.Min.AddDays(-45);
 
-	// Using `Range.Min:dd MMM yyyy HH` instead of Range.Min.ToString("dd MMM yyyy HH")`
-	public string FirstAndLastDates => $"DateRange: {Range.Min:dd MMM yyyy HH} - {Range.Max:dd MMM yyyy HH}";
+  // Using `Range.Min:dd MMM yyyy HH` instead of DateOnlyRange.Min.ToString("dd MMM yyyy HH")`
+  // FormatException: String 'dd MMM yyyy HH' contains parts which are not specific to the DateOnly.
+  public string FirstAndLastDates => $"DateRange: {DateOnlyRange.Min:dd MMM yyyy} - {DateOnlyRange.Max:dd MMM yyyy}";
 
-  public MarkupString CalendarDayHtml => (MarkupString)$"<span class='badge bg-primary fs-6 text-white'><i class='{Icon}'></i> {CalendarTitle}</span>";
+  public MarkupString DayCellHtml => (MarkupString)$"<span class='badge bg-primary fs-6 text-white'><i class='{Icon}'></i> {CalendarTitle}</span>";
 
   public MarkupString HasCalendarDetailsFormatted => HasCalendarDetails 
     ? (MarkupString)"<mark><b><span>&#10003;</span></b></mark>" 
@@ -97,9 +97,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => false;
 		public override int? DaysFromPrevFeast => null;  // This is the beginning of the year
-		public override DateRange Range => new (Date, PlannerDetailEnum.HanukkahDay8.Date);
-		public override DateTime Date => FeastDayDates.Hanukkah;
-    public override DateOnlyRange DateOnlyRange => new(DateOnly.FromDateTime(Date), DateOnly.FromDateTime(Date).AddDays(8)); // ToDo: Remove DateOnly.FromDateTime
+		public override DateOnly Date => FeastDayDates.Hanukkah;
+    public override DateOnlyRange DateOnlyRange => new(Date, Date.AddDays(8)); // ToDo: Remove DateOnly.FromDateTime
   } 
 
   private sealed class PurimSE : FeastDay
@@ -118,9 +117,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override bool HasCalendarDetails => false;
 		public override int? DaysFromPrevFeast => null;  // Hanukkah comes before and it's to fluid to track, so null
 
-		public override DateRange Range => new (Date, PlannerDetailEnum.Purim.Date);
-		public override DateTime Date => FeastDayDates.Purim;
-    public override DateOnlyRange DateOnlyRange => new(DateOnly.FromDateTime(Date), DateOnly.FromDateTime(Date));
+		public override DateOnly Date => FeastDayDates.Purim;
+    public override DateOnlyRange DateOnlyRange => new(Date, Date);
   }
 
 	//ToDo, Rename this PassoverWeek(SE)
@@ -139,9 +137,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => true;
 		public override int? DaysFromPrevFeast => null;  // Purim comes before and it's to fluid to track, so null
-		public override DateRange Range => new (Date, PlannerDetailEnum.UnleavenedBreadDay7.Date);
-		public override DateTime Date => FeastDayDates.Passover;
-    public override DateOnlyRange DateOnlyRange => new(DateOnly.FromDateTime(Date), DateOnly.FromDateTime(Date));
+		public override DateOnly Date => FeastDayDates.Passover;
+    public override DateOnlyRange DateOnlyRange => new(Date, Date);
   }
 
 	private sealed class WeeksSE : FeastDay
@@ -159,9 +156,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => false;  // this is the only one that isn't true
 		public override int? DaysFromPrevFeast => 51;  // Pesach is before and so a hard business rule can be made ... I think ... why isn't it 50?
-		public override DateRange Range => new (Date, PlannerDetailEnum.Weeks.Date);
-		public override DateTime Date => FeastDayDates.Weeks;
-    public override DateOnlyRange DateOnlyRange => new(DateOnly.FromDateTime(Date), DateOnly.FromDateTime(Date));
+		public override DateOnly Date => FeastDayDates.Weeks;
+    public override DateOnlyRange DateOnlyRange => new(Date, Date);
   }
 
 	private sealed class TrumpetsSE : FeastDay
@@ -179,9 +175,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => true;
 		public override int? DaysFromPrevFeast => 113;  // Shavuot / Weeks is before and so a hard business rule can be made ... I think 
-		public override DateRange Range => new (Date, PlannerDetailEnum.Trumpets.Date);
-		public override DateTime Date => FeastDayDates.Trumpets;
-    public override DateOnlyRange DateOnlyRange => new(DateOnly.FromDateTime(Date), DateOnly.FromDateTime(Date));
+		public override DateOnly Date => FeastDayDates.Trumpets;
+    public override DateOnlyRange DateOnlyRange => new(Date, Date);  
   }
 
 	private sealed class YomKippurSE : FeastDay
@@ -199,9 +194,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => true;
 		public override int? DaysFromPrevFeast => 9;  // Trumpets is before and so a hard business rule can be made
-		public override DateRange Range => new (Date, PlannerDetailEnum.YomKippur.Date);
-		public override DateTime Date => FeastDayDates.YomKippur;
-    public override DateOnlyRange DateOnlyRange => new(DateOnly.FromDateTime(Date), DateOnly.FromDateTime(Date));
+		public override DateOnly Date => FeastDayDates.YomKippur;
+    public override DateOnlyRange DateOnlyRange => new(Date, Date);
   }
 
 	private sealed class TabernaclesSE : FeastDay
@@ -219,16 +213,15 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => true;
 		public override int? DaysFromPrevFeast => 5;  // Yom Kippur is before and so a hard business rule can be made 
-		public override DateRange Range => new(Date, PlannerDetailEnum.SukkotCampTearDown.Date);
-		public override DateTime Date => FeastDayDates.Tabernacles;
-    public override DateOnlyRange DateOnlyRange => new(DateOnly.FromDateTime(Date), DateOnly.FromDateTime(Date).AddDays(8)); 
+		public override DateOnly Date => FeastDayDates.Tabernacles;
+    public override DateOnlyRange DateOnlyRange => new(Date, Date.AddDays(8)); 
   }
 
 	#endregion
 	
 }
 
-public record DateRange(DateTime Min, DateTime Max);
+//public record DateRange(DateOnly Min, DateOnly Max);
 
 public record DateOnlyRange(DateOnly Min, DateOnly Max);
 

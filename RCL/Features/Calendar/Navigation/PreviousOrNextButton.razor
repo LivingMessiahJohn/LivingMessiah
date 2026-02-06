@@ -1,15 +1,13 @@
-﻿@using RCL.Features.Calendar.Data
+﻿@using System.Linq
+@using RCL.Features.Calendar.Data
 
 @* @inject ILogger<PreviousOrNextButton>? Logger *@
-@inject IJSRuntime JS
+@* @inject IJSRuntime JS *@
 @* @inject IToastService? Toast *@
-@inject RCL.Features.Calendar.Data.IService? Service
-
 
 @if (!IsEdge)
 {
-	<button type="button" class="btn btn-outline-primary btn-md @Direction.Margin"
-					title="Date: @CurrentDateOnly.Year @CurrentDateOnly.Month Range: @DateOnlyRange"
+	<button type="button" class="btn btn-outline-primary btn-md @Direction.Margin" title=""
 					@onclick="ButtonClick">
 		<i class="@Direction.Icon"></i>
 	</button>
@@ -21,16 +19,14 @@ else
 	</button>
 }
 
-
-
 @code {
-	[Parameter, EditorRequired] public DateOnly CurrentDateOnly { get; set; }
+	[Parameter, EditorRequired] public DateOnly CurrentDate { get; set; }
 	[Parameter, EditorRequired] public Enums.Direction Direction { get; set; }
-	[Parameter, EditorRequired] public EventCallback<DateOnly> OnDateOnlySelected { get; set; }
+	[Parameter, EditorRequired] public EventCallback<DateOnly> OnDateSelected { get; set; }
 
 	private bool IsEdge;
 
-	private DateOnlyRange? DateOnlyRange;
+	private DateRange? DateRange;
 
 	private static int YearMonthKey(DateOnly d) => d.Year * 100 + d.Month;
 	int currentKey;
@@ -39,17 +35,16 @@ else
 
 	protected override void OnParametersSet()
 	{
-		//Populate();
-		DateOnlyRange = Service!.GetDateRange2();
+		DateRange = new DateRange(new DateOnly(CurrentDate.Year, 1, 1), new DateOnly(CurrentDate.Year, 12, 31));
 
 		IsEdge = false;
-		if (DateOnlyRange is null) { return; }
 
 		// Compare only Year and Month, not the full DateOnly value.
 
-		currentKey = YearMonthKey(CurrentDateOnly);
-		startKey = YearMonthKey(DateOnlyRange!.Start);
-		endKey = YearMonthKey(DateOnlyRange!.End);
+		currentKey = YearMonthKey(CurrentDate);
+		startKey = YearMonthKey(DateRange!.Start);
+		endKey = YearMonthKey(DateRange!.End);
+
 
 		if (Direction == Enums.Direction.Previous && currentKey <= startKey)
 		{
@@ -68,18 +63,20 @@ else
 	{
 		if (firstRender)
 		{
-			try
-			{
+			//try
+			//{
+			/*
 				jsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./Features/Calendar/PreviousOrNextButton.razor.js");
 				_dotNetRef = DotNetObjectReference.Create(this);
 				await jsModule.InvokeVoidAsync("addArrowKeyListener", _dotNetRef);
+				*/
 				//Logger!.LogInformation("{Method}, JSMethod: {JSMethod}", nameof(OnAfterRenderAsync), JsonKeyboard.Method);
-			}
-			catch (Exception ex)
-			{
+			//}
+			//catch (Exception ex)
+			//{
 				//Logger!.LogError(ex, "{Method}", nameof(OnAfterRenderAsync));
 				//Toast!.ShowError("An invalid operation occurred, contact your administrator");
-			}
+			//}
 		}
 	}
 
@@ -90,13 +87,13 @@ else
 
 	private void ExecuteMove()
 	{
-		if (DateOnlyRange is null) { return; }
+		if (DateRange is null) { return; }
 
 		DateOnly adjustedDateOnly = Direction == Enums.Direction.Previous
-			? CurrentDateOnly.AddMonths(-1)
-			: CurrentDateOnly.AddMonths(+1);
+			? CurrentDate.AddMonths(-1)
+			: CurrentDate.AddMonths(+1);
 
-		OnDateOnlySelected.InvokeAsync(adjustedDateOnly);
+		OnDateSelected.InvokeAsync(adjustedDateOnly);
 	}
 
 	/*

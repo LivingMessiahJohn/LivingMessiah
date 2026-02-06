@@ -4,18 +4,18 @@
 public static class FeastDayDates 
 {
   //public static readonly DateTime Hanukkah = Convert.ToDateTime("2025-12-14");
-  public static readonly DateTime Purim = Convert.ToDateTime("2026-03-03");
-  public static readonly DateTime Passover = Convert.ToDateTime("2026-04-03");
-  public static readonly DateTime Weeks = Convert.ToDateTime("2026-05-23");
-  public static readonly DateTime Trumpets = Convert.ToDateTime("2026-09-12");
-  public static readonly DateTime YomKippur = Convert.ToDateTime("2026-09-21");
-  public static readonly DateTime Tabernacles = Convert.ToDateTime("2026-09-26");
-  public static readonly DateTime Hanukkah = Convert.ToDateTime("2026-12-16");    //The type 'FeastDayDates' already contains a definition for 'Hanukkah'
+  public static readonly DateOnly Purim = DateOnly.Parse("2026-03-03");
+  public static readonly DateOnly Passover = DateOnly.Parse("2026-04-03");
+  public static readonly DateOnly Weeks = DateOnly.Parse("2026-05-23");
+  public static readonly DateOnly Trumpets = DateOnly.Parse("2026-09-12");
+  public static readonly DateOnly YomKippur = DateOnly.Parse("2026-09-21");
+  public static readonly DateOnly Tabernacles = DateOnly.Parse("2026-09-26");
+  public static readonly DateOnly Hanukkah = DateOnly.Parse("2026-12-16");    
 
 
-  public static IReadOnlyList<DateTime> List(bool includeMinValue = false)
+  public static IReadOnlyList<DateOnly> List(bool includeMinValue = false)
   {
-    var items = new List<DateTime>
+    var items = new List<DateOnly>
     {
       Purim,
       Passover,
@@ -28,7 +28,7 @@ public static class FeastDayDates
 
     if (!includeMinValue)
     {
-      items.RemoveAll(d => d == DateTime.MinValue);
+      items.RemoveAll(d => d == DateOnly.MinValue);
     }
 
     return items;
