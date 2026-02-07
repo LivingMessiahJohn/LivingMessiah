@@ -118,7 +118,7 @@
 		.Select(triennial => triennial.WeeklyReadingParashaFile);
 	}
 
-	protected FileUploadResultRecord? result;
+	protected BlobOperationResult? result;
 
 	private IBrowserFile? selectedFile;
 	private long selectedFileSize;
@@ -211,18 +211,49 @@
 
 			await using var stream = await response.Content.ReadAsStreamAsync();
 
-			// Upload stream to Azure Blob (reuse/adapt your existing upload logic)
-			await BlobService.UploadStreamAsync(stream, fileName, response.Content.Headers.ContentType?.MediaType);
+			// Upload stream to Azure Blob
+			result = await BlobService.UploadStreamAsync(stream, fileName, response.Content.Headers.ContentType?.MediaType);
+			
+			if (result.IsSuccess)
+			{
+				// Get blob URL asynchronously
+				var urlResult = await BlobService.GetBlobUrlAsync(fileName);
+				if (urlResult.IsSuccess && !string.IsNullOrEmpty(urlResult.Data))
+				{
+					uploadedBlobUrl = urlResult.Data;
+					uploadProgress = 100;
+					Toast?.ShowSuccess("Upload finished.");
+				}
+				else
+				{
+					Logger?.LogWarning("Failed to retrieve blob URL for {FileName}", fileName);
+					uploadProgress = 100;
+					Toast?.ShowWarning("Upload completed but could not retrieve URL.");
+				}
+			}
+			else
+			{
+				uploadProgress = 0;
+				if (result.IsTransient)
+				{
+					Toast?.ShowWarning("Service temporarily unavailable. Please try again.");
+				}
+				else
+				{
+					Toast?.ShowError("Upload failed.");
+				}
+			}
 		}
 		catch (Exception ex)
 		{
-			// Handle errors (e.g., invalid URL, network issues, expired link)
-			// Show user-friendly message
 			Logger?.LogError(ex, "{Method}", nameof(UploadFromUrlToAzure));
-
-			// "Failed to download PDF: invalid/expired link or network issue"
-			Toast!.ShowError($"{Global.ToastShowError}; Inside {nameof(UploadFromUrlToAzure)}");
-			result = new FileUploadResultRecord(false, $"Exception: {ex.Message}");
+			Toast?.ShowError($"{Global.ToastShowError}; Inside {nameof(UploadFromUrlToAzure)}");
+			result = new BlobOperationResult(false, ex.Message, ex);
+			uploadProgress = 0;
+		}
+		finally
+		{
+			StateHasChanged();
 		}
 	}
 
@@ -277,16 +308,34 @@
 				// Await final result
 				result = await uploadTask;
 
-				uploadProgress = result!.Success ? 100 : uploadProgress;
+				uploadProgress = result!.IsSuccess ? 100 : uploadProgress;
 
-				if (result.Success)
+				if (result.IsSuccess)
 				{
-					uploadedBlobUrl = BlobService.GetBlobUrl(target);
-					Toast?.ShowSuccess("Upload finished.");
+					// Get blob URL asynchronously
+					var urlResult = await BlobService.GetBlobUrlAsync(target);
+					if (urlResult.IsSuccess && !string.IsNullOrEmpty(urlResult.Data))
+					{
+						uploadedBlobUrl = urlResult.Data;
+						Toast?.ShowSuccess("Upload finished.");
+					}
+					else
+					{
+						Logger?.LogWarning("Failed to retrieve blob URL for {Target}", target);
+						uploadProgress = 100;
+						Toast?.ShowWarning("Upload completed but could not retrieve URL.");
+					}
 				}
 				else
 				{
-					Toast?.ShowError("Upload failed.");
+					if (result.IsTransient)
+					{
+						Toast?.ShowWarning("Service temporarily unavailable. Please try again.");
+					}
+					else
+					{
+						Toast?.ShowError("Upload failed.");
+					}
 				}
 			}
 			finally
@@ -300,20 +349,19 @@
 						File.Delete(tempFilePath);
 					}
 				}
-
 				catch (Exception ex)
 				{
 					Logger?.LogError(ex, "Deletion of tempFilePath failed");
 					Toast?.ShowInfo("Deletion of tempFilePath failed");
-					result = new FileUploadResultRecord(false, $"Exception: {ex.Message}");
+					result = new BlobOperationResult(false, $"Temp file deletion failed: {ex.Message}", ex);
 				}
 			}
 		}
 		catch (Exception ex)
 		{
 			Logger?.LogError(ex, "Upload failed");
-			Toast?.ShowInfo("Upload failed");
-			result = new FileUploadResultRecord(false, $"Exception: {ex.Message}");
+			Toast?.ShowError($"{Global.ToastShowError}");
+			result = new BlobOperationResult(false, $"Exception: {ex.Message}", ex);
 		}
 		finally
 		{
@@ -321,13 +369,11 @@
 
 			// If upload succeeded, clear the selected file so ToggleDisabled() will disable the Upload button.
 			// Keeps fileName so the user can see the target; change as needed if you prefer clearing fileName too.
-			if (result?.Success == true)
+			if (result?.IsSuccess == true)
 			{
 				selectedFile = null;
 				selectedFileSize = 0;
 			}
-
-			Toast?.ShowInfo($"result: {result}");
 
 			ToggleDisabled();
 			StateHasChanged();

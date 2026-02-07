@@ -9,7 +9,7 @@
 		<hr class="warning" />
 
 		<img src="@Blobs.Leadership(@item.ImageFile)"
-				 class="@item.ImgClassSmMdLg" alt="@item.OfficeHolderName" />
+				 class="@item.ImgClassSmMdLg" alt="@item.OfficeHolderName" @onerror="(ErrorEventArgs e) => HandleImageError(e)" />
 
 		<div class="card-body">
 			<h4 class="card-title">@item.OfficeHolderName<br /></h4>
@@ -60,5 +60,9 @@
 </div>    <!-- card -->
 
 @code {
-
+    private void HandleImageError(ErrorEventArgs e)
+    {
+        // Log the error or show a placeholder
+        Console.WriteLine($"Inside {nameof(HandleImageError)}Failed to load image: {e}");
+    }
 }
