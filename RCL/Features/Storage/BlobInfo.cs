@@ -1,3 +1,3 @@
 ﻿namespace RCL.Features.Storage;
 
-public record BlobInfo(string BlobName, string Url, long Size);
+public record BlobInfo(string Name, string Url, long SizeBytes);

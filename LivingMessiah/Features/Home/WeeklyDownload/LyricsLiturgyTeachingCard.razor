@@ -12,7 +12,7 @@
 		<h2 class="text-center text-white ">Lyrics, Liturgy and Teaching</h2>
 	</div>
 
-<Interary />
+	<Interary />
 
 	@if (AzureBlobService is not null)
 	{
@@ -59,25 +59,64 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		Logger!.LogDebug("{Method}, {Message}", $"{nameof(LyricsLiturgyTeachingCard)}!{nameof(OnInitializedAsync)}", "Start");
+		
 		if (CurrentReadingEnum is null)
 		{
+			Logger!.LogDebug("{Method}, {Message}", nameof(OnInitializedAsync), "CurrentReadingEnum is null");
 			return;
 		}
 
 		if (AzureBlobService is not null)
 		{
-
-
 			CardTitle = $"{CurrentReadingEnum!.Date.ToString("yyyy MMMM dd")} | {CurrentReadingEnum.BCV}";
 			string _WeeklyReadingParashaFile = CurrentReadingEnum.WeeklyReadingParashaFile?.Trim() ?? string.Empty;
+
 			try
 			{
-				if (await AzureBlobService.ExistsAsync(_WeeklyReadingParashaFile))
+				// Check if blob exists
+				var existsResult = await AzureBlobService.ExistsAsync(_WeeklyReadingParashaFile);
+
+				if (!existsResult.IsSuccess)
 				{
-					BlobInfo? _blobInfo = await AzureBlobService.GetBlobInfoAsync(_WeeklyReadingParashaFile);
-					if (_blobInfo is not null)
+					Logger!.LogWarning("Failed to check blob existence: {Message}", existsResult.Message);
+					if (existsResult.IsTransient)
 					{
-						CurrentReadingFilenameRecord = new CurrentReadingFilenameRecord(_blobInfo.BlobName, _blobInfo.Url, _blobInfo.Size);
+						Toast!.ShowError("Service temporarily unavailable. Please try again.");
+					}
+					else
+					{
+						Toast!.ShowError($"{Global.ToastShowError}");
+					}
+					return;
+				}
+
+				if (existsResult.Data)
+				{
+					// Get blob info
+					var blobInfoResult = await AzureBlobService.GetBlobInfoAsync(_WeeklyReadingParashaFile);
+
+					if (!blobInfoResult.IsSuccess)
+					{
+						Logger!.LogWarning("Failed to get blob info: {Message}", blobInfoResult.Message);
+						if (blobInfoResult.IsTransient)
+						{
+							Toast!.ShowError("Service temporarily unavailable. Please try again.");
+						}
+						else
+						{
+							Toast!.ShowError($"{Global.ToastShowError}");
+						}
+						CurrentReadingFilenameRecord = new CurrentReadingFilenameRecord(_WeeklyReadingParashaFile, string.Empty, 0);
+						return;
+					}
+
+					if (blobInfoResult.Data is not null)
+					{
+						CurrentReadingFilenameRecord = new CurrentReadingFilenameRecord(
+							blobInfoResult.Data.Name,
+							blobInfoResult.Data.Url,
+							blobInfoResult.Data.SizeBytes);
 					}
 					else
 					{
@@ -91,9 +130,14 @@
 			}
 			catch (Exception ex)
 			{
-				Logger!.LogError(ex, "{Method} {Message}", nameof(OnInitialized), $"_WeeklyReadingParashaFile: {_WeeklyReadingParashaFile}");
+				Logger!.LogError(ex, "{Method} {Message}", nameof(OnInitializedAsync), $"_WeeklyReadingParashaFile: {_WeeklyReadingParashaFile}");
 				Toast!.ShowError($"{Global.ToastShowError}");
 			}
+		}
+		else
+		{
+			
+			Logger!.LogWarning("{Method}, {Message}", nameof(OnInitializedAsync), "AzureBlobService");
 		}
 	}
 
