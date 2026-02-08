@@ -11,12 +11,12 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     internal const int Hanukkah = 3;
     internal const int Purim = 4;
     internal const int Seder = 5;
-    internal const int Matzah1 = 6;  
+    internal const int Matzah1 = 6;
     internal const int Matzah2 = 7;
     internal const int Omer = 8;
     internal const int Shavuot = 9;
-    internal const int YomTeruah = 10; 
-    internal const int YomKippur = 11;  
+    internal const int YomTeruah = 10;
+    internal const int YomKippur = 11;
     internal const int SukkotPrep = 12;
     internal const int SukkotDay1 = 13;
     internal const int SukkotDay8 = 14;
@@ -46,11 +46,12 @@ public abstract class EventFeast : SmartEnum<EventFeast>
   public abstract string Icon { get; }
   public abstract string Title { get; }
   public abstract DateOnly Date { get; }
+  public abstract FeastDateRange FeastDateRange { get; }
   public abstract string BadgeColor { get; }
-  public abstract string TextColor { get; }  
+  public abstract string TextColor { get; }
   public abstract DateType Category { get; }
   public abstract int EventSort { get; }
-  public abstract bool IsSplit { get; } 
+  public abstract bool IsSplit { get; }
   public abstract int Repeats { get; }  // ToDo: do something with this or remove it
   #endregion
 
@@ -86,11 +87,12 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string Icon => "fas fa-hanukiah";
     public override string Title => "Hanukkah";
     public override DateOnly Date => FeastDayDates.Hanukkah;
-    public override string BadgeColor => "bg-primary";  
+    public override FeastDateRange FeastDateRange => new(FeastDayDates.Hanukkah.AddDays(-1), FeastDayDates.Hanukkah.AddDays(7));
+    public override string BadgeColor => "bg-primary";
     public override string TextColor => "text-dark";
-    public override DateType Category =>  DateType.Feast;
+    public override DateType Category => DateType.Feast;
     public override int EventSort => 0;
-    public override bool IsSplit => true; 
+    public override bool IsSplit => true;
     public override int Repeats => 8;
   }
 
@@ -100,6 +102,8 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string Icon => "fas fa-dice";
     public override string Title => "Purim";
     public override DateOnly Date => FeastDayDates.Purim;
+    //public override FeastDateRange DateRange => new(FeastDayDates.Purim, FeastDayDates.Purim);
+    public override FeastDateRange FeastDateRange => new(Date.AddDays(-1), Date);
     public override string BadgeColor => "bg-warning";
     public override string TextColor => "text-dark";
     public override DateType Category => DateType.Feast;
@@ -115,6 +119,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string Title => "Seder";
     //public override DateOnly Date => FeastDayDates.Passover; 
     public override DateOnly Date => FeastDayDates.Passover.AddDays(-1);
+    public override FeastDateRange FeastDateRange => new(FeastDayDates.Passover.AddDays(-1), FeastDayDates.Passover.AddDays(6));
     public override string BadgeColor => "bg-primary-subtle";
     public override string TextColor => "text-dark";
     public override DateType Category => DateType.Feast;
@@ -129,6 +134,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string Icon => "fas fa-times-circle";
     public override string Title => "Matzah 1";
     public override DateOnly Date => FeastDayDates.Passover;
+    public override FeastDateRange FeastDateRange => new(FeastDayDates.Passover.AddDays(-1), FeastDayDates.Passover.AddDays(6));
     public override string BadgeColor => "bg-primary";
     public override string TextColor => "text-white";
     public override DateType Category => DateType.Feast;
@@ -143,6 +149,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string Icon => "fas fa-times-circle";
     public override string Title => "Matzah 7";
     public override DateOnly Date => FeastDayDates.Passover.AddDays(6);
+    public override FeastDateRange FeastDateRange => new(FeastDayDates.Passover.AddDays(-1), FeastDayDates.Passover.AddDays(6));
     public override string BadgeColor => "bg-primary";
     public override string TextColor => "text-white";
     public override DateType Category => DateType.Feast;
@@ -157,6 +164,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string Icon => "fas fa-hashtag";
     public override string Title => "Omer";
     public override DateOnly Date => FeastDayDates.Passover.AddDays(+2); // Fix was -1
+    public override FeastDateRange FeastDateRange => new(Date, Date);
     public override string BadgeColor => "bg-info";
     public override string TextColor => "text-dark";
     public override DateType Category => DateType.Feast;
@@ -171,6 +179,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string Icon => "fas fa-book-open";
     public override string Title => "Shavuot";
     public override DateOnly Date => FeastDayDates.Weeks; // ToDo: rename to FeastDayDates.Shavuot
+    public override FeastDateRange FeastDateRange => new(Date.AddDays(-1), Date);
     public override string BadgeColor => "bg-success";
     public override string TextColor => "text-white";
     public override DateType Category => DateType.Feast;
@@ -185,6 +194,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string Icon => "fas fa-bullhorn";
     public override string Title => "Yom Teruah";
     public override DateOnly Date => FeastDayDates.Trumpets; // ToDo: rename to FeastDayDates.YomTeruah
+    public override FeastDateRange FeastDateRange => new(Date.AddDays(-1), Date);
     public override string BadgeColor => "bg-warning";
     public override string TextColor => "text-dark";
     public override DateType Category => DateType.Feast;
@@ -198,7 +208,8 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public YomKippurSE() : base($"{nameof(Id.YomKippur)}", Id.YomKippur) { }
     public override string Icon => "fas fa-hands-helping";
     public override string Title => "Yom Kippur";
-    public override DateOnly Date => FeastDayDates.YomKippur; 
+    public override DateOnly Date => FeastDayDates.YomKippur;
+    public override FeastDateRange FeastDateRange => new(Date.AddDays(-1), Date);
     public override string BadgeColor => "bg-danger";
     public override string TextColor => "text-white";
     public override DateType Category => DateType.Feast;
@@ -206,13 +217,14 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override bool IsSplit => true;
     public override int Repeats => 0;
   }
-  
+
   private sealed class SukkotPrepSE : EventFeast
   {
     public SukkotPrepSE() : base($"{nameof(Id.SukkotPrep)}", Id.SukkotPrep) { }
     public override string Icon => "fas fa-campground";
     public override string Title => "Preparation";
     public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(-1); // ToDo: rename to FeastDayDates.Sukkot
+    public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
     public override string BadgeColor => "bg-primary-subtle";
     public override string TextColor => "text-dark";
     public override DateType Category => DateType.Feast;
@@ -227,6 +239,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string Icon => "fas fa-campground";
     public override string Title => "Sukkot Day 1";
     public override DateOnly Date => FeastDayDates.Tabernacles; // ToDo: rename to FeastDayDates.Sukkot
+    public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
     public override string BadgeColor => "bg-primary";
     public override string TextColor => "text-white";
     public override DateType Category => DateType.Feast;
@@ -241,6 +254,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string Icon => "fas fa-campground";
     public override string Title => "Sukkot Day 8";
     public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(7); // ToDo: rename to FeastDayDates.Sukkot
+    public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
     public override string BadgeColor => "bg-primary";
     public override string TextColor => "text-dark";
     public override DateType Category => DateType.Feast;
@@ -255,6 +269,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string Icon => "fas fa-campground";
     public override string Title => "Tear Down";
     public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(8); // ToDo: rename to FeastDayDates.Sukkot
+    public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
     public override string BadgeColor => "bg-primary-subtle";
     public override string TextColor => "text-dark";
     public override DateType Category => DateType.Feast;
@@ -266,4 +281,4 @@ public abstract class EventFeast : SmartEnum<EventFeast>
   #endregion
 }
 
-//public record DateRange(DateOnly Min, DateOnly Max);
+public record FeastDateRange(DateOnly Min, DateOnly Max);

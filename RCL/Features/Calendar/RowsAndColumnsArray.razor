@@ -1,77 +1,61 @@
-﻿@using RCL.Features.Calendar.Enums
-@using CalendarEnumDateType = RCL.Features.Calendar.Enums.DateType
-@using CSS = RCL.Features.Calendar.Constants.CSS.JustifyContentSuffix
+﻿@using RCL.Features.Calendar.Data
+@using RCL.Features.Calendar.Enums
 
-<div class="hebrew-calendar">
+@inherits BaseEventsRepository
 
-	@for (int row = 0; row < MonthDays.Count / 7; row++)
-	{
-		@for (int col = 0; col < 7; col++)
+@if (BaseData is not null)
+{
+	<div class="hebrew-calendar">
+
+		@for (int row = 0; row < MonthDays.Count / 7; row++)
 		{
-			var date = MonthDays[row * 7 + col];
-
-			<DayCell Date="date" 
-				MonthNumber="CurrentDate.Month" 
-				DayCellList="GetDayCellList(date)" 
-				FontSize="@FS" />
+			@for (int col = 0; col < 7; col++)
+			{
+				var date = MonthDays[row * 7 + col];
+ 				<div class="d-md-none">
+					<DayCell Date="date"
+									 MonthNumber="CurrentDate.Month"
+									 DayCellList="GetDayCellList(date)"
+									 FeastRowBorder=""
+									 MediaQuery="d-md-none" />
+				</div> 
+				<div class="d-none d-md-block">
+					<DayCell Date="date"
+									 MonthNumber="CurrentDate.Month"
+									 DayCellList="GetDayCellList(date)"
+									 FeastRowBorder=""
+									 MediaQuery="d-none d-md-block" />
+				</div>
+			}
 		}
-	}
 
-</div>
+	</div>
+}
+else
+{
+	<div class="alert alert-warning text-center" role="alert">
+		<b>Note:</b> <code>BaseData is not null</code>
+	</div>
+}
 
 @code {
 	[Parameter, EditorRequired] public DateOnly CurrentDate { get; set; }
-	[Parameter] public bool IsXsOrSm { get; set; }
-
-
-	protected string FS => IsXsOrSm ? "" : "fs-6";
 
 	private List<DateOnly> MonthDays { get; set; } = new();
+
 	protected override void OnParametersSet()
 	{
 		MonthDays = Helpers.MonthView.GetDates(CurrentDate);
 	}
 
-	// Each DayCell component can have None, One, or Many special dates.
 	private List<Enums.EventRecord>? GetDayCellList(DateOnly date)
 	{
-		List<Enums.EventRecord>? data;
-		data = Enums.EventFeast.List
-		.Where(f => f.IsSplit)
-		.Select(f => new Enums.EventRecord(f.ErevDate, DateType.Feast, GetJustifyContent(CSS.End), f.SpanIcon, f.Category.Value, f.EventSort))
-		.Concat(Enums.EventFeast.List
-			.Where(f => f.IsSplit)
-			.Select(f => new Enums.EventRecord(f.DayTimeDate, DateType.Feast, GetJustifyContent(CSS.Start), f.SpanText, f.Category.Value, f.EventSort)))
+		if (BaseData is null)	{	return null; }
 
-		.Concat(Enums.EventFeast.List
-			.Where(f => !f.IsSplit)
-			.Select(f => new Enums.EventRecord(f.DayTimeDate, DateType.Feast, GetJustifyContent(CSS.Center), f.SpanIconAndText, f.Category.Value, f.EventSort)))
-
-		.Concat(Enums.EventFeast.List
-			.Where(f => !f.IsSplit)
-			.Select(f => new Enums.EventRecord(f.DayTimeDate.AddDays(1), DateType.Feast, GetJustifyContent(CSS.Center), f.SpanBlank, f.Category.Value, f.EventSort)))
-
-		.Concat(Enums.EventSeason.List
-			.Select(s => new Enums.EventRecord(s.Date, DateType.Season, GetJustifyContent(CSS.Center), s.SpanIconAndText, DateType.Season.Value, s.EventSort)))
-
-		.Concat(Enums.EventMoon.List
-			.Where(m => m.ErevDate is not null)
-			.Select(m => new Enums.EventRecord(m.Date.HasValue ? m.Date.Value.AddDays(-1) : default, DateType.Month, GetJustifyContent(CSS.End), m.SpanIcon, DateType.Month.Value, m.EventSort)))
-
-		.Concat(Enums.EventMoon.List
-			.Where(m => m.DayTimeDate is not null)
-			.Select(m => new Enums.EventRecord(m.Date ?? default, DateType.Month, GetJustifyContent(CSS.Start), m.SpanText, DateType.Month.Value, m.EventSort)))
-
-		.Where(w => w.Date == date)
+		return BaseData.Where(w => w.Date == date)
 		.OrderBy(r => r.Date)
-		.ThenBy(r => r.Sort1).ThenBy(r => r.Sort2)  // .ThenBy(r => r.Category.Value).ThenBy(r => r.Sort2)
+		.ThenBy(r => r.Sort1).ThenBy(r => r.Sort2)
 		.ToList();
-
-		return data;
 	}
 
-	private string GetJustifyContent(string css)
-	{
-		return $"justify-content-{css}"; 
-	}
 }

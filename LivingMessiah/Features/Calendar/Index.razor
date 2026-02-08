@@ -49,12 +49,7 @@
 </div>
 
 <div class="border-bottom border-dark border-4 ">
-	<div class="@MediaQuery.XsOrSm.DivClass">
-		<RowsAndColumnsArray CurrentDate="CurrentDate" IsXsOrSm="true" />
-	</div>
-	<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-		<RowsAndColumnsArray CurrentDate="CurrentDate" IsXsOrSm="false" />
-	</div>
+	<RowsAndColumnsArray CurrentDate="CurrentDate" />
 </div>
 
 
@@ -73,7 +68,8 @@
 
 @code {
 	public DateOnly CurrentDate = DateOnly.FromDateTime(DateTime.Today);
-	//public DateOnly CurrentDate = new DateOnly(2026, 3, 1);
+	//public DateOnly CurrentDate = new DateOnly(2026, 3, 2);
+
 	protected CalendarEnumDateType? CurrentFilter = CalendarEnumDateType.All;
 
 	#region EventCallbacks

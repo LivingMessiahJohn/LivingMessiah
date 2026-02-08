@@ -34,18 +34,12 @@ public abstract class EventSeason : SmartEnum<EventSeason>
   public abstract string TextColor { get; }
   public abstract int EventSort { get; }
   //public abstract string Emoji { get; }  // https://www.dotnetcatch.com/2019/06/04/visual-studio-quicktip-add-emoji-to-your-source-code/
-  //public abstract string CalendarColor { get; }
   public abstract DateOnly Date { get; }
 
   #endregion
 
   #region Extra Properties
-  //public string JustifyContent => $"justify-content-{CSS.Center}";  // 
   public string SpanIconAndText => $"<span class='badge {BadgeColor} {TextColor}'><i class='{Icon}'></i> {Name}</span>";
-
-  //public DateOnly? ErevDate => Date.AddDays(-1);
-  //public DateOnly? DayTimeDate => Date;
-  //public MarkupString DayCellHtml => (MarkupString)$"<span class='badge {BadgeColor} fs-6 text-black text-center'><i class='{Icon}'></i> {this.Name}</span>";
   #endregion
 
   #region Private Instantiation
@@ -58,7 +52,6 @@ public abstract class EventSeason : SmartEnum<EventSeason>
     public override string TextColor => "text-dark";
     public override int EventSort => 0;
     //public override string Emoji => "❄";
-    //public override string CalendarColor => CalendarColors.Primary;
     public override DateOnly Date => SeasonDates.Winter; 
   }
 	private sealed class SpringSE : EventSeason
@@ -70,7 +63,6 @@ public abstract class EventSeason : SmartEnum<EventSeason>
     public override string TextColor => "text-dark";
     public override int EventSort => 0;
     //public override string Emoji => "🌨";
-    //public override string CalendarColor => CalendarColors.Success;
     public override DateOnly Date => SeasonDates.Spring;
 	}
 	private sealed class SummerSE : EventSeason
@@ -79,10 +71,9 @@ public abstract class EventSeason : SmartEnum<EventSeason>
 		public override string Type => "Solstice";
 		public override string BadgeColor => "bg-danger";
 		public override string Icon => "far fa-sun";
-    public override string TextColor => "text-dark";
+    public override string TextColor => "text-white";
     public override int EventSort => 0;
     //public override string Emoji => "☀";
-    //public override string CalendarColor => CalendarColors.Danger;
     public override DateOnly Date => SeasonDates.Summer; 
 
 	}
@@ -95,7 +86,6 @@ public abstract class EventSeason : SmartEnum<EventSeason>
     public override string TextColor => "text-dark";
     public override int EventSort => 0;
     //public override string Emoji => "🍁";
-    //public override string CalendarColor => CalendarColors.Warning;
     public override DateOnly Date => SeasonDates.Fall; 
 	}
 	#endregion
