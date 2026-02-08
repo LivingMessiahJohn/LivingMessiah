@@ -1,8 +1,9 @@
 ﻿@using System.Linq
-@using RCL.Features.Calendar.Enums
 @using CalendarEnumDateType = RCL.Features.Calendar.Enums.DateType
-@using CSS = RCL.Features.Calendar.Constants.CSS.JustifyContentSuffix
+@using RCL.Features.Calendar.Data
+@using RCL.Features.Calendar.Enums
 
+@inherits BaseEventsRepository
 
 <div class="row">
 	<div class="col-sm-6">
@@ -17,7 +18,7 @@
 	<div class="col-12">
 
 		<TableTemplate HeaderCSS="table table-sm table-warning table-hover"
-									 Items="data">
+									 Items="filteredData">
 			<TableHeader>
 				<th class="text-info">Date</th>
 				<th class="text-info">Category</th>
@@ -39,60 +40,14 @@
 
 
 @code {
-	[Parameter, EditorRequired] public CalendarEnumDateType? CurrentFilter { get; set; } // = CalendarEnumDateType.All;
+	[Parameter, EditorRequired] public CalendarEnumDateType? CurrentFilter { get; set; } 
 	[Parameter, EditorRequired] public EventCallback<CalendarEnumDateType> OnFilterSelected { get; set; }
 
-	private List<Enums.EventRecord>? data { get; set; }
-
-	protected override void OnParametersSet()
-	{
-		Populate();
-	}
-
-	private void Populate()
-	{
-		data = Enums.EventFeast.List
-		.Where(f => f.IsSplit)
-		.Select(f => new Enums.EventRecord(f.ErevDate, DateType.Feast, GetJustifyContent(CSS.End), f.SpanIcon, f.Category.Value, f.EventSort))
-		.Concat(Enums.EventFeast.List
-			.Where(f => f.IsSplit)
-			.Select(f => new Enums.EventRecord(f.DayTimeDate, DateType.Feast, GetJustifyContent(CSS.Start), f.SpanText, f.Category.Value, f.EventSort)))
-
-		.Concat(Enums.EventFeast.List
-			.Where(f => !f.IsSplit)
-			.Select(f => new Enums.EventRecord(f.DayTimeDate, DateType.Feast, GetJustifyContent(CSS.Center), f.SpanIconAndText, f.Category.Value, f.EventSort)))
-
-		.Concat(Enums.EventFeast.List
-			.Where(f => !f.IsSplit)
-			.Select(f => new Enums.EventRecord(f.DayTimeDate.AddDays(1), DateType.Feast, GetJustifyContent(CSS.Center), f.SpanBlank, f.Category.Value, f.EventSort)))
-
-		.Concat(Enums.EventSeason.List
-			.Select(s => new Enums.EventRecord(s.Date, DateType.Season, GetJustifyContent(CSS.Center), s.SpanIconAndText, DateType.Season.Value, s.EventSort)))
-
-		.Concat(Enums.EventMoon.List
-			.Where(m => m.ErevDate is not null)
-			.Select(m => new Enums.EventRecord(m.Date.HasValue ? m.Date.Value.AddDays(-1) : default, DateType.Month, GetJustifyContent(CSS.End), m.SpanIcon, DateType.Month.Value, m.EventSort)))
-
-		.Concat(Enums.EventMoon.List
-			.Where(m => m.DayTimeDate is not null)
-			.Select(m => new Enums.EventRecord(m.Date ?? default, DateType.Month, GetJustifyContent(CSS.Start), m.SpanText, DateType.Month.Value, m.EventSort)))
-
-		.OrderBy(r => r.Date)
-		.ThenBy(r => r.Sort1).ThenBy(r => r.Sort2)  
-		.ToList();
-
-		if (CurrentFilter != CalendarEnumDateType.All)
-		{
-			data = data!.Where(w => w.Category == CurrentFilter).ToList();
-		}
-
-	}
-
-	private string GetJustifyContent(string css)
-	{
-		return $"justify-content-{css}";
-	}
-
+	private List<Enums.EventRecord>? filteredData => 
+	CurrentFilter != CalendarEnumDateType.All 
+	? BaseData!.Where(w => w.Category == CurrentFilter).ToList() 
+	: BaseData;
+	
 	private void ReturnedFilter(CalendarEnumDateType filter)
 	{
 		//Logger!.LogDebug("{Method} {Message}", nameof(ReturnedFilter), filter.Name);

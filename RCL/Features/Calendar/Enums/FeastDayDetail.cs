@@ -1,7 +1,5 @@
 ﻿using Ardalis.SmartEnum;
-using RCL.Features.Calendar.Constants;
 using RCL.Constants;
-using Microsoft.AspNetCore.Components;
 
 namespace RCL.Features.Calendar.Enums;
 
@@ -41,7 +39,6 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
   public abstract string Description { get; }
   public abstract string Title { get; }
   public abstract string Icon { get; }
-  public abstract string CalendarColor { get; }
   #endregion
 
   #region Extra Properties
@@ -63,7 +60,6 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
     public override string Description => "Passover Seder Meal";
     public override string Title => "Passover";
     public override string Icon => "fas fa-door-open";
-    public override string CalendarColor => CalendarColors.Purple;
   }
 
   private sealed class UnleavenedBreadDay1SE : FeastDayDetail
@@ -74,7 +70,6 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
     public override string Description => "First day of Unleavened Bread";
     public override string Title => "Matzah day 1"; //  "Unleavened Bread day 1";
     public override string Icon => "fas fa-times-circle";  // ToDo: need a better icon
-    public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
   }
 
   private sealed class UnleavenedBreadDay7SE : FeastDayDetail
@@ -85,7 +80,6 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
     public override string Description => "Last day of Unleavened Bread";
     public override string Title => "Matzah day 7"; //  "Unleavened Bread day 7";
     public override string Icon => "fas fa-times-circle";  // ToDo: need a better icon
-    public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
   }
 
   private sealed class TrumpetsErevSE : FeastDayDetail
@@ -96,7 +90,6 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
     public override string Description => "We blow thhe trumpets at sunset";
     public override string Title => "Erev Trumpets";  // "🎺 Erev Trumpets";
     public override string Icon => "fas fa-bullhorn";  // ToDo: need a better icon
-    public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
   }
 
   private sealed class YomKippurErevSE : FeastDayDetail
@@ -107,7 +100,6 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
     public override string Description => "at evening we afflict our souls";
     public override string Title => "Erev Yom Kippur";
     public override string Icon => "fas fa-hands-helping";
-    public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
   }
 
   private sealed class SukkotDay0SE : FeastDayDetail
@@ -118,7 +110,6 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
     public override string Description => "Preparation Day, High Sabbath begins at sunset";
     public override string Title => "Preparation Day 🎪 ⬆";
     public override string Icon => "fas fa-campground";
-    public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
   }
 
   private sealed class SukkotLastGreatDaySE : FeastDayDetail
@@ -129,7 +120,6 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
     public override string Description => "Last Day (Great Day), Sabbath";
     public override string Title => "Sukkot | Day 7";
     public override string Icon => "fas fa-campground";
-    public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
   }
 
   private sealed class SukkotEndsAtSundownSE : FeastDayDetail
@@ -140,7 +130,6 @@ public abstract class FeastDayDetail : SmartEnum<FeastDayDetail>
     public override string Description => "Sukkot ended previous night; tear down camp";
     public override string Title => "Camp tear down  🎪 ⬇";
     public override string Icon => "fas fa-campground";
-    public override string CalendarColor => Enums.DateType.Feast.CalendarColor;
   }
 
   #endregion

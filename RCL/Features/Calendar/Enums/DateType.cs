@@ -30,10 +30,6 @@ public abstract class DateType : SmartEnum<DateType>
 	#region Extra Fields
 	public abstract string BadgeColor { get; }
 	public abstract string Icon { get; }
-	public abstract string TextColor { get; }
-	public abstract string CalendarColor { get; }
-	public abstract string FilterLabel { get; }
-  //public abstract bool HasDetails { get; }
   #endregion
 
   #region Private Instantiation
@@ -43,10 +39,6 @@ public abstract class DateType : SmartEnum<DateType>
 		public AllSE() : base($"{nameof(Id.All)}", Id.All) { }
 		public override string BadgeColor => string.Empty;
 		public override string Icon => string.Empty;
-		public override string TextColor => string.Empty;
-		public override string CalendarColor => string.Empty;
-		public override string FilterLabel => "All";
-    //public override bool HasDetails => false; // Not applicable
   }
 
 	private sealed class FeastSE : DateType
@@ -54,10 +46,6 @@ public abstract class DateType : SmartEnum<DateType>
 		public FeastSE() : base($"{nameof(Id.Feast)}", Id.Feast) { }
 		public override string BadgeColor => "bg-primary";
 		public override string Icon => "fas fa-glass-cheers";
-		public override string TextColor => "text-primary";
-		public override string CalendarColor => CalendarColors.Blue;
-		public override string FilterLabel => "Feast";
-    //public override bool HasDetails => false;
   }
 
 	private sealed class MonthSE : DateType
@@ -65,10 +53,6 @@ public abstract class DateType : SmartEnum<DateType>
 		public MonthSE() : base($"{nameof(Id.Month)}", Id.Month) { }
 		public override string BadgeColor => "bg-secondary";
 		public override string Icon => "far fa-moon";
-		public override string TextColor => "text-info";
-		public override string CalendarColor => CalendarColors.Dark;
-		public override string FilterLabel => "Lunar Month";
-    //public override bool HasDetails => true;
   }
 
 	private sealed class SeasonSE : DateType
@@ -76,10 +60,6 @@ public abstract class DateType : SmartEnum<DateType>
 		public SeasonSE() : base($"{nameof(Id.Season)}", Id.Season) { }
 		public override string BadgeColor => "bg-success";
 		public override string Icon => "fas fa-calendar-alt";  // See BaseSeasonSmartEnum
-		public override string TextColor => "text-success";
-		public override string CalendarColor => CalendarColors.Olive;
-		public override string FilterLabel => "Season";
-    //public override bool HasDetails => true;
   }
 	#endregion
 
