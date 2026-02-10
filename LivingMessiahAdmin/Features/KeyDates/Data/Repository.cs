@@ -49,7 +49,7 @@ ORDER BY Date
 
 	public async Task<List<CalendarAnalysisQuery>> GetCalendarAnalysisQuery(int yearId, CalendarEnums.DateType filter)
 	{
-		Logger!.LogDebug("{Method} {Message}", nameof(GetCalendarAnalysisQuery), $"yearId: {yearId}, filter:{filter.Name}");
+		Logger!.LogDebug("{Method} {Message}", nameof(GetCalendarAnalysisQuery), $"yearId: {yearId}, filter:{filter.Name}({filter.Value})");
 		base.Parms = new DynamicParameters(new
 		{
 			YearId = yearId,
@@ -64,6 +64,8 @@ FROM KeyDate.tvfCalendarAnalysis_02_Union(@YearId)
 WHERE ((DateTypeId = @DateTypeId) OR (@DateTypeId = -1))  -- All is -1 NOT 0!!!
 ORDER BY Date
 ";
+
+		Logger!.LogDebug("{Method} {Sql}", nameof(GetCalendarAnalysisQuery), $"Sql: {base.Sql}");
 		return await WithConnectionAsync(async connection =>
 		{
 			var rows = await connection.QueryAsync<CalendarAnalysisQuery>(sql: base.Sql, param: base.Parms);

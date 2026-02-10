@@ -12,13 +12,13 @@
 			@for (int col = 0; col < 7; col++)
 			{
 				var date = MonthDays[row * 7 + col];
- 				<div class="d-md-none">
+				<div class="d-md-none">
 					<DayCell Date="date"
 									 MonthNumber="CurrentDate.Month"
 									 DayCellList="GetDayCellList(date)"
 									 FeastRowBorder=""
 									 MediaQuery="d-md-none" />
-				</div> 
+				</div>
 				<div class="d-none d-md-block">
 					<DayCell Date="date"
 									 MonthNumber="CurrentDate.Month"
@@ -43,19 +43,39 @@ else
 
 	private List<DateOnly> MonthDays { get; set; } = new();
 
+
+	protected List<Enums.EventRecord>? ParashaData;
+
 	protected override void OnParametersSet()
 	{
 		MonthDays = Helpers.MonthView.GetDates(CurrentDate);
+		ParashaData = GetParash(CurrentDate.Year, CurrentDate.Month) ?? new();
+		//Console.WriteLine($"GetDayCellList: {date} - BaseData count: {BaseData.Count}, ParashaData count: {ParashaData.Count}");
 	}
 
 	private List<Enums.EventRecord>? GetDayCellList(DateOnly date)
 	{
-		if (BaseData is null)	{	return null; }
+		if (BaseData is null) { return null; }
 
-		return BaseData.Where(w => w.Date == date)
-		.OrderBy(r => r.Date)
-		.ThenBy(r => r.Sort1).ThenBy(r => r.Sort2)
-		.ToList();
+		if (ParashaData is not null)
+		{
+			return BaseData
+				.Concat(ParashaData)
+				.Where(w => w.Date == date)
+				.OrderBy(r => r.Date)
+				.ThenBy(r => r.Sort1)
+				.ThenBy(r => r.Sort2)
+				.ToList();
+		}
+		else
+		{
+			return BaseData
+			.Where(w => w.Date == date)
+			.OrderBy(r => r.Date)
+			.ThenBy(r => r.Sort1)
+			.ThenBy(r => r.Sort2)
+			.ToList();
+		}
 	}
 
 }

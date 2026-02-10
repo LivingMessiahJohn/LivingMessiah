@@ -1,7 +1,6 @@
 ﻿@using System.Linq
 @using CalendarEnumDateType = RCL.Features.Calendar.Enums.DateType
 @using RCL.Features.Calendar.Data
-@using RCL.Features.Calendar.Enums
 
 @inherits BaseEventsRepository
 
@@ -28,7 +27,7 @@
 			</TableHeader>
 			<RowTemplate>
 				<td>@context.Date</td>
-				<td>@context.Category.Value - @context.Category.Name</td>
+				<td>@context.Filter.Value - @context.Filter.Name</td>
 				<td><code>@context.JustifyContentSuffix</code></td>
 				<td><code>@context.Span</code></td>
 				<td>@context.Sort1 | @context.Sort2 </td>
@@ -45,7 +44,7 @@
 
 	private List<Enums.EventRecord>? filteredData => 
 	CurrentFilter != CalendarEnumDateType.All 
-	? BaseData!.Where(w => w.Category == CurrentFilter).ToList() 
+	? BaseData!.Where(w => w.Filter == CurrentFilter).ToList() 
 	: BaseData;
 	
 	private void ReturnedFilter(CalendarEnumDateType filter)

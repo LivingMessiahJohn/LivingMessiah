@@ -9,7 +9,7 @@
 	<div class="calendar-day @CSSToday @CSSMonth @CSSFeastBorder">
 		@if (DayCellList is not null && DayCellList.Any())
 		{
-			<div class="day-content">
+			<div class="day-content" @onclick="() => ShowModal()">
 				@foreach (var item in DayCellList!)
 				{
 					<div class="d-flex @item.JustifyContentSuffix" title="@GetTitle(@item)">
@@ -30,13 +30,14 @@
 </div>
 
 
-
 @code {
 	[Parameter, EditorRequired] public DateOnly Date { get; set; }
 	[Parameter, EditorRequired] public int MonthNumber { get; set; }
 	[Parameter, EditorRequired] public List<Enums.EventRecord>? DayCellList { get; set; }
 	[Parameter, EditorRequired] public string MediaQuery { get; set; }
 	[Parameter, EditorRequired] public string FeastRowBorder { get; set; }
+
+
 
 	private string CSSToday => Date == DateOnly.FromDateTime(DateTime.Today) ? ConstantsCSS.Today : string.Empty;
 	//private string CSSToday => Date == new DateOnly(2026, 3, 2) ? ConstantsCSS.Today : string.Empty;
@@ -50,18 +51,9 @@
 		return string.Empty;
 	}
 
-	private string ShowTitle
+	private void ShowModal()
 	{
-		get
-		{
-			string title = "";
-			return title;
-		}
-	}
-
-	void ShowModal()
-	{
-		//modalOpen = true; ModalIsNotShownToggle = false; 	modalClass += " show";
-		StateHasChanged();
+		//Console.WriteLine($"ShowModal called for {Date}");
+		//DayModalRef?.Open();
 	}
 }
