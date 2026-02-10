@@ -63,8 +63,8 @@ public abstract class EventMoon : SmartEnum<EventMoon>
   #region Extra Properties
   public DateOnly? ErevDate => Date.HasValue ? Date.Value.AddDays(-1) : (DateOnly?)null;
   public DateOnly? DayTimeDate => Date;  
-  public string SpanIcon => $"<span class='badge {DateType.Month.BadgeColor}'><i class='{DateType.Month.Icon} '></i></span>";
-  public string SpanText => $"<span class='badge {DateType.Month.BadgeColor} text-white'> {Name}</span>";
+  public string SpanIcon => $"<span class='badge bg-secondary'><i class='far fa-moon '></i></span>";
+  public string SpanText => $"<span class='badge bg-secondary text-white'> {Name}</span>";
 
   #endregion
 

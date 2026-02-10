@@ -11,8 +11,8 @@ public abstract class DateType : SmartEnum<DateType>
 		internal const int All = -1;
 		internal const int None = 0;
 
-		internal const int Feast = 1;
-		internal const int Month = 2;
+		internal const int Month = 1;
+		internal const int Feast = 2;
 		internal const int Season = 3;
 	}
 	#endregion
@@ -28,38 +28,28 @@ public abstract class DateType : SmartEnum<DateType>
 	private DateType(string name, int value) : base(name, value) { } // Constructor
 
 	#region Extra Fields
-	public abstract string BadgeColor { get; }
-	public abstract string Icon { get; }
-  #endregion
+	#endregion
 
   #region Private Instantiation
 
   private sealed class AllSE : DateType
 	{
 		public AllSE() : base($"{nameof(Id.All)}", Id.All) { }
-		public override string BadgeColor => string.Empty;
-		public override string Icon => string.Empty;
   }
 
 	private sealed class FeastSE : DateType
 	{
 		public FeastSE() : base($"{nameof(Id.Feast)}", Id.Feast) { }
-		public override string BadgeColor => "bg-primary";
-		public override string Icon => "fas fa-glass-cheers";
   }
 
 	private sealed class MonthSE : DateType
 	{
 		public MonthSE() : base($"{nameof(Id.Month)}", Id.Month) { }
-		public override string BadgeColor => "bg-secondary";
-		public override string Icon => "far fa-moon";
   }
 
 	private sealed class SeasonSE : DateType
 	{
 		public SeasonSE() : base($"{nameof(Id.Season)}", Id.Season) { }
-		public override string BadgeColor => "bg-success";
-		public override string Icon => "fas fa-calendar-alt";  // See BaseSeasonSmartEnum
   }
 	#endregion
 
