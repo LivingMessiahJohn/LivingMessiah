@@ -1,5 +1,6 @@
 ﻿using Ardalis.SmartEnum;
 using RCL.Features.Calendar.Constants;
+using ConstantsCSS = RCL.Features.Calendar.Constants.CSS.DayCell;
 
 namespace RCL.Features.Calendar.Enums;
 
@@ -49,10 +50,11 @@ public abstract class EventFeast : SmartEnum<EventFeast>
   public abstract FeastDateRange FeastDateRange { get; }
   public abstract string BadgeColor { get; }
   public abstract string TextColor { get; }
+  public abstract string BorderColor { get; }
   public abstract DateType Category { get; }
   public abstract int EventSort { get; }
   public abstract bool IsSplit { get; }
-  public abstract int Repeats { get; }  // ToDo: do something with this or remove it
+  //public abstract int Repeats { get; }  // ToDo: do something with this or remove it
   #endregion
 
   #region Extra Properties
@@ -73,7 +75,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
       }
     }
   }
-
+ 
   public string SpanIconAndText => $"<span class='badge {BadgeColor} {TextColor}'><i class='{Icon}'></i> {Title}</span>";
   public string SpanBlank => $"<span class='badge badge bg-opacity-25 text-white'> blank</span>";
 
@@ -89,11 +91,12 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override DateOnly Date => FeastDayDates.Hanukkah;
     public override FeastDateRange FeastDateRange => new(FeastDayDates.Hanukkah.AddDays(-1), FeastDayDates.Hanukkah.AddDays(7));
     public override string BadgeColor => "bg-primary";
-    public override string TextColor => "text-dark";
+    public override string TextColor => "text-white";
+    public override string BorderColor => ConstantsCSS.HistoryBorder;
     public override DateType Category => DateType.Feast;
-    public override int EventSort => 0;
+    public override int EventSort => 2;
     public override bool IsSplit => true;
-    public override int Repeats => 8;
+    //public override int Repeats => 8;
   }
 
   private sealed class PurimSE : EventFeast
@@ -106,10 +109,11 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override FeastDateRange FeastDateRange => new(Date.AddDays(-1), Date);
     public override string BadgeColor => "bg-warning";
     public override string TextColor => "text-dark";
+    public override string BorderColor => ConstantsCSS.HistoryBorder;
     public override DateType Category => DateType.Feast;
     public override int EventSort => 0;
     public override bool IsSplit => true;
-    public override int Repeats => 0;
+    //public override int Repeats => 0;
   }
 
   private sealed class SederSE : EventFeast
@@ -122,10 +126,11 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override FeastDateRange FeastDateRange => new(FeastDayDates.Passover.AddDays(-1), FeastDayDates.Passover.AddDays(6));
     public override string BadgeColor => "bg-primary-subtle";
     public override string TextColor => "text-dark";
+    public override string BorderColor => ConstantsCSS.FeastBorder;
     public override DateType Category => DateType.Feast;
     public override int EventSort => 0;
     public override bool IsSplit => false;
-    public override int Repeats => 0;
+    //public override int Repeats => 0;
   }
 
   private sealed class Matzah1SE : EventFeast
@@ -137,10 +142,11 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override FeastDateRange FeastDateRange => new(FeastDayDates.Passover.AddDays(-1), FeastDayDates.Passover.AddDays(6));
     public override string BadgeColor => "bg-primary";
     public override string TextColor => "text-white";
+    public override string BorderColor => ConstantsCSS.FeastBorder;
     public override DateType Category => DateType.Feast;
     public override int EventSort => 1;
     public override bool IsSplit => true;
-    public override int Repeats => 0;
+    //public override int Repeats => 0;
   }
 
   private sealed class Matzah7SE : EventFeast
@@ -152,10 +158,11 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override FeastDateRange FeastDateRange => new(FeastDayDates.Passover.AddDays(-1), FeastDayDates.Passover.AddDays(6));
     public override string BadgeColor => "bg-primary";
     public override string TextColor => "text-white";
+    public override string BorderColor => ConstantsCSS.FeastBorder;
     public override DateType Category => DateType.Feast;
     public override int EventSort => 0;
     public override bool IsSplit => true;
-    public override int Repeats => 0;
+    //public override int Repeats => 0;
   }
 
   private sealed class OmerSE : EventFeast
@@ -163,14 +170,15 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public OmerSE() : base($"{nameof(Id.Omer)}", Id.Omer) { }
     public override string Icon => "fas fa-hashtag";
     public override string Title => "Omer";
-    public override DateOnly Date => FeastDayDates.Passover.AddDays(+2); // Fix was -1
-    public override FeastDateRange FeastDateRange => new(Date, Date);
-    public override string BadgeColor => "bg-info";
-    public override string TextColor => "text-dark";
+    public override DateOnly Date => FeastDayDates.Passover.AddDays(+2); // Fix was -1; Omer is always on 16th of Nissan which is resurrection day
+    public override FeastDateRange FeastDateRange => new(Date, Date.AddDays(48)); // middle part
+    public override string BadgeColor => "bg-success";
+    public override string TextColor => "text-white";
+    public override string BorderColor => ConstantsCSS.FeastBorder;
     public override DateType Category => DateType.Feast;
-    public override int EventSort => 0;
+    public override int EventSort => 2;
     public override bool IsSplit => false;
-    public override int Repeats => 49;
+    //public override int Repeats => 49;
   }
 
   private sealed class ShavuotSE : EventFeast
@@ -182,10 +190,11 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override FeastDateRange FeastDateRange => new(Date.AddDays(-1), Date);
     public override string BadgeColor => "bg-success";
     public override string TextColor => "text-white";
+    public override string BorderColor => ConstantsCSS.FeastBorder;
     public override DateType Category => DateType.Feast;
     public override int EventSort => 0;
     public override bool IsSplit => true;
-    public override int Repeats => 0;
+    //public override int Repeats => 0;
   }
 
   private sealed class YomTeruahSE : EventFeast
@@ -197,10 +206,11 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override FeastDateRange FeastDateRange => new(Date.AddDays(-1), Date);
     public override string BadgeColor => "bg-warning";
     public override string TextColor => "text-dark";
+    public override string BorderColor => ConstantsCSS.FeastBorder;
     public override DateType Category => DateType.Feast;
     public override int EventSort => 0;
     public override bool IsSplit => true;
-    public override int Repeats => 0;
+    //public override int Repeats => 0;
   }
 
   private sealed class YomKippurSE : EventFeast
@@ -212,10 +222,11 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override FeastDateRange FeastDateRange => new(Date.AddDays(-1), Date);
     public override string BadgeColor => "bg-danger";
     public override string TextColor => "text-white";
+    public override string BorderColor => ConstantsCSS.FeastBorder;
     public override DateType Category => DateType.Feast;
     public override int EventSort => 0;
     public override bool IsSplit => true;
-    public override int Repeats => 0;
+    //public override int Repeats => 0;
   }
 
   private sealed class SukkotPrepSE : EventFeast
@@ -227,10 +238,11 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
     public override string BadgeColor => "bg-primary-subtle";
     public override string TextColor => "text-dark";
+    public override string BorderColor => ConstantsCSS.FeastBorder;
     public override DateType Category => DateType.Feast;
     public override int EventSort => 0;
     public override bool IsSplit => false;
-    public override int Repeats => 0;
+    //public override int Repeats => 0;
   }
 
   private sealed class SukkotDay1SE : EventFeast
@@ -242,10 +254,11 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
     public override string BadgeColor => "bg-primary";
     public override string TextColor => "text-white";
+    public override string BorderColor => ConstantsCSS.FeastBorder;
     public override DateType Category => DateType.Feast;
     public override int EventSort => 1;
     public override bool IsSplit => true;
-    public override int Repeats => 0;
+    //public override int Repeats => 0;
   }
 
   private sealed class SukkotDay8SE : EventFeast
@@ -257,10 +270,11 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
     public override string BadgeColor => "bg-primary";
     public override string TextColor => "text-dark";
+    public override string BorderColor => ConstantsCSS.FeastBorder;
     public override DateType Category => DateType.Feast;
     public override int EventSort => 0;
     public override bool IsSplit => true;
-    public override int Repeats => 0;
+    //public override int Repeats => 0;
   }
 
   private sealed class SukkotTearDownSE : EventFeast
@@ -272,10 +286,11 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
     public override string BadgeColor => "bg-primary-subtle";
     public override string TextColor => "text-dark";
+    public override string BorderColor => ConstantsCSS.FeastBorder;
     public override DateType Category => DateType.Feast;
     public override int EventSort => 0;
     public override bool IsSplit => false;
-    public override int Repeats => 0;
+    //public override int Repeats => 0;
   }
 
   #endregion
