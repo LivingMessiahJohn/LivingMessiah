@@ -11,9 +11,6 @@
 <PageHeader PageEnum="LivingMessiah.Enums.Nav.Calendar">
 	<div class="pb-n1 mt-2 mb-3 ">
 		<h1 class=""><i class="@Nav.Calendar.Icon"></i>&nbsp;&nbsp;@Nav.Calendar.Title</h1>
-
-		@* <div class="alert alert-danger text-center fs-4" role="alert">Work in Progress!</div> *@
-
 	</div>
 </PageHeader>
 
@@ -53,16 +50,17 @@
 </div>
 
 
+<div class="d-print-none">
+	<div class="row mt-2">
+		<div class="col-12">
+			<ToggleButton ButtonLabel="Raw Data">
 
-<div class="row mt-2">
-	<div class="col-12">
-		<ToggleButton ButtonLabel="Raw Data">
+				<div class="card bg-warning-subtle p-1">
+					<EventsTable CurrentFilter="CurrentFilter" OnFilterSelected="ReturnedRawDataFilter" />
+				</div>
 
-			<div class="card bg-warning-subtle p-1">
-				<EventsTable CurrentFilter="CurrentFilter" OnFilterSelected="ReturnedRawDataFilter" />
-			</div>
-
-		</ToggleButton>
+			</ToggleButton>
+		</div>
 	</div>
 </div>
 

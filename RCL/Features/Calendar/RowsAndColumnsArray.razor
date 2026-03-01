@@ -49,7 +49,7 @@ else
 	protected override void OnParametersSet()
 	{
 		MonthDays = Helpers.MonthView.GetDates(CurrentDate);
-		ParashaData = GetParash(CurrentDate.Year, CurrentDate.Month) ?? new();
+		ParashaData = GetParasha(CurrentDate.Year, CurrentDate.Month) ?? new();
 		//Console.WriteLine($"GetDayCellList: {date} - BaseData count: {BaseData.Count}, ParashaData count: {ParashaData.Count}");
 	}
 
