@@ -54,7 +54,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
   public abstract DateType Category { get; }
   public abstract int EventSort { get; }
   public abstract bool IsSplit { get; }
-  //public abstract int Repeats { get; }  // ToDo: do something with this or remove it
+  //public abstract string ModalText { get; }
   #endregion
 
   #region Extra Properties
@@ -75,7 +75,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
       }
     }
   }
- 
+
   public string SpanIconAndText => $"<span class='badge {BadgeColor} {TextColor}'><i class='{Icon}'></i> {Title}</span>";
   public string SpanBlank => $"<span class='badge badge bg-opacity-25 text-white'> blank</span>";
 
@@ -96,7 +96,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override DateType Category => DateType.Feast;
     public override int EventSort => 2;
     public override bool IsSplit => true;
-    //public override int Repeats => 8;
+    //public override string ModalText => "Hanukkah Day "; // Joh_10_22
   }
 
   private sealed class PurimSE : EventFeast
@@ -113,7 +113,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override DateType Category => DateType.Feast;
     public override int EventSort => 0;
     public override bool IsSplit => true;
-    //public override int Repeats => 0;
+    //public override string ModalText => "Purim Details, see ";  // LivingMessiah\Features\FeastDayPlanner\VerseReferenceCards\Est_9_24_32.razor
   }
 
   private sealed class SederSE : EventFeast
@@ -130,7 +130,7 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override DateType Category => DateType.Feast;
     public override int EventSort => 0;
     public override bool IsSplit => false;
-    //public override int Repeats => 0;
+    //public override string ModalText => "Hanukkah Day "; // Joh_10_22
   }
 
   private sealed class Matzah1SE : EventFeast
@@ -146,154 +146,144 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override DateType Category => DateType.Feast;
     public override int EventSort => 1;
     public override bool IsSplit => true;
-    //public override int Repeats => 0;
   }
 
-  private sealed class Matzah7SE : EventFeast
-  {
-    public Matzah7SE() : base($"{nameof(Id.Matzah2)}", Id.Matzah2) { }
-    public override string Icon => "fas fa-times-circle";
-    public override string Title => "Matzah 7";
-    public override DateOnly Date => FeastDayDates.Passover.AddDays(6);
-    public override FeastDateRange FeastDateRange => new(FeastDayDates.Passover.AddDays(-1), FeastDayDates.Passover.AddDays(6));
-    public override string BadgeColor => "bg-primary";
-    public override string TextColor => "text-white";
-    public override string BorderColor => ConstantsCSS.FeastBorder;
-    public override DateType Category => DateType.Feast;
-    public override int EventSort => 0;
-    public override bool IsSplit => true;
-    //public override int Repeats => 0;
-  }
+    private sealed class Matzah7SE : EventFeast
+    {
+      public Matzah7SE() : base($"{nameof(Id.Matzah2)}", Id.Matzah2) { }
+      public override string Icon => "fas fa-times-circle";
+      public override string Title => "Matzah 7";
+      public override DateOnly Date => FeastDayDates.Passover.AddDays(6);
+      public override FeastDateRange FeastDateRange => new(FeastDayDates.Passover.AddDays(-1), FeastDayDates.Passover.AddDays(6));
+      public override string BadgeColor => "bg-primary";
+      public override string TextColor => "text-white";
+      public override string BorderColor => ConstantsCSS.FeastBorder;
+      public override DateType Category => DateType.Feast;
+      public override int EventSort => 0;
+      public override bool IsSplit => true;
+    }
 
-  private sealed class OmerSE : EventFeast
-  {
-    public OmerSE() : base($"{nameof(Id.Omer)}", Id.Omer) { }
-    public override string Icon => "fas fa-hashtag";
-    public override string Title => "Omer";
-    public override DateOnly Date => FeastDayDates.Passover.AddDays(+2); // Fix was -1; Omer is always on 16th of Nissan which is resurrection day
-    public override FeastDateRange FeastDateRange => new(Date, Date.AddDays(48)); // middle part
-    public override string BadgeColor => "bg-success";
-    public override string TextColor => "text-white";
-    public override string BorderColor => ConstantsCSS.FeastBorder;
-    public override DateType Category => DateType.Feast;
-    public override int EventSort => 2;
-    public override bool IsSplit => false;
-    //public override int Repeats => 49;
-  }
+    private sealed class OmerSE : EventFeast
+    {
+      public OmerSE() : base($"{nameof(Id.Omer)}", Id.Omer) { }
+      public override string Icon => "fas fa-hashtag";
+      public override string Title => "Omer";
+      public override DateOnly Date => FeastDayDates.Passover.AddDays(+2); // Fix was -1; Omer is always on 16th of Nissan which is resurrection day
+      public override FeastDateRange FeastDateRange => new(Date, Date.AddDays(48)); // middle part
+      public override string BadgeColor => "bg-success";
+      public override string TextColor => "text-white";
+      public override string BorderColor => ConstantsCSS.FeastBorder;
+      public override DateType Category => DateType.Feast;
+      public override int EventSort => 2;
+      public override bool IsSplit => false;
+    }
 
-  private sealed class ShavuotSE : EventFeast
-  {
-    public ShavuotSE() : base($"{nameof(Id.Shavuot)}", Id.Shavuot) { }
-    public override string Icon => "fas fa-book-open";
-    public override string Title => "Shavuot";
-    public override DateOnly Date => FeastDayDates.Weeks; // ToDo: rename to FeastDayDates.Shavuot
-    public override FeastDateRange FeastDateRange => new(Date.AddDays(-1), Date);
-    public override string BadgeColor => "bg-success";
-    public override string TextColor => "text-white";
-    public override string BorderColor => ConstantsCSS.FeastBorder;
-    public override DateType Category => DateType.Feast;
-    public override int EventSort => 0;
-    public override bool IsSplit => true;
-    //public override int Repeats => 0;
-  }
+    private sealed class ShavuotSE : EventFeast
+    {
+      public ShavuotSE() : base($"{nameof(Id.Shavuot)}", Id.Shavuot) { }
+      public override string Icon => "fas fa-book-open";
+      public override string Title => "Shavuot";
+      public override DateOnly Date => FeastDayDates.Weeks; // ToDo: rename to FeastDayDates.Shavuot
+      public override FeastDateRange FeastDateRange => new(Date.AddDays(-1), Date);
+      public override string BadgeColor => "bg-success";
+      public override string TextColor => "text-white";
+      public override string BorderColor => ConstantsCSS.FeastBorder;
+      public override DateType Category => DateType.Feast;
+      public override int EventSort => 0;
+      public override bool IsSplit => true;
+    }
 
-  private sealed class YomTeruahSE : EventFeast
-  {
-    public YomTeruahSE() : base($"{nameof(Id.YomTeruah)}", Id.YomTeruah) { }
-    public override string Icon => "fas fa-bullhorn";
-    public override string Title => "Yom Teruah";
-    public override DateOnly Date => FeastDayDates.Trumpets; // ToDo: rename to FeastDayDates.YomTeruah
-    public override FeastDateRange FeastDateRange => new(Date.AddDays(-1), Date);
-    public override string BadgeColor => "bg-warning";
-    public override string TextColor => "text-dark";
-    public override string BorderColor => ConstantsCSS.FeastBorder;
-    public override DateType Category => DateType.Feast;
-    public override int EventSort => 0;
-    public override bool IsSplit => true;
-    //public override int Repeats => 0;
-  }
+    private sealed class YomTeruahSE : EventFeast
+    {
+      public YomTeruahSE() : base($"{nameof(Id.YomTeruah)}", Id.YomTeruah) { }
+      public override string Icon => "fas fa-bullhorn";
+      public override string Title => "Yom Teruah";
+      public override DateOnly Date => FeastDayDates.Trumpets; // ToDo: rename to FeastDayDates.YomTeruah
+      public override FeastDateRange FeastDateRange => new(Date.AddDays(-1), Date);
+      public override string BadgeColor => "bg-warning";
+      public override string TextColor => "text-dark";
+      public override string BorderColor => ConstantsCSS.FeastBorder;
+      public override DateType Category => DateType.Feast;
+      public override int EventSort => 0;
+      public override bool IsSplit => true;
+    }
 
-  private sealed class YomKippurSE : EventFeast
-  {
-    public YomKippurSE() : base($"{nameof(Id.YomKippur)}", Id.YomKippur) { }
-    public override string Icon => "fas fa-hands-helping";
-    public override string Title => "Yom Kippur";
-    public override DateOnly Date => FeastDayDates.YomKippur;
-    public override FeastDateRange FeastDateRange => new(Date.AddDays(-1), Date);
-    public override string BadgeColor => "bg-danger";
-    public override string TextColor => "text-white";
-    public override string BorderColor => ConstantsCSS.FeastBorder;
-    public override DateType Category => DateType.Feast;
-    public override int EventSort => 0;
-    public override bool IsSplit => true;
-    //public override int Repeats => 0;
-  }
+    private sealed class YomKippurSE : EventFeast
+    {
+      public YomKippurSE() : base($"{nameof(Id.YomKippur)}", Id.YomKippur) { }
+      public override string Icon => "fas fa-hands-helping";
+      public override string Title => "Yom Kippur";
+      public override DateOnly Date => FeastDayDates.YomKippur;
+      public override FeastDateRange FeastDateRange => new(Date.AddDays(-1), Date);
+      public override string BadgeColor => "bg-danger";
+      public override string TextColor => "text-white";
+      public override string BorderColor => ConstantsCSS.FeastBorder;
+      public override DateType Category => DateType.Feast;
+      public override int EventSort => 0;
+      public override bool IsSplit => true;
+    }
 
-  private sealed class SukkotPrepSE : EventFeast
-  {
-    public SukkotPrepSE() : base($"{nameof(Id.SukkotPrep)}", Id.SukkotPrep) { }
-    public override string Icon => "fas fa-campground";
-    public override string Title => "Preparation";
-    public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(-1); // ToDo: rename to FeastDayDates.Sukkot
-    public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
-    public override string BadgeColor => "bg-primary-subtle";
-    public override string TextColor => "text-dark";
-    public override string BorderColor => ConstantsCSS.FeastBorder;
-    public override DateType Category => DateType.Feast;
-    public override int EventSort => 0;
-    public override bool IsSplit => false;
-    //public override int Repeats => 0;
-  }
+    private sealed class SukkotPrepSE : EventFeast
+    {
+      public SukkotPrepSE() : base($"{nameof(Id.SukkotPrep)}", Id.SukkotPrep) { }
+      public override string Icon => "fas fa-campground";
+      public override string Title => "Preparation";
+      public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(-1); // ToDo: rename to FeastDayDates.Sukkot
+      public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
+      public override string BadgeColor => "bg-primary-subtle";
+      public override string TextColor => "text-dark";
+      public override string BorderColor => ConstantsCSS.FeastBorder;
+      public override DateType Category => DateType.Feast;
+      public override int EventSort => 0;
+      public override bool IsSplit => false;
+    }
 
-  private sealed class SukkotDay1SE : EventFeast
-  {
-    public SukkotDay1SE() : base($"{nameof(Id.SukkotDay1)}", Id.SukkotDay1) { }
-    public override string Icon => "fas fa-campground";
-    public override string Title => "Sukkot Day 1";
-    public override DateOnly Date => FeastDayDates.Tabernacles; // ToDo: rename to FeastDayDates.Sukkot
-    public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
-    public override string BadgeColor => "bg-primary";
-    public override string TextColor => "text-white";
-    public override string BorderColor => ConstantsCSS.FeastBorder;
-    public override DateType Category => DateType.Feast;
-    public override int EventSort => 1;
-    public override bool IsSplit => true;
-    //public override int Repeats => 0;
-  }
+    private sealed class SukkotDay1SE : EventFeast
+    {
+      public SukkotDay1SE() : base($"{nameof(Id.SukkotDay1)}", Id.SukkotDay1) { }
+      public override string Icon => "fas fa-campground";
+      public override string Title => "Sukkot Day 1";
+      public override DateOnly Date => FeastDayDates.Tabernacles; // ToDo: rename to FeastDayDates.Sukkot
+      public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
+      public override string BadgeColor => "bg-primary";
+      public override string TextColor => "text-white";
+      public override string BorderColor => ConstantsCSS.FeastBorder;
+      public override DateType Category => DateType.Feast;
+      public override int EventSort => 1;
+      public override bool IsSplit => true;
+    }
 
-  private sealed class SukkotDay8SE : EventFeast
-  {
-    public SukkotDay8SE() : base($"{nameof(Id.SukkotDay8)}", Id.SukkotDay8) { }
-    public override string Icon => "fas fa-campground";
-    public override string Title => "Sukkot Day 8";
-    public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(7); // ToDo: rename to FeastDayDates.Sukkot
-    public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
-    public override string BadgeColor => "bg-primary";
-    public override string TextColor => "text-dark";
-    public override string BorderColor => ConstantsCSS.FeastBorder;
-    public override DateType Category => DateType.Feast;
-    public override int EventSort => 0;
-    public override bool IsSplit => true;
-    //public override int Repeats => 0;
-  }
+    private sealed class SukkotDay8SE : EventFeast
+    {
+      public SukkotDay8SE() : base($"{nameof(Id.SukkotDay8)}", Id.SukkotDay8) { }
+      public override string Icon => "fas fa-campground";
+      public override string Title => "Sukkot Day 8";
+      public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(7); // ToDo: rename to FeastDayDates.Sukkot
+      public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
+      public override string BadgeColor => "bg-primary";
+      public override string TextColor => "text-white";
+      public override string BorderColor => ConstantsCSS.FeastBorder;
+      public override DateType Category => DateType.Feast;
+      public override int EventSort => 0;
+      public override bool IsSplit => true;
+    }
 
-  private sealed class SukkotTearDownSE : EventFeast
-  {
-    public SukkotTearDownSE() : base($"{nameof(Id.SukkotTearDown)}", Id.SukkotTearDown) { }
-    public override string Icon => "fas fa-campground";
-    public override string Title => "Tear Down";
-    public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(8); // ToDo: rename to FeastDayDates.Sukkot
-    public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
-    public override string BadgeColor => "bg-primary-subtle";
-    public override string TextColor => "text-dark";
-    public override string BorderColor => ConstantsCSS.FeastBorder;
-    public override DateType Category => DateType.Feast;
-    public override int EventSort => 0;
-    public override bool IsSplit => false;
-    //public override int Repeats => 0;
-  }
+    private sealed class SukkotTearDownSE : EventFeast
+    {
+      public SukkotTearDownSE() : base($"{nameof(Id.SukkotTearDown)}", Id.SukkotTearDown) { }
+      public override string Icon => "fas fa-campground";
+      public override string Title => "Tear Down";
+      public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(8); // ToDo: rename to FeastDayDates.Sukkot
+      public override FeastDateRange FeastDateRange => new(FeastDayDates.Tabernacles.AddDays(-1), FeastDayDates.Tabernacles.AddDays(8));
+      public override string BadgeColor => "bg-primary-subtle";
+      public override string TextColor => "text-dark";
+      public override string BorderColor => ConstantsCSS.FeastBorder;
+      public override DateType Category => DateType.Feast;
+      public override int EventSort => 0;
+      public override bool IsSplit => false;
+    }
 
   #endregion
-}
+  }
 
-public record FeastDateRange(DateOnly Min, DateOnly Max);
+  public record FeastDateRange(DateOnly Min, DateOnly Max);

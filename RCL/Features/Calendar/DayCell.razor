@@ -8,7 +8,7 @@
 	<div class="calendar-day @CSSToday @CSSMonth @CSSBorder">
 		@if (DayCellList is not null && DayCellList.Any())
 		{
-			<div class="day-content" @onclick="() => ShowModal()">
+			<div class="day-content" style="cursor: pointer;" @onclick="() => ShowModal()">
 				@foreach (var item in DayCellList!)
 				{
 					<div class="d-flex @item.JustifyContentSuffix" title="@GetTitle(@item)">
@@ -22,20 +22,26 @@
 			<div class="">&nbsp;</div>
 		}
 
-		
+
 		<div class="day-number" title="CSSBorder: @CSSBorder">@Date.Day</div>
 		@* <div class="day-number">@Date.Day</div> *@
 
 	</div>
 </div>
 
+<DetailModal 
+	IsVisible="showModal" 
+	Date="Date" 
+	LineItems="LineItems"
+	WholeParasha="@WholeParasha" 
+	OnClose="CloseModal" />
 
 @code {
 	[Parameter, EditorRequired] public DateOnly Date { get; set; }
 	[Parameter, EditorRequired] public int MonthNumber { get; set; }
 	[Parameter, EditorRequired] public List<Enums.EventRecord>? DayCellList { get; set; }
+	[Parameter, EditorRequired] public string? WholeParasha { get; set; }
 	[Parameter, EditorRequired] public string MediaQuery { get; set; }
-	[Parameter, EditorRequired] public string FeastRowBorder { get; set; }
 
 	private string CSSToday => Date == DateOnly.FromDateTime(DateTime.Today) ? ConstantsCSS.Today : string.Empty;
 	//private string CSSToday => Date == new DateOnly(2026, 3, 2) ? ConstantsCSS.Today : string.Empty;
@@ -48,14 +54,19 @@
 		{
 			if (DayCellList?.Any(item => item.CSSBorder == ConstantsCSS.FeastBorder) == true)
 				return ConstantsCSS.FeastBorder;
-			
+
 			if (DayCellList?.Any(item => item.CSSBorder == ConstantsCSS.HistoryBorder) == true)
 				return ConstantsCSS.HistoryBorder;
-			
+
 			return string.Empty;
 		}
 	}
 
+	List<string>? LineItems;
+	protected override void OnParametersSet()
+	{
+		LineItems = DayCellList?.Select(item => item.ModalLineItem).ToList();
+	}
 
 	private string GetTitle(Enums.EventRecord item)
 	{
@@ -63,9 +74,14 @@
 		return string.Empty;
 	}
 
+	private bool showModal = false;
 	private void ShowModal()
 	{
-		//Console.WriteLine($"ShowModal called for {Date}");
-		//DayModalRef?.Open();
+		showModal = true;
+	}
+
+	private void CloseModal()
+	{
+		showModal = false;
 	}
 }
