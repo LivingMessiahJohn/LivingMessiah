@@ -16,14 +16,14 @@
 					<DayCell Date="date"
 									 MonthNumber="CurrentDate.Month"
 									 DayCellList="GetDayCellList(date)"
-									 FeastRowBorder=""
+									 WholeParasha="@GetTriennial(date)"
 									 MediaQuery="d-md-none" />
 				</div>
 				<div class="d-none d-md-block">
 					<DayCell Date="date"
 									 MonthNumber="CurrentDate.Month"
 									 DayCellList="GetDayCellList(date)"
-									 FeastRowBorder=""
+									 WholeParasha="@GetTriennial(date)"
 									 MediaQuery="d-none d-md-block" />
 				</div>
 			}
@@ -51,6 +51,12 @@ else
 		MonthDays = Helpers.MonthView.GetDates(CurrentDate);
 		ParashaData = GetParasha(CurrentDate.Year, CurrentDate.Month) ?? new();
 		//Console.WriteLine($"GetDayCellList: {date} - BaseData count: {BaseData.Count}, ParashaData count: {ParashaData.Count}");
+	}
+	
+
+	private string GetTriennial(DateOnly date)
+	{
+		return GetWholeParasha(date);
 	}
 
 	private List<Enums.EventRecord>? GetDayCellList(DateOnly date)

@@ -1,0 +1,40 @@
+﻿@page "/CalendarTest"
+
+<h3>Calendar Text</h3>
+
+@* <div class="border-bottom border-dark border-4 "></div> *@
+
+@* <div class="ms-2"></div> *@
+	<div class="my-calendar ms-2">
+		<!-- Normal Gregorian day -->
+		@* <div class="day">3</div> *@
+
+		<div class="day hebrew">
+			<div class="gregorian">3</div>
+			<div class="hebrew-overlay">15</div>
+
+		</div>
+	</div>
+
+<div class="border-bottom border-dark border-4 "></div>
+
+<div class="calendar-wrapper">
+	<div class="my-calendar gregorian-layer">
+		<!-- all 35–42 day cells here, always Gregorian -->
+	</div>
+
+	<div class="hebrew-overlay-layer">
+		<!-- only render boxes for special Hebrew days -->
+		<!-- position them with grid-column + transform -->
+	</div>
+</div>
+
+
+@* <div class="border-bottom border-dark border-4 ">
+	<Grid CurrentDate="CurrentDate" />
+</div> *@
+
+@code {
+	public DateOnly CurrentDate = DateOnly.FromDateTime(DateTime.Today);
+	//public DateOnly CurrentDate = new DateOnly(2026, 3, 2);
+}

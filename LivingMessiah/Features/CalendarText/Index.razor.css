@@ -1,0 +1,64 @@
+.my-calendar {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: 0;
+	/* optional: border, min-height-per-row etc */
+}
+
+.day {
+	border: 1px solid #ccc;
+	min-height: 100px; /* or whatever you need */
+	position: relative; /* ← very important! */
+	background: white;
+	padding: 8px;
+	box-sizing: border-box;
+}
+
+.gregorian {
+	/* normal content styling */
+}
+
+.hebrew-overlay {
+	position: absolute;
+	inset: 0; /* fill the parent cell */
+	transform: translateX(-25%); /* shift left by 25% of cell width */
+	background: rgba(240, 248, 255, 0.92); /* light blue-ish, semi-transparent */
+	border: 1px solid #3b82f6;
+	border-left: 3px solid #1d4ed8; /* visual cue for "starts earlier" */
+	padding: 8px;
+	box-sizing: border-box;
+	pointer-events: none; /* optional: let clicks go through to gregorian underneath */
+	z-index: 1;
+}
+
+/* Optional: make it only cover ~75–80% so previous day is still partially visible */
+.hebrew-overlay {
+	width: 125%; /* extends rightward to compensate for left shift */
+	transform: translateX(-25%);
+}
+
+.calendar-wrapper {
+	position: relative;
+}
+
+.my-calendar.gregorian-layer {
+	/* as before */
+}
+
+.hebrew-overlay-layer {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	pointer-events: none;
+}
+
+	.hebrew-overlay-layer > .hebrew-day {
+		grid-column: 3; /* example: Wednesday */
+		transform: translateX(-25%);
+		background: rgba(200, 230, 255, 0.9);
+		border: 1px solid royalblue;
+		margin: 1px; /* subtle separation */
+		z-index: 2;
+		/* height comes from content or min-height */
+	}

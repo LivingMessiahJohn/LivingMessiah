@@ -6,5 +6,6 @@ public record EventRecord(
   string JustifyContentSuffix, 
   string CSSBorder, 
   string Span, 
-  int Sort1, int Sort2);
+  int Sort1, int Sort2,
+  string ModalLineItem);
 
