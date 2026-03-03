@@ -12,17 +12,26 @@
 			@for (int col = 0; col < 7; col++)
 			{
 				var date = MonthDays[row * 7 + col];
-				<div class="d-md-none">
+							 
+				<div class="d-sm-none">
 					<DayCell Date="date"
 									 MonthNumber="CurrentDate.Month"
-									 DayCellList="GetDayCellList(date)"
+									 DayCellList="GetDayCellList(date, true)"
+									 WholeParasha="@GetTriennial(date)"
+									 MediaQuery="d-sm-none" />
+				</div>
+
+				<div class="d-none d-sm-block d-md-none d-lg-none d-xl-none">
+					<DayCell Date="date"
+									 MonthNumber="CurrentDate.Month"
+									 DayCellList="GetDayCellList(date, false)"
 									 WholeParasha="@GetTriennial(date)"
 									 MediaQuery="d-md-none" />
 				</div>
 				<div class="d-none d-md-block">
 					<DayCell Date="date"
 									 MonthNumber="CurrentDate.Month"
-									 DayCellList="GetDayCellList(date)"
+									 DayCellList="GetDayCellList(date, false)"
 									 WholeParasha="@GetTriennial(date)"
 									 MediaQuery="d-none d-md-block" />
 				</div>
@@ -42,8 +51,6 @@ else
 	[Parameter, EditorRequired] public DateOnly CurrentDate { get; set; }
 
 	private List<DateOnly> MonthDays { get; set; } = new();
-
-
 	protected List<Enums.EventRecord>? ParashaData;
 
 	protected override void OnParametersSet()
@@ -52,35 +59,65 @@ else
 		ParashaData = GetParasha(CurrentDate.Year, CurrentDate.Month) ?? new();
 		//Console.WriteLine($"GetDayCellList: {date} - BaseData count: {BaseData.Count}, ParashaData count: {ParashaData.Count}");
 	}
-	
+
 
 	private string GetTriennial(DateOnly date)
 	{
 		return GetWholeParasha(date);
 	}
 
-	private List<Enums.EventRecord>? GetDayCellList(DateOnly date)
+	private List<Enums.EventRecord>? GetDayCellList(DateOnly date, bool isXs)
 	{
 		if (BaseData is null) { return null; }
 
 		if (ParashaData is not null)
 		{
-			return BaseData
-				.Concat(ParashaData)
-				.Where(w => w.Date == date)
-				.OrderBy(r => r.Date)
-				.ThenBy(r => r.Sort1)
-				.ThenBy(r => r.Sort2)
-				.ToList();
+			if (isXs)
+			{
+				return BaseData
+					//.Concat(ParashaData)
+					.Where(w => w.Date == date)
+					.Where(w => w.Filter.Value != Filter.Omer)
+					.Where(w => w.Filter.Value != Filter.Season)
+					.OrderBy(r => r.Date)
+					.ThenBy(r => r.Filter.Value)
+					.ThenBy(r => r.Sort2)
+					.ToList();
+			}
+			else
+			{
+				return BaseData
+					.Concat(ParashaData)
+					.Where(w => w.Date == date)
+					.OrderBy(r => r.Date)
+					.ThenBy(r => r.Filter.Value)
+					.ThenBy(r => r.Sort2)
+					.ToList();
+			}
 		}
 		else
 		{
-			return BaseData
-			.Where(w => w.Date == date)
-			.OrderBy(r => r.Date)
-			.ThenBy(r => r.Sort1)
-			.ThenBy(r => r.Sort2)
-			.ToList();
+			if (isXs)
+			{
+				return BaseData
+					.Where(w => w.Date == date)
+					.Where(w => w.Filter != Filter.Omer)
+					.Where(w => w.Filter.Value != Filter.Season)
+					.OrderBy(r => r.Date)
+					.ThenBy(r => r.Filter.Value)
+					.ThenBy(r => r.Sort2)
+					.ToList();
+			}
+			else
+			{
+				return BaseData
+				.Where(w => w.Date == date)
+				.OrderBy(r => r.Date)
+				.ThenBy(r => r.Filter.Value)
+				.ThenBy(r => r.Sort2)
+				.ToList();
+
+			}
 		}
 	}
 

@@ -6,6 +6,7 @@ public record EventRecord(
   string JustifyContentSuffix, 
   string CSSBorder, 
   string Span, 
-  int Sort1, int Sort2,
+  int Sort2,  
   string ModalLineItem);
 
+// int Sort1, // Filter.[Month][Feast][Season][Parasha][Omer].Value 1-4

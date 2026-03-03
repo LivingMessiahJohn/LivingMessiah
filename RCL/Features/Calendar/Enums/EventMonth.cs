@@ -65,7 +65,7 @@ public abstract class EventMoon : SmartEnum<EventMoon>
   public DateOnly? DayTimeDate => Date;  
   public string SpanIcon => $"<span class='badge bg-secondary'><i class='far fa-moon '></i></span>";
   public string SpanText => $"<span class='badge bg-secondary text-white'> {Name}</span>";
-
+  //public DateType DateType => DateType.Month; // static
   #endregion
 
   #region Private Instantiation

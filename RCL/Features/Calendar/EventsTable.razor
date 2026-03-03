@@ -1,5 +1,4 @@
-﻿@using System.Linq
-@using CalendarEnumDateType = RCL.Features.Calendar.Enums.DateType
+﻿@using CalendarEnumDateType = RCL.Features.Calendar.Enums.DateType
 @using RCL.Features.Calendar.Data
 
 @inherits BaseEventsRepository
@@ -20,17 +19,17 @@
 									 Items="filteredData">
 			<TableHeader>
 				<th class="text-info">Date</th>
-				<th class="text-info">Category</th>
+				<th class="text-info">Filter</th>
 				<th class="text-info">Justify Markup</th>
-				<th class="text-info">Span Markup</th>
-				<th class="text-info">Sort</th>
+				<th class="text-info">MarkupString</th>
+				<th class="text-info">Sort2</th>
 			</TableHeader>
 			<RowTemplate>
-				<td>@context.Date</td>
+				<td>@context.Date.ToShortDateString()</td>
 				<td>@context.Filter.Value - @context.Filter.Name</td>
 				<td><code>@context.JustifyContentSuffix</code></td>
-				<td><code>@context.Span</code></td>
-				<td>@context.Sort1 | @context.Sort2 </td>
+				<td> @((MarkupString)@context.Span)</td>
+				<td>@context.Sort2 </td>
 			</RowTemplate>
 		</TableTemplate>
 
