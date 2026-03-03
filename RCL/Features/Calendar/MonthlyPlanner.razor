@@ -1,0 +1,110 @@
+﻿@using CalendarEnumDateType = RCL.Features.Calendar.Enums.DateType
+@using ConstantsCSS = RCL.Features.Calendar.Constants.CSS.DayCell
+@using RCL.Features.Calendar.Data
+
+@inherits BaseEventsRepository
+
+<LoadingComponentLIBRARY IsLoading="DataFiltered == null" TurnSpinnerOff=TurnSpinnerOff>
+	@* <h4>@CurrentDate.ToString("MMMM yyyy")</h4>) *@
+
+	@foreach (var dateGroup in DataFiltered!)
+	{
+		<div class="row" style="width: 25rem;">
+			<div class="col-6">
+				<span class="">@dateGroup.Key.ToString("ddd, MM/dd")</span>
+			</div>
+			<div class="col-6">
+				@foreach (var item in dateGroup)
+				{
+					<div class="d-flex @item.JustifyContentSuffix">
+						@((MarkupString)item.Span)
+					</div>
+				}
+			</div>
+			@* <div class="col-6">BLANK</div> *@
+		</div>
+	}
+
+</LoadingComponentLIBRARY>
+
+<hr />
+@if (DataFiltered is not null)
+{
+	<TableTemplate HeaderCSS="table table-sm table-warning table-hover"
+								 Items="filteredData">
+		<TableHeader>
+			<th class="text-info">Date</th>
+			<th class="text-info">Filter</th>
+			<th class="text-info">MarkupString</th>
+			<th class="text-info">Sort2</th> 
+		</TableHeader>
+		<RowTemplate>
+			<td>@context.Date</td>
+			<td>@context.Filter.Value - @context.Filter.Name</td>
+			<td> @((MarkupString)@context.Span)</td>
+			<td>@context.Sort2</td> 
+		</RowTemplate>
+	</TableTemplate>
+}
+
+
+@code {
+	[Parameter, EditorRequired] public DateOnly CurrentDate { get; set; }
+	[Parameter, EditorRequired] public EventCallback<CalendarEnumDateType> OnFilterSelected { get; set; }
+
+	private string CSSToday(DateOnly dateOnly)
+	{
+		if (dateOnly == DateOnly.FromDateTime(DateTime.Today))
+		{
+			return ConstantsCSS.Today;
+		}
+		else
+		{
+			return string.Empty;
+		}
+	}
+
+	private string CSSBorder
+	{
+		get
+		{
+			if (DataFiltered?.SelectMany(g => g).Any(item => item.CSSBorder == ConstantsCSS.FeastBorder) == true)
+				return ConstantsCSS.FeastBorder;
+
+			if (DataFiltered?.SelectMany(g => g).Any(item => item.CSSBorder == ConstantsCSS.HistoryBorder) == true)
+				return ConstantsCSS.HistoryBorder;
+
+			return string.Empty;
+		}
+	}
+
+
+	bool TurnSpinnerOff = false;
+	protected IEnumerable<IGrouping<DateOnly, Enums.EventRecord>>? DataFiltered;
+
+	protected override void OnParametersSet()
+	{
+		DataFiltered = BaseData?
+		//.Where(f => !f.IsSplit).Where(f => f != EventFeast.Omer)
+		.Where(w => w.Date.Month == CurrentDate.Month)
+		.Where(w2 => w2.Filter != Enums.Filter.Omer)
+		.Where(w3 => w3.Filter != Enums.Filter.Season)
+		.OrderBy(r => r.Date)
+		.ThenBy(r => r.Filter.Value)
+		.ThenBy(r => r.Sort2)
+		.GroupBy(g => g.Date);
+
+		TurnSpinnerOff = true;
+	}
+
+	private List<Enums.EventRecord>? filteredData => 
+		BaseData!
+		.Where(w => w.Date.Month == CurrentDate.Month).Where(w2 => w2.Filter != Enums.Filter.Omer)
+		.ToList();
+
+	private void ReturnedFilter(CalendarEnumDateType filter)
+	{
+		//Logger!.LogDebug("{Method} {Message}", nameof(ReturnedFilter), filter.Name);
+		OnFilterSelected.InvokeAsync(filter);
+	}
+}

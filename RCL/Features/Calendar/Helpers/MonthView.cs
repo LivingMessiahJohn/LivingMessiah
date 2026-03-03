@@ -29,4 +29,4 @@ public static class MonthView
       //Logger!.LogError(ex, "{Method} failed for CurrentDate: {CurrentDate}", nameof(OnParametersSet), CurrentDate.ToShortDateString());
     }
     */
-  }
+ }

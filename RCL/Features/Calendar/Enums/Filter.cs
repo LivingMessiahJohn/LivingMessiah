@@ -15,6 +15,7 @@ public abstract class Filter : SmartEnum<Filter>
 		internal const int Feast = 2;
 		internal const int Season = 3;
 		internal const int Parasha = 4;
+		internal const int Omer = 5;
 	}
 	#endregion
 
@@ -24,6 +25,7 @@ public abstract class Filter : SmartEnum<Filter>
 	public static readonly Filter Feast = new FeastSE();
 	public static readonly Filter Season = new SeasonSE();
 	public static readonly Filter Parasha = new ParashaSE();
+	public static readonly Filter Omer = new OmerSE();
 	// SE=SmartEnum
 	#endregion
 
@@ -57,6 +59,11 @@ public abstract class Filter : SmartEnum<Filter>
   private sealed class ParashaSE : Filter
   {
     public ParashaSE() : base($"{nameof(Id.Parasha)}", Id.Parasha) { }
+  }
+
+  private sealed class OmerSE : Filter
+  {
+    public OmerSE() : base($"{nameof(Id.Omer)}", Id.Omer) { }
   }
 
   #endregion

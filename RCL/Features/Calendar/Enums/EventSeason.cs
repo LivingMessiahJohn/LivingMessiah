@@ -40,6 +40,7 @@ public abstract class EventSeason : SmartEnum<EventSeason>
 
   #region Extra Properties
   public string SpanIconAndText => $"<span class='badge {BadgeColor} {TextColor}'><i class='{Icon}'></i> {Name}</span>";
+  //public DateType DateType => DateType.Season; // static
   #endregion
 
   #region Private Instantiation

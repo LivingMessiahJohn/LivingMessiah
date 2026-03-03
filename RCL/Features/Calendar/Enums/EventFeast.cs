@@ -51,7 +51,6 @@ public abstract class EventFeast : SmartEnum<EventFeast>
   public abstract string BadgeColor { get; }
   public abstract string TextColor { get; }
   public abstract string BorderColor { get; }
-  public abstract DateType Category { get; }
   public abstract int EventSort { get; }
   public abstract bool IsSplit { get; }
   //public abstract string ModalText { get; }
@@ -93,7 +92,6 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string BadgeColor => "bg-primary";
     public override string TextColor => "text-white";
     public override string BorderColor => ConstantsCSS.HistoryBorder;
-    public override DateType Category => DateType.Feast;
     public override int EventSort => 2;
     public override bool IsSplit => true;
     //public override string ModalText => "Hanukkah Day "; // Joh_10_22
@@ -110,7 +108,6 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string BadgeColor => "bg-warning";
     public override string TextColor => "text-dark";
     public override string BorderColor => ConstantsCSS.HistoryBorder;
-    public override DateType Category => DateType.Feast;
     public override int EventSort => 0;
     public override bool IsSplit => true;
     //public override string ModalText => "Purim Details, see ";  // LivingMessiah\Features\FeastDayPlanner\VerseReferenceCards\Est_9_24_32.razor
@@ -127,7 +124,6 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string BadgeColor => "bg-primary-subtle";
     public override string TextColor => "text-dark";
     public override string BorderColor => ConstantsCSS.FeastBorder;
-    public override DateType Category => DateType.Feast;
     public override int EventSort => 0;
     public override bool IsSplit => false;
     //public override string ModalText => "Hanukkah Day "; // Joh_10_22
@@ -143,7 +139,6 @@ public abstract class EventFeast : SmartEnum<EventFeast>
     public override string BadgeColor => "bg-primary";
     public override string TextColor => "text-white";
     public override string BorderColor => ConstantsCSS.FeastBorder;
-    public override DateType Category => DateType.Feast;
     public override int EventSort => 1;
     public override bool IsSplit => true;
   }
@@ -158,7 +153,6 @@ public abstract class EventFeast : SmartEnum<EventFeast>
       public override string BadgeColor => "bg-primary";
       public override string TextColor => "text-white";
       public override string BorderColor => ConstantsCSS.FeastBorder;
-      public override DateType Category => DateType.Feast;
       public override int EventSort => 0;
       public override bool IsSplit => true;
     }
@@ -173,7 +167,6 @@ public abstract class EventFeast : SmartEnum<EventFeast>
       public override string BadgeColor => "bg-success";
       public override string TextColor => "text-white";
       public override string BorderColor => ConstantsCSS.FeastBorder;
-      public override DateType Category => DateType.Feast;
       public override int EventSort => 2;
       public override bool IsSplit => false;
     }
@@ -188,7 +181,6 @@ public abstract class EventFeast : SmartEnum<EventFeast>
       public override string BadgeColor => "bg-success";
       public override string TextColor => "text-white";
       public override string BorderColor => ConstantsCSS.FeastBorder;
-      public override DateType Category => DateType.Feast;
       public override int EventSort => 0;
       public override bool IsSplit => true;
     }
@@ -203,7 +195,6 @@ public abstract class EventFeast : SmartEnum<EventFeast>
       public override string BadgeColor => "bg-warning";
       public override string TextColor => "text-dark";
       public override string BorderColor => ConstantsCSS.FeastBorder;
-      public override DateType Category => DateType.Feast;
       public override int EventSort => 0;
       public override bool IsSplit => true;
     }
@@ -218,7 +209,6 @@ public abstract class EventFeast : SmartEnum<EventFeast>
       public override string BadgeColor => "bg-danger";
       public override string TextColor => "text-white";
       public override string BorderColor => ConstantsCSS.FeastBorder;
-      public override DateType Category => DateType.Feast;
       public override int EventSort => 0;
       public override bool IsSplit => true;
     }
@@ -233,7 +223,6 @@ public abstract class EventFeast : SmartEnum<EventFeast>
       public override string BadgeColor => "bg-primary-subtle";
       public override string TextColor => "text-dark";
       public override string BorderColor => ConstantsCSS.FeastBorder;
-      public override DateType Category => DateType.Feast;
       public override int EventSort => 0;
       public override bool IsSplit => false;
     }
@@ -248,7 +237,6 @@ public abstract class EventFeast : SmartEnum<EventFeast>
       public override string BadgeColor => "bg-primary";
       public override string TextColor => "text-white";
       public override string BorderColor => ConstantsCSS.FeastBorder;
-      public override DateType Category => DateType.Feast;
       public override int EventSort => 1;
       public override bool IsSplit => true;
     }
@@ -263,7 +251,6 @@ public abstract class EventFeast : SmartEnum<EventFeast>
       public override string BadgeColor => "bg-primary";
       public override string TextColor => "text-white";
       public override string BorderColor => ConstantsCSS.FeastBorder;
-      public override DateType Category => DateType.Feast;
       public override int EventSort => 0;
       public override bool IsSplit => true;
     }
@@ -278,7 +265,6 @@ public abstract class EventFeast : SmartEnum<EventFeast>
       public override string BadgeColor => "bg-primary-subtle";
       public override string TextColor => "text-dark";
       public override string BorderColor => ConstantsCSS.FeastBorder;
-      public override DateType Category => DateType.Feast;
       public override int EventSort => 0;
       public override bool IsSplit => false;
     }
