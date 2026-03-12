@@ -1,14 +1,13 @@
 ﻿@using System.Linq
+@using Microsoft.Extensions.Logging
 @using RCL.Features.Calendar.Data
 
 @* @inject ILogger<PreviousOrNextButton>? Logger *@
-@* @inject IJSRuntime JS *@
-@* @inject IToastService? Toast *@
 
 @if (!IsEdge)
 {
-	<button type="button" class="btn btn-outline-primary btn-md @Direction.Margin" title=""
-					@onclick="ButtonClick">
+	<button type="button" class="btn btn-outline-primary btn-md @Direction.Margin" title="@Direction.Name"
+					@onclick="@(() => ButtonClick())">
 		<i class="@Direction.Icon"></i>
 	</button>
 }
@@ -20,6 +19,7 @@ else
 }
 
 @code {
+
 	[Parameter, EditorRequired] public DateOnly CurrentDate { get; set; }
 	[Parameter, EditorRequired] public Enums.Direction Direction { get; set; }
 	[Parameter, EditorRequired] public EventCallback<DateOnly> OnDateSelected { get; set; }
@@ -35,6 +35,8 @@ else
 
 	protected override void OnParametersSet()
 	{
+		//Logger!.LogInformation("{Method}, Direction: {Direction}", nameof(OnParametersSet), Direction.Name);
+
 		DateRange = new DateRange(new DateOnly(CurrentDate.Year, 1, 1), new DateOnly(CurrentDate.Year, 12, 31));
 
 		IsEdge = false;
@@ -56,37 +58,16 @@ else
 		}
 	}
 
-	//private IJSObjectReference? jsModule;
-	//private DotNetObjectReference<PreviousOrNextButton>? _dotNetRef;
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
+	protected void ButtonClick()
 	{
-		if (firstRender)
-		{
-			//try
-			//{
-			/*
-				jsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./Features/Calendar/PreviousOrNextButton.razor.js");
-				_dotNetRef = DotNetObjectReference.Create(this);
-				await jsModule.InvokeVoidAsync("addArrowKeyListener", _dotNetRef);
-				*/
-				//Logger!.LogInformation("{Method}, JSMethod: {JSMethod}", nameof(OnAfterRenderAsync), JsonKeyboard.Method);
-			//}
-			//catch (Exception ex)
-			//{
-				//Logger!.LogError(ex, "{Method}", nameof(OnAfterRenderAsync));
-				//Toast!.ShowError("An invalid operation occurred, contact your administrator");
-			//}
-		}
-	}
-
-	private void ButtonClick()
-	{
+		//Logger!.LogInformation("{Method}, Direction: {Direction}", nameof(ButtonClick), Direction.Name);
 		ExecuteMove();
 	}
 
 	private void ExecuteMove()
 	{
+		//Logger!.LogInformation("{Method}", nameof(ExecuteMove));
+
 		if (DateRange is null) { return; }
 
 		DateOnly adjustedDateOnly = Direction == Enums.Direction.Previous
@@ -95,47 +76,5 @@ else
 
 		OnDateSelected.InvokeAsync(adjustedDateOnly);
 	}
-
-	/*
-	THIS DOESN'T WORK WHY!!!
-	private void ExecuteMoveViaKeyboard(Enums.Direction direction)
-	{
-		if (DateOnlyRange is null) { return; }
-
-		DateOnly adjustedDateOnly = direction == Enums.Direction.Previous
-			? CurrentDateOnly.AddMonths(-1)
-			: CurrentDateOnly.AddMonths(+1);
-
-		Toast!.ShowWarning($"IsEdge: {IsEdge}; dir: {direction.Name}; adjustedDate: {adjustedDateOnly.Year} {adjustedDateOnly.Month}");
-		
-		OnDateOnlySelected.InvokeAsync(adjustedDateOnly);
-	}
-
-	[JSInvokable]
-	public void HandleArrowKey(string key)
-	{
-		if (key != Enums.Direction.Previous.KeyboardKey && key != Enums.Direction.Next.KeyboardKey) { return; }
-		//if (!IsEdge) { return; }
-
-		if (Direction == Enums.Direction.Previous && key == Enums.Direction.Previous.KeyboardKey)
-		{
-			ExecuteMoveViaKeyboard(Enums.Direction.Previous);
-		}
-		else if (Direction == Enums.Direction.Next && key == Enums.Direction.Next.KeyboardKey)
-		{
-			ExecuteMoveViaKeyboard(Enums.Direction.Next);
-		}
-	}
-	
-	public async ValueTask DisposeAsync()
-	{
-		if (jsModule != null)
-		{
-			await jsModule.InvokeVoidAsync("removeArrowKeyListener");
-			await jsModule.DisposeAsync();
-		}
-		_dotNetRef?.Dispose();
-	}
-	*/
 }
 

@@ -1,0 +1,33 @@
+.scroll-to-top {
+	position: fixed;
+	top: 50%; /* ← this is the key change */
+	right: 30px;
+	transform: translateY(-50%); /* centers it perfectly vertically regardless of button height */
+	z-index: 1000;
+	opacity: 0;
+	visibility: hidden;
+	transition: all 0.3s ease;
+	pointer-events: none;
+}
+
+.scroll-to-top.visible {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+}
+
+.scroll-to-top button {
+	width: 55px;
+	height: 55px;
+	font-size: 1.4rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-to-top button:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25) !important;
+}

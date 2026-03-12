@@ -1,0 +1,35 @@
+﻿@using Microsoft.Extensions.Options
+@using PWA.Settings
+
+@inject ILogger<StripeCard>? Logger 
+@inject IConfiguration Configuration
+
+<div class="card">
+
+	<div class="card-body text-center">
+		<span class="fs-3">Donations on-line using</span> <br /> <i class="fab fa-cc-stripe fa-fw fa-3x"></i>
+	</div>
+
+	<div class="card-footer bg-transparent border-success">
+		<stripe-buy-button buy-button-id="@StripeBuyButtonId"
+											 publishable-key="@StripePublishableKey">
+		</stripe-buy-button>
+
+	</div>
+</div>
+
+@code {
+	private string? StripeBuyButtonId;
+	private string? StripePublishableKey;
+
+	protected override void OnInitialized()
+	{
+		StripeBuyButtonId = Configuration["DonationSettings:StripeBuyButtonId"];
+		StripePublishableKey = Configuration["DonationSettings:StripePublishableKey"];
+
+		Logger!.LogWarning("{Method}, StripePublishableKey Length: {StripePublishableKey}"
+		 , nameof(OnInitialized), StripePublishableKey == null ? "null" : StripePublishableKey.Length.ToString());
+		//StripePublishableKey!.Substring(0,13)
+	}
+
+}

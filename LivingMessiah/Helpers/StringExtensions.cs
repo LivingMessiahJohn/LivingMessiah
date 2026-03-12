@@ -18,6 +18,7 @@ public static class StringExtensions
 		return builder;
 	}
 
+	//ToDo: NOTE BEING USED
 	public static StringBuilder AppendIfElse(
 		this StringBuilder builder, bool condition, string ifValue, string elseValue)
 	{
@@ -31,6 +32,7 @@ public static class StringExtensions
 		}
 	}
 
+	//ToDo: NOTE BEING USED
 	public static string Repeat(this string input, int count)
 	{
 		if (string.IsNullOrEmpty(input) || count <= 1)

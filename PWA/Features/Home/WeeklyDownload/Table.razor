@@ -1,0 +1,27 @@
+﻿@page "/WeeklyDownload"
+
+@using ParashaEnums = RCL.Features.Parasha.Enums
+@using ParashaHelpers = RCL.Features.Parasha.Helpers
+
+<PageHeader PageEnum="Nav.WeeklyDownload" />
+
+<TableTemplate HeaderCSS="table table-sm table-warning table-hover" Items="ParashaEnums.Triennial.List.OrderBy(o => o.Value).ToList()">
+	<TableHeader>
+		<th>Id</th>
+		<th class="text-start"><i class="fas fa-file-download" aria-hidden="true"></i></th>
+		
+	</TableHeader>
+	<RowTemplate>
+		<td>@context.Value</td>
+		<td>
+			@context.WeeklyReadingParashaFile
+			@* <a href="@(ParashaHelpers.TeachingBlobFolder + context.WeeklyReadingParashaFile)" target="_blank">@context.WeeklyReadingParashaFile</a> *@
+
+		</td>
+	</RowTemplate>
+</TableTemplate>
+
+
+@code {
+
+}

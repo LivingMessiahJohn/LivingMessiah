@@ -1,0 +1,104 @@
+﻿@using PWA.Helpers
+@using EventMonthEnum = RCL.Features.Calendar.Enums.EventMoon
+
+@using RCL.Features.Calendar.Enums
+
+@* @inject ILogger<DailyWrapper>? Logger *@
+
+<div class="@MediaQuery.Xs.DivClass">
+	<ShabbatMeter />
+
+	@if (!String.IsNullOrEmpty(ImageFile))
+	{
+		<div class="d-flex justify-content-center">
+			<LunarMoonCard EventMoon="EventMonth" ImageFile="@ImageFile" DaysToGoText="@DaysToGoText" />
+		</div>
+	}
+</div>
+
+<div class="@MediaQuery.Sm.DivClass">
+	<div class="d-flex justify-content-evenly">
+		<ShabbatMeter />
+		@if (!String.IsNullOrEmpty(ImageFile))
+		{
+			<LunarMoonCard EventMoon="EventMonth" ImageFile="@ImageFile" DaysToGoText="@DaysToGoText" MaxWidth="max-width: 250px;" />
+		}
+
+	</div>
+</div>
+
+<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+	<div class="d-flex justify-content-evenly">
+		<ShabbatMeter />
+		@if (!String.IsNullOrEmpty(ImageFile))
+		{
+			<LunarMoonCard EventMoon="EventMonth" ImageFile="@ImageFile" DaysToGoText="@DaysToGoText" />
+		}
+
+	</div>
+</div>
+
+@code {
+	EventMonthEnum? EventMonth = null;
+	int DaysToGo = 0;
+	int DaysOld = 0;
+	private string ImageFile = string.Empty;
+	string DaysToGoText = string.Empty;
+	private string DaysOldMessage = string.Empty;
+
+	protected override void OnInitialized()
+	{
+		DateOnly dateAzUTC = DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(0).AddHours(Utc.ArizonaUtcMinus7));
+
+		//Logger!.LogInformation("{Method}, {Message}", nameof(OnInitialized), $"dateAzUTC: {dateAzUTC}");
+
+		EventMonth = EventMonthEnum.List
+			.Where(w => w.Date >= dateAzUTC)
+			.OrderBy(o => o.Date)
+			.FirstOrDefault();
+
+		if (EventMonth is not null)
+		{
+			DaysToGo = EventMonth.Date!.Value.DayNumber - dateAzUTC.DayNumber;
+
+			int lmDateDN = EventMonth.Date!.Value.DayNumber;
+			int azUtcDN = dateAzUTC.DayNumber;
+
+			DaysOld = 30 - DaysToGo; //DaysOld = lmDateDN - azUtcDN - 30; // 28
+
+			//Logger!.LogInformation("{Method}, {Message}", nameof(OnInitialized)
+			//, $"lmDateDN: {lmDateDN} {EventMonth!.Date!.Value.ToShortDateString()} azUtcDN: {azUtcDN}, DaysOld: {DaysOld}");
+
+			if (DaysOld < 0)
+			{
+				DaysOld = 1;
+			}
+
+			if (DaysOld == 0)
+			{
+				DaysToGoText = "New Moon";
+				ImageFile = "/images/moons/01.jpg";
+			}
+			else
+			{
+				DaysToGoText = $"{DaysToGo} days";
+			}
+
+			if (DaysOld >= 0 && DaysOld <= 30)
+			{
+				var fileName = FormatDaysOld(DaysOld) + ".jpg";
+				ImageFile = $"/images/moons/{fileName}";
+			}
+
+			//Logger!.LogInformation("{Method}, {Message}, {DayCalc}", nameof(OnInitialized)
+			//	, $"Lunar Month: {EventMonth!.Name} {EventMonth!.Date!.Value.ToShortDateString()}"
+			//	, $"ToGo: {DaysToGo}, Old: {DaysOld}");
+
+		}
+	}
+
+	private static string FormatDaysOld(int days)
+	{
+		return Math.Abs(days).ToString("D2");
+	}
+}

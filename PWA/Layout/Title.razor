@@ -1,0 +1,17 @@
+﻿
+<div class="@Enums.MediaQuery.Xs.DivClass">
+	<div class="fs-6 @css" title="XS">@text</div>
+</div>
+
+<div class="@Enums.MediaQuery.Sm.DivClass">
+	<div class="fs-4 @css" title="SM">@text</div>
+</div>
+
+<div class="@Enums.MediaQuery.MdOrLgOrXl.DivClass">
+	<div class="fs-2 @css" title="MD+">@text</div>
+</div>
+
+@code {
+	const string text = "Living Messiah";
+	const string css = "fw-bold flex-fill text-center";
+}

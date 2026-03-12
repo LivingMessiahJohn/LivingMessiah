@@ -1,0 +1,17 @@
+﻿@page "/YomKippur"
+
+@using PWA.Layout.AlephBet
+@using PWA.Features.Feasts.VerseReferenceCards
+@using PWA.Layout
+
+<DetailsHeader FeastNav="RCL.Features.Feasts.Enums.Feast.YomKippur" />
+
+<div class="card border-primary mt-5">
+	<Lev_23_26_32 />
+</div>
+
+<Wrapper />
+
+<img src="@Blobs.UrlEvents("yom-kippur-783x380.jpg")" alt="Yom Kippur" class="img-fluid rounded mt-4" />
+
+@*<BibleReference Feast="@LinkSmartEnums.Feast.YomKippur"/>*@

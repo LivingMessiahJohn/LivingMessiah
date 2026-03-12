@@ -1,0 +1,21 @@
+﻿@inject IJSRuntime JS
+@using Microsoft.JSInterop
+
+<a class="nav-link pe-2" @onclick="Toggle" title="@GetTitle()">
+	<i class="@GetIcon()"></i>
+</a>
+
+@code {
+	private string Current = "light";
+
+	protected override async Task OnAfterRenderAsync(bool first) { /* load from JS */ }
+
+	private async Task Toggle()
+	{
+		Current = Current == "dark" ? "light" : "dark";
+		await JS.InvokeVoidAsync("theme.set", Current);
+	}
+
+	private string GetTitle() => $"{(Current == "dark" ? "Return to light 🌞 👍" : "Go to the dark side 😦 👎")}";
+	private string GetIcon() => $"{(Current == "dark" ? "fas fa-sun" : "fas fa-moon")}";
+}

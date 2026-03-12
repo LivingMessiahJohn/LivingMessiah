@@ -1,5 +1,6 @@
 ﻿namespace LivingMessiah.Data;
 
+// ToDo: Delete this, not used
 public static class Helper
 {
 	public static (string CompareDate, bool IsDayOfWeekSaturday) CurrentShabbatDate()

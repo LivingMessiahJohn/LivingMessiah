@@ -1,0 +1,58 @@
+@using Microsoft.JSInterop
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<div class="scroll-to-top @(IsVisible ? "visible" : "")" @onclick="ScrollToTopAsync">
+  <button type="button" class="btn btn-primary btn-sm rounded-circle shadow" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+</div>
+
+
+@code {
+  private bool IsVisible { get; set; }
+  private IJSObjectReference? module;
+  private DotNetObjectReference<ScrollToTop>? dotNetRef;
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    if (firstRender)
+    {
+      dotNetRef = DotNetObjectReference.Create(this);
+
+      module = await JS.InvokeAsync<IJSObjectReference>(
+          "import", "./Components/ScrollToTop.razor.js");
+
+      if (module != null)
+      {
+        await module.InvokeVoidAsync("initializeScrollToTop", dotNetRef);
+      }
+    }
+  }
+
+  [JSInvokable]
+  public void ShowButton(bool visible)
+  {
+    IsVisible = visible;
+    StateHasChanged();
+  }
+
+  private async Task ScrollToTopAsync()
+  {
+    await JS.InvokeVoidAsync("window.scrollTo", new
+    {
+      top = 0,
+      behavior = "smooth"
+    });
+  }
+
+  public async ValueTask DisposeAsync()
+  {
+    if (module != null)
+    {
+      await module.DisposeAsync();
+    }
+
+    dotNetRef?.Dispose();
+  }
+}

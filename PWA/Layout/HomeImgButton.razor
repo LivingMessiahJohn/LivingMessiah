@@ -1,0 +1,18 @@
+﻿@inject NavigationManager NavigationManager
+
+<div>
+	<border @onclick="NavigateToHome" class="@border" aria-label="Home" style="cursor: pointer;">
+		<img src="/favicon.ico" class="rounded" alt="logo" />
+	</border>
+</div>
+
+
+@code {
+	//const string border = "border border-2";
+	const string border = "";
+
+	private void NavigateToHome()
+	{
+		NavigationManager.NavigateTo("/");
+	}
+}

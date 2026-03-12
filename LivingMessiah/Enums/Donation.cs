@@ -3,6 +3,7 @@ using LivingMessiah.Helpers.Constants;
 
 namespace LivingMessiah.Enums;
 
+// ToDo: Delete, not used
 public abstract class Donation : SmartEnum<Donation>
 {
 
