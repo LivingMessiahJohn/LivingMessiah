@@ -1,0 +1,71 @@
+﻿
+@* @inject IToastService? Toast *@
+@inject ILogger<Index>? Logger
+
+@if (DetailContent is not null)
+{
+		@if (ShowImages && EnumContent is not null)
+		{
+			<img src='@Blobs.UrlShabbatService(@EnumContent.GraphicUrl	)' 
+				alt="@EnumContent.Title" class="img-fluid rounded mt-1 mb-3" />
+		}
+	<div class="card border-primary ">
+
+		<div class="card-header bg-warning-subtle text-center">
+			<h2 class="mb-0">@CurrentEnumContent!.Title</h2>
+		</div>
+
+		<DynamicComponent Type="DetailContent" />
+
+	</div> <!-- card -->
+}
+else
+{
+	<div class="alert alert-warning text-center" role="alert">
+		<b>DetailContentEng:</b> is null
+	</div>
+}
+
+@code {
+	[Parameter, EditorRequired] public Enums.Content? EnumContent { get; set; }
+	[Parameter, EditorRequired] public bool ShowImages { get; set; }
+
+	protected Enums.Content? CurrentEnumContent;
+	protected override void OnParametersSet()
+	{
+		//Section = 1;
+		//Logger!.LogInformation("OnParametersSet: Language: {Language}; Section: {Section}", Language, Section);
+		CurrentEnumContent = Enums.Content.List.FirstOrDefault(w => w.Value == EnumContent);
+		if (CurrentEnumContent is null)
+		{
+			Logger!.LogWarning("OnParametersSet: CurrentEnumContent IS NULL; EnumContent: {EnumContent}", EnumContent);
+			//Toast!.ShowError($"{Global.ToastShowError} {nameof(Index)}!{nameof(OnParametersSet)}");
+			return;
+		}
+		SetDetail();
+	}
+	protected Type? DetailContent;
+
+	private void SetDetail()
+	{
+		//Logger!.LogInformation("{Method}, EngPath: {EngPath}, EspPath: {EspPath}", nameof(SetDetail), Constants.DynamicComponentPathEng, Constants.DynamicComponentPathEsp);
+		Logger!.LogInformation("{Method}, EngPath: {EngPath}", nameof(SetDetail), Constants.DynamicComponentPathEng);
+		try
+		{
+			DetailContent = Type.GetType($"{Constants.DynamicComponentPathEng}.{CurrentEnumContent!.Name}");
+
+			if (DetailContent is null)
+			{
+				Logger!.LogWarning("{Method}, DetailContentEng IS NULL; CurrentContent: {CurrentContent}"
+					, nameof(SetDetail), CurrentEnumContent);
+				//Toast!.ShowError($"{Global.ToastShowError} {nameof(Index)}!{nameof(SetDetail)}");
+				return;
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(SetDetail));
+			//Toast!.ShowError($"{Global.ToastShowError} {nameof(Index)}!{nameof(SetDetail)}");
+		}
+	}
+}

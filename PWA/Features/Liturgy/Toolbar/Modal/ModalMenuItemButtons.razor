@@ -1,0 +1,36 @@
+﻿
+<div class="btn-group-vertical btn-group-md dropstart"
+		 role="group" aria-label="Vertical button group">
+
+	<button type="button" class="btn btn-primary btn-md dropdown-toggle"
+					data-bs-toggle="dropdown" aria-expanded="false">
+		<i class="fas fa-cogs"></i>
+	</button>
+
+	<ul class="dropdown-menu">
+
+		@foreach (var item in Enums.ModalMenuItem.List.ToList())
+		{
+			@* <li><strong class="dropdown-header">Default</strong></li> *@
+
+			<li class="dropdown-item">
+				<button @onclick="@(e => ButtonClick(item))"
+								type="button" class="btn btn-outline-primary btn-sm">
+					@item.Title
+				</button>
+			</li>
+		}
+		@* <li><hr class="dropdown-divider" /></li> *@
+
+	</ul>
+
+</div>
+
+@code {
+	[Parameter, EditorRequired] public EventCallback<Enums.ModalMenuItem> OnModalSelected { get; set; }
+
+	private void ButtonClick(Enums.ModalMenuItem language)
+	{
+		OnModalSelected.InvokeAsync(language);
+	}
+}

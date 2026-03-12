@@ -1,0 +1,36 @@
+﻿@using Toolbelt.Blazor.PWA.Updater
+@inherits LayoutComponentBase
+
+<DomIdsInitializer />
+
+<header>
+	<MenuOffcanvas />
+	@* 
+		LMM MenuNavbar\
+		- Wrapper.razor 
+			- LeftAnchors.razor
+			- SearchModal.razor
+				
+
+	*@
+
+	@* <Authorize /> <BlazoredToasts /> *@
+
+	<PWAUpdater />
+	@* <PWAUpdater State="PWAUpdater.States.Showing" /> *@
+</header>
+
+@* Full width requires px-0 ... <div class="container-fluid px-0"> *@
+<div class="container-fluid">
+	@Body
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+	An unhandled error has occurred.
+	<a href="." class="reload">Reload</a>
+	<span class="dismiss">🗙</span>
+</div>
+
+<footer class="text-muted">
+	<Footer />
+</footer>

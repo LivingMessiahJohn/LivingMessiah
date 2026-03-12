@@ -1,0 +1,42 @@
+﻿@using PWA.Helpers
+
+<div class="progress" style="height: 40px;">
+
+	@if(CalculatePercentage() < 50)
+	{
+		<div class="progress-bar bg-info text-dark" style='@GetProgressStyle()'></div>
+		<span class="fs-4 fw-bold mt-2">&nbsp;@GetProgressTimeStamp()</span>
+	}
+	else
+	{
+		<div class="progress-bar bg-info text-dark" style='@GetProgressStyle()'>
+			<span class="fs-4 fw-bold mt-2 float-end">@GetProgressTimeStamp()</span>
+		</div>
+	}
+</div>
+
+@code {
+	[Parameter, EditorRequired] public int Section { get; set; }
+	[Parameter, EditorRequired] public Enums.Content? CurrentContent { get; set; }
+
+	protected string GetProgressStyle()
+	{
+		return $"width:{CalculatePercentage()}%";
+	}
+
+	protected string GetProgressPercent()
+	{
+		return $"{CalculatePercentage()}%";
+	}
+
+	protected string GetProgressTimeStamp()
+	{
+		return $"{CurrentContent?.Time ?? "???"}";
+	}
+
+	private int CalculatePercentage()
+	{
+		return (Section * 100) / Enums.Content.List.Count;
+	}
+
+}

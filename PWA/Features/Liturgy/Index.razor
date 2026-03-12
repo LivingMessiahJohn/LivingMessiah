@@ -1,0 +1,86 @@
+﻿@page "/Liturgy"
+@using PWA.Features.Liturgy.Toolbar
+@using PWA.Features.Liturgy.Toolbar.Modal
+
+@* 
+@inject ILogger<Index>? Logger
+@inject IToastService? Toast 
+*@
+
+<PageTitle>@Nav.Liturgy.Title</PageTitle>
+<div class="mt-3">
+	<h3 class="text-center"><i class="@Nav.Liturgy.Icon"></i>&nbsp;&nbsp;@Nav.Liturgy.Title</h3>
+</div>
+
+<NavSkeleton Section="Section">
+	<JustifyStartRF></JustifyStartRF>
+
+
+	<PrevButtonDivRF>
+		<PreviousOrNextButton Section="Section" Direction=Enums.Direction.Previous OnSectionSelected="ReturnedSection" />
+	</PrevButtonDivRF>
+
+	<ProgressBarDivRF>
+		<Progressbar Section="Section" CurrentContent=CurrentContent />
+	</ProgressBarDivRF>
+
+	<NextButtonDivRF>
+		<PreviousOrNextButton Section="Section" Direction=Enums.Direction.Next OnSectionSelected="ReturnedSection" />
+	</NextButtonDivRF>
+
+	<JustifyEndRF>
+		<ModalMenuItemButtons OnModalSelected="ReturnedModalMenuItem" />
+	</JustifyEndRF>
+
+</NavSkeleton>
+
+<ModalSkeleton ShowMenuItem="CurrentModalToShow">
+	<!-- Instructions -->
+	<InstructionsRF>
+		<Template OnClose="ReturnedCloseEvent">
+			<HeaderRF>Liturgy Instructions</HeaderRF>
+			<BodyRF>
+				<PageInstructions />
+			</BodyRF>
+		</Template>
+
+	</InstructionsRF>
+
+	<!-- User Settings -->
+</ModalSkeleton>
+
+<Detail EnumContent="CurrentContent" ShowImages=ShowImages />
+
+
+@code {
+	protected Enums.Content? CurrentContent;
+	protected int Section;
+	protected bool ShowImages;
+
+	protected override void OnParametersSet()
+	{
+		CurrentContent = Enums.Content.CallToService;
+		ShowImages = true; 
+	}
+
+	private async Task ReturnedSection(int section)
+	{
+		Section = section;
+		CurrentContent = Enums.Content.List.FirstOrDefault(w => w.Value == Section);
+	}
+
+	protected Enums.ModalMenuItem? CurrentModalToShow { get; set; }
+	private void ReturnedModalMenuItem(Enums.ModalMenuItem modalMenuItem)
+	{
+		//Logger!.LogInformation("{Method}, modalMenuItem: {modalMenuItem}", nameof(ReturnedModalMenuItem), modalMenuItem);
+		ShowImages = !ShowImages;
+		//Logger!.LogInformation("{Method}, ShowImages: {ShowImages}", nameof(ReturnedModalMenuItem), ShowImages);
+	}
+
+	private void ReturnedCloseEvent()
+	{
+		CurrentModalToShow = null;
+		//Logger!.LogInformation("{Method}, CurrentModalToShow set to null", nameof(ReturnedCloseEvent));
+	}
+
+}

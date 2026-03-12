@@ -1,0 +1,63 @@
+﻿@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<a class="nav-link px-1 ms-2 @GetBorder()" title="@GetTitle()">
+	<i class="@GetIcon()"></i>
+</a>
+
+@code {
+	private bool isOnline = true;
+	private IJSObjectReference? moduleCleanup;
+
+	private string GetBorder() => $"{(isOnline ? "" : " border border-2 border-danger rounded-2")}";
+	private string GetIcon() => $"{(isOnline ? "fas fa-wifi" : "fas fa-slash")}";   
+	private string GetTitle() => $"{(isOnline ? "Online 👍" : "Offline 👎")}";
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			await InitializeConnectionStatus();
+		}
+	}
+
+	private async Task InitializeConnectionStatus()
+	{
+		try
+		{
+			// Get initial state
+			isOnline = await JS.InvokeAsync<bool>("eval", "navigator.onLine");
+
+			// Register event listeners
+			var dotNetRef = DotNetObjectReference.Create(this);
+			var cleanupRef = await JS.InvokeAsync<IJSObjectReference>(
+					"connectionStatus.registerEvents",
+					dotNetRef);
+
+			moduleCleanup = cleanupRef;
+
+			StateHasChanged();
+		}
+		catch (Exception)
+		{
+			// Fallback to assuming online if check fails
+			isOnline = true;
+		}
+	}
+
+	[JSInvokable]
+	public void OnConnectionChanged(bool online)
+	{
+		isOnline = online;
+		StateHasChanged();
+	}
+
+	public async ValueTask DisposeAsync()
+	{
+		if (moduleCleanup != null)
+		{
+			await moduleCleanup.InvokeVoidAsync("call"); // executes the returned cleanup function
+			await moduleCleanup.DisposeAsync();
+		}
+	}
+}

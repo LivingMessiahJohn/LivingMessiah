@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivingMessiahSukkot", "Livi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RCL", "RCL\RCL.csproj", "{153631B0-F89D-9417-17A7-D6877D62E6EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PWA", "PWA\PWA.csproj", "{E0122D8E-9001-4D29-B064-81A224814CFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,18 @@ Global
 		{153631B0-F89D-9417-17A7-D6877D62E6EF}.Release|x64.Build.0 = Release|Any CPU
 		{153631B0-F89D-9417-17A7-D6877D62E6EF}.Release|x86.ActiveCfg = Release|Any CPU
 		{153631B0-F89D-9417-17A7-D6877D62E6EF}.Release|x86.Build.0 = Release|Any CPU
+		{E0122D8E-9001-4D29-B064-81A224814CFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0122D8E-9001-4D29-B064-81A224814CFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0122D8E-9001-4D29-B064-81A224814CFC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E0122D8E-9001-4D29-B064-81A224814CFC}.Debug|x64.Build.0 = Debug|Any CPU
+		{E0122D8E-9001-4D29-B064-81A224814CFC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E0122D8E-9001-4D29-B064-81A224814CFC}.Debug|x86.Build.0 = Debug|Any CPU
+		{E0122D8E-9001-4D29-B064-81A224814CFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0122D8E-9001-4D29-B064-81A224814CFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0122D8E-9001-4D29-B064-81A224814CFC}.Release|x64.ActiveCfg = Release|Any CPU
+		{E0122D8E-9001-4D29-B064-81A224814CFC}.Release|x64.Build.0 = Release|Any CPU
+		{E0122D8E-9001-4D29-B064-81A224814CFC}.Release|x86.ActiveCfg = Release|Any CPU
+		{E0122D8E-9001-4D29-B064-81A224814CFC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

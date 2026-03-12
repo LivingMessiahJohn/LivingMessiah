@@ -3,6 +3,9 @@
 
 @inject ILogger<FilterButtons>? Logger
 
+
+
+
 <div class="d-print-none mb-2">
 	<div class=" d-flex justify-content-end">
 		@foreach (var item in CalendarEnumDateType.List.OrderBy(o => o.Value))
@@ -18,6 +21,7 @@
 </div>
 
 @code {
+
 	[Parameter, EditorRequired] public required CalendarEnumDateType? CurrentFilter { get; set; }
 	[Parameter] public EventCallback<CalendarEnumDateType> OnFilterSelected { get; set; }
 

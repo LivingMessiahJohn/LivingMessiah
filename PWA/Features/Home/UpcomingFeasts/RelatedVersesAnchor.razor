@@ -1,0 +1,10 @@
+﻿<a href='@Index' class='btn btn-outline-primary btn-sm'
+	 title='Related verses for @Title'>
+	<span class=" @FontSize">@Title</span>
+</a>
+
+@code {
+	[Parameter, EditorRequired] public string Title { get; set; }
+	[Parameter, EditorRequired] public string Index { get; set; }
+	[Parameter, EditorRequired] public string FontSize { get; set; }
+}

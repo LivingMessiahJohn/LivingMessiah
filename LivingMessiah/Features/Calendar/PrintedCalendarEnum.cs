@@ -1,6 +1,7 @@
 ﻿
 namespace LivingMessiah.Features.Calendar;
 
+// ToDo: Delete, not being used
 public enum PrintedCalendarEnum
 {
 	CommingSoon = 1,   // Not taking orders, but here's a preview lmm-calendar-2022-1020-1020.jpg"

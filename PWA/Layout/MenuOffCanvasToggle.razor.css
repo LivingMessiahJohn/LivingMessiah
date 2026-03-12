@@ -1,0 +1,9 @@
+.menu-icon {
+	font-size: 1.25rem; /* fs-5 equivalent */
+}
+
+@media (min-width: 576px) {
+	.menu-icon {
+		font-size: 2rem; /* fs-2 equivalent */
+	}
+}

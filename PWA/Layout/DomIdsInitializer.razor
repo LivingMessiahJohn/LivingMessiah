@@ -1,0 +1,13 @@
+@inject IJSRuntime JS
+@using PWA.Constants
+
+@code {
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			await JS.InvokeVoidAsync("window.initializeDomIds", 
+				DomIds.Menu.OffCanvas);
+		}
+	}
+}

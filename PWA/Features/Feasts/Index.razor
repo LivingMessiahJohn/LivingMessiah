@@ -1,0 +1,30 @@
+﻿@page "/Feasts"
+@using PWA.Features.Feasts.VerseReferenceCards
+@using PWA.Layout
+@using PWA.Layout.AlephBet
+@using static RCL.Features.Feasts.Enums.ColorConstants
+
+<PageHeader PageEnum="Nav.Feasts">
+	<ChildContent>
+		<div class="d-flex justify-content-between align-items-center mt-2  mb-3 border-bottom border-info">
+			
+				<h2 class=""><i class="@Nav.Feasts.Icon"></i>&nbsp;&nbsp;@Nav.Feasts.Title</h2>
+			<span class="hebrew30">מוֹעֲדִים</span>
+		</div>
+	</ChildContent>
+</PageHeader>
+
+<ListGroup />
+
+<div class="d-flex justify-content-center align-items-center mt-1">
+	<span>color code:&nbsp;&nbsp;</span>
+	<span class="text-black badge bg-@CssForMoadim-subtle">appointed times</span>&nbsp;&nbsp;
+	<span class="text-black badge bg-@CssForNonMoadim-subtle">other times </span>
+</div>
+
+<div class="card border-primary mt-3"><Lev_23_01_02_04 /></div>
+
+
+<CommonHebrewWords /> 
+
+<Wrapper />

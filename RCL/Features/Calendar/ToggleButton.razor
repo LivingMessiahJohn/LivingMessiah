@@ -1,13 +1,13 @@
 ﻿@if (IsCollapsed)
 {
-	<button @onclick="@(e => ToggleButtonClick(IsCollapsed))"
+	<button @onclick="() => ToggleButtonClick(IsCollapsed)"
 					class="btn btn-outline-primary btn-sm ">
 		@ButtonLabel <i class='fas fa-chevron-down'></i>
 	</button>
 }
 else
 {
-	<button @onclick="@(e => ToggleButtonClick(IsCollapsed))"
+	<button @onclick="() => ToggleButtonClick(IsCollapsed)"
 					class="btn btn-outline-primary btn-sm">
 		Hide <i class='fas fa-chevron-up'></i>
 	</button>

@@ -1,0 +1,10 @@
+﻿
+<div class="alert @AlertType @(TextCenter ? "text-center" : "")" role="alert">
+	@ChildContent
+</div>
+
+@code {
+	[Parameter, EditorRequired] public RenderFragment? ChildContent { get; set; }
+	[Parameter]	public string AlertType { get; set; } = "alert-warning";
+	[Parameter]	public bool TextCenter { get; set; } = true;
+}

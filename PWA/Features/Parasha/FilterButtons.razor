@@ -1,0 +1,44 @@
+﻿@using TorahBookFilterEnums = RCL.Features.Parasha.Enums.TorahBookFilter
+
+<div class="d-flex justify-content-end mt-2">
+	@foreach (var item in TorahBookFilterEnums.List.OrderBy(o => o.Value))
+	{
+		<button @onclick="@(() => OnButtonClicked(item))"
+						class="btn btn-outline-primary btn-sm @ActiveFilter(item)">
+
+			@if (MediaQuery == MediaQuery.MdOrLgOrXl)
+			{
+				@item.Name <i class="fas fa-chevron-circle-right"></i>
+			}
+			else
+			{
+				@item.Abrv <i class="fas fa-chevron-circle-right"></i>
+			}
+
+		</button>
+	}
+	<div class="mt-1 ms-2"><i class="fas fa-filter"></i></div>
+</div>
+
+@code {
+	//[Parameter, EditorRequired] public required TorahBookFilter? CurrentFilter { get; set; }
+	[Parameter, EditorRequired] public required TorahBookFilterEnums? CurrentFilter { get; set; }
+	[Parameter, EditorRequired] public MediaQuery? MediaQuery { get; set; }
+	[Parameter] public EventCallback<TorahBookFilterEnums> OnFilterSelected { get; set; }
+
+	private TorahBookFilterEnums? _SelectedFilter;
+	protected override void OnParametersSet()
+	{
+		_SelectedFilter = CurrentFilter;
+	}
+
+	public string ActiveFilter(TorahBookFilterEnums filter)
+	{
+		return filter == CurrentFilter ? "active" : "";
+	}
+
+	private void OnButtonClicked(TorahBookFilterEnums filter)
+	{
+		OnFilterSelected.InvokeAsync(filter);
+	}
+}

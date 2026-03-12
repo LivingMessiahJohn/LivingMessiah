@@ -1,0 +1,17 @@
+@using PWA.Features.ImportantLinks.Enums
+
+<h2 id="@Link.Value"><span class="badge bg-warning text-dark">@Link.Title</span></h2>
+<div class="card">
+	<img src="@Blobs.UrlImportantLinks(Link.Image)" class="card-img-top" alt="@Link.Title" />
+	<div class="card-body">
+		<p class="card-text">
+			@Description
+		</p>
+		<a href="@Link.Url" target="_blank" class="btn btn-primary">@Link.UrlSimple &nbsp;<i class="fas fa-external-link-square-alt"></i></a>
+	</div>
+</div>
+
+@code {
+	[Parameter, EditorRequired]	public Links Link { get; set; } = default!;
+	[Parameter, EditorRequired]	public RenderFragment? Description { get; set; }
+}
