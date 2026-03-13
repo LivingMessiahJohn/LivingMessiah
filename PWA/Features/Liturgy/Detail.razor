@@ -6,7 +6,7 @@
 {
 		@if (ShowImages && EnumContent is not null)
 		{
-			<img src='@Blobs.UrlShabbatService(@EnumContent.GraphicUrl	)' 
+			<img src='@Constants.Blobs.Link(EnumContent.GraphicUrl	)' 
 				alt="@EnumContent.Title" class="img-fluid rounded mt-1 mb-3" />
 		}
 	<div class="card border-primary ">
@@ -49,10 +49,10 @@ else
 	private void SetDetail()
 	{
 		//Logger!.LogInformation("{Method}, EngPath: {EngPath}, EspPath: {EspPath}", nameof(SetDetail), Constants.DynamicComponentPathEng, Constants.DynamicComponentPathEsp);
-		Logger!.LogInformation("{Method}, EngPath: {EngPath}", nameof(SetDetail), Constants.DynamicComponentPathEng);
+		Logger!.LogInformation("{Method}, EngPath: {EngPath}", nameof(SetDetail), Constants.ContentComponents.Path);
 		try
 		{
-			DetailContent = Type.GetType($"{Constants.DynamicComponentPathEng}.{CurrentEnumContent!.Name}");
+			DetailContent = Type.GetType($"{Constants.ContentComponents.Path}.{CurrentEnumContent!.Name}");
 
 			if (DetailContent is null)
 			{

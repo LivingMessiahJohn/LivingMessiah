@@ -26,7 +26,7 @@
 		<nav class="nav flex-column">
 			@foreach (var item in Enums.Nav.List.ToList()
 			@* .Where(w => w != Nav.Test).Where(w => w != Nav.ShareTarget) *@
-			.OrderBy(o => o.Value))
+			.OrderBy(o => o.Name))
 			{
 				<a class="nav-link px-3" href="@item.Index"><i class="@item.Icon"></i> @item.Title</a>
 				@*  @item.IconColor *@
