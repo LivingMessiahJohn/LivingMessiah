@@ -22,7 +22,6 @@ public enum PageListType
 
 public abstract class Nav : SmartEnum<Nav>
 {
-
 	#region Id's
 	private static class Id
 	{
@@ -48,12 +47,15 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int FurtherStudies = 20;
 		internal const int ImportantLinks = 21;
 		internal const int WeeklyDownload = 22;
-		//internal const int Profile = 24;
-		//internal const int PasswordChanged = 25;
-		//internal const int Planner = 26;
-		//internal const int CalendarRawData = 27;
-		//internal const int UpcomingEvents = 28; // ToDo: replace with SpecialEvents
-		//internal const int IndepthStudy = 29;
+		internal const int CalendarExplanation = 23; 
+		internal const int Location = 24; 
+
+		//internal const int Profile = 25;
+		//internal const int PasswordChanged = 26;
+		//internal const int Planner = 27;
+		//internal const int CalendarRawData = 28;
+		//internal const int UpcomingEvents = 29; // ToDo: replace with SpecialEvents
+		//internal const int IndepthStudy = 30;
 	}
 	#endregion
 
@@ -80,6 +82,9 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav FurtherStudies = new FurtherStudiesSE();
 	public static readonly Nav ImportantLinks = new ImportantLinksSE();
 	public static readonly Nav WeeklyDownload = new WeeklyDownloadSE();
+	public static readonly Nav CalendarExplanation = new CalendarExplanationSE();
+	public static readonly Nav Location = new LocationSE(); 
+
 	//public static readonly Nav Profile = new ProfileSE();
 	//public static readonly Nav PasswordChanged = new PasswordChangedSE();
 	//public static readonly Nav Planner = new PlannerSE();
@@ -436,6 +441,34 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeTitleSuffix => "";
 		public override string HomeFloatRightHebrew => "";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	private sealed class CalendarExplanationSE : Nav
+	{
+		public CalendarExplanationSE() : base($"{nameof(Id.CalendarExplanation)}", Id.CalendarExplanation) { }
+		public override string Index => "/CalendarExplanation";
+		public override string Title => "Calendar Explanation";
+		public override string Icon => "fas fa-calendar";
+		public override int Sort => Id.CalendarExplanation;
+		public override string HomeTitleSuffix => "";
+		public override string HomeFloatRightHebrew => "";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
+	private sealed class LocationSE : Nav
+	{
+		public LocationSE() : base($"{nameof(Id.Location)}", Id.Location) { }
+		public override string Index => "/Location";
+		public override string Title => "Location";
+		public override string Icon => "fas fa-map-signs";
+		public override int Sort => Id.Location;
+		public override string HomeTitleSuffix => "";
+		public override string HomeFloatRightHebrew => "";
+		public override PageListType PageListType => PageListType.SitemapPage;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}

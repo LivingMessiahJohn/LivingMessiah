@@ -18,7 +18,7 @@
 	{
 		try
 		{
-			return Type.GetType($"{Constants.DynamicComponentPath}.{name}");
+			return Type.GetType($"{Constants.ContentComponents.Path}.{name}");
 		}
 		catch (Exception ex)
 		{

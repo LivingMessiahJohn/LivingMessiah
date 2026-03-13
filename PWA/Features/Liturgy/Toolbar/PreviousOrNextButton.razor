@@ -1,9 +1,7 @@
 ﻿@using PWA.Helpers
 
-@* 
+@* @inject IToastService? Toast*@
 @inject ILogger<PreviousOrNextButton>? Logger
-@inject IToastService? Toast
-*@
 @inject IJSRuntime JS
 
 @if (!IsEdge)
@@ -44,14 +42,12 @@ else
 				await jsModule.InvokeVoidAsync("addArrowKeyListener", _dotNetRef);
 				//Logger!.LogInformation("{Method}, JSMethod: {JSMethod}", nameof(OnAfterRenderAsync), JsonKeyboard.Method);
 			}
-			catch (Exception) { }
-			/*
+			
 			catch (Exception ex)
 			{
 				Logger!.LogError(ex, "{Method}", nameof(OnAfterRenderAsync));
-				Toast!.ShowError("An invalid operation occurred, contact your administrator");
+				//Toast!.ShowError("An invalid operation occurred, contact your administrator");
 			}
-			*/
 		}
 	}
 
