@@ -10,6 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\OtherPages\**" />
+    <Content Remove="Features\OtherPages\**" />
+    <EmbeddedResource Remove="Features\OtherPages\**" />
+    <None Remove="Features\OtherPages\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Ardalis.SmartEnum" Version="8.2.0" />
     <!--<PackageReference Include="Markdig" Version="1.0.0" />-->
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="10.0.3" />
@@ -27,10 +34,6 @@
 
   <ItemGroup>
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Features\OtherPages\" />
   </ItemGroup>
 
 </Project>

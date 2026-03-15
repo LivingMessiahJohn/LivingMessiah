@@ -1,0 +1,119 @@
+﻿@using RCL.Features.Storage
+
+@inject IAzureBlobService? AzureBlobService
+@inject ILogger<PdfButtonCardFooter>? Logger
+
+@* 
+@if (AzureBlobService is not null)
+{
+}
+else
+{
+	<RCL.Components.Alert>
+		AzureBlobService is null
+	</RCL.Components.Alert>
+}
+*@
+
+<div class="card-footer">
+
+	@if (HasConnectionStatus)
+	{
+		<div class="text-center">
+
+			@if (CurrentReadingFilenameRecord is not null)
+			{
+				<PdfButton CurrentReadingFilenameRecord="CurrentReadingFilenameRecord" />
+			}
+			else
+			{
+				<RCL.Components.Alert>Current Reading file information is not found</RCL.Components.Alert>
+			}
+		</div>
+	}
+	else
+	{
+		<RCL.Components.Alert>Can't validate PDF! Not Connected!</RCL.Components.Alert>
+	}
+</div>
+
+
+@code {
+	[Parameter, EditorRequired] public bool HasConnectionStatus { get; set; }
+	[Parameter, EditorRequired] public string WeeklyReadingParashaFile { get; set; }
+
+	protected CurrentReadingFilenameRecord? CurrentReadingFilenameRecord;
+	protected override async Task OnInitializedAsync()
+	{
+		Logger!.LogInformation("{Method}, {Message}", $"{nameof(PdfButtonCardFooter)}!{nameof(OnInitializedAsync)}", "Start");
+		if (AzureBlobService is not null)
+		{
+			try
+			{
+				// Check if blob exists
+				var existsResult = await AzureBlobService.ExistsAsync(WeeklyReadingParashaFile);
+
+				if (!existsResult.IsSuccess)
+				{
+					Logger!.LogWarning("Failed to check blob existence: {Message}", existsResult.Message);
+					if (existsResult.IsTransient)
+					{
+						//Toast!.ShowError("Service temporarily unavailable. Please try again.");
+					}
+					else
+					{
+						//Toast!.ShowError($"{Global.ToastShowError}");
+					}
+					return;
+				}
+
+				if (existsResult.Data)
+				{
+					// Get blob info
+					var blobInfoResult = await AzureBlobService.GetBlobInfoAsync(WeeklyReadingParashaFile);
+
+					if (!blobInfoResult.IsSuccess)
+					{
+						Logger!.LogWarning("Failed to get blob info: {Message}", blobInfoResult.Message);
+						if (blobInfoResult.IsTransient)
+						{
+							//Toast!.ShowError("Service temporarily unavailable. Please try again.");
+						}
+						else
+						{
+							//Toast!.ShowError($"{Global.ToastShowError}");
+						}
+						CurrentReadingFilenameRecord = new CurrentReadingFilenameRecord(WeeklyReadingParashaFile, string.Empty, 0);
+						return;
+					}
+
+					if (blobInfoResult.Data is not null)
+					{
+						CurrentReadingFilenameRecord = new CurrentReadingFilenameRecord(
+						blobInfoResult.Data.Name,
+						blobInfoResult.Data.Url,
+						blobInfoResult.Data.SizeBytes);
+					}
+					else
+					{
+						CurrentReadingFilenameRecord = new CurrentReadingFilenameRecord(WeeklyReadingParashaFile, string.Empty, 0);
+					}
+				}
+				else
+				{
+					CurrentReadingFilenameRecord = new CurrentReadingFilenameRecord(WeeklyReadingParashaFile, string.Empty, 0);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logger!.LogError(ex, "{Method} {Message}", nameof(OnInitializedAsync), $"WeeklyReadingParashaFile: {WeeklyReadingParashaFile}");
+				//Toast!.ShowError($"{Global.ToastShowError}");
+			}
+		}
+		else
+		{
+			Logger!.LogWarning("{Method}, {Message}", nameof(OnInitializedAsync), $"{nameof(AzureBlobService)} is null");
+		}
+	}
+
+}

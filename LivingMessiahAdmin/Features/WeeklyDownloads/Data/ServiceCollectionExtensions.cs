@@ -9,8 +9,7 @@ public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddAzureBlobService(this IServiceCollection services)
 	{
-		// Register AzureBlobService using factory so we can log the container name via the DI logger.
-		services.AddSingleton<AzureBlobService>(sp =>
+		services.AddSingleton<IAzureBlobService, AzureBlobService>(sp =>
 		{
 			var options = sp.GetRequiredService<IOptions<WeeklyDownloadsSettings.AzureBlob>>();
 			var azureBlob = options.Value;

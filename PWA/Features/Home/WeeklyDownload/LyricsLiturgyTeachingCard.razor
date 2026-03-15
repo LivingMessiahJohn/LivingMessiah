@@ -1,9 +1,7 @@
 ﻿@using TriennialEnum = RCL.Features.Parasha.Enums.Triennial
 @using ParashaHelpers = RCL.Features.Parasha.Helpers
-@using RCL.Features.Storage
 
 @* @inject IToastService? Toast *@
-@inject AzureBlobService? AzureBlobService
 @inject ILogger<LyricsLiturgyTeachingCard>? Logger
 
 <div class="card border border-danger border-3 rounded-top text-center mb-3 mt-3">
@@ -14,136 +12,35 @@
 
 	<Interary />
 
-	@if (AzureBlobService is not null)
+	@if (WeeklyReadingParashaFile is not null)
 	{
-
-		@if (CurrentReadingEnum is not null)
-		{
-			<div class="body my-2 fs-4">@CardTitle</div>
-
-			<div class="card-footer">
-				<div class="text-center">
-
-					@if (CurrentReadingFilenameRecord is not null)
-					{
-						<PdfButton CurrentReadingFilenameRecord="CurrentReadingFilenameRecord" />
-					}
-					else
-					{
-						<RCL.Components.Alert>
-							Current Reading file information is not found
-						</RCL.Components.Alert>
-					}
-
-				</div>
-			</div>
-
-		}
-		else
-		{
-			<RCL.Components.Alert>
-				Current Reading is not found!
-			</RCL.Components.Alert>
-		}
+		<div class="body my-2 fs-4">@CardTitle</div>
+		<PdfButtonCardFooter HasConnectionStatus="false" WeeklyReadingParashaFile="@WeeklyReadingParashaFile" />
 	}
 	else
 	{
-		<RCL.Components.Alert>
-			AzureBlobService is null
-		</RCL.Components.Alert>
-	}
-
+		<RCL.Components.Alert><code>WeeklyReadingParashaFile</code> is Null!</RCL.Components.Alert>
+	}	
 </div>
 
 @code {
 
-	private string CardTitle = string.Empty;  // Is assigned in OnInitializedAsync only if CurrentReading is NOT null
-
+	private string CardTitle = string.Empty;  
 	private TriennialEnum? CurrentReadingEnum = ParashaHelpers.GetCurrentReading();
 
-	protected CurrentReadingFilenameRecord? CurrentReadingFilenameRecord;
-
+	private string? WeeklyReadingParashaFile;
 	protected override async Task OnInitializedAsync()
 	{
-		Logger!.LogInformation("{Method}, {Message}", $"{nameof(LyricsLiturgyTeachingCard)}!{nameof(OnInitializedAsync)}", "Start");
-		
+		//Logger!.LogInformation("{Method}, {Message}", $"{nameof(LyricsLiturgyTeachingCard)}!{nameof(OnInitializedAsync)}", "Start");
+
 		if (CurrentReadingEnum is null)
 		{
 			Logger!.LogInformation("{Method}, {Message}", nameof(OnInitializedAsync), "CurrentReadingEnum is null");
 			return;
 		}
 
-		if (AzureBlobService is not null)
-		{
-			CardTitle = $"{CurrentReadingEnum!.Date.ToString("yyyy MMMM dd")} | {CurrentReadingEnum.BCV}";
-			string _WeeklyReadingParashaFile = CurrentReadingEnum.WeeklyReadingParashaFile?.Trim() ?? string.Empty;
-
-			try
-			{
-				// Check if blob exists
-				var existsResult = await AzureBlobService.ExistsAsync(_WeeklyReadingParashaFile);
-
-				if (!existsResult.IsSuccess)
-				{
-					Logger!.LogWarning("Failed to check blob existence: {Message}", existsResult.Message);
-					if (existsResult.IsTransient)
-					{
-						//Toast!.ShowError("Service temporarily unavailable. Please try again.");
-					}
-					else
-					{
-						//Toast!.ShowError($"{Global.ToastShowError}");
-					}
-					return;
-				}
-
-				if (existsResult.Data)
-				{
-					// Get blob info
-					var blobInfoResult = await AzureBlobService.GetBlobInfoAsync(_WeeklyReadingParashaFile);
-
-					if (!blobInfoResult.IsSuccess)
-					{
-						Logger!.LogWarning("Failed to get blob info: {Message}", blobInfoResult.Message);
-						if (blobInfoResult.IsTransient)
-						{
-							//Toast!.ShowError("Service temporarily unavailable. Please try again.");
-						}
-						else
-						{
-							//Toast!.ShowError($"{Global.ToastShowError}");
-						}
-						CurrentReadingFilenameRecord = new CurrentReadingFilenameRecord(_WeeklyReadingParashaFile, string.Empty, 0);
-						return;
-					}
-
-					if (blobInfoResult.Data is not null)
-					{
-						CurrentReadingFilenameRecord = new CurrentReadingFilenameRecord(
-							blobInfoResult.Data.Name,
-							blobInfoResult.Data.Url,
-							blobInfoResult.Data.SizeBytes);
-					}
-					else
-					{
-						CurrentReadingFilenameRecord = new CurrentReadingFilenameRecord(_WeeklyReadingParashaFile, string.Empty, 0);
-					}
-				}
-				else
-				{
-					CurrentReadingFilenameRecord = new CurrentReadingFilenameRecord(_WeeklyReadingParashaFile, string.Empty, 0);
-				}
-			}
-			catch (Exception ex)  
-			{
-				Logger!.LogError(ex, "{Method} {Message}", nameof(OnInitializedAsync), $"_WeeklyReadingParashaFile: {_WeeklyReadingParashaFile}");
-				//Toast!.ShowError($"{Global.ToastShowError}");
-			}
-		}
-		else
-		{
-			Logger!.LogWarning("{Method}, {Message}", nameof(OnInitializedAsync), $"{nameof(AzureBlobService)} is null");
-		}
+		CardTitle = $"{CurrentReadingEnum!.Date.ToString("yyyy MMMM dd")} | {CurrentReadingEnum.BCV}";
+		WeeklyReadingParashaFile = CurrentReadingEnum.WeeklyReadingParashaFile?.Trim() ?? string.Empty;
 	}
 
 }

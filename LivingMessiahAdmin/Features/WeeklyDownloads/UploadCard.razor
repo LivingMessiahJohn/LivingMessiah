@@ -2,7 +2,7 @@
 @using RCL.Features.Storage
 @using RCL.Components
 
-@inject AzureBlobService BlobService
+@inject IAzureBlobService BlobService
 @inject ILogger<UploadCard>? Logger
 @inject IToastService? Toast
 @inject HttpClient HttpClient
@@ -15,19 +15,10 @@
 		</div>
 
 		<div class="card-body border border-3 border-warning mb-1">
-			<SourcePills CurrentSource="CurrentSourceType" OnSourceSelected="ReturnedSource" />
-
-			@if (CurrentSourceType == Enums.Source.Url)
+			<InputFile OnChange="OnInputFileChange" class="form-control" />
+			@if (selectedFile is not null)
 			{
-				<InputText @bind-Value="AttachmentUrl" Placeholder="Paste iCloud attachment URL here" class="form-control" />
-			}
-			else
-			{
-				<InputFile OnChange="OnInputFileChange" class="form-control" />
-				@if (selectedFile is not null)
-				{
-					<div class="small text-muted mt-1">@selectedFile.Name (@FormatBytes(selectedFileSize))</div>
-				}
+				<div class="small text-muted mt-1">@selectedFile.Name (@FormatBytes(selectedFileSize))</div>
 			}
 		</div>
 
@@ -43,7 +34,7 @@
 			<div class="text-center mt-2">
 
 
-				<button @onclick="@(e => OnButtonClicked(CurrentSourceType))" 
+				<button @onclick="@(e => OnButtonClicked())" 
 								class="btn btn-primary m-2" disabled="@IsDisabled">
 					@if (isUploading)
 					{
@@ -149,12 +140,6 @@
 		StateHasChanged();  //
 	}
 
-	private Enums.Source CurrentSourceType = Enums.Source.Url;
-	void ReturnedSource(Enums.Source source)
-	{
-		CurrentSourceType = source;
-	}
-
 	private static string FormatBytes(long bytes)
 	{
 		if (bytes <= 0) return "0 B";
@@ -166,15 +151,9 @@
 
 	private string AttachmentUrl { get; set; } = string.Empty;
 
-	private async Task OnButtonClicked(Enums.Source source)
+	private async Task OnButtonClicked()
 	{
-		if (CurrentSourceType == Enums.Source.Url){
-			await UploadFromUrlToAzure();
-		}
-		else
-		{
-			await UploadFromFileToAzure();
-		}	
+		await UploadFromFileToAzure();
 	}
 
 	private async Task UploadFromUrlToAzure()

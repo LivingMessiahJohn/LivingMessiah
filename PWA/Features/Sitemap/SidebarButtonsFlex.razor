@@ -1,11 +1,10 @@
-﻿
-@if (MediaQuery == MediaQuery.Xs)
+﻿@if (MediaQuery == MediaQuery.Xs)
 {
 	<div class="card-body px-0">
 		<div class="list-group">
 			@foreach (var item in Nav.List.ToList()
-				.Where(w => w.IsPartOfList(PageListType.Layout))
-				.OrderBy(o => o.Sort))
+					.Where(w => w.IsPartOfList(PageListType.SitemapPage))
+					.OrderBy(o => o.Sort))
 			{
 				<FancyFatNavButton Nav="item" MediaQuery="MediaQuery" />
 			}
@@ -19,9 +18,9 @@ else
 			<div class="col-6">
 				<div class="list-group">
 					@foreach (var item in Nav.List.ToList()
-							.Where(w => w.IsPartOfList(PageListType.Layout))
-							.Where(w => w.Value <= ColumnButtonCountSplit)
-							.OrderBy(o => o.Sort))
+									.Where(w => w.IsPartOfList(PageListType.SitemapPage))
+									.Where(w => w.Value <= ColumnButtonCountSplit)
+									.OrderBy(o => o.Sort))
 					{
 						<FancyFatNavButton Nav="item" MediaQuery="MediaQuery" />
 					}
@@ -30,9 +29,9 @@ else
 			<div class="col-6">
 				<div class="list-group">
 					@foreach (var item in Nav.List.ToList()
-							.Where(w => w.IsPartOfList(PageListType.Layout))
-							.Where(w => w.Value > ColumnButtonCountSplit)
-							.OrderBy(o => o.Sort))
+									.Where(w => w.IsPartOfList(PageListType.SitemapPage))
+									.Where(w => w.Value > ColumnButtonCountSplit)
+									.OrderBy(o => o.Sort))
 					{
 						<FancyFatNavButton Nav="item" MediaQuery="MediaQuery" />
 					}
@@ -44,5 +43,5 @@ else
 
 @code {
 	[Parameter, EditorRequired] public MediaQuery? MediaQuery { get; set; }
-	private const int ColumnButtonCountSplit = 12;	
+	private const int ColumnButtonCountSplit = 12;
 }

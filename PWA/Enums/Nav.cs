@@ -6,17 +6,10 @@ namespace PWA.Enums;
 [Flags]
 public enum PageListType
 {
-	None = 0,
+	None = 0,  // DonateReplyConfirmSE
 	SitemapPage = 1,
-	Footer = 2,
-	Layout = 4,
-	HealthCheck = 8,
-	Reply = 16,
-	LayoutXs = 32,
-	LayoutSm = 64,
-	LayoutMd = 128,
-	LayoutLg = 256,
-	LayoutXl = 512,
+	TearOne = 2,
+	HealthCheck = 4
 }
 
 
@@ -29,26 +22,26 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int Calendar = 2;
 		internal const int FeastTable = 3;
 		internal const int Donate = 4;
-		internal const int DonateReplyConfirm = 5;
-		internal const int Sitemap = 6;
-		internal const int Feasts = 7;
-		internal const int LunarMonth = 8;
-		internal const int Leadership = 9;
-		internal const int HeavensDeclare = 10;
-		internal const int ThresholdCovenant = 11;
-		internal const int Podcast = 12;
-		internal const int Parasha = 13;  // PageParasha.Archive
-		internal const int Welcome = 14;
-		internal const int Liturgy = 15;
-		internal const int TorahTuesday = 16;
-		internal const int About = 17;
-		internal const int BloodMoons = 18;
-		internal const int Articles = 19;
-		internal const int FurtherStudies = 20;
-		internal const int ImportantLinks = 21;
-		internal const int WeeklyDownload = 22;
-		internal const int CalendarExplanation = 23; 
-		internal const int Location = 24; 
+		internal const int Sitemap = 5;
+		internal const int Feasts = 6;
+		internal const int LunarMonth = 7;
+		internal const int Leadership = 8;
+		internal const int HeavensDeclare = 9;
+		internal const int ThresholdCovenant = 10;
+		internal const int Podcast = 11;
+		internal const int Parasha = 12;  // PageParasha.Archive
+		internal const int Welcome = 13;
+		internal const int Liturgy = 14;
+		internal const int TorahTuesday = 15;
+		internal const int About = 16;
+		internal const int BloodMoons = 17;
+		internal const int Articles = 18;
+		internal const int FurtherStudies = 19;
+		internal const int ImportantLinks = 20;
+		internal const int WeeklyDownload = 21;
+		internal const int CalendarExplanation = 22; 
+		internal const int Location = 23; 
+		internal const int DonateReplyConfirm = 24;
 
 		//internal const int Profile = 25;
 		//internal const int PasswordChanged = 26;
@@ -64,7 +57,6 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav Calendar = new CalendarSE();
 	public static readonly Nav FeastTable = new FeastTableSE();
 	public static readonly Nav Donate = new DonateSE();
-	public static readonly Nav DonateReplyConfirm = new DonateReplyConfirmSE();
 	public static readonly Nav Sitemap = new SitemapSE();
 	public static readonly Nav Feasts = new FeastsSE();
 	public static readonly Nav LunarMonth = new LunarMonthSE();
@@ -84,6 +76,7 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav WeeklyDownload = new WeeklyDownloadSE();
 	public static readonly Nav CalendarExplanation = new CalendarExplanationSE();
 	public static readonly Nav Location = new LocationSE(); 
+	public static readonly Nav DonateReplyConfirm = new DonateReplyConfirmSE();
 
 	//public static readonly Nav Profile = new ProfileSE();
 	//public static readonly Nav PasswordChanged = new PasswordChangedSE();
@@ -139,7 +132,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Home;
 		public override string HomeTitleSuffix => " bayit H1004";
 		public override string HomeFloatRightHebrew => "בַּיִת";
-		public override PageListType PageListType => PageListType.Footer;
+		public override PageListType PageListType => PageListType.TearOne;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -153,7 +146,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Calendar;
 		public override string HomeTitleSuffix => " chôdeshim H2320";
 		public override string HomeFloatRightHebrew => "חֳדָשִׁים";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Footer | PageListType.Layout | PageListType.LayoutMd;
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TearOne;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -181,24 +174,9 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Donate;
 		public override string HomeTitleSuffix => " Tsadik H6662";
 		public override string HomeFloatRightHebrew => "צַדִּיק";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Footer | PageListType.Layout | PageListType.LayoutMd;
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TearOne;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
-	}
-
-	private sealed class DonateReplyConfirmSE : Nav
-	{
-		public DonateReplyConfirmSE() : base($"{nameof(Id.DonateReplyConfirm)}", Id.DonateReplyConfirm) { }
-		public override string Index => "/confirm_donation.html";
-		public override string Title => "Donation Confirmed";
-		public override string Icon => "fab fa-cc-stripe";
-		public override int Sort => Id.DonateReplyConfirm;
-		public override string HomeTitleSuffix => "";
-		public override string HomeFloatRightHebrew => "";
-
-		public override PageListType PageListType => PageListType.Reply;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => false; // N/A
 	}
 
 	private sealed class SitemapSE : Nav
@@ -210,7 +188,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Sitemap;
 		public override string HomeTitleSuffix => " nahal H5095";
 		public override string HomeFloatRightHebrew => "נָהַל";
-		public override PageListType PageListType => PageListType.Footer | PageListType.Layout;
+		public override PageListType PageListType =>  PageListType.TearOne;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -224,7 +202,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Feasts;
 		public override string HomeTitleSuffix => " moed H4150";
 		public override string HomeFloatRightHebrew => "מוֹעֵד";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Footer | PageListType.Layout | PageListType.LayoutMd;
+		public override PageListType PageListType => PageListType.SitemapPage;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -238,7 +216,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.LunarMonth;
 		public override string HomeTitleSuffix => " yerach H3394"; // "Month yerach H3391";
 		public override string HomeFloatRightHebrew => "יָרֵחַ";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout | PageListType.LayoutMd;
+		public override PageListType PageListType => PageListType.SitemapPage;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -252,7 +230,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Leadership;
 		public override string HomeTitleSuffix => " zaken H2205";  //nasi H5387
 		public override string HomeFloatRightHebrew => "זָקֵן";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout | PageListType.LayoutMd;
+		public override PageListType PageListType => PageListType.SitemapPage;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -266,7 +244,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.HeavensDeclare;
 		public override string HomeTitleSuffix => " shamayim H8064";
 		public override string HomeFloatRightHebrew => "שָׁמַיִם";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout | PageListType.LayoutMd;
+		public override PageListType PageListType => PageListType.SitemapPage;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -280,7 +258,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.ThresholdCovenant;
 		public override string HomeTitleSuffix => " saph H5592";
 		public override string HomeFloatRightHebrew => "סַף";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout | PageListType.LayoutMd;
+		public override PageListType PageListType => PageListType.SitemapPage;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -294,7 +272,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Podcast;
 		public override string HomeTitleSuffix => "";
 		public override string HomeFloatRightHebrew => "";
-		public override PageListType PageListType => PageListType.Footer;
+		public override PageListType PageListType => PageListType.SitemapPage;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -309,7 +287,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Parasha;
 		public override string HomeTitleSuffix => " Parashat H6567";
 		public override string HomeFloatRightHebrew => "פָּרָשַׁת";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TearOne;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -323,7 +301,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Welcome;
 		public override string HomeTitleSuffix => " Shalom  H7695";
 		public override string HomeFloatRightHebrew => "שָׁלוֹם";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TearOne;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -332,12 +310,12 @@ public abstract class Nav : SmartEnum<Nav>
 	{
 		public TorahTuesdaySE() : base($"{nameof(Id.TorahTuesday)}", Id.TorahTuesday) { }
 		public override string Index => "/TorahTuesday";
-		public override string Title => "Tuesday Night Bible Study";
+		public override string Title => "Bible Study";  //Tuesday Night 
 		public override string Icon => "fas fa-torah";
 		public override int Sort => Id.TorahTuesday;
 		public override string HomeTitleSuffix => " Torah H8451";
 		public override string HomeFloatRightHebrew => "תּוֹרָה";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override PageListType PageListType => PageListType.SitemapPage;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -351,7 +329,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.About;
 		public override string HomeTitleSuffix => " Odot H182";
 		public override string HomeFloatRightHebrew => "אודות";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override PageListType PageListType => PageListType.SitemapPage;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -365,7 +343,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.BloodMoons;
 		public override string HomeTitleSuffix => " yareach H3394";
 		public override string HomeFloatRightHebrew => "יָרֵחַ";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override PageListType PageListType => PageListType.SitemapPage;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -393,7 +371,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.FurtherStudies;
 		public override string HomeTitleSuffix => " sepher H5612";
 		public override string HomeFloatRightHebrew => "סֵפֶר";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override PageListType PageListType => PageListType.SitemapPage;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -407,7 +385,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.ImportantLinks;
 		public override string HomeTitleSuffix => " rakad H7540";
 		public override string HomeFloatRightHebrew => "רָקַד";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override PageListType PageListType => PageListType.SitemapPage;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -425,7 +403,7 @@ public abstract class Nav : SmartEnum<Nav>
 			public override string HomeTitleSuffix => " sidur H5468";  // H5468=seder 
 			public override string HomeFloatRightHebrew => "//סידור";
 		*/
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TearOne;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -440,7 +418,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.WeeklyDownload;
 		public override string HomeTitleSuffix => "";
 		public override string HomeFloatRightHebrew => "";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
+		public override PageListType PageListType => PageListType.None;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -454,7 +432,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.CalendarExplanation;
 		public override string HomeTitleSuffix => "";
 		public override string HomeFloatRightHebrew => "";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
+		public override PageListType PageListType => PageListType.SitemapPage;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -473,8 +451,24 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false;
 	}
 
+	private sealed class DonateReplyConfirmSE : Nav
+	{
+		public DonateReplyConfirmSE() : base($"{nameof(Id.DonateReplyConfirm)}", Id.DonateReplyConfirm) { }
+		public override string Index => "/confirm_donation.html";
+		public override string Title => "Donation Confirmed";
+		public override string Icon => "fab fa-cc-stripe";
+		public override int Sort => Id.DonateReplyConfirm;
+		public override string HomeTitleSuffix => "";
+		public override string HomeFloatRightHebrew => "";
+
+		public override PageListType PageListType => PageListType.None;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false; // N/A
+	}
+
 
 	/*
+	
 	private sealed class ProfileSE : Nav
 	{
 		public ProfileSE() : base($"{nameof(Id.Profile)}", Id.Profile) { }
