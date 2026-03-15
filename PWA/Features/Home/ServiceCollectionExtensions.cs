@@ -1,22 +1,17 @@
-﻿namespace PWA.Features.Home;
-
-using PWA.Features.Home.WeeklyDownload.Settings;
-using Microsoft.Extensions.Logging.Abstractions;
+﻿using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using WeeklyDownloadsSettings = PWA.Features.Home.WeeklyDownload.Settings;
 using RCL.Features.Storage;
+
+namespace PWA.Features.Home;
 
 public static class ServiceCollectionExtensions
 {
-	// Called by Program.cs like `builder.Services.AddAzureBlobService();`
 	public static IServiceCollection AddAzureBlobService(this IServiceCollection services)
 	{
-		/*
-		services.AddSingleton<IAzureBlobService, AzureBlobService>(sp => ...)  ToDo: USE THIS INTERFACE SOLUTION INSTEAD 
-		*/
-		// Register AzureBlobService using factory so we can log the container name via the DI logger.
-		services.AddSingleton<AzureBlobService>(sp =>
+		services.AddSingleton<IAzureBlobService, AzureBlobService>(sp =>
 		{
-			var options = sp.GetRequiredService<IOptions<AzureBlob>>();  // WeeklyDownloadsSettings.AzureBlob
+			var options = sp.GetRequiredService<IOptions<WeeklyDownloadsSettings.AzureBlob>>(); 
 			var azureBlob = options.Value;
 			var loggerFactory = sp.GetService<ILoggerFactory>() ?? NullLoggerFactory.Instance;
 			var Logger = loggerFactory.CreateLogger<AzureBlobService>();

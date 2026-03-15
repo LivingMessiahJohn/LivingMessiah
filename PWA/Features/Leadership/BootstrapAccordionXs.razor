@@ -1,0 +1,86 @@
+@using PWA.Features.Leadership.Enums
+@using PWA.Features.Leadership.Biographies
+@using PWA.Features.Leadership.Constants
+
+<div class="accordion" id="accordionLeadership">
+	@{
+		var items = Office.List
+			.OrderBy(o => o.Sort)
+			.Where(w => w.IsFilled == true)
+			.ToList();
+
+		for (int i = 0; i < items.Count; i++)
+		{
+			var item = items[i];
+			var headingId = $"heading{i}";
+			var collapseId = $"collapse{i}";
+			var isFirstItem = i == 0;
+
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="@headingId">
+					<button class="accordion-button @(isFirstItem ? "" : "collapsed")" 
+							type="button" 
+							data-bs-toggle="collapse" 
+							data-bs-target="#@collapseId" 
+							aria-expanded="@(isFirstItem ? "true" : "false")" 
+							aria-controls="@collapseId">
+						<div class="my-1">
+							<img src="@Blobs.Link(item.IconFile)" class="me-2 rounded-3" alt="@item.OfficeHolderName icon" />
+							@if (item.IsSpouseIncluded)
+							{
+								<img src="@Blobs.Link(item.IconFile2)" class="me-2 rounded-3" alt="@item.OfficeHolderName spouse icon" />
+							}
+							<p class="mt-1 mb-2">@item.OfficeHolderName  <b><i>@item.Title</i></b></p>
+						</div>
+					</button>
+				</h2>
+				<div id="@collapseId" 
+					 class="accordion-collapse collapse @(isFirstItem ? "show" : "")" 
+					 aria-labelledby="@headingId" 
+					 data-bs-parent="#accordionLeadership">
+					<div class="accordion-body">
+						<img src="@Blobs.Link(@item.ImageFile)"
+							 class="w-100 p-3"
+							 alt="@item.OfficeHolderName" />
+
+						@if (item.Value == Office.CongregationLeader)
+						{
+							<CongregationLeader />
+						}
+						else if (item.Value == Office.BeitDin1)
+						{
+							<BeitDin1 />
+						}
+						else if (item.Value == Office.BeitDin2)
+						{
+							<BeitDin2 />
+						}
+						else if (item.Value == Office.BeitDin3)
+						{
+							<BeitDin3 />
+						}
+						else if (item.Value == Office.Elder1)
+						{
+							<Elder1 />
+						}
+						else if (item.Value == Office.Elder2)
+						{
+							<Elder2 />
+						}
+						else
+						{
+							<Elder3 />
+						}
+					</div>
+				</div>
+			</div>
+		}
+	}
+</div>
+
+<style>
+	.accordion-button:not(.collapsed) {
+		background-color: #fff3cd !important;
+		color: #000;
+	}
+</style>

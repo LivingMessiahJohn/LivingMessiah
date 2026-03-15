@@ -1,23 +1,55 @@
 ﻿@using Toolbelt.Blazor.PWA.Updater
+@using PWA.Layout.MenuNavbar
+@using PWA.Constants
+
 @inherits LayoutComponentBase
+@inject Microsoft.JSInterop.IJSRuntime JsRuntime
 
 <DomIdsInitializer />
 
 <header>
-	<MenuOffcanvas />
-	@* 
-		LMM MenuNavbar\
-		- Wrapper.razor 
-			- LeftAnchors.razor
-			- SearchModal.razor
-				
+	<div class="container-fluid px-0">
+		<div class="d-flex align-items-center justify-content-between bg-primary text-white p-2 navbar navbar-dark">
+			<div class="d-flex align-items-center gap-2">
+				<HomeImgButton />
+				<SearchButton />
+				<ConnectionStatus />
+			</div>
+			<Title />
+			<div class="d-flex align-items-center gap-2">
+				<ThemeToggle />
+				<OffcanvasToggler />
+			</div>
+		</div>
+	</div>
+			
+	<div class="offcanvas offcanvas-end" tabindex="-1" id="@DomIds.Menu.OffCanvas"
+			 aria-labelledby="@DomIds.Menu.OffCanvasLabel" style="width: 260px;">
 
-	*@
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title" id="@DomIds.Menu.OffCanvasLabel">Menu</h5>
+			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
+
+		<div class="offcanvas-body px-0">
+			<nav class="nav flex-column">
+				@foreach (var item in Enums.Nav.List.ToList()
+								.Where(w => w.IsPartOfList(PageListType.TearOne))
+								.OrderBy(o => o.Value))
+				{
+					<a class="nav-link px-3" href="@item.Index"><i class="@item.Icon"></i> @item.Title</a>
+				}
+			</nav>
+		</div>
+	</div>
 
 	@* <Authorize /> <BlazoredToasts /> *@
 
 	<PWAUpdater />
 	@* <PWAUpdater State="PWAUpdater.States.Showing" /> *@
+
+	<SearchModal />
+
 </header>
 
 @* Full width requires px-0 ... <div class="container-fluid px-0"> *@
@@ -34,3 +66,14 @@
 <footer class="text-muted">
 	<Footer />
 </footer>
+
+@code {
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			// Initialize global keyboard shortcut to open the search modal (Ctrl+K / Cmd+K)
+			await JsRuntime.InvokeVoidAsync("searchHotkeys.init");
+		}
+	}
+}

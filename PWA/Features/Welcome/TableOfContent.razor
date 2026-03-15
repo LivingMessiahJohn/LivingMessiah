@@ -1,11 +1,24 @@
-﻿
-<ul class="list-inline justify-content-center d-flex">
-  <li class="list-inline-item text-decoration-underline">Introduction</li>
-  <li class="list-inline-item text-decoration-underline">Vision</li>
-  <li class="list-inline-item text-decoration-underline">Mission</li>
-  <li class="list-inline-item text-decoration-underline">Resolve</li>
+﻿<ul class="list-inline justify-content-center d-flex">
+
+	<li class="list-inline-item text-decoration-underline">
+		<a href="@($"{BaseUrl}introduction")" title="Welcome to Living Messiah">Introduction</a>
+	</li>
+
+	<li class="list-inline-item text-decoration-underline">
+		<a href="@($"{BaseUrl}vision")" title="To build community from a Hebraic understanding">Vision</a>
+	</li>
+
+	<li class="list-inline-item text-decoration-underline">
+		<a href="@($"{BaseUrl}mission")" title="Proclaiming The Living Word of THE LORD">Mission</a>
+	</li>
+
+	<li class="list-inline-item text-decoration-underline">
+		<a href="@($"{BaseUrl}resolve")" title="We resolve to...">Resolve</a>
+	</li>
+
 </ul>
 
 @code {
-
+	[Parameter, EditorRequired]
+	public string BaseUrl { get; set; } = default!; // required URL prefix for links
 }

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace RCL.Features.Storage;
 
-public class AzureBlobService
+public class AzureBlobService : IAzureBlobService
 {
     private readonly BlobContainerClient _container;
     private readonly ILogger<AzureBlobService> Logger;
