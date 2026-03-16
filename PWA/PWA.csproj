@@ -6,7 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
-    <UserSecretsId>cd5a67d6-e92f-4940-b02e-9c4e08ec05e7</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
