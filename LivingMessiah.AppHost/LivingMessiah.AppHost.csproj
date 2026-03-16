@@ -12,14 +12,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.0.0" />
-    <PackageReference Include="Aspire.Hosting.Seq" Version="13.0.0" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.1.2" />
+    <PackageReference Include="Aspire.Hosting.Seq" Version="13.1.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LivingMessiahAdmin\LivingMessiahAdmin.csproj" />
     <ProjectReference Include="..\LivingMessiah\LivingMessiah.csproj" />
     <ProjectReference Include="..\LivingMessiahSukkot\LivingMessiahSukkot.csproj" />
+    <ProjectReference Include="..\PWA\PWA.csproj" />
   </ItemGroup>
 
 </Project>

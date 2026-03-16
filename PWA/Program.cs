@@ -30,7 +30,12 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.Configure<AzureBlob>(builder.Configuration.GetSection("AzureBlob"));
+
+/*
+ToDo: Move this logic to an Azure Function solution
 builder.Services.AddAzureBlobService();
+*/
+
 builder.Services.AddFeastDayPlanner();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });

@@ -8,7 +8,7 @@ public enum PageListType
 {
 	None = 0,  // DonateReplyConfirmSE
 	SitemapPage = 1,
-	TearOne = 2,
+	TierOne = 2,
 	HealthCheck = 4
 }
 
@@ -132,7 +132,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Home;
 		public override string HomeTitleSuffix => " bayit H1004";
 		public override string HomeFloatRightHebrew => "בַּיִת";
-		public override PageListType PageListType => PageListType.TearOne;
+		public override PageListType PageListType => PageListType.TierOne;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -146,7 +146,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Calendar;
 		public override string HomeTitleSuffix => " chôdeshim H2320";
 		public override string HomeFloatRightHebrew => "חֳדָשִׁים";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TearOne;
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TierOne;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -174,7 +174,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Donate;
 		public override string HomeTitleSuffix => " Tsadik H6662";
 		public override string HomeFloatRightHebrew => "צַדִּיק";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TearOne;
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TierOne;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -188,7 +188,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Sitemap;
 		public override string HomeTitleSuffix => " nahal H5095";
 		public override string HomeFloatRightHebrew => "נָהַל";
-		public override PageListType PageListType =>  PageListType.TearOne;
+		public override PageListType PageListType =>  PageListType.TierOne;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -287,7 +287,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Parasha;
 		public override string HomeTitleSuffix => " Parashat H6567";
 		public override string HomeFloatRightHebrew => "פָּרָשַׁת";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TearOne;
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TierOne;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -301,7 +301,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int Sort => Id.Welcome;
 		public override string HomeTitleSuffix => " Shalom  H7695";
 		public override string HomeFloatRightHebrew => "שָׁלוֹם";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TearOne;
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TierOne;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
@@ -403,7 +403,7 @@ public abstract class Nav : SmartEnum<Nav>
 			public override string HomeTitleSuffix => " sidur H5468";  // H5468=seder 
 			public override string HomeFloatRightHebrew => "//סידור";
 		*/
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TearOne;
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TierOne;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}
