@@ -34,7 +34,7 @@
 		<div class="offcanvas-body px-0">
 			<nav class="nav flex-column">
 				@foreach (var item in Enums.Nav.List.ToList()
-								.Where(w => w.IsPartOfList(PageListType.TearOne))
+								.Where(w => w.IsPartOfList(PageListType.TierOne))
 								.OrderBy(o => o.Value))
 				{
 					<a class="nav-link px-3" href="@item.Index"><i class="@item.Icon"></i> @item.Title</a>

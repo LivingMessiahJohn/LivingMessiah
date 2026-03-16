@@ -48,7 +48,7 @@
 @code {
 	private IEnumerable<Nav>? NavList = Nav.List
 	.ToList()
-	.Where(w => w.IsPartOfList(PageListType.SitemapPage) && !w.IsPartOfList(PageListType.HealthCheck))
+	.Where(w => (w.IsPartOfList(PageListType.SitemapPage) || w == Nav.Sitemap) && !w.IsPartOfList(PageListType.HealthCheck))
 	.OrderBy(o => o.Name);
 
 	public string SearchText = "";
