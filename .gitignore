@@ -398,6 +398,13 @@ FodyWeavers.xsd
 # Windows Installer files from build outputs
 *.cab
 *.msi
+
+# Azure Functions
+__blobstorage__/
+__queuestorage__/
+__azurite_db*__.json
+local.settings.json
+.python_packages/
 *.msix
 *.msm
 *.msp

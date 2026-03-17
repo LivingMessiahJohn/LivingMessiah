@@ -31,10 +31,14 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.Configure<AzureBlob>(builder.Configuration.GetSection("AzureBlob"));
 
-/*
-ToDo: Move this logic to an Azure Function solution
-builder.Services.AddAzureBlobService();
-*/
+// Use Azure Function API for blob operations
+// In production (Azure Static Web Apps), the API is at the same base address
+// In development, you can configure this via appsettings or use the Functions local endpoint
+var apiBaseAddress = builder.HostEnvironment.IsDevelopment() 
+	? "http://localhost:7071"  // Azure Functions local endpoint
+	: builder.HostEnvironment.BaseAddress;  // Same as app base address in production
+
+builder.Services.AddBlobApiService(apiBaseAddress);
 
 builder.Services.AddFeastDayPlanner();
 
