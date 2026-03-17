@@ -1,0 +1,60 @@
+# Sample GitHub Actions workflow for deploying to Azure Static Web Apps
+# This file shows the key sections needed for deploying both the PWA and API
+
+# name: Azure Static Web Apps CI/CD
+# 
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     types: [opened, synchronize, reopened, closed]
+#     branches:
+#       - main
+# 
+# jobs:
+#   build_and_deploy_job:
+#     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+#     runs-on: ubuntu-latest
+#     name: Build and Deploy Job
+#     steps:
+#       - uses: actions/checkout@v3
+#         with:
+#           submodules: true
+#       
+#       - name: Build And Deploy
+#         id: builddeploy
+#         uses: Azure/static-web-apps-deploy@v1
+#         with:
+#           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+#           repo_token: ${{ secrets.GITHUB_TOKEN }}
+#           action: "upload"
+#           ###### Repository/Build Configurations ######
+#           app_location: "/PWA"                    # Blazor WebAssembly project location
+#           api_location: "/Api"                    # Azure Functions project location
+#           output_location: "wwwroot"              # Built app output folder
+#           ###### End of Repository/Build Configurations ######
+# 
+#   close_pull_request_job:
+#     if: github.event_name == 'pull_request' && github.event.action == 'closed'
+#     runs-on: ubuntu-latest
+#     name: Close Pull Request Job
+#     steps:
+#       - name: Close Pull Request
+#         id: closepullrequest
+#         uses: Azure/static-web-apps-deploy@v1
+#         with:
+#           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+#           action: "close"
+
+# To use this workflow:
+# 1. Uncomment the sections above
+# 2. Update the branch name if different from 'main'
+# 3. Update app_location and api_location if your folder structure is different
+# 4. Get your Azure Static Web Apps API token from Azure Portal:
+#    - Go to your Static Web App > Settings > Configuration
+#    - Copy the deployment token
+# 5. Add the token as a GitHub secret:
+#    - Go to your GitHub repository > Settings > Secrets and variables > Actions
+#    - Add a new repository secret named AZURE_STATIC_WEB_APPS_API_TOKEN
+# 6. Save this file as .github/workflows/azure-static-web-apps.yml
