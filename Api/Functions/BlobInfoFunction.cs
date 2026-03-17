@@ -7,6 +7,7 @@ using Azure.Storage.Blobs.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using BlobInfo = Api.Models.BlobInfo;
 
 namespace Api.Functions;
 
