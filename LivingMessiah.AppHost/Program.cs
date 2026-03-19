@@ -1,5 +1,7 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
+// Lot's of redundancy here with the blob configuration.
+
 // Azure Storage configuration from User Secrets
 var storageConnectionString = builder.Configuration["AzureStorageConnectionString"] 
     ?? throw new InvalidOperationException("AzureStorageConnectionString not configured in secrets");
@@ -12,13 +14,10 @@ var apiService = builder.AddProject<Projects.Api>("api")
     .WithEnvironment("BlobContainerName", blobContainerName);
 
 // Add PWA with reference to API
-builder.AddProject<Projects.PWA>("pwa")
-    .WithReference(apiService);
+builder.AddProject<Projects.PWA>("pwa").WithReference(apiService);
 
 builder.AddProject<Projects.LivingMessiah>("livingmessiah");
-
 builder.AddProject<Projects.LivingMessiahAdmin>("livingmessiahadmin");
-
 builder.AddProject<Projects.LivingMessiahSukkot>("livingmessiahsukkot");
 
 builder.Build().Run();
