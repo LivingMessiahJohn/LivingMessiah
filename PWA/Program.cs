@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using PWA;
 using PWA.Features.Home;
-using PWA.Features.Home.WeeklyDownload.Settings;
 using PWA.Features.FeastDayPlanner.Data;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 using Serilog;
@@ -29,14 +28,16 @@ builder.Logging.AddSerilog(Log.Logger);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.Configure<AzureBlob>(builder.Configuration.GetSection("AzureBlob"));
-
 // Use Azure Function API for blob operations
+// When running under Aspire, the API endpoint is provided via service discovery
 // In production (Azure Static Web Apps), the API is at the same base address
-// In development, you can configure this via appsettings or use the Functions local endpoint
-var apiBaseAddress = builder.HostEnvironment.IsDevelopment() 
-	? "http://localhost:7071"  // Azure Functions local endpoint
-	: builder.HostEnvironment.BaseAddress;  // Same as app base address in production
+var apiBaseAddress = builder.Configuration["services:api:https:0"] 
+	?? builder.Configuration["services:api:http:0"]
+	?? (builder.HostEnvironment.IsDevelopment() 
+		? "http://localhost:7071"  // Fallback for running PWA standalone
+		: builder.HostEnvironment.BaseAddress);  // Same as app base address in production
+
+Log.Information("API Base Address: {ApiBaseAddress}", apiBaseAddress);
 
 builder.Services.AddBlobApiService(apiBaseAddress);
 

@@ -1,4 +1,6 @@
-﻿<div class="row g-0">
+﻿@using PWA.Features.Donations.Constants
+
+<div class="row g-0">
 
 	<div class="col-sm-8">
 		<div class="card-body">
@@ -35,8 +37,7 @@
 		</div>
 	</div>
 	<div class="col-sm mt-4 p-2 text-center">
-		@* <img src="/Images/@DonateQRC" class="img-fluid" alt="Stripe QR Code" /> *@
-		<img src="/Images/@PWA.Features.Donations.Constants.QRC_Image" class="img-fluid" alt="Stripe QR Code" />
+		<img src="/Images/@QRC.QRC_Image" class="img-fluid" alt="Stripe QR Code" />
 		<p class="fs-6 mt-1"><sup>Living Messiah QR Code</sup></p>
 	</div>
 </div>
