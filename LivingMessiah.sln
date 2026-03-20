@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.0.11205.157
@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivingMessiah.AppHost", "Li
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivingMessiah.ServiceDefaults", "LivingMessiah.ServiceDefaults\LivingMessiah.ServiceDefaults.csproj", "{AC247E11-8CD7-C3B0-C7A9-07CA45A22651}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivingMessiahAdmin", "LivingMessiahAdmin\LivingMessiahAdmin.csproj", "{ECCCE89B-548D-4594-0EB6-9114309F73CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Admin", "Admin\Admin.csproj", "{ECCCE89B-548D-4594-0EB6-9114309F73CC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivingMessiahSukkot", "LivingMessiahSukkot\LivingMessiahSukkot.csproj", "{0A81F1BD-A568-4A82-85FE-6EF6B9D81423}"
 EndProject

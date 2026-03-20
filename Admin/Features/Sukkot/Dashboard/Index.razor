@@ -1,0 +1,26 @@
+﻿@using RoleGroup = Admin.Security.Enums.RoleGroup;
+
+@page "/SukkotDashboard"
+
+@using Admin.Security.Constants
+@using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar;
+@using Microsoft.AspNetCore.Components.Authorization
+
+<AuthorizeView Policy=@RoleGroup.Sukkot>
+  <Authorized>
+    <PageHeaderMenubar MenuBarEnum=MenuBarEnums.Dashboard />
+    <Grid />
+    <StripeTable />
+  </Authorized>
+  <NotAuthorized>
+    <LoginRedirectCard Nav="Nav.SukkotDashboard" ReturnUrl=@Nav.SukkotDashboard.Index />
+    <div class="alert alert-warning text-end" role="alert">
+      <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small> 
+    </div>
+  </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+}
