@@ -1,6 +1,6 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-// Lot's of redundancy here with the blob configuration.
+// ToDo: Lot's of redundancy here with the blob configuration.
 
 // Azure Storage configuration from User Secrets
 var storageConnectionString = builder.Configuration["AzureStorageConnectionString"] 
@@ -17,7 +17,7 @@ var apiService = builder.AddProject<Projects.Api>("api")
 builder.AddProject<Projects.PWA>("pwa").WithReference(apiService);
 
 builder.AddProject<Projects.LivingMessiah>("livingmessiah");
-builder.AddProject<Projects.LivingMessiahAdmin>("livingmessiahadmin");
+builder.AddProject<Projects.Admin>("admin");
 builder.AddProject<Projects.LivingMessiahSukkot>("livingmessiahsukkot");
 
 builder.Build().Run();

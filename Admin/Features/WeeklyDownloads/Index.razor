@@ -1,0 +1,28 @@
+﻿@page "/WeeklyDownload"
+
+@using Admin.Features.WeeklyDownloads.Data
+@using Microsoft.AspNetCore.Components.Forms
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using Page = Admin.Enums.Nav
+@using RoleGroup = Admin.Security.Enums.RoleGroup;
+
+<PageHeader PageEnum="Page.WeeklyDownload" />
+
+@* ToDo: add different RoleGroup.UploadToBlo or something *@
+
+<AuthorizeView Policy=@RoleGroup.KeyDates>
+  <Authorized>
+<UploadCard />
+	</Authorized>
+	<NotAuthorized>
+		<div class="alert alert-warning text-end" role="alert">
+			<small>Not Authorized; Role Group Policy: @RoleGroup.KeyDates</small>
+		</div>
+		<LoginRedirectCard Nav="Nav.KeyDates" ReturnUrl=@Nav.KeyDates.Index />
+	</NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}

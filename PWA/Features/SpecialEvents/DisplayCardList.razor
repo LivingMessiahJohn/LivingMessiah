@@ -1,0 +1,29 @@
+﻿@* @using PWA.Features.SpecialEvents *@
+
+@inject ILogger<DisplayCardList>? Logger
+
+@* Azure Function to call the database *@
+
+@foreach (var item in SpecialEvents)
+{
+	<DisplayCard FormVM="item" />
+}
+
+@code {
+	protected List<FormVM> SpecialEvents = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		Logger!.LogInformation("{Method}", nameof(OnInitializedAsync));
+		try
+		{
+			//SpecialEvents = await db!.GetCurrentEvents();
+		}
+		catch (Exception ex)
+		{
+			//Toast!.ShowError($"{Global.ToastShowError}; inside: {inside}!{nameof(OnInitializedAsync)}");
+			Logger?.LogError(ex, ""); // " {Name}", name);
+		}
+	}
+
+}

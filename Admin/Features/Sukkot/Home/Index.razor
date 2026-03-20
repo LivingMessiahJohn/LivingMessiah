@@ -1,0 +1,195 @@
+﻿@page "/Sukkot"
+
+@using Admin.Security.Constants
+@using Admin.Features.Sukkot.Components.RegistrationForm
+@using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar;
+
+@using StepEnums = RCL.Features.Sukkot.Enums.Step
+@using RoleGroup = Admin.Security.Enums.RoleGroup;
+
+@using Admin.Features.Sukkot.Home.Data
+@using Admin.Features.Sukkot.Home.Donations
+@using Admin.Features.Sukkot.Home.RegistrationList
+@using Admin.Features.Sukkot.Home.RegistrationList.Enums
+@using Admin.Features.Sukkot.Home.RegistrationDetail
+@using Admin.Features.Sukkot.Home.Agreement
+@using Microsoft.AspNetCore.Components.Authorization
+
+
+@inject ILogger<Index>? Logger
+@inject IRepository? db;
+@inject IToastService? Toast
+
+<AuthorizeView Policy=@RoleGroup.Sukkot>
+  <Authorized>
+
+    @if (VisibleComponent == Enums.VisibleComponent.RegistrationList)
+    {
+      <PageHeaderMenubar MenuBarEnum=MenuBarEnums.Home ShowPrintButton=true OnHraActionSelected="ReturnedShowAgreement" />
+
+      <LoadingComponent IsLoading="RegistrationList == null" TurnSpinnerOff=TurnSpinnerOff>
+        <div class="@MediaQuery.XsOrSm.DivClass">
+          <XsSmCard RegistrationList="RegistrationList"
+                    OnCrudActionSelected="ReturnedCrudActionSelected" />
+        </div>
+        <div class="@MediaQuery.MdOrLgOrXl.DivClass">
+          <MdLgXlTable RegistrationList="RegistrationList"
+                       OnCrudActionSelected="ReturnedCrudActionSelected" />
+        </div>
+
+        <StatusInlineUL />
+        <HelpInlineUL />
+      </LoadingComponent>
+    }
+    else
+    {
+      <RegistrationListButton OnShowListSelected="ReturnedShowList" />
+      <DetailPageHeader DetailPageHeaderVM="DetailPageHeaderVM" />
+
+      @if (VisibleComponent == Enums.VisibleComponent.Registrant)
+      {
+        <div class="card mt-0 mb-3 @StepEnums.Registration.CardBodyCSS">
+          <div class="card-body @StepEnums.Registration.CardBodyCSS">
+            @*  OnAddCompleted="ReturnedRegistrationAddCompleted"  *@
+            <Form Email="@Email" Id="@Id" CurrentStep="StepEnums.Registration" />
+          </div>
+        </div>
+      }
+      else
+      {
+        if (VisibleComponent == Enums.VisibleComponent.RegistrationDetail)
+        {
+          <div class="card border-primary my-3 p-2">
+            <Report RegistrationId="Id" />
+          </div>
+        }
+        else
+        {
+          if (VisibleComponent == Enums.VisibleComponent.Agreement)
+          {
+            <div class="card border-primary my-3 p-2">
+              <AgreementEditForm OnActionCompleted="ReturnedShowList" />
+            </div>
+          }
+          else
+          {
+            if (VisibleComponent == Enums.VisibleComponent.Donation)
+            {
+              <div class="card border-primary my-3 p-2">
+                <DonationEntryForm RegistrationId="Id" OnActionCompleted="ReturnedShowList" />
+              </div>
+            }
+            else
+            {
+              <div class="alert alert-warning text-center fs-4" role="alert">
+                Inside: <b>@nameof(Index)</b>  <br /> Unknown <code>VisibleComponent</code>
+              </div>
+            }
+          }
+        }
+      }
+    }
+  </Authorized>
+  <NotAuthorized>
+    <LoginRedirectCard Nav="Nav.Sukkot" ReturnUrl=@Nav.Sukkot.Index />
+    <div class="alert alert-warning text-end" role="alert">
+      <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small>
+    </div>
+  </NotAuthorized>
+</AuthorizeView>
+
+
+
+@code {
+
+  protected Enums.VisibleComponent? VisibleComponent { get; set; } = Enums.VisibleComponent.RegistrationList;
+
+  bool TurnSpinnerOff = false;
+
+  protected List<Data.RegistrationListQuery>? RegistrationList;
+
+
+  int Id { get; set; } = 0;
+  string? Email { get; set; } = null;
+  DetailPageHeaderVM? DetailPageHeaderVM;
+
+  protected override async Task OnInitializedAsync()
+  {
+    Logger!.LogDebug("{Method}", nameof(OnInitializedAsync));
+
+    try
+    {
+      RegistrationList = await db!.GetAll();
+      if (RegistrationList is null)
+      {
+        Logger!.LogWarning("{Method} {Message}", nameof(OnInitializedAsync), "RegistrationList is null");
+        Toast!.ShowWarning($"RegistrationList is null");
+      }
+
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+      Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(OnInitializedAsync)}");
+    }
+
+    TurnSpinnerOff = true;
+  }
+
+
+  private void ReturnedShowList()
+  {
+    VisibleComponent = Enums.VisibleComponent.RegistrationList;
+  }
+
+  private void ReturnedShowAgreement()
+  {
+    VisibleComponent = Enums.VisibleComponent.Agreement;
+  }
+
+
+  void ReturnedCrudActionSelected(CrudRecord args)
+  {
+    if (args.Crud == Crud.Display)
+    {
+      Id = args.Id;
+      VisibleComponent = Enums.VisibleComponent.RegistrationDetail;
+      DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
+    }
+    else
+    {
+      if (args.Crud == Crud.AddRegistration)
+      {
+        Id = 0;
+        Email = args.EMail;
+        VisibleComponent = Enums.VisibleComponent.Registrant;
+        DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
+      }
+      else
+      {
+        if (args.Crud == Crud.Edit)
+        {
+          Id = args.Id;
+          Email = args.EMail;
+          VisibleComponent = Enums.VisibleComponent.Registrant;
+          DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
+        }
+        else
+        {
+          if (args.Crud == Crud.Donation)
+          {
+            Id = args.Id;
+            VisibleComponent = Enums.VisibleComponent.Donation;
+            DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
+          }
+          else
+          {
+            Toast!.ShowWarning($"Unknown Crud Action: {args.Crud.Name}");
+            //  if (args.Crud == Crud.DeleteRegistration) { }
+          }
+        }
+      } 
+
+    }
+  }
+}

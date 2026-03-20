@@ -7,7 +7,7 @@
     - [x] Upcoming Feasts Events  `Home/UpcomingFeasts/FeastCards.razor`
     - [x] `LunarMoonCard`
     - [ ] `SpecialEventsCard`
-      - this is dependent on the CRUD functionality of the `SpecialEvents` to be ported, presumably to a LivingMessiahAdmin project.
+      - this is dependent on the CRUD functionality of the `SpecialEvents` to be ported, presumably to a Admin project.
 
 - [x] `Nav<SmartEnum` Replaced `Links` with the `Nav` gotten from `MHB`.
 - [x] NavBar with `More` and `Search`

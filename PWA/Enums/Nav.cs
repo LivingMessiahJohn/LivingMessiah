@@ -41,14 +41,14 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int WeeklyDownload = 21;
 		internal const int CalendarExplanation = 22; 
 		internal const int Location = 23; 
-		internal const int DonateReplyConfirm = 24;
+		internal const int SpecialEvents = 24; 
+		internal const int DonateReplyConfirm = 25;
 
-		//internal const int Profile = 25;
-		//internal const int PasswordChanged = 26;
-		//internal const int Planner = 27;
-		//internal const int CalendarRawData = 28;
-		//internal const int UpcomingEvents = 29; // ToDo: replace with SpecialEvents
-		//internal const int IndepthStudy = 30;
+		//internal const int Profile = 26;
+		//internal const int PasswordChanged = 27;
+		//internal const int Planner = 28;
+		//internal const int CalendarRawData = 29;
+		//internal const int IndepthStudy = 31;
 	}
 	#endregion
 
@@ -76,13 +76,13 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav WeeklyDownload = new WeeklyDownloadSE();
 	public static readonly Nav CalendarExplanation = new CalendarExplanationSE();
 	public static readonly Nav Location = new LocationSE(); 
+	public static readonly Nav SpecialEvents = new SpecialEventsSE(); 
 	public static readonly Nav DonateReplyConfirm = new DonateReplyConfirmSE();
 
 	//public static readonly Nav Profile = new ProfileSE();
 	//public static readonly Nav PasswordChanged = new PasswordChangedSE();
 	//public static readonly Nav Planner = new PlannerSE();
 	//public static readonly Nav CalendarRawData = new CalendarRawDataSE();
-	//public static readonly Nav UpcomingEvents = new UpcomingEventsSE();
 	//public static readonly Nav IndepthStudy = new IndepthStudySE();
 
 	#endregion
@@ -451,6 +451,20 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false;
 	}
 
+	private sealed class SpecialEventsSE : Nav
+	{
+		public SpecialEventsSE() : base($"{nameof(Id.Location)}", Id.Location) { }
+		public override string Index => "/SpecialEventsS";
+		public override string Title => "Special EventsS";
+		public override string Icon => "far fa-clock";
+		public override int Sort => Id.SpecialEvents;
+		public override string HomeTitleSuffix => "Shofar H7782";
+		public override string HomeFloatRightHebrew => "שׁוֹפָר"; // 
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TierOne;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
+	}
+
 	private sealed class DonateReplyConfirmSE : Nav
 	{
 		public DonateReplyConfirmSE() : base($"{nameof(Id.DonateReplyConfirm)}", Id.DonateReplyConfirm) { }
@@ -525,22 +539,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeTitleSuffix => "";
 		public override string HomeFloatRightHebrew => "";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => false;
-	}
-
-
-	// ToDo Delete
-	private sealed class UpcomingEventsSE : Nav
-	{
-		public UpcomingEventsSE() : base($"{nameof(Id.UpcomingEvents)}", Id.UpcomingEvents) { }
-		public override string Index => "/UpcomingEvents";
-		public override string Title => "Upcoming Events";
-		public override string Icon => "far fa-clock";
-		public override int Sort => Id.UpcomingEvents;
-		public override string HomeTitleSuffix => "";
-		public override string HomeFloatRightHebrew => "";
-		public override PageListType PageListType => PageListType.SitemapPage; //  | PageListType.Layout
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}

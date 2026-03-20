@@ -1,22 +1,24 @@
 ﻿@using LunarMonthEnum = RCL.Features.Calendar.Enums.LunarMonth
 
 
-
-<div class="card position-relative" style='@MaxWidth'>
-	<img src='@ImageFile' class="" alt="Moon @LunarMonth.FullName">
-	<div class="card-img-overlay">
-		<div class="d-flex justify-content-between">
-			<h3 class="text-warning"><i>@LunarMonth.FullName</i></h3>
-			<h3 class="text-warning">@DaysToGoText</h3>
-		</div>
-		<div class="position-absolute bottom-0 start-0 p-2">
-			<h3 class="text-warning"><i>@LunarMonth.BiblicalName</i></h3>
-		</div>
-		<div class="position-absolute bottom-0 end-0 p-2">
-			<h3 class="text-warning hebrew30">@LunarMonth.BiblicalHebrew</h3>
+@if (LunarMonth is not null)
+{
+	<div class="card position-relative" style='@MaxWidth'>
+		<img src='@ImageFile' class="" alt="Moon @LunarMonth.FullName">
+		<div class="card-img-overlay">
+			<div class="d-flex justify-content-between">
+				<h3 class="text-warning"><i>@LunarMonth.FullName</i></h3>
+				<h3 class="text-warning">@DaysToGoText</h3>
+			</div>
+			<div class="position-absolute bottom-0 start-0 p-2">
+				<h3 class="text-warning"><i>@LunarMonth.BiblicalName</i></h3>
+			</div>
+			<div class="position-absolute bottom-0 end-0 p-2">
+				<h3 class="text-warning hebrew30">@LunarMonth.BiblicalHebrew</h3>
+			</div>
 		</div>
 	</div>
-</div>
+}
 
 @code {
 	[Parameter, EditorRequired] public LunarMonthEnum? LunarMonth { get; set; }

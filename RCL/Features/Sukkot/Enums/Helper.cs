@@ -6,7 +6,7 @@ namespace RCL.Features.Sukkot.Enums;
 public class Helper
 {
 	// used only by Features\Sukkot\Dashboard\Data\GridQuery.cs
-	// public string AttendanceColumnValue => LivingMessiahAdmin.Features.Sukkot.Enums.Helper.GetAttendanceDatesColumnValue(AttendanceBitwise);	
+	// public string AttendanceColumnValue => Admin.Features.Sukkot.Enums.Helper.GetAttendanceDatesColumnValue(AttendanceBitwise);	
 	public static string GetAttendanceDatesColumnValue(int attendanceBitwise)
 	{
 		// Assumes AttendanceDate.List contains all AttendanceDate instances in order

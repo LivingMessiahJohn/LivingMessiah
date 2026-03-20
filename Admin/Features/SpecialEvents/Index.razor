@@ -1,0 +1,53 @@
+﻿@page "/SpecialEvents"
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using Page = Admin.Enums.Nav
+@using Admin.Security.Constants
+@using RoleGroup = Admin.Security.Enums.RoleGroup;
+
+<PageHeader PageEnum="Page.SpecialEvents" />
+
+<AuthorizeView Policy=@RoleGroup.Announcements>
+  <Authorized>
+    <div class="alert alert-success text-end" role="alert">
+      <small>Authorized: Role Group Policy: @RoleGroup.Announcements</small>
+    </div>
+@* 
+	ToDo: see Admin\Features\Sukkot\Home\Index.razor as an example how to convert from the old way of doing things using the `Fluxor Store`
+    @if (State!.Value.VisibleComponent == Enums.VisibleComponent.MasterList)
+		{
+			<div class="@MediaQuery.XsOrSm.DivClass">
+				<MasterList IsXsOrSm="true" />
+			</div>
+
+			<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+				<MasterList IsXsOrSm="false" />
+			</div>
+		}
+		else
+		{
+			<ShowMasterIndex />
+
+			@if (State!.Value.VisibleComponent == Enums.VisibleComponent.AddEditForm)
+			{
+				<Form />
+			}
+			else
+			{
+				<DisplayCard FormVM="State!.Value.FormVM" ShowPrintAnchor="true" />
+			}
+		}
+		 *@
+
+  </Authorized>
+  <NotAuthorized>
+    <div class="alert alert-warning text-end" role="alert">
+      <small>Authorized: Role Group Policy: @RoleGroup.Announcements</small>
+    </div>
+    <LoginRedirectCard Nav="Nav.SpecialEvents" ReturnUrl=@Nav.SpecialEvents.Index />
+  </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}

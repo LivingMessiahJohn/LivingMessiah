@@ -1,0 +1,86 @@
+﻿@using Admin.Features.Sukkot.Home
+
+<TableTemplate Items="RegistrationList!"
+               HeaderCSS="table table-light table-hover table-sm" TRCSS="fs-6">
+  <TableHeader>
+    <th>Full Name</th>
+    <th>Email</th>
+    <th>Next Step</th>
+    <th>NS</th>
+    <th>
+      <div class="d-print-none">
+        Admin Notes
+      </div>
+    </th>
+    <th class="text-center">People</th>
+    <th class="text-center">$ Paid</th>
+    <th class="text-center">
+      <div class="d-print-none">
+        Actions
+      </div>
+    </th>
+  </TableHeader>
+
+  <RowTemplate>
+    <td class="text-start  @context.FullNameOrNAColor">@context.FullNameOrNA</td>
+    <td>@context.EMail </td>
+    <td>@context.StatusName</td>
+    <td>@context.NoShow</td>
+    <td>
+      <div class="d-print-none">
+        <small>@context.AdminNotesShort</small>
+      </div>
+    </td>
+    <td class="text-center">@context.Adults - @context.Children   </td>
+    <td class="@context.TotalDonationClass">
+      @context.TotalDonationNoCents
+    </td>
+    <td class="text-center">
+      <div class="d-print-none">
+
+        <div class="btn-group">
+          <ActionButtonGroup IdHra="@context.IdHra"
+                             Id="@context.Id"
+                             EMail="@context.EMail"
+                             FullName="@context.FullName"
+                             DonationRowCount="@context.DonationRowCount"
+                             StatusId="@context.StatusId"
+                             OnCrudActionSelected="ReturnedCrudActionSelected" />
+        </div>
+      </div>
+    </td>
+
+  </RowTemplate>
+  <TableFooter>
+    <th><span class="border-bottom border-4 border-primary">@RowCnt Reg.</span></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th class="text-end">Σ</th>
+    <th class="text-center"><span class="border-bottom border-4 border-primary">@AdultCnt - @ChildCnt</span></th>
+  </TableFooter>
+</TableTemplate>
+
+@code {
+  [Parameter, EditorRequired] public List<Data.RegistrationListQuery>? RegistrationList { get; set; }
+  [Parameter] public EventCallback<CrudRecord> OnCrudActionSelected { get; set; }
+
+  void ReturnedCrudActionSelected(CrudRecord args)
+  {
+    OnCrudActionSelected.InvokeAsync(args);
+  }
+
+  private int RowCnt { get; set; } = 0;
+  private int AdultCnt { get; set; } = 0;
+  private int ChildCnt { get; set; } = 0;
+  protected override void OnInitialized()
+  {
+    if (RegistrationList is not null)
+    {
+      RowCnt = RegistrationList.Count;
+      AdultCnt = RegistrationList.Select(s => s.Adults).Sum();
+      ChildCnt = RegistrationList.Select(s => s.Children).Sum();
+    }
+  }
+
+}
