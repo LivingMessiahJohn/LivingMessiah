@@ -1,0 +1,125 @@
+﻿@inject ILogger<MasterQuickGrid>? Logger
+@inject IToastService? Toast
+@inject Data.IRepository? db;
+
+@if (IsXsOrSm)
+{
+	<div class="mb-1">
+		<ActionButtons ParmCrud="Enums.Crud.Add" IsXsOrSm="@IsXsOrSm" Id="0" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
+	</div>
+
+	<LoadingComponentLIBRARY IsLoading="data == null">
+		@foreach (var item in data!)
+		{
+			<div class="card text-dark bg-light mb-5">
+				<div class="card-header text-center">
+					<h4>@item.Title</h4>
+					<p>Type: @item.SpecialEventTypeDescr</p>
+				</div>
+				<div class="card-body">
+					<div class="float-start">
+						Event Date<br><b>@item.EventDate.ToShortDateString()</b>
+					</div>
+					<div class="float-end">
+						Days <i class='fas fa-angle-left'></i>
+						or <i class='fas fa-angle-right'></i>
+						<br>@((MarkupString)item.DaysAheadXmSmMU)
+					</div>
+				</div>
+
+				<h4 class="text-center mb-3">@item.SubTitle</h4>
+
+				<div class="card-footer">
+					@*
+					<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Edit" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
+					<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Delete" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
+					<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Display" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
+ *@					
+					<YouTubeButton YouTubeId="@item.YouTubeId" IsXsOrSm="@IsXsOrSm" />
+				</div>
+
+			</div>
+		}
+	</LoadingComponentLIBRARY>
+}
+else
+{
+	<span class="float-end mb-1">
+		<ActionButtons ParmCrud="Enums.Crud.Add" IsXsOrSm="@IsXsOrSm" Id="0" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
+	</span>
+
+	<TableTemplate Items="data" HeaderCSS="table table-primary table-hover">
+		<TableHeader>
+			<th>Title</th>
+			<th>Event Date</th>
+			<th>Days <i class='fas fa-angle-left'></i> or <i class='fas fa-angle-right'></i></th>
+			<th>Type</th>
+			<th>YT</th>
+			<th class="text-center">Actions</th>
+		</TableHeader>
+
+		<RowTemplate>
+			<td>@context.Title</td>
+			<td>@context.EventDate.ToShortDateString()</td>
+			<td>	@((MarkupString)context.DaysAheadMU) </td>
+			<td>@context.SpecialEventTypeDescr </td>
+			<td><YouTubeButton YouTubeId="@context.YouTubeId" IsXsOrSm="@IsXsOrSm" /></td>
+			<td class="text-center">
+				<div class="btn-group">
+					<ActionButtons ParmCrud="Enums.Crud.Edit" IsXsOrSm="@IsXsOrSm" Id="@context.Id" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
+					<ActionButtons ParmCrud="Enums.Crud.Delete" IsXsOrSm="@IsXsOrSm" Id="@context.Id" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
+					<ActionButtons ParmCrud="Enums.Crud.Display" IsXsOrSm="@IsXsOrSm" Id="@context.Id" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
+				</div>
+			</td>
+
+		</RowTemplate>
+
+	</TableTemplate>
+}
+
+<div class="row">
+	<div class="col-12">
+		<p class="text-mute float-end" mt-5><small>Dates: @Constants.DateRange.Start - @Constants.DateRange.End </small></p>
+	</div>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
+	[Parameter] public EventCallback<CrudAndIdArgs> OnReturnedCrudAndIdArgs { get; set; }
+
+	protected List<Data.SpecialEventQuery>? data = new();
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			data = await db!.GetEventsByDateRange(DateTime.Parse(Constants.DateRange.Start), DateTime.Parse(Constants.DateRange.End));
+
+			if (data is not null)
+			{
+				Logger!.LogDebug("{Method}, {Message}", nameof(OnInitializedAsync), $"Count: {data.Count}");
+			}
+			else
+			{
+				Logger!.LogWarning("{Method}, {Message}", nameof(OnInitializedAsync), "No Special Events found, data is null");
+				Toast!.ShowWarning("No Special Events found, (data is null)");
+			}
+
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Class}!{Method}", nameof(MasterQuickGrid), nameof(OnInitializedAsync));
+			Toast!.ShowError($"{Global.ToastShowError} {nameof(MasterQuickGrid)}!{nameof(OnInitializedAsync)}");
+		}
+	}
+
+	private async Task ReturnedCrudAndIdArgs(CrudAndIdArgs args)
+	{
+		//best way to dump all the values in args
+		//Logger!.LogDebug("{Method}, {Message}", nameof(ReturnedCrudAndIdArgs), $"Crud: {args.Crud.Name}; icon: {args.Crud.Icon}; id: {args.Crud.Value}");
+		
+		//Use structured logging with @ prefix (recommended)
+		Logger!.LogDebug("{Method}, Args: {@Args}", $"Pass thru from {nameof(MasterQuickGrid)}!{nameof(ReturnedCrudAndIdArgs)}", args);
+		await OnReturnedCrudAndIdArgs.InvokeAsync(args);
+	}
+
+}

@@ -5,49 +5,134 @@
 @using Admin.Security.Constants
 @using RoleGroup = Admin.Security.Enums.RoleGroup;
 
+@inject ILogger<Index>? Logger
+@inject IToastService? Toast
+@inject Data.IRepository? db;
+
 <PageHeader PageEnum="Page.SpecialEvents" />
 
 <AuthorizeView Policy=@RoleGroup.Announcements>
-  <Authorized>
-    <div class="alert alert-success text-end" role="alert">
-      <small>Authorized: Role Group Policy: @RoleGroup.Announcements</small>
-    </div>
-@* 
-	ToDo: see Admin\Features\Sukkot\Home\Index.razor as an example how to convert from the old way of doing things using the `Fluxor Store`
-    @if (State!.Value.VisibleComponent == Enums.VisibleComponent.MasterList)
+	<Authorized>
+		<div class="alert alert-success text-end" role="alert">
+			<small>Authorized: Role Group Policy: @RoleGroup.Announcements</small>
+		</div>
+
+		@if (CurrentRefreshList)
 		{
 			<div class="@MediaQuery.XsOrSm.DivClass">
-				<MasterList IsXsOrSm="true" />
+				<MasterQuickGrid IsXsOrSm="true" OnReturnedCrudAndIdArgs="ReturnedCrudAndIdArgs" />
 			</div>
 
 			<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-				<MasterList IsXsOrSm="false" />
+				<MasterQuickGrid IsXsOrSm="false" OnReturnedCrudAndIdArgs="ReturnedCrudAndIdArgs" />
 			</div>
 		}
 		else
 		{
-			<ShowMasterIndex />
+			<Alert>
+				CurrentRefreshList is false
+			</Alert>
+		}
 
-			@if (State!.Value.VisibleComponent == Enums.VisibleComponent.AddEditForm)
+		@if (VisibleComponent == Enums.VisibleComponent.AddEditForm)
+		{
+			<Form Id="id" OnResponseRecordChanged="ReturnedResponseRecord" />
+		}
+		else
+		{
+			if (VisibleComponent == Enums.VisibleComponent.DisplayCard)
 			{
-				<Form />
-			}
-			else
-			{
-				<DisplayCard FormVM="State!.Value.FormVM" ShowPrintAnchor="true" />
+				<DisplayCard Id="id" ShowPrintAnchor="true" />
 			}
 		}
-		 *@
 
-  </Authorized>
-  <NotAuthorized>
-    <div class="alert alert-warning text-end" role="alert">
-      <small>Authorized: Role Group Policy: @RoleGroup.Announcements</small>
-    </div>
-    <LoginRedirectCard Nav="Nav.SpecialEvents" ReturnUrl=@Nav.SpecialEvents.Index />
-  </NotAuthorized>
+		@if (showDeleteModal)
+		{
+			<DeleteModal Id="@id" Title="ToDo: Add Title" OnDeleteResponse="ReturnedDeleteResponse" />
+		}
+
+	</Authorized>
+	<NotAuthorized>
+		<div class="alert alert-warning text-end" role="alert">
+			<small>Authorized: Role Group Policy: @RoleGroup.Announcements</small>
+		</div>
+		<LoginRedirectCard Nav="Nav.SpecialEvents" ReturnUrl=@Nav.SpecialEvents.Index />
+	</NotAuthorized>
 </AuthorizeView>
 
 @code {
+	protected Enums.VisibleComponent? VisibleComponent { get; set; } = Enums.VisibleComponent.MasterList;
+
+	protected List<Data.SpecialEventQuery>? SpecialEventList { get; init; }
+
+	protected int id; // if 0 then Add else Edit;
+	protected FormVM? FormVM { get; set; } = default;
+
+	private bool showDeleteModal = false;
+	private async Task ReturnedDeleteResponse(bool shouldDelete)
+	{
+		showDeleteModal = false;
+		if (shouldDelete)
+		{
+			CurrentRefreshList = true;
+			Toast!.ShowInfo($"inside ReturnedDeleteResponse id={id}");
+			await Delete(id, "ToDo: Add Title");
+		}
+
+	}
+
+	private async Task ReturnedCrudAndIdArgs(CrudAndIdArgs args)
+	{
+		Logger!.LogDebug("{Method} {Message}", $"{nameof(Index)}!{nameof(ReturnedCrudAndIdArgs)}", $"Crud: {args.Crud.Name}, Id: {args.Id}");
+		switch (args.Crud.Name)
+		{
+			case nameof(Enums.Crud.Add):
+				VisibleComponent = Enums.VisibleComponent.AddEditForm;
+				id = 0;
+				break;
+
+			case nameof(Enums.Crud.Edit):
+				VisibleComponent = Enums.VisibleComponent.AddEditForm;
+				id = args.Id;
+				break;
+
+			case nameof(Enums.Crud.Display):
+				VisibleComponent = Enums.VisibleComponent.DisplayCard;
+				id = args.Id;
+				break;
+
+			case nameof(Enums.Crud.Delete):
+				id = args.Id;	
+				showDeleteModal = true;
+				break;
+		}
+
+	}
+
+	private ResponseRecord? CurrentResponseRecord;
+	private bool CurrentRefreshList = true;
+	private async Task ReturnedResponseRecord(ResponseRecord? responseRecord)
+	{
+		CurrentRefreshList = responseRecord?.RefreshList ?? false;
+		CurrentResponseRecord = responseRecord;
+		Toast!.ShowInfo($"{CurrentResponseRecord?.Message}, CurrentRefreshList: {CurrentRefreshList}");
+	}
+
+	protected async Task Delete(int Id, string Title)
+	{
+		Logger!.LogDebug("{Method} {Message}", $"{nameof(Index)}!{nameof(Delete)}", $"Id: {Id}");
+		try
+		{
+			var affectedRows = await db!.RemoveSpecialEvent(Id);
+			Logger!.LogInformation("{Method} {Message}", $"{nameof(Delete)}", $"affectedRows: {affectedRows}");
+			Toast!.ShowInfo($"Special Event {Title} Deleted");
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method} {Message}", nameof(Delete), $"Id: {Id}");
+			Toast!.ShowError($"{Global.ToastShowError} {nameof(Delete)}!{nameof(Delete)}");
+		}
+
+	}
 
 }

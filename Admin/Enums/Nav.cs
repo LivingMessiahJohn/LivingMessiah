@@ -24,7 +24,6 @@ public enum PageListType
 /*
 - [ ] Calendar\ManageParashaCalendar
 - [ ] Contacts
-- [ ] SpecialEvents
  */
 
 public abstract class Nav : SmartEnum<Nav>

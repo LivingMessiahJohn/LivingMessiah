@@ -37,7 +37,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 		Sql = "SpecialEvent.stpSpecialEventInsert";
 		Parms = new DynamicParameters(new
 		{
-			DateTime = formVM.EventDate,
+			formVM.EventDate,
 			formVM.ShowBeginDate,
 			formVM.ShowEndDate,
 			formVM.SpecialEventTypeId,
@@ -63,12 +63,14 @@ public class Repository : BaseRepositoryAsync, IRepository
 		return await WithConnectionAsync(async connection =>
 		{
 			Logger.LogDebug("{Method} {Message}", nameof(CreateSpecialEvent), $"Title: {formVM.Title}; about to execute SPROC: {Sql}");
-			
+
 			var affectedrows = await connection.ExecuteAsync(
 				sql: Sql, param: base.Parms, commandType: System.Data.CommandType.StoredProcedure);
-			// int? x = Parms!.Get<int?>("NewId");   FN:1
-			returnMsg = $"Special Event created for {formVM.Title}; NewId=YOUR GUESS IS AS GOOD AS MINE";
-			
+
+			newId = base.Parms.Get<int>("@NewId");
+			sprocReturnValue = base.Parms.Get<int>(ReturnValueParm);
+
+			returnMsg = $"Special Event created for {formVM.Title}; NewId={newId}";
 			Logger.LogDebug("{Method} {Message}", nameof(CreateSpecialEvent), $"newId: {newId}, Affected Rows: {affectedrows}");
 
 			return (newId, sprocReturnValue, returnMsg);
@@ -81,7 +83,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 		base.Parms = new DynamicParameters(new
 		{
 			formVM.Id,
-			DateTime = formVM.EventDate,
+			EventDate = formVM.EventDate,
 			formVM.ShowBeginDate,
 			formVM.ShowEndDate,
 			formVM.SpecialEventTypeId,
@@ -114,10 +116,10 @@ public class Repository : BaseRepositoryAsync, IRepository
 	public async Task<int> RemoveSpecialEvent(int id)
 	{
 		base.Parms = new DynamicParameters(new { Id = id });
-		base.Sql = $"DELETE FROM SpecialEvent.Event WHERE Id=@Id";
+		base.Sql = $"DELETE FROM SpecialEvent.Event WHERE Id=@Id";  
 		return await WithConnectionAsync(async connection =>
 		{
-			Logger.LogDebug("{Method} {Message}", nameof(RemoveSpecialEvent), $"Sql: {Sql}");
+			Logger.LogDebug("{Method} {Message}", nameof(RemoveSpecialEvent), $"Sql: {Sql}; id={id}");
 			var affectedrows = await connection.ExecuteAsync(sql: base.Sql, param: base.Parms);
 			return affectedrows;
 		});
@@ -200,33 +202,3 @@ ORDER BY EventDate
 
 }
 
-
-/*
-# Footnotes
-
-## FN:1
-int? x = Parms!.Get<int?>("NewId");   
-	// Why doesn't this WORK?!
-	// System.Collections.Generic.KeyNotFoundException: The given key 'NewId' was not present in the dictionary.
-
-
-if (x == null)
-{
-	if (sprocReturnValue == ReturnValueViolationInUniqueIndex)
-	{
-		returnMsg = $"Database call did not insert a new record because it caused a Unique Index Violation; registration.EMail: {formVM.Title}; ";
-		Logger!.LogWarning($"...returnMsg: {returnMsg}; {Environment.NewLine} {base.Sql}");
-	}
-	else
-	{
-		returnMsg = $"Database call failed; registration.EMail: {formVM.Title}; SprocReturnValue: {sprocReturnValue}";
-		Logger!.LogWarning($"...returnMsg: {returnMsg}; {Environment.NewLine} {base.Sql}");
-	}
-}
-else
-{
-	newId = int.TryParse(x.ToString(), out newId) ? newId : 0;
-	returnMsg = $"Special Event created for {formVM.Title}; NewId={newId}";
-	Logger!.LogDebug($"...Return newId:{newId}, Affected Rows: {affectedrows}");
-}
-*/
