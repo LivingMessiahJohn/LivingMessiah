@@ -1,0 +1,113 @@
+﻿@inject ILogger<DisplayCard>? Logger
+@inject Data.IRepository? db;
+@inject IToastService? Toast
+
+@if (ShowPrintAnchor)
+{
+	<div class="d-print-none">
+		<div class="row">
+			<div class="col-12 d-flex justify-content-end">
+
+				<a href="javascript:window.print()">
+					<i class="fa fa-print"></i> Print
+				</a>
+			</div>
+		</div>
+	</div>
+}
+
+<LoadingComponentLIBRARY IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
+
+	<div class="card  border-primary my-1">
+
+		<div class="card-header">
+
+			<div class="row">
+				<div class="col-6">
+					<h4>
+						<i class="far fa-calendar"></i>
+						<span class='badge bg-primary'>@data!.EventDate.ToString(DateFormat.ddd_mm_dd)</span>
+					</h4>
+				</div>
+				<div class="col-6 text-end">
+					Type: @Enums.SpecialEventType.FromValue(data.SpecialEventTypeId).Descr
+				</div>
+			</div>
+
+		</div>
+
+		<div class="card-body">
+			<h3 class="card-text text-center">
+				@data.Title
+			</h3>
+		</div>
+
+		<div class="card-body">
+			@if (!String.IsNullOrEmpty(@data.ImageUrl))
+			{
+				<p class="">@data.ImageUrl</p>
+				@* <img src='@Blobs.UrlShabbatService(Section!.GraphicUrl)' alt="@Section.Title" class="img-fluid rounded mt-4" />	*@
+			}
+		</div>
+
+		<div class="card-body">
+
+			@if (!String.IsNullOrEmpty(@data.YouTubeId))
+			{
+				<a href="https://www.youtube.com/watch?v=@data.YouTubeId" target="_blank" title="@data.YouTubeId">
+					<img src='https://img.youtube.com/vi/@data.YouTubeId/mqdefault.jpg' class='mt-4' /> <br>  @data.Title
+				</a>
+			}
+
+
+			@if (!String.IsNullOrEmpty(@data.SubTitle))
+			{
+				<h4 class="card-title">@data.SubTitle</h4>
+			}
+
+			@if (!String.IsNullOrEmpty(@data.WebsiteUrl))
+			{
+				<Anchor Href="@data.WebsiteUrl" TargetIsBlank="true" Descr="@data.WebsiteDescr" />
+			}
+		</div>
+
+		<div class="row mt-n2 mb-3">
+			<div class="col-12">
+
+				@* <SfRichTextEditor *@
+				<p>@data.Description</p>
+
+			</div>
+		</div>
+
+	</div>
+
+</LoadingComponentLIBRARY>
+
+@code {
+	[Parameter, EditorRequired] public int Id { get; set; }
+	[Parameter] public bool ShowPrintAnchor { get; set; } = false;
+
+	bool TurnSpinnerOff = false;
+	private FormVM? data;
+	protected override async Task OnParametersSetAsync()
+	{
+		Logger!.LogDebug("{Method}", $"{nameof(Form)}!{nameof(OnParametersSetAsync)}");
+		data = await db!.GetEventById(Id);
+		try
+		{
+			data = await db!.GetEventById(Id);
+			if (data == null)
+			{
+				Logger!.LogWarning("{Method} {Message}", nameof(OnParametersSetAsync), $"Id: {Id} not found");
+				Toast!.ShowWarning($"data is null, {nameof(DisplayCard)}!{nameof(OnParametersSetAsync)} Id: {Id} not found");
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method} {Message}", nameof(OnParametersSetAsync), $"Id: {data!.Id}");
+			Toast!.ShowError($"{Global.ToastShowError} {nameof(DisplayCard)}!{nameof(OnParametersSetAsync)}");
+		}
+		TurnSpinnerOff = true;
+	}
+}
