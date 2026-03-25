@@ -60,8 +60,8 @@ jobs:
       - name: Publish Admin
         run: dotnet publish Admin/Admin.csproj -c Release -o ${{ github.workspace }}/publish/LivingMessiahAdmin
 
-      - name: Publish LivingMessiahSukkot
-        run: dotnet publish LivingMessiahSukkot/LivingMessiahSukkot.csproj -c Release -o ${{ github.workspace }}/publish/LivingMessiahSukkot --self-contained true -r win-x64
+      - name: Publish Sukkot
+        run: dotnet publish Sukkot/Sukkot.csproj -c Release -o ${{ github.workspace }}/publish/Sukkot --self-contained true -r win-x64
 
       - name: Upload LivingMessiah artifact
         uses: actions/upload-artifact@v4
@@ -75,11 +75,11 @@ jobs:
           name: LivingMessiahAdmin
           path: ${{ github.workspace }}/publish/LivingMessiahAdmin
 
-      - name: Upload LivingMessiahSukkot artifact
+      - name: Upload Sukkot artifact
         uses: actions/upload-artifact@v4
         with:
-          name: LivingMessiahSukkot
-          path: ${{ github.workspace }}/publish/LivingMessiahSukkot
+          name: Sukkot
+          path: ${{ github.workspace }}/publish/Sukkot
 
   deploy:
     runs-on: ubuntu-latest
@@ -100,10 +100,10 @@ jobs:
           name: LivingMessiahAdmin
           path: ./deploy-livingmessiahadmin
 
-      - name: Download LivingMessiahSukkot artifact
+      - name: Download Sukkot artifact
         uses: actions/download-artifact@v4
         with:
-          name: LivingMessiahSukkot
+          name: Sukkot
           path: ./deploy-sukkot
 
       - name: Deploy LivingMessiah to Azure Web App
@@ -120,9 +120,9 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_ADMIN }}
           package: './deploy-livingmessiahadmin'
 
-      - name: Deploy LivingMessiahSukkot to Azure Web App
+      - name: Deploy Sukkot to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'LivingMessiahSukkot'
+          app-name: 'Sukkot'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_SUKKOT }}
           package: './deploy-sukkot'

@@ -20,7 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Admin\Admin.csproj" />
     <ProjectReference Include="..\LivingMessiah\LivingMessiah.csproj" />
-    <ProjectReference Include="..\LivingMessiahSukkot\LivingMessiahSukkot.csproj" />
+    <ProjectReference Include="..\Sukkot\Sukkot.csproj" />
     <ProjectReference Include="..\PWA\PWA.csproj" />
     <ProjectReference Include="..\Api\Api.csproj" />
   </ItemGroup>

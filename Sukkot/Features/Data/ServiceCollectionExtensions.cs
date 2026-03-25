@@ -1,0 +1,28 @@
+﻿using FluentValidation;
+using Sukkot.Features.Components.RegistrationForm;
+using Sukkot.Security;
+
+namespace Sukkot.Features.Data;
+
+public static class ServiceCollectionExtensions
+{
+	public static IServiceCollection AddSukkotData(this IServiceCollection services)
+	{
+		services
+			.AddTransient<ISecurityHelper, SecurityHelper>()
+			.AddTransient<IRepository, Repository>()
+			.AddTransient<IValidator<VM>, VMValidator>();
+		return services;
+	}
+}
+
+/*
+ToDo: remove after adding a new Admin WebApp
+using  LivingMessiah.Features.SukkotAdmin.Data;
+using  LivingMessiah.Features.SukkotAdmin.Donations.Data;
+...
+
+		.AddTransient<IDonationRepository, DonationRepository>()
+		.AddTransient<ISukkotAdminRepository, SukkotAdminRepository>()
+		.AddScoped<AppState>();
+*/

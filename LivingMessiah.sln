@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivingMessiah.ServiceDefaul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Admin", "Admin\Admin.csproj", "{ECCCE89B-548D-4594-0EB6-9114309F73CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivingMessiahSukkot", "LivingMessiahSukkot\LivingMessiahSukkot.csproj", "{0A81F1BD-A568-4A82-85FE-6EF6B9D81423}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sukkot", "Sukkot\Sukkot.csproj", "{0A81F1BD-A568-4A82-85FE-6EF6B9D81423}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RCL", "RCL\RCL.csproj", "{153631B0-F89D-9417-17A7-D6877D62E6EF}"
 EndProject
