@@ -1,0 +1,19 @@
+﻿@using Sukkot.Features.Enums
+@inject NavigationManager NavigationManager
+
+<button @onclick="@(e => ButtonClick(Id))"
+        class="btn btn-outline-primary btn-sm" title="@Nav.Print!.Title">
+  <i class="@Nav.Print.Icon"></i> @Nav.Print.Title
+</button>
+
+@code {
+  [Parameter, EditorRequired] public int Id { get; set; }
+
+  void ButtonClick(int? id)
+  {
+    NavigationManager!.NavigateTo($"{Nav.Print.Index}");
+  }
+
+  //   @Nav.Print!.Css
+}
+
