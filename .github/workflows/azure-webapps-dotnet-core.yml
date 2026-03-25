@@ -75,10 +75,10 @@ jobs:
           name: LivingMessiahAdmin
           path: ${{ github.workspace }}/publish/LivingMessiahAdmin
 
-      - name: Upload Sukkot artifact
+      - name: Upload LivingMessiahSukkot artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Sukkot
+          name: LivingMessiahSukkot
           path: ${{ github.workspace }}/publish/Sukkot
 
   deploy:
@@ -100,11 +100,11 @@ jobs:
           name: LivingMessiahAdmin
           path: ./deploy-livingmessiahadmin
 
-      - name: Download Sukkot artifact
+      - name: Download LivingMessiahSukkot artifact
         uses: actions/download-artifact@v4
         with:
-          name: Sukkot
-          path: ./deploy-sukkot
+          name: LivingMessiahSukkot
+          path: ./deploy-livingmessiahsukkot
 
       - name: Deploy LivingMessiah to Azure Web App
         uses: azure/webapps-deploy@v3
@@ -120,9 +120,9 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_ADMIN }}
           package: './deploy-livingmessiahadmin'
 
-      - name: Deploy Sukkot to Azure Web App
+      - name: Deploy LivingMessiahSukkot to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'Sukkot'
+          app-name: 'LivingMessiahSukkot'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_SUKKOT }}
-          package: './deploy-sukkot'
+          package: './deploy-livingmessiahsukkot'
