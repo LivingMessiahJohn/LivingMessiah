@@ -44,7 +44,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Set up dependency caching for faster builds
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
@@ -107,21 +107,21 @@ jobs:
           path: ./deploy-sukkot
 
       - name: Deploy LivingMessiah to Azure Web App
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: 'LivingMessiah'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: './deploy-livingmessiah'
 
       - name: Deploy LivingMessiahAdmin to Azure Web App
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: 'LivingMessiahAdmin'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_ADMIN }}
           package: './deploy-livingmessiahadmin'
 
       - name: Deploy Sukkot to Azure Web App
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: 'Sukkot'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_SUKKOT }}
