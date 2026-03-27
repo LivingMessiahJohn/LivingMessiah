@@ -1,8 +1,9 @@
 ﻿@using TriennialEnum = RCL.Features.Parasha.Enums.Triennial
 @using RCL.Features.Storage
 @using RCL.Components
+@using Microsoft.Extensions.DependencyInjection
 
-@inject IAzureBlobService BlobService
+@inject IServiceProvider ServiceProvider
 @inject ILogger<UploadCard>? Logger
 @inject IToastService? Toast
 @inject HttpClient HttpClient
@@ -85,6 +86,8 @@
 
 
 @code {
+	private IAzureBlobService BlobService => ServiceProvider.GetRequiredKeyedService<IAzureBlobService>("WeeklyDownloads");
+
 	private bool IsDisabled { get; set; } = true;
 
 	private bool isUploading = false;

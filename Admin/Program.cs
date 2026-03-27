@@ -4,6 +4,7 @@ using Admin.Components;
 using Admin.Features.Database;
 using Admin.Features.KeyDates.Data;
 using Admin.Features.SpecialEvents.Data;
+
 using Admin.Features.Sukkot.Dashboard.Data;
 using Admin.Features.Sukkot.Home.Data;
 using Admin.Features.Sukkot.Home.Donations.Data;
@@ -11,6 +12,7 @@ using Admin.Features.Sukkot.Notes.Data;
 using Admin.Features.Sukkot.Reports.Data;
 
 using Admin.Features.WeeklyDownloads.Data;
+
 using Admin.Security;
 using Admin.SecurityRoot;  // Added for ServiceCollectionExtensions
 
@@ -25,6 +27,7 @@ using AccountEnum = Admin.Enums.Account;
 using HealthChecksSukkot = Admin.HealthChecks.Sukkot;
 using HealthChecksSukkotEndPoint = Admin.HealthChecks.Sukkot.Endpoints.Constants.StripeConstants;
 
+using SpecialEventsSettings = Admin.Features.SpecialEvents.Settings;
 using WeeklyDownloadsSettings = Admin.Features.WeeklyDownloads.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,7 +66,10 @@ try
 	builder.Services.AddHealthChecks().AddCheck<HealthChecksSukkot.StripeWebhookHealthCheck>(HealthChecksSukkotEndPoint.HealthCheckName);
 
 	builder.Services.Configure<WeeklyDownloadsSettings.AzureBlob>(builder.Configuration.GetSection(nameof(WeeklyDownloadsSettings.AzureBlob)));
-	builder.Services.AddAzureBlobService();
+	builder.Services.Configure<SpecialEventsSettings.AzureBlob>(builder.Configuration.GetSection(nameof(SpecialEventsSettings.AzureBlob)));
+
+	builder.Services.AddSpecialEvents();
+	builder.Services.AddWeeklyDownloads();
 
 	var app = builder.Build();
 	app.MapDefaultEndpoints();

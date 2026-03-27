@@ -1,9 +1,12 @@
 ﻿@using Admin.Features.SpecialEvents.Enums
 @using Blazored.FluentValidation;
+@using RCL.Features.Storage
+@using Microsoft.Extensions.DependencyInjection
 
 @inject IToastService? Toast
 @inject ILogger<Form>? Logger
 @inject Data.IRepository? db;
+@inject IServiceProvider ServiceProvider
 
 @if (data is not null)
 {
@@ -87,16 +90,81 @@
 		</fieldset>
 
 		<fieldset class="mt-3">
-			<legend class="text-primary">Image Url</legend>
+			<legend class="text-primary">Image</legend>
 			<div class="row mt-n2">
 				<div class="col-sm-12">
 					<div class="mb-3">
-						<label for="imageUrl" class="control-label">Image Url</label>
-						<InputText id="imageUrl" class="form-control" @bind-Value="data.ImageUrl" />
-						<ValidationMessage For="@(() => data.ImageUrl)" />
+						<label for="imageFile" class="control-label">Upload Image</label>
+						<InputFile OnChange="OnInputFileChange" class="form-control" accept="image/*" />
+						@if (selectedImageFile is not null)
+						{
+							<div class="small text-muted mt-1">@selectedImageFile.Name (@FormatBytes(selectedImageFile.Size))</div>
+						}
 					</div>
 				</div>
 			</div>
+
+			@if (selectedImageFile is not null)
+			{
+				<div class="row mt-n2">
+					<div class="col-sm-12">
+						<div class="mb-3">
+							<button type="button" @onclick="UploadImageToAzure" class="btn btn-info" disabled="@isUploadingImage">
+								@if (isUploadingImage)
+								{
+									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+									<span>&nbsp;Uploading...</span>
+								}
+								else
+								{
+									<span class="fas fa-upload">&nbsp;Upload to Azure</span>
+								}
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="row mt-n2">
+					<div class="col-sm-12">
+						<div class="progress" style="height: 1.5rem;">
+							<div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+									 role="progressbar"
+									 style=@($"width:{uploadProgress}%")
+									 aria-valuenow="@uploadProgress"
+									 aria-valuemin="0"
+									 aria-valuemax="100">
+								@if (uploadProgress == 100)
+								{
+									<span>Complete</span>
+								}
+								else if (uploadProgress > 0)
+								{
+									<span>@uploadProgress%</span>
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+
+
+			<div class="row mt-2">
+				<div class="col-sm-12">
+					<div class="mb-3">
+						<label for="imageUrl" class="control-label">Image Url</label>
+						<InputText id="imageUrl" class="form-control" @bind-Value="data.ImageUrl" readonly />
+						<ValidationMessage For="@(() => data.ImageUrl)" />
+						@if (!string.IsNullOrEmpty(data.ImageUrl))
+						{
+							<div class="mt-2">
+								<img src="@data.ImageUrl" alt="Event Image" style="max-width: 300px; max-height: 200px;" class="img-thumbnail" />
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+
+
 		</fieldset>
 
 		<fieldset class="mt-3">
@@ -138,7 +206,7 @@
 				<div class="col-sm-12">
 
 					@* <SfRichTextEditor ShowCharCount="true" @bind-Value="@VM.Description" MaxLength="5000" Placeholder="Add some markdown " /> *@
-					<InputTextArea id="description" class="form-control" @bind-Value="data.Description" rows="10" />
+					<InputTextArea id="description" class="form-control" @bind-Value="data.Description" rows="5" />
 					<ValidationMessage For="@(() => data.Description)" />
 
 				</div>
@@ -167,10 +235,17 @@
 
 @code {
 	[Parameter, EditorRequired] public int Id { get; set; }
+	[Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
 	[Parameter] public EventCallback<ResponseRecord> OnResponseRecordChanged { get; set; }
+
+	private IAzureBlobService BlobService => ServiceProvider.GetRequiredKeyedService<IAzureBlobService>("SpecialEvents");
 
 	private FormVM? data;
 	private FluentValidationValidator? _fluentValidationValidator;
+
+	private IBrowserFile? selectedImageFile;
+	private bool isUploadingImage = false;
+	private int uploadProgress = 0;
 
 	private Enums.FormMode FormMode => Id == 0 ? Enums.FormMode.Add : Enums.FormMode.Edit;
 
@@ -205,6 +280,106 @@
 		}
 	}
 
+	private void OnInputFileChange(InputFileChangeEventArgs e)
+	{
+		selectedImageFile = e.File;
+		uploadProgress = 0;
+		StateHasChanged();
+	}
+
+	private static string FormatBytes(long bytes)
+	{
+		if (bytes <= 0) return "0 B";
+		string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+		var order = (int)Math.Floor(Math.Log(bytes, 1024));
+		var adjusted = Math.Round(bytes / Math.Pow(1024, order), 2);
+		return $"{adjusted} {sizes[order]}";
+	}
+
+	private async Task UploadImageToAzure()
+	{
+		if (selectedImageFile is null)
+		{
+			Toast?.ShowWarning("Please select an image file first.");
+			return;
+		}
+
+		isUploadingImage = true;
+		uploadProgress = 0;
+		StateHasChanged();
+
+		try
+		{
+			// Generate a unique blob name using timestamp and original filename
+			var timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
+			var extension = Path.GetExtension(selectedImageFile.Name);
+			var blobName = $"events/{timestamp}_{Path.GetFileNameWithoutExtension(selectedImageFile.Name)}{extension}";
+
+			Toast?.ShowInfo($"Uploading {blobName}...");
+
+			// Upload the image stream
+			const long maxAllowedSize = 1024L * 1024L * 10; // 10 MB
+			await using var stream = selectedImageFile.OpenReadStream(maxAllowedSize);
+
+			// Simulate progress while uploading
+			var uploadTask = BlobService.UploadStreamAsync(stream, blobName, selectedImageFile.ContentType);
+
+			while (!uploadTask.IsCompleted)
+			{
+				uploadProgress = Math.Min(90, uploadProgress + 10);
+				StateHasChanged();
+				await Task.Delay(200);
+			}
+
+			var result = await uploadTask;
+
+			if (result.IsSuccess)
+			{
+				uploadProgress = 100;
+
+				// Construct the full blob URL - blobName already includes "events/" prefix
+				data!.ImageUrl = Constants.Blobs.EventsLink(Path.GetFileName(blobName));
+
+				Toast?.ShowSuccess("Image uploaded successfully!");
+				Logger?.LogInformation("Uploaded image: {BlobName}", blobName);
+
+				// Clear selected file after successful upload
+				selectedImageFile = null;
+			}
+			else
+			{
+				uploadProgress = 0;
+
+				Toast?.ShowError($"Upload failed; result.IsSuccess is false ");
+
+				/*
+				Toast?.ShowError($"Upload failed: {result.ErrorMessage}");
+				Logger?.LogError("Upload failed: {ErrorMessage}", result.ErrorMessage);
+
+				if (result.IsTransient)
+				{
+					Toast?.ShowWarning("Service temporarily unavailable. Please try again.");
+				}
+				else
+				{
+					Toast?.ShowError("Upload failed.");
+				}
+				*/
+			}
+		}
+		catch (Exception ex)
+		{
+			uploadProgress = 0;
+			Logger?.LogError(ex, "Failed to upload image");
+			Toast?.ShowError($"{Global.ToastShowError} Failed to upload image.");
+		}
+		finally
+		{
+			isUploadingImage = false;
+			StateHasChanged();
+		}
+	}
+
 	protected ResponseRecord? responseRecord;
 	protected async Task HandleValidSubmit()
 	{
@@ -229,22 +404,24 @@
 			try
 			{
 				var sprocTuple = await db!.UpdateSpecialEvent(data!);
-				responseRecord = new(ResponseMessage.Success, sprocTuple.Affectedrows.ToString(), RefreshList: true);
+				responseRecord = new(ResponseMessage.Success, $"Updated {Title} (Id: {Id})", RefreshList: true);
 			}
 			catch (Exception ex)
 			{
 				Logger!.LogError(ex, "{Method} {Message}", nameof(HandleValidSubmit), $"Update Id: {data!.Id}, Title: {data!.Title}");
 				Toast!.ShowError($"{Global.ToastShowError} {nameof(Form)}!{nameof(HandleValidSubmit)}");
 				responseRecord = new(ResponseMessage.Failure, $"{Constants.Effects.ResponseMessageFailure}. Action: {Enums.FormMode.Edit.Name}", RefreshList: false);
-				
+
 			}
 		}
 		await OnResponseRecordChanged.InvokeAsync(responseRecord);
 	}
 
-	void CancelActionHandler()
+	protected async Task CancelActionHandler()
 	{
 		Logger!.LogDebug("{Method}", $"{nameof(Form)}!{nameof(CancelActionHandler)}");
+		responseRecord = new(ResponseMessage.Success, "Action Canceled", RefreshList: true);
+		await OnResponseRecordChanged.InvokeAsync(responseRecord);
 	}
 
 }
