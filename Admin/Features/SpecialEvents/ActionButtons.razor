@@ -1,6 +1,6 @@
 ﻿
-<button @onclick="@OnButtonClicked" title="@Id"
-				type="button" class="@ParmCrud!.ButtonColor btn-sm me-1">
+<button @onclick="@OnButtonClicked" title="@Id | @Title"
+				type="button" class="@ParmCrud!.ButtonColor btn-sm me-1 @(IsXsOrSm ? "float-end" : "")">
 	<i class="@ParmCrud!.Icon"></i>
 	@((MarkupString)GetBr())<small>@ParmCrud.Text</small>
 </button>
@@ -8,6 +8,7 @@
 @code {
 	[Parameter, EditorRequired] public Enums.Crud? ParmCrud { get; set; }
 	[Parameter, EditorRequired] public int Id { get; set; } // Use 0 for Add and Repopulate
+	[Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
 	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
 	[Parameter] public EventCallback<CrudAndIdArgs> OnCrudAndIdArgsSelected { get; set; }
 
@@ -16,7 +17,8 @@
 		CrudAndIdArgs args = new CrudAndIdArgs
 		{
 			Crud = ParmCrud!,
-			Id = Id
+			Id = Id,
+			Title = Title
 		};
 		await OnCrudAndIdArgsSelected.InvokeAsync(args);
 	}

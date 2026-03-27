@@ -4,8 +4,12 @@
 
 @if (IsXsOrSm)
 {
-	<div class="mb-1">
-		<ActionButtons ParmCrud="Enums.Crud.Add" IsXsOrSm="@IsXsOrSm" Id="0" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
+	<div class="row">
+		<div class="col-12 mb-1">
+			<div class="">
+				<ActionButtons ParmCrud="Enums.Crud.Add" IsXsOrSm="@IsXsOrSm" Id="0" Title="NOT KNOWN" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
+			</div>
+		</div>
 	</div>
 
 	<LoadingComponentLIBRARY IsLoading="data == null">
@@ -30,11 +34,11 @@
 				<h4 class="text-center mb-3">@item.SubTitle</h4>
 
 				<div class="card-footer">
-					@*
-					<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Edit" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
-					<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Delete" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
-					<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Display" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
- *@					
+
+					<ActionButtons ParmCrud="Enums.Crud.Edit" IsXsOrSm="@IsXsOrSm" Id="@item.Id" Title="@item.Title" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
+					<ActionButtons ParmCrud="Enums.Crud.Delete" IsXsOrSm="@IsXsOrSm" Id="@item.Id" Title="@item.Title" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
+					<ActionButtons ParmCrud="Enums.Crud.Display" IsXsOrSm="@IsXsOrSm" Id="@item.Id" Title="@item.Title" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
+					
 					<YouTubeButton YouTubeId="@item.YouTubeId" IsXsOrSm="@IsXsOrSm" />
 				</div>
 
@@ -45,7 +49,7 @@
 else
 {
 	<span class="float-end mb-1">
-		<ActionButtons ParmCrud="Enums.Crud.Add" IsXsOrSm="@IsXsOrSm" Id="0" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
+		<ActionButtons ParmCrud="Enums.Crud.Add" IsXsOrSm="@IsXsOrSm" Id="0" Title="NOT KNOWN" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
 	</span>
 
 	<TableTemplate Items="data" HeaderCSS="table table-primary table-hover">
@@ -66,9 +70,9 @@ else
 			<td><YouTubeButton YouTubeId="@context.YouTubeId" IsXsOrSm="@IsXsOrSm" /></td>
 			<td class="text-center">
 				<div class="btn-group">
-					<ActionButtons ParmCrud="Enums.Crud.Edit" IsXsOrSm="@IsXsOrSm" Id="@context.Id" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
-					<ActionButtons ParmCrud="Enums.Crud.Delete" IsXsOrSm="@IsXsOrSm" Id="@context.Id" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
-					<ActionButtons ParmCrud="Enums.Crud.Display" IsXsOrSm="@IsXsOrSm" Id="@context.Id" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
+					<ActionButtons ParmCrud="Enums.Crud.Edit" IsXsOrSm="@IsXsOrSm" Id="@context.Id" Title="@context.Title" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
+					<ActionButtons ParmCrud="Enums.Crud.Delete" IsXsOrSm="@IsXsOrSm" Id="@context.Id" Title="@context.Title" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
+					<ActionButtons ParmCrud="Enums.Crud.Display" IsXsOrSm="@IsXsOrSm" Id="@context.Id" Title="@context.Title" OnCrudAndIdArgsSelected="ReturnedCrudAndIdArgs" />
 				</div>
 			</td>
 

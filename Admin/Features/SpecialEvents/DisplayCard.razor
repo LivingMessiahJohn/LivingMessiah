@@ -7,9 +7,11 @@
 	<div class="d-print-none">
 		<div class="row">
 			<div class="col-12 d-flex justify-content-end">
-
-				<a href="javascript:window.print()">
-					<i class="fa fa-print"></i> Print
+				<button @onclick="@CancelActionHandler" class="@Constants.CancelButton.Color me-1">
+					<i class="@Constants.CancelButton.Icon"></i> @Constants.CancelButton.Text
+				</button>
+				<a href="javascript:window.print()" class="@Constants.PrintButton.Color">
+					<i class=" @Constants.PrintButton.Icon"></i> @Constants.PrintButton.Text
 				</a>
 			</div>
 		</div>
@@ -18,9 +20,9 @@
 
 <LoadingComponentLIBRARY IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
 
-	<div class="card  border-primary my-1">
+	<div class="card border-primary my-1">
 
-		<div class="card-header">
+		<div class="card-header bg-primary-subtle">
 
 			<div class="row">
 				<div class="col-6">
@@ -42,13 +44,12 @@
 			</h3>
 		</div>
 
-		<div class="card-body">
-			@if (!String.IsNullOrEmpty(@data.ImageUrl))
-			{
-				<p class="">@data.ImageUrl</p>
-				@* <img src='@Blobs.UrlShabbatService(Section!.GraphicUrl)' alt="@Section.Title" class="img-fluid rounded mt-4" />	*@
-			}
-		</div>
+		@if (!String.IsNullOrEmpty(@data.ImageUrl))
+		{
+			<div class="card-body">
+				<img src="@data.ImageUrl" alt="Event Image" style="max-width: 500px; max-height: 300px;" class="d-block mx-auto img-fluid border border-3 border-primary rounded" />
+			</div>
+		}
 
 		<div class="card-body">
 
@@ -87,6 +88,7 @@
 @code {
 	[Parameter, EditorRequired] public int Id { get; set; }
 	[Parameter] public bool ShowPrintAnchor { get; set; } = false;
+	[Parameter] public EventCallback<ResponseRecord> OnResponseRecordChanged { get; set; } //
 
 	bool TurnSpinnerOff = false;
 	private FormVM? data;
@@ -110,4 +112,13 @@
 		}
 		TurnSpinnerOff = true;
 	}
+
+	protected ResponseRecord? responseRecord;
+	protected async Task CancelActionHandler()
+	{
+		Logger!.LogDebug("{Method}", $"{nameof(DisplayCard)}!{nameof(CancelActionHandler)}");
+		responseRecord = new(Enums.ResponseMessage.Success, "Action Canceled", RefreshList: true);
+		await OnResponseRecordChanged.InvokeAsync(responseRecord);
+	}
+
 }

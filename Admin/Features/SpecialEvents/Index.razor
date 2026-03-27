@@ -17,38 +17,32 @@
 			<small>Authorized: Role Group Policy: @RoleGroup.Announcements</small>
 		</div>
 
-		@if (CurrentRefreshList)
+		@if (VisibleComponent == Enums.VisibleComponent.MasterList)
 		{
-			<div class="@MediaQuery.XsOrSm.DivClass">
-				<MasterQuickGrid IsXsOrSm="true" OnReturnedCrudAndIdArgs="ReturnedCrudAndIdArgs" />
-			</div>
+		<div class="@MediaQuery.XsOrSm.DivClass">
+			<MasterQuickGrid @key="refreshKey" IsXsOrSm="true" OnReturnedCrudAndIdArgs="ReturnedCrudAndIdArgs" />
+		</div>
 
-			<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-				<MasterQuickGrid IsXsOrSm="false" OnReturnedCrudAndIdArgs="ReturnedCrudAndIdArgs" />
-			</div>
-		}
-		else
-		{
-			<Alert>
-				CurrentRefreshList is false
-			</Alert>
+		<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+			<MasterQuickGrid @key="refreshKey" IsXsOrSm="false" OnReturnedCrudAndIdArgs="ReturnedCrudAndIdArgs" />
+		</div>
 		}
 
 		@if (VisibleComponent == Enums.VisibleComponent.AddEditForm)
 		{
-			<Form Id="id" OnResponseRecordChanged="ReturnedResponseRecord" />
+			<Form Id="@id" Title="@title" OnResponseRecordChanged="ReturnedResponseRecord" />
 		}
 		else
 		{
 			if (VisibleComponent == Enums.VisibleComponent.DisplayCard)
 			{
-				<DisplayCard Id="id" ShowPrintAnchor="true" />
+				<DisplayCard Id="@id" ShowPrintAnchor="true" OnResponseRecordChanged="ReturnedResponseRecord" />
 			}
 		}
 
 		@if (showDeleteModal)
 		{
-			<DeleteModal Id="@id" Title="ToDo: Add Title" OnDeleteResponse="ReturnedDeleteResponse" />
+			<DeleteModal Id="@id" Title="@title" OnDeleteResponse="ReturnedDeleteResponse" />
 		}
 
 	</Authorized>
@@ -61,12 +55,14 @@
 </AuthorizeView>
 
 @code {
+	private Guid refreshKey = Guid.NewGuid();
+
 	protected Enums.VisibleComponent? VisibleComponent { get; set; } = Enums.VisibleComponent.MasterList;
 
 	protected List<Data.SpecialEventQuery>? SpecialEventList { get; init; }
 
 	protected int id; // if 0 then Add else Edit;
-	protected FormVM? FormVM { get; set; } = default;
+	protected string? title;
 
 	private bool showDeleteModal = false;
 	private async Task ReturnedDeleteResponse(bool shouldDelete)
@@ -74,63 +70,68 @@
 		showDeleteModal = false;
 		if (shouldDelete)
 		{
-			CurrentRefreshList = true;
-			Toast!.ShowInfo($"inside ReturnedDeleteResponse id={id}");
-			await Delete(id, "ToDo: Add Title");
+			await DeleteCommand(id, title ?? "EMPTY");
+			VisibleComponent = Enums.VisibleComponent.MasterList;
+			refreshKey = Guid.NewGuid(); // Force re-render of the MasterQuickGrid to reflect changes in the columns of MasterQuickGrid
 		}
-
 	}
 
 	private async Task ReturnedCrudAndIdArgs(CrudAndIdArgs args)
 	{
-		Logger!.LogDebug("{Method} {Message}", $"{nameof(Index)}!{nameof(ReturnedCrudAndIdArgs)}", $"Crud: {args.Crud.Name}, Id: {args.Id}");
+		//Logger!.LogDebug("{Method} {Message}", $"{nameof(Index)}!{nameof(ReturnedCrudAndIdArgs)}", $"Crud: {args.Crud.Name}, Id: {args.Id}, Title: {args.Title}");
 		switch (args.Crud.Name)
 		{
 			case nameof(Enums.Crud.Add):
 				VisibleComponent = Enums.VisibleComponent.AddEditForm;
 				id = 0;
+				title = string.Empty;
 				break;
 
 			case nameof(Enums.Crud.Edit):
 				VisibleComponent = Enums.VisibleComponent.AddEditForm;
 				id = args.Id;
+				title = args.Title;
 				break;
 
 			case nameof(Enums.Crud.Display):
 				VisibleComponent = Enums.VisibleComponent.DisplayCard;
 				id = args.Id;
+				title = args.Title;
 				break;
 
 			case nameof(Enums.Crud.Delete):
-				id = args.Id;	
+				id = args.Id;
+				title = args.Title;
 				showDeleteModal = true;
 				break;
 		}
 
 	}
 
-	private ResponseRecord? CurrentResponseRecord;
-	private bool CurrentRefreshList = true;
 	private async Task ReturnedResponseRecord(ResponseRecord? responseRecord)
 	{
-		CurrentRefreshList = responseRecord?.RefreshList ?? false;
-		CurrentResponseRecord = responseRecord;
-		Toast!.ShowInfo($"{CurrentResponseRecord?.Message}, CurrentRefreshList: {CurrentRefreshList}");
+		Logger!.LogDebug("{Method} {Message}", $"{nameof(Index)}!{nameof(ReturnedResponseRecord)}", $"Message: {responseRecord?.Message}");
+		if (responseRecord?.RefreshList ?? false)
+		{
+			VisibleComponent = Enums.VisibleComponent.MasterList;
+			refreshKey = Guid.NewGuid(); // Force re-render
+		}
+		Toast!.ShowInfo($"{responseRecord?.Message}");
 	}
 
-	protected async Task Delete(int Id, string Title)
+	protected async Task DeleteCommand(int Id, string Title)
 	{
-		Logger!.LogDebug("{Method} {Message}", $"{nameof(Index)}!{nameof(Delete)}", $"Id: {Id}");
+		//Logger!.LogDebug("{Method} {Message}", $"{nameof(Index)}!{nameof(DeleteCommand)}", $"Id: {Id}");
 		try
 		{
 			var affectedRows = await db!.RemoveSpecialEvent(Id);
-			Logger!.LogInformation("{Method} {Message}", $"{nameof(Delete)}", $"affectedRows: {affectedRows}");
+			Logger!.LogInformation("{Method} {Message}", $"{nameof(DeleteCommand)}", $"affectedRows: {affectedRows}");
 			Toast!.ShowInfo($"Special Event {Title} Deleted");
 		}
 		catch (Exception ex)
 		{
-			Logger!.LogError(ex, "{Method} {Message}", nameof(Delete), $"Id: {Id}");
-			Toast!.ShowError($"{Global.ToastShowError} {nameof(Delete)}!{nameof(Delete)}");
+			Logger!.LogError(ex, "{Method} {Message}", nameof(DeleteCommand), $"Id: {Id}");
+			Toast!.ShowError($"{Global.ToastShowError} {nameof(DeleteCommand)}!{nameof(DeleteCommand)}");
 		}
 
 	}
