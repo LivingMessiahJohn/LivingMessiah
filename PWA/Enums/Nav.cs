@@ -43,11 +43,12 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int Location = 23; 
 		internal const int SpecialEvents = 24; 
 		internal const int DonateReplyConfirm = 25;
+		internal const int Haggadah = 26;
 
-		//internal const int Profile = 26;
-		//internal const int PasswordChanged = 27;
-		//internal const int Planner = 28;
-		//internal const int CalendarRawData = 29;
+		//internal const int Profile = 27;
+		//internal const int PasswordChanged = 28;
+		//internal const int Planner = 29;
+		//internal const int CalendarRawData = 30;
 		//internal const int IndepthStudy = 31;
 	}
 	#endregion
@@ -78,6 +79,7 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav Location = new LocationSE(); 
 	public static readonly Nav SpecialEvents = new SpecialEventsSE(); 
 	public static readonly Nav DonateReplyConfirm = new DonateReplyConfirmSE();
+	public static readonly Nav Haggadah = new HaggadahSE();
 
 	//public static readonly Nav Profile = new ProfileSE();
 	//public static readonly Nav PasswordChanged = new PasswordChangedSE();
@@ -478,6 +480,20 @@ public abstract class Nav : SmartEnum<Nav>
 		public override PageListType PageListType => PageListType.None;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false; // N/A
+	}
+
+	private sealed class HaggadahSE : Nav
+	{
+		public HaggadahSE() : base($"{nameof(Id.Haggadah)}", Id.Haggadah) { }
+		public override string Index => "Haggadah";
+		public override string Title => "Haggadah (telling)";
+		public override string Icon => "fas fa-book-open";
+		public override int Sort => Id.Haggadah;
+		public override string HomeTitleSuffix => " Nagad H5046";
+		public override string HomeFloatRightHebrew => "הַגָּדָה";
+		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TierOne;
+		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
+		public override bool Disabled => false;
 	}
 
 

@@ -1,0 +1,15 @@
+﻿@using H = PWA.Features.Haggadah.Helper
+
+<p class="@H.VerseClass">
+	<b>@Title</b><br />
+	@((MarkupString)H.VerseIcon)
+	<sup class="@H.VerseSupClass">6</sup>
+	I will strengthen the house of Judah, and I will save the house of Joseph.
+	I will bring them back because I have compassion on them, and they shall be as though I had not rejected them,
+	for I am the LORD their God and I will answer them.
+</p>
+
+@code {
+	
+	[Parameter, EditorRequired] public string? Title { get; set; }
+}

@@ -1,0 +1,20 @@
+﻿@using H = PWA.Features.Haggadah.Helper
+
+<p class="@H.VerseClass">
+	<b>@Title</b><br />
+	@((MarkupString)H.VerseIcon)
+
+	<sup class="@H.VerseSupClass">4</sup>
+	In those days and in that time, declares the LORD, the people of Israel and the people of Judah shall come together,
+	weeping as they come, and they shall seek the LORD their God.
+
+	<sup class="@H.VerseSupClass">5</sup>
+	They shall ask the way to Tsiyon [Zion], their faces toward it,
+	'Come and let us join ourselves to Yehovah, in an everlasting Covenant, never to be forgotten.'
+
+</p>
+
+@code {
+	
+	[Parameter, EditorRequired] public string? Title { get; set; }
+}

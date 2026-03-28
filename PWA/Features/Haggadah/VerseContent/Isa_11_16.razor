@@ -1,0 +1,15 @@
+﻿@using H = PWA.Features.Haggadah.Helper
+
+<p class="@H.VerseClass">
+	<b>@Title</b><br />
+	@((MarkupString)H.VerseIcon)
+
+	<sup class="@H.VerseSupClass">16</sup>
+	And there will be a highway from Assyria for the remnant that remains of his people,  as there was for Israel when they came up from the land of Egypt.”
+
+</p>
+
+@code {
+	
+	[Parameter, EditorRequired] public string? Title { get; set; }
+}

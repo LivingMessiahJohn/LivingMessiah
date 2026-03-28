@@ -1,0 +1,14 @@
+﻿@using H = PWA.Features.Haggadah.Helper
+
+<p class="@H.VerseClass">
+	<b>@Title</b><br />
+	@((MarkupString)H.VerseIcon)
+	<sup class="@H.VerseSupClass">20</sup>
+	Is Ephraim My dear son? Indeed, as often as I have spoken against him,
+	I certainly still remember him; Therefore My inmost being yearns for him; I will surely have mercy on him, declares Yehovah.
+</p>
+
+@code {
+	
+	[Parameter, EditorRequired] public string? Title { get; set; }
+}

@@ -1,0 +1,19 @@
+﻿@using H = PWA.Features.Haggadah.Helper
+
+<p class="@H.VerseClass">
+	<b>@Title</b><br />
+	@((MarkupString)H.VerseIcon)
+
+	<sup class="@H.VerseSupClass">19</sup>
+	And when He had taken some bread and given thanks, He broke it and gave it to them, saying,
+	This is My body which is given for you. Do this in remembrance of Me.
+
+	<sup class="@H.VerseSupClass">22</sup>
+	And in the same way He took the cup after they had eaten, saying,
+	This cup which is poured out for you is the renewed covenant in My blood.
+</p>
+
+@code {
+	
+	[Parameter, EditorRequired] public string? Title { get; set; }
+}

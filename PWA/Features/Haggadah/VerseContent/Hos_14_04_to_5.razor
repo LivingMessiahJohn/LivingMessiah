@@ -1,0 +1,17 @@
+﻿@using H = PWA.Features.Haggadah.Helper
+
+<p class="@H.VerseClass">
+	<b>@Title</b><br />
+	@((MarkupString)H.VerseIcon)
+
+	<sup class="@H.VerseSupClass">4</sup> <sup class="@H.VerseSupClassHebrew">[14:5]</sup>
+	I will heal their turning away from Me; I will love them freely, For My anger has turned away from them
+
+	<sup class="@H.VerseSupClass">5</sup>  <sup class="@H.VerseSupClassHebrew">[14:6]</sup>
+	I will be like the dew to Israel; He will flourish like the lily, And he will [fn]take root like the cedars of Lebanon
+</p>
+
+@code {
+	
+	[Parameter, EditorRequired] public string? Title { get; set; }
+}

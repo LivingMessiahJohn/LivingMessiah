@@ -1,0 +1,47 @@
+﻿@if (ShowMenuItem is not null)
+{
+  @switch (ShowMenuItem)
+  {
+    // Instructions
+    case var item when item == Enums.ModalMenuItem.Instructions:
+      @InstructionsRF
+      break;
+
+    //Appendix
+    case var item when item == Enums.ModalMenuItem.TenPlagues:
+      @TenPlaguesRF
+      break;
+    case var item when item == Enums.ModalMenuItem.Easter:
+      @EasterRF
+      break;
+    case var item when item == Enums.ModalMenuItem.BibleVerses:
+      @BibleVersesRF
+      break;
+
+    // User Settings
+    case var item when item == Enums.ModalMenuItem.Language:
+      @LanguageRF
+      break;
+
+    default:
+      <p>Unknown modal type.</p>
+      break;
+  }
+}
+@* else { <p>no modal showing</p>	 } 
+
+
+      
+*@
+
+
+@code {
+  [Parameter, EditorRequired] public Enums.ModalMenuItem? ShowMenuItem { get; set; }
+
+  [Parameter, EditorRequired] public RenderFragment? InstructionsRF { get; set; }
+  [Parameter, EditorRequired] public RenderFragment? TenPlaguesRF { get; set; }
+  [Parameter, EditorRequired] public RenderFragment? EasterRF { get; set; }
+  [Parameter, EditorRequired] public RenderFragment? BibleVersesRF { get; set; }
+  [Parameter, EditorRequired] public RenderFragment? LanguageRF { get; set; }
+
+}

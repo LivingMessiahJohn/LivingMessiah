@@ -1,0 +1,20 @@
+﻿@using H = PWA.Features.Haggadah.Helper
+
+<p class="@H.VerseClass">
+	<b>@Title</b><br />
+	@((MarkupString)H.VerseIcon)
+
+	<sup class="@H.VerseSupClass">7</sup>
+	For thus says Yehovah, Sing aloud with gladness for Jacob, And shout among the head of the nations;
+	Make it heard, give praise, and say, ‘O Yehovah, save Your people, The remnant <span class='hebrew text-danger fw-bold'>אֵת</span> of Israel.
+
+	<sup class="@H.VerseSupClass">8</sup>
+	Behold, I will bring them from the north country and gather them from the farthest parts of the earth,
+	among them the blind and the lame, the pregnant woman and she who is in labor, together; a great company, they shall return here.
+
+</p>
+
+@code {
+	
+	[Parameter, EditorRequired] public string? Title { get; set; }
+}
