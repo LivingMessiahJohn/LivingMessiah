@@ -1,0 +1,53 @@
+﻿
+<div class="d-flex justify-content-between d-print-none my-2">
+	<button @onclick="ReturnToNormalViewClick" class="btn btn-outline-info" title="return to normal view">
+		<i class="far fa-arrow-alt-circle-left"></i> Return
+	</button>
+
+	<a class="btn btn-outline-secondary" title="click to print" href="javascript:window.print()">
+		<span class="fas fa-print"></span>
+	</a>
+
+</div>
+
+@foreach (var item in Enums.Content.List.ToList().OrderBy(o => o.Value))
+{
+	<div class="card border-primary p-2 mb-2">
+
+		<div class="row">
+			<div class="col-12">@item!.EngTitle</div>
+		</div>
+
+		<div class="row">
+			<div class="col-12">
+				@{
+					var componentType = Type.GetType($"{ComponentPath}.{item!.Name}");
+					if (componentType is not null)
+					{
+						<DynamicComponent Type="componentType" />
+					}
+					else
+					{
+						<div class="text-danger">Component not found: @item!.Name</div>
+					}
+				}
+			</div>
+		</div>
+	</div>
+}
+
+@code {
+	[Parameter, EditorRequired] public Enums.DisplayLanguage? Language { get; set; } // = Enums.DisplayLanguage.English;
+	[Parameter, EditorRequired] public EventCallback OnReturn { get; set; }
+
+	protected string ComponentPath => 
+		Language == Enums.DisplayLanguage.Spanish 
+		? Constants.DynamicComponentPathEsp 
+		: Constants.DynamicComponentPathEng;	
+
+	private void ReturnToNormalViewClick()
+	{
+		OnReturn.InvokeAsync();
+	}
+
+}

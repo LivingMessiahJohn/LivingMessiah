@@ -10,14 +10,12 @@ public abstract class DisplayLanguage : SmartEnum<DisplayLanguage>
 	{
 		internal const int English = 1;
 		internal const int Spanish = 2;
-		internal const int Both = 3;
 	}
 	#endregion
 
 	#region Declared Public Instances
 	public static readonly DisplayLanguage English = new EnglishSE();
 	public static readonly DisplayLanguage Spanish = new SpanishSE();
-	public static readonly DisplayLanguage Both = new BothSE();
 	#endregion
 
 	private DisplayLanguage(string name, int value) : base(name, value) { }
@@ -40,13 +38,5 @@ public abstract class DisplayLanguage : SmartEnum<DisplayLanguage>
 		public override string Title => "Español";
 		public override string Description => "Display content in Español only.";
 	}
-
-	private sealed class BothSE : DisplayLanguage
-	{
-		public BothSE() : base(nameof(Both), Id.Both) { }
-		public override string Title => "Eng + Esp";
-		public override string Description => "Display content in both English and Español.";
-	}
 }
 
-/* public enum DisplayLanguage {  English = 1, Spanish = 2,	Both = 3 } */

@@ -1,12 +1,5 @@
 ﻿<nav class="navbar navbar-expand bg-primary-subtle mt-1">
 
-	<div class="d-flex justify-content-start">
-
-		<div class="px-1">
-			@JustifyStartRF
-		</div>
-	</div>
-
 	<div class="collapse navbar-collapse justify-content-between">
 
 		<div class="px-1">
@@ -33,7 +26,6 @@
 @* <dialog>@DialogRF</dialog> *@
 
 @code {
-	[Parameter, EditorRequired] public RenderFragment? JustifyStartRF { get; set; }
 	[Parameter, EditorRequired] public RenderFragment? PrevButtonDivRF { get; set; }
 	[Parameter, EditorRequired] public RenderFragment? ProgressBarDivRF { get; set; }
 	[Parameter, EditorRequired] public RenderFragment? NextButtonDivRF { get; set; }
