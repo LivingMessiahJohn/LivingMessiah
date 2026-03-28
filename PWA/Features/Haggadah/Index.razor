@@ -8,132 +8,131 @@
 @using PWA.Features.Haggadah.DetailContent
 @using PWA.Layout.MenuNavbar
 
-@* @inject IToastService? Toast *@
 @inject ILogger<Index>? Logger
 
 <PageTitle>@Page.Haggadah.Title</PageTitle>
 
-<NavSkeleton>
 
-	@* <JustifyStartRF><HomeButton /></JustifyStartRF> *@
-	<JustifyStartRF><HomeImgButton /></JustifyStartRF>
+@if (CurrentView)
+{
+	<NavSkeleton>
+		<PrevButtonDivRF>
+			<PreviousOrNextButton Section="Section"
+														Forward=false
+														OnSectionSelected="ReturnedSection" />
+		</PrevButtonDivRF>
 
-	<PrevButtonDivRF>
-		<PreviousOrNextButton Section="Section"
-													Forward=false
-													OnSectionSelected="ReturnedSection" />
-	</PrevButtonDivRF>
+		<ProgressBarDivRF>
+			<div class="@MediaQuery.XsOrSm.DivClass">
+				<Progressbar Section="Section" IsXsOrSm=true />
+			</div>
+			<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+				<Progressbar Section="Section" IsXsOrSm=false />
+			</div>
+		</ProgressBarDivRF>
 
-	<ProgressBarDivRF>
-		<div class="@MediaQuery.XsOrSm.DivClass">
-			<Progressbar Section="Section" IsXsOrSm=true />
-		</div>
-		<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-			<Progressbar Section="Section" IsXsOrSm=false />
-		</div>
-	</ProgressBarDivRF>
+		<NextButtonDivRF>
+			<PreviousOrNextButton Section="Section"
+														Forward=true
+														OnSectionSelected="ReturnedSection" />
+		</NextButtonDivRF>
+		
+		<JustifyEndRF>
+			<div>
+				<button @onclick="PrintToggleClick" class="btn btn-outline-secondary me-2" title="show printer friendly view">
+					<i class="fa fa-print"></i>
+				</button>
+			</div>
+			<ModalMenuItemButtons OnModalSelected="ReturnedModalMenuItem" />
+		</JustifyEndRF>
 
-	<NextButtonDivRF>
-		<PreviousOrNextButton Section="Section"
-													Forward=true
-													OnSectionSelected="ReturnedSection" />
-	</NextButtonDivRF>
+	</NavSkeleton>
 
-	<JustifyEndRF>
-		<ModalMenuItemButtons OnModalSelected="ReturnedModalMenuItem" />
-	</JustifyEndRF>
+	<ModalSkeleton ShowMenuItem="CurrentModalToShow">
+		<InstructionsRF>
+			<Template OnClose="ReturnedCloseEvent">
+				<HeaderRF>Haggadah Instructions</HeaderRF>
+				<BodyRF>
+					<PageInstructions />
+				</BodyRF>
+			</Template>
 
-</NavSkeleton>
+		</InstructionsRF>
 
-<ModalSkeleton ShowMenuItem="CurrentModalToShow">
-	@* Instructions *@
-	<InstructionsRF>
-		<Template OnClose="ReturnedCloseEvent">
-			<HeaderRF>Haggadah Instructions</HeaderRF>
-			<BodyRF>
-				<PageInstructions />
-			</BodyRF>
-		</Template>
+		@* Appendix *@
+		<TenPlaguesRF>
+			<Template OnClose="ReturnedCloseEvent">
+				<HeaderRF>Appendix 10 Plagues</HeaderRF>
+				<BodyRF>
+					<AppendixTenPlagues />
+				</BodyRF>
+			</Template>
+		</TenPlaguesRF>
 
-	</InstructionsRF>
+		<EasterRF>
+			<Template OnClose="ReturnedCloseEvent">
+				<HeaderRF>Appendix What about Easter?</HeaderRF>
+				<BodyRF><AppendixEaster /></BodyRF>
+			</Template>
+		</EasterRF>
 
-	@* Appendix *@
-	<TenPlaguesRF>
-		<Template OnClose="ReturnedCloseEvent">
-			<HeaderRF>Appendix 10 Plagues</HeaderRF>
-			<BodyRF>
-				<AppendixTenPlagues />
-			</BodyRF>
-		</Template>
-	</TenPlaguesRF>
+		<BibleVersesRF>
+			<Template OnClose="ReturnedCloseEvent">
+				<HeaderRF>Appendix Bible Verses</HeaderRF>
+				<BodyRF><VerseIndex /></BodyRF>
+			</Template>
+		</BibleVersesRF>
 
-	<EasterRF>
-		<Template OnClose="ReturnedCloseEvent">
-			<HeaderRF>Appendix What about Easter?</HeaderRF>
-			<BodyRF><AppendixEaster /></BodyRF>
-		</Template>
-	</EasterRF>
+		@* User Settings *@
+		<LanguageRF>
 
-	<BibleVersesRF>
-		<Template OnClose="ReturnedCloseEvent">
-			<HeaderRF>Appendix Bible Verses</HeaderRF>
-			<BodyRF><VerseIndex /></BodyRF>
-		</Template>
-	</BibleVersesRF>
+			<Template OnClose="ReturnedCloseEvent">
+				<HeaderRF>Language</HeaderRF>
+				<BodyRF>
+					<LanguagePickerButtons OnLanguageSelected="ReturnedLanguageMenuItem" />
+				</BodyRF>
+			</Template>
+		</LanguageRF>
 
-	@* User Settings *@
-	<LanguageRF>
+	</ModalSkeleton>
 
-		<Template OnClose="ReturnedCloseEvent">
-			<HeaderRF>Language</HeaderRF>
-			<BodyRF>
-				<LanguagePickerButtons OnLanguageSelected="ReturnedLanguageMenuItem" />
-			</BodyRF>
-		</Template>
-	</LanguageRF>
-
-</ModalSkeleton>
-
-@* <LoadingProgress> *@
-	<div class="">
-		@if (CurrentContent is not null)
+	
+	@if (CurrentContent is not null)
+	{
+		if (DetailContentEng is not null && DetailContentEsp is not null)
 		{
-			if (DetailContentEng is not null && DetailContentEsp is not null)
-			{
-				<ContentSkeleton Content=CurrentContent Language="Language">
-					<EngBody><DynamicComponent Type="DetailContentEng" /></EngBody>
-					<EspBody><DynamicComponent Type="DetailContentEsp" /></EspBody>
-				</ContentSkeleton>
-			}
-			else
-			{
-				<div class="card border-danger mb-3">
-					<div class="card-body text-center fs-1">DetailContentEng and/or DetailContentEsg are null <br /> (◡︵◡)</div>
-				</div>
-			}
+			<ContentSkeleton Content=CurrentContent Language="Language">
+				<EngBody><DynamicComponent Type="DetailContentEng" /></EngBody>
+				<EspBody><DynamicComponent Type="DetailContentEsp" /></EspBody>
+			</ContentSkeleton>
 		}
 		else
 		{
 			<div class="card border-danger mb-3">
-				<div class="card-body text-center fs-1">No Haggadah Section Found <br /> (◡︵◡)</div>
+				<div class="card-body text-center fs-1">DetailContentEng and/or DetailContentEsg are null <br /> (◡︵◡)</div>
 			</div>
 		}
-	</div>
-
-@* </LoadingProgress> *@
+	}
+	else
+	{
+		<div class="card border-danger mb-3">
+			<div class="card-body text-center fs-1">No Haggadah Section Found <br /> (◡︵◡)</div>
+		</div>
+	}
+}
+else
+{
+	<Print Language="Language" OnReturn="ReturnedNormalView" />
+}
+	
 
 @code {
-	//[CascadingParameter] public CascadingAppState? State { get; set; }
-
-
-	protected int Section;
+	protected int Section = 1;
 	protected Enums.Content? CurrentContent;
-	protected Enums.DisplayLanguage? Language;
+	protected Enums.DisplayLanguage? Language = Enums.DisplayLanguage.English;
 
 	protected override void OnInitialized()
 	{
-		Language = GetLanguageState();
-		Section = 1;
 		//Logger!.LogInformation("OnParametersSet: Language: {Language}; Section: {Section}", Language, Section);
 		CurrentContent = Enums.Content.List.FirstOrDefault(w => w.Value == Section);
 		SetDetail();
@@ -166,31 +165,11 @@
 				//Toast!.ShowError($"{Global.ToastShowError} {nameof(Index)}!{nameof(SetDetail)}");
 				return;
 			}
-
-			//Logger!.LogInformation("{Method}, DetailContentEng: {DetailContentEng}, DetailContentEsp: {DetailContentEsp}"
-			//	, nameof(SetDetail), DetailContentEng?.ToString() ?? "null", DetailContentEsp?.ToString() ?? "null");
 		}
 		catch (Exception ex)
 		{
 			Logger!.LogError(ex, "{Method}", nameof(SetDetail));
 			//Toast!.ShowError($"{Global.ToastShowError} {nameof(Index)}!{nameof(SetDetail)}");
-		}
-	}
-
-	// Called by: OnInitialized
-	private Enums.DisplayLanguage GetLanguageState()
-	{
-		//int id = State!.AppState!.HaggadahState!.Get();
-		int id = 1;
-
-		Enums.DisplayLanguage? _language;
-		if (Enums.DisplayLanguage.TryFromValue(id, out _language))
-		{
-			return Enums.DisplayLanguage.FromValue(id);
-		}
-		else
-		{
-			return Enums.DisplayLanguage.English;
 		}
 	}
 
@@ -200,17 +179,13 @@
 		Section = section;
 		CurrentContent = Enums.Content.List.FirstOrDefault(w => w.Value == Section);
 		SetDetail();
-		// save to local storage
 	}
 
 	#region MenuTemplate and Skeleton
-
-
 	// Called by: <Skeleton><LanguageRF><Template><BodyRF><LanguagePickerButtons OnLanguageSelected="ReturnedLanguageMenuItem" />
-	private async Task ReturnedLanguageMenuItem(Enums.DisplayLanguage item)
+	private void ReturnedLanguageMenuItem(Enums.DisplayLanguage item)
 	{
 		Language = item;
-		//await State!.AppState!.HaggadahState!.UpdateLanguage(item);
 		CurrentModalToShow = null;
 	}
 
@@ -227,6 +202,19 @@
 		CurrentModalToShow = null;
 		//Logger!.LogInformation("{Method}, CurrentModalToShow set to null", nameof(ReturnedCloseEvent));
 	}
+
+	protected bool CurrentView = true;  // Normal, if false then Print Friendly
+	private void PrintToggleClick()
+	{
+		CurrentView = !CurrentView;
+	}
+
+	private void ReturnedNormalView()
+	{
+		CurrentModalToShow = null;
+		CurrentView = true;
+	}
+
 
 	#endregion
 
