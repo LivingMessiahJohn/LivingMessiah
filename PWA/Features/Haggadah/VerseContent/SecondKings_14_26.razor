@@ -1,0 +1,13 @@
+﻿@using H = PWA.Features.Haggadah.Helper
+
+<p class="@H.VerseClass">
+	<b>@Title</b><br />
+	@((MarkupString)H.VerseIcon)
+	<sup class="@H.VerseSupClass">26</sup>
+	For Yehovah saw the affliction of Israel, which was very bitter; and whether bond or free, there was no helper for Israel.
+</p>
+
+@code {
+	
+	[Parameter, EditorRequired] public string? Title { get; set; }
+}

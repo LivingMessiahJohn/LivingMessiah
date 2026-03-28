@@ -1,0 +1,13 @@
+﻿@using H = PWA.Features.Haggadah.Helper
+
+<p class="@H.VerseClass">
+	<b>@Title</b><br />
+	@((MarkupString)H.VerseIcon)
+	<sup class="@H.VerseSupClass">20</sup>
+	He who bears witness to these things says, “Yes, I am coming quickly.” Amen. Come, Master Yeshua!
+</p>
+
+@code {
+	
+	[Parameter, EditorRequired] public string? Title { get; set; }
+}

@@ -1,0 +1,19 @@
+﻿@using H = PWA.Features.Haggadah.Helper
+
+<p class="@H.VerseClass">
+	<b>@Title</b><br />
+	@((MarkupString)H.VerseIcon)
+
+	<sup class="@H.VerseSupClass">7</sup>
+	And you shall set yourselves apart, and shall be set apart,
+	for I am Yehovah your Elohim, and you shall guard My laws and do them.
+
+	<sup class="@H.VerseSupClass">8</sup>
+	I am Yehovah, Who sets you apart.
+
+</p>
+
+@code {
+	
+	[Parameter, EditorRequired] public string? Title { get; set; }
+}

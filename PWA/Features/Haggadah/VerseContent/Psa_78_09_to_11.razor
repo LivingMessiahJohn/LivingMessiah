@@ -1,0 +1,20 @@
+﻿@using H = PWA.Features.Haggadah.Helper
+
+<p class="@H.VerseClass">
+	<b>@Title</b><br />
+	@((MarkupString)H.VerseIcon)
+
+	<sup class="@H.VerseSupClass">9</sup>
+	The children of Ephraim, being armed, and carrying bows, turned back in the day of battle
+
+	<sup class="@H.VerseSupClass">10</sup>
+	didn't keep God's covenant, and refused to walk in his law.
+
+	<sup class="@H.VerseSupClass">11</sup>
+	They forgot his acts; His wondrous works that he had shown them.
+</p>
+
+@code {
+	
+	[Parameter, EditorRequired] public string? Title { get; set; }
+}

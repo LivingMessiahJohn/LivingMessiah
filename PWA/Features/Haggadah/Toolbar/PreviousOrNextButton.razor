@@ -1,0 +1,59 @@
+﻿@using PWA.Helpers
+@* @using PWA.Components.Toolbar *@
+
+@if (Forward)
+{
+	if (Section < Enums.Content.List.Count)
+	{
+		<button type="button" class="btn btn-outline-primary btn-md @Margin"
+						title="Section: @Section"
+						@onclick="ButtonClick">
+			<i class="@Icon"></i>
+		</button>
+	}
+	else
+	{
+		<button class="btn btn-light btn-md disabled">
+			<span class="text-black-50"><i class="fas fa-ban"></i></span>
+		</button>
+	}
+}
+else
+{
+	if (Section != 1)
+	{
+		<button type="button" class="btn btn-outline-primary btn-md @Margin"
+						title="Section: @Section"
+						@onclick="ButtonClick">
+			<i class="@Icon"></i>
+		</button>
+	}
+	else
+	{
+		<button class="btn btn-light btn-md disabled">
+			<span class="text-black-50"><i class="fas fa-ban"></i></span>
+		</button>
+	}
+}
+
+@code {
+	[Parameter, EditorRequired] public int Section { get; set; }
+	[Parameter, EditorRequired] public bool Forward { get; set; }
+	[Parameter, EditorRequired] public EventCallback<int> OnSectionSelected { get; set; }
+
+	private string Icon => Forward ? "fas fa-arrow-right" : "fas fa-arrow-left";
+	private string Margin => Forward ? "me-1" : "ms-1";
+
+	private void ButtonClick()
+	{
+		if (Forward)
+		{
+			OnSectionSelected.InvokeAsync(Section + 1);
+		}
+		else
+		{
+			OnSectionSelected.InvokeAsync(Section - 1);
+		}
+	}
+}
+

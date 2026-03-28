@@ -35,5 +35,20 @@ public static class StringExtensions
           .ToString("###-###-#### " + new String('#', (value.Length - 10)));
     return value;
   }
+
+  public static StringBuilder AppendIfElse(
+    this StringBuilder builder, bool condition, string ifValue, string elseValue)
+  {
+    if (condition)
+    {
+      return builder.Append(ifValue);
+    }
+    else
+    {
+      return builder.Append(elseValue);
+    }
+  }
+
+
 }
 

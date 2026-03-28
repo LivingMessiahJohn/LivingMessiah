@@ -1,0 +1,20 @@
+﻿@using H = PWA.Features.Haggadah.Helper
+
+<p class="@H.VerseClass">
+	<b>@Title</b><br />
+	@((MarkupString)H.VerseIcon)
+
+	<sup class="@H.VerseSupClass">14</sup>
+	Therefore behold, days are coming, declares Yehovah,
+	when it will no longer be said, ‘As Yehovah lives, who brought up the sons of Israel out of the land of Egypt,’
+
+	<sup class="@H.VerseSupClass">15</sup>
+	but, ‘As Yehovah lives, who brought up the sons of Israel from the land of the north and from all the lands where He had banished them.’
+	For I will return them to their own land which I gave to their fathers.
+
+</p>
+
+@code {
+	
+	[Parameter, EditorRequired] public string? Title { get; set; }
+}

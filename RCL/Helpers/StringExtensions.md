@@ -8,19 +8,6 @@
 		return builder;
 	}
 
-	public static StringBuilder AppendIfElse(
-		this StringBuilder builder, bool condition, string ifValue, string elseValue)
-	{
-		if (condition)
-		{
-			return builder.Append(ifValue);
-		}
-		else
-		{
-			return builder.Append(elseValue);
-		}
-	}
-
 	public static string Repeat(this string input, int count)
 	{
 		if (string.IsNullOrEmpty(input) || count <= 1)
