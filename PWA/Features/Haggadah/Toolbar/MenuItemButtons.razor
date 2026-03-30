@@ -12,8 +12,8 @@
 	<ul class="dropdown-menu">
 
 		@foreach (var group in Enums.ModalMenuItem.List
-			.GroupBy(item => item.Category)
-			.OrderBy(g => g.Key))
+							.GroupBy(item => item.Category)
+							.OrderBy(g => g.Key))
 		{
 			<li><strong class="dropdown-header">@group.Key</strong></li>
 
@@ -29,15 +29,29 @@
 			<li><hr class="dropdown-divider" /></li>
 		}
 
+		<li><strong class="dropdown-header">Print Options</strong></li>
+		<li class="dropdown-item">
+			<button @onclick="ButtonClickPrintFriendly" class="btn btn-outline-secondary" title="Print Friendly View">
+				<i class="fa fa-print"></i>
+			</button>
+		</li>
+
 	</ul>
 
 </div>
 
 @code {
 	[Parameter, EditorRequired] public EventCallback<Enums.ModalMenuItem> OnModalSelected { get; set; }
+	[Parameter, EditorRequired] public EventCallback OnPrintFriendlySelected { get; set; }
 
 	private void ButtonClick(Enums.ModalMenuItem language)
 	{
 		OnModalSelected.InvokeAsync(language);
 	}
+
+	private void ButtonClickPrintFriendly()
+	{
+		OnPrintFriendlySelected.InvokeAsync();
+	}
+
 }

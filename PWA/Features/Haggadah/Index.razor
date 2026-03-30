@@ -12,8 +12,7 @@
 
 <PageTitle>@Page.Haggadah.Title</PageTitle>
 
-
-@if (CurrentView)
+@if (CurrentView == ViewEnum.CarouselView)
 {
 	<NavSkeleton>
 		<PrevButtonDivRF>
@@ -36,14 +35,9 @@
 														Forward=true
 														OnSectionSelected="ReturnedSection" />
 		</NextButtonDivRF>
-		
+
 		<JustifyEndRF>
-			<div>
-				<button @onclick="PrintToggleClick" class="btn btn-outline-secondary me-2" title="show printer friendly view">
-					<i class="fa fa-print"></i>
-				</button>
-			</div>
-			<ModalMenuItemButtons OnModalSelected="ReturnedModalMenuItem" />
+			<MenuItemButtons OnModalSelected="ReturnedModalMenuItem" OnPrintFriendlySelected="ReturnedPrintFriendlySelected" />
 		</JustifyEndRF>
 
 	</NavSkeleton>
@@ -85,7 +79,6 @@
 
 		@* User Settings *@
 		<LanguageRF>
-
 			<Template OnClose="ReturnedCloseEvent">
 				<HeaderRF>Language</HeaderRF>
 				<BodyRF>
@@ -93,38 +86,21 @@
 				</BodyRF>
 			</Template>
 		</LanguageRF>
-
 	</ModalSkeleton>
 
-	
-	@if (CurrentContent is not null)
-	{
-		if (DetailContentEng is not null && DetailContentEsp is not null)
-		{
-			<ContentSkeleton Content=CurrentContent Language="Language">
-				<EngBody><DynamicComponent Type="DetailContentEng" /></EngBody>
-				<EspBody><DynamicComponent Type="DetailContentEsp" /></EspBody>
-			</ContentSkeleton>
-		}
-		else
-		{
-			<div class="card border-danger mb-3">
-				<div class="card-body text-center fs-1">DetailContentEng and/or DetailContentEsg are null <br /> (◡︵◡)</div>
-			</div>
-		}
-	}
-	else
-	{
-		<div class="card border-danger mb-3">
-			<div class="card-body text-center fs-1">No Haggadah Section Found <br /> (◡︵◡)</div>
-		</div>
-	}
+	<ContentSkeleton Content=CurrentContent Language="Language">
+		<EngBody><DynamicComponent Type="DetailContentEng" /></EngBody>
+		<EspBody><DynamicComponent Type="DetailContentEsp" /></EspBody>
+	</ContentSkeleton>
 }
 else
 {
-	<Print Language="Language" OnReturn="ReturnedNormalView" />
+	@if (CurrentView == ViewEnum.PrinterFriendlyView)
+	{
+		<PrintFriendlyView Language="Language" OnReturn="ReturnedNormalView" />
+	}
+	@* else { Not Possible	} *@
 }
-	
 
 @code {
 	protected int Section = 1;
@@ -133,9 +109,11 @@ else
 
 	protected override void OnInitialized()
 	{
-		//Logger!.LogInformation("OnParametersSet: Language: {Language}; Section: {Section}", Language, Section);
+		//Logger!.LogInformation("OnInitialized: Language: {Language}; Section: {Section}", Language, Section);
 		CurrentContent = Enums.Content.List.FirstOrDefault(w => w.Value == Section);
+		//if (CurrentContent is null) { Throw Exception }
 		SetDetail();
+		//if (DetailContentEng is null || DetailContentEsp is null) { Throw Exception }
 	}
 
 	protected Type? DetailContentEng;
@@ -203,16 +181,14 @@ else
 		//Logger!.LogInformation("{Method}, CurrentModalToShow set to null", nameof(ReturnedCloseEvent));
 	}
 
-	protected bool CurrentView = true;  // Normal, if false then Print Friendly
-	private void PrintToggleClick()
-	{
-		CurrentView = !CurrentView;
-	}
-
+	protected ViewEnum CurrentView = ViewEnum.CarouselView;
 	private void ReturnedNormalView()
 	{
-		CurrentModalToShow = null;
-		CurrentView = true;
+		CurrentView = ViewEnum.CarouselView;
+	}
+	private void ReturnedPrintFriendlySelected()
+	{
+		CurrentView = ViewEnum.PrinterFriendlyView;
 	}
 
 
