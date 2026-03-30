@@ -11,117 +11,123 @@
 
 @if (FeastList is not null && FeastList.Count() != 0)
 {
-  <div class="container text-center">
-    @if (IsXs)
-    {
-      <h3 class="bg-warning text-black mt-5 mb-3 p-2"><b>Upcoming Feasts</b></h3>
-    }
-    else
-    {
-      <div class="row mt-4">
-        <div class="col-1"></div>
-        <div class="col-10">
-          <h2 class="bg-warning text-center text-black p-2"><b>Upcoming Feasts</b></h2>
-        </div>
-        <div class="col-1"></div>
-      </div>
-    }
-  </div>
+	@if (IsXs)
+	{
+		<h3 class="@TitleColor @NothingUpcoming mt-4 mb-3 p-2"><b>@Title</b></h3>
+	}
 
-  @foreach (var item in FeastList)
-  {
-    @if (IsXs)
-    {
-      <div class="container">
-        <p class="mb-0 text-end fs-6 text-black-50">(@item.DaysAway) days away</p>
-        <div class="card border border-warning border-4 mb-4">
-          <div class="row g-0">
-            <div class="col-5 "><img src="@item.Image" class="img-fluid rounded-start" alt="@item.Title"></div>
-            <div class="col-7 bg-warning-subtle text-center">
-              <div class="mt-2"><RelatedVersesAnchor Title="@item.Title" Index="@item.Index" FontSize="@FontSize" /></div>
-              <div class="text-primary @HebrewCSS">@item!.FloatRightHebrew</div>
-            </div>
-          </div>
-        </div>
-      </div>
+	else
+	{
+		<div class="container text-center">
+			<div class="row mt-4">
+				<div class="col-1"></div>
+				<div class="col-10">
+					<h2 class="@TitleColor @NothingUpcoming p-2"><b>@Title</b></h2>
+				</div>
+				<div class="col-1"></div>
+			</div>
+		</div>
+	}
 
-    }
-    else
-    {
-      <div class="container">
-        <div class="row">
-          <div class="col-1"></div>
-          <div class="col-10">
-              <div class="d-flex justify-content-between">
-                <span class="fs-6 text-black-50">Date: @item.RangeFormatted</span>
-                <span class="fs-6 text-black-50">@item.DaysAway days away</span>
-              </div>
-            <div class="card border border-warning border-4 mb-4">
-              <div class="row g-0">
-                <div class="col-5 "><img src="@item.Image" class="img-fluid rounded-start" alt="@item.Title"></div>
-                <div class="col-7 bg-warning-subtle text-center">
-                  <div class="mt-2"><RelatedVersesAnchor Title="@item.Title" Index="@item.Index" FontSize="@FontSize" /></div>
-                  <div class="text-primary @HebrewCSS">@item!.FloatRightHebrew</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-1"></div>
-        </div>
-      </div>
-    }
-  }
+	@foreach (var item in FeastList)
+	{
+		@if (IsXs)
+		{
+			<div class="container">
+				<p class="mb-0 text-end fs-6 text-black-50">(@item.DaysAway) days away</p>
+				<div class="card border border-warning border-4 mb-4">
+					<div class="row g-0">
+						<div class="col-5 "><img src="@item.Image" class="img-fluid rounded-start" alt="@item.Title"></div>
+						<div class="col-7 bg-warning-subtle text-center">
+							<div class="mt-2"><RelatedVersesAnchor Title="@item.Title" Index="@item.Index" FontSize="@FontSize" /></div>
+							<div class="text-primary @HebrewCSS">@item!.FloatRightHebrew</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		}
+		else
+		{
+			<div class="container">
+				<div class="row">
+					<div class="col-1"></div>
+					<div class="col-10">
+						<div class="d-flex justify-content-between">
+							<span class="fs-6 text-black-50">Date: @item.RangeFormatted</span>
+							<span class="fs-6 text-black-50">@item.DaysAway days away</span>
+						</div>
+						<div class="card border border-warning border-4 mb-4">
+							<div class="row g-0">
+								<div class="col-5 "><img src="@item.Image" class="img-fluid rounded-start" alt="@item.Title"></div>
+								<div class="col-7 bg-warning-subtle text-center">
+									<div class="mt-2"><RelatedVersesAnchor Title="@item.Title" Index="@item.Index" FontSize="@FontSize" /></div>
+									<div class="text-primary @HebrewCSS">@item!.FloatRightHebrew</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-1"></div>
+				</div>
+			</div>
+		}
+	}
 
 }
 
 
 @code {
-  [Parameter, EditorRequired] public bool IsXs { get; set; }
-  [Parameter] public DateOnly? CurrentDateOverride { get; set; }
+	[Parameter, EditorRequired] public bool IsXs { get; set; }
+	[Parameter] public DateOnly? CurrentDateOverride { get; set; }
 
-  protected string FontSize => IsXs ? " fs-5" : " fs-2";
-  protected string HebrewCSS => IsXs ? " hebrew" : "  hebrew44";
+	const string Title = "Upcoming Feasts";
+	const string TitleColor = "bg-warning text-center text-black";
+	
 
-  protected List<FeastCardDTO>? FeastList;
+	protected string FontSize => IsXs ? " fs-5" : " fs-2";
+	protected string HebrewCSS => IsXs ? " hebrew" : "  hebrew44";
+	protected string NothingUpcoming = "";
 
-  DateOnly CurrentDate;
+	protected List<FeastCardDTO>? FeastList;
 
-  protected override void OnParametersSet()
-  {
-    try
-    {
-      CurrentDate = CurrentDateOverride ?? GetCurrentDate();
+	DateOnly CurrentDate;
 
-      Logger!.LogDebug("{Method}, {Message}", $"{nameof(GetCurrentDate)} (just called)"
-      , $"CurrentDate: {CurrentDate.ToShortDateString()}");
+	protected override void OnParametersSet()
+	{
+		try
+		{
+			CurrentDate = CurrentDateOverride ?? GetCurrentDate();
 
-      FeastList = (from feast in RCL.Features.Feasts.Enums.Feast.List.ToList()
-                   join feastDay in CalendarEnums.FeastDay.List.ToList()
-                       on feast.FeastDay?.Value equals feastDay.Value
-                   where CurrentDate >= feastDay.StartShowingCard && CurrentDate <= feastDay.DateOnlyRange.Max
-                   orderby feast.Value
-                   select new FeastCardDTO
-                   {
-                     Title = feast.Title,
-                     Index = feast.Index,
-                     Image = feast.Image,
-                     FloatRightHebrew = feast.Hebrew.FloatRightHebrew ?? "",
-                     RangeFormatted = feastDay.RangeFormatted, 
-                     DaysAway = feastDay.Date.DayNumber - CurrentDate.DayNumber
-                   }).ToList();
-    }
-    catch (Exception ex)
-    {
-      Logger!.LogError(ex, "{Method}", nameof(OnParametersSet));
-      //Toast!.ShowError($"{Global.ToastShowError} {nameof(FeastCards)}!{nameof(OnParametersSet)}");
-    }
+			Logger!.LogDebug("{Method}, {Message}", $"{nameof(GetCurrentDate)} (just called)"
+			, $"CurrentDate: {CurrentDate.ToShortDateString()}");
 
-  }
+			FeastList = (from feast in RCL.Features.Feasts.Enums.Feast.List.ToList()
+									 join feastDay in CalendarEnums.FeastDay.List.ToList()
+											 on feast.FeastDay?.Value equals feastDay.Value
+									 where CurrentDate >= feastDay.StartShowingCard && CurrentDate <= feastDay.DateOnlyRange.Max
+									 orderby feast.Value
+									 select new FeastCardDTO
+									 {
+										 Title = feast.Title,
+										 Index = feast.Index,
+										 Image = feast.Image,
+										 FloatRightHebrew = feast.Hebrew.FloatRightHebrew ?? "",
+										 RangeFormatted = feastDay.RangeFormatted,
+										 DaysAway = feastDay.Date.DayNumber - CurrentDate.DayNumber
+									 }).ToList();
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(OnParametersSet));
+			//Toast!.ShowError($"{Global.ToastShowError} {nameof(FeastCards)}!{nameof(OnParametersSet)}");
+		}
+		if (FeastList is null || FeastList.Count() == 0) { NothingUpcoming = "opacity-50"; }
+	}
 
-  private DateOnly GetCurrentDate()
-  {
-    return DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(Test.AddDays).AddHours(Utc.ArizonaUtcMinus7));
-  }
+	private DateOnly GetCurrentDate()
+	{
+		return DateUtil.GetDateTimeWithoutTime(DateTime.Now.AddDays(Test.AddDays).AddHours(Utc.ArizonaUtcMinus7));
+	}
 
 }
 
