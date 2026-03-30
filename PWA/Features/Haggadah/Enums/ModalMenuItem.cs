@@ -7,11 +7,11 @@ public abstract class ModalMenuItem : SmartEnum<ModalMenuItem>
 	#region Id's
 	private static class Id
 	{
-		internal const int Instructions = 1;
-		internal const int TenPlagues = 2;
-		internal const int Easter = 3;
-		internal const int BibleVerses = 4;
-		internal const int Language = 5;
+		internal const int Instructions = 2;
+		internal const int TenPlagues = 3;
+		internal const int Easter = 4;
+		internal const int BibleVerses = 5;
+		internal const int Language = 6;
 	}
 	#endregion
 
