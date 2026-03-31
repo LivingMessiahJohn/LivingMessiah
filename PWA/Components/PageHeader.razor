@@ -12,7 +12,12 @@
 @if (ChildContent is null)
 {
 	<div class="pb-n1 mt-2 mb-3 @BorderCSS">
-		<h1 class=""><i class="@PageEnum.Icon"></i>&nbsp;&nbsp;@PageEnum.Title</h1>
+		<div class="@MediaQuery.Xs.DivClass">
+			<h1 class="text-center"><i class="@PageEnum.Icon"></i>&nbsp;&nbsp;@PageEnum.Title</h1>
+		</div>
+		<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+			<h1 class=""><i class="@PageEnum.Icon"></i>&nbsp;&nbsp;@PageEnum.Title</h1>
+		</div>
 	</div>
 }
 else

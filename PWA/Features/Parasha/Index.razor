@@ -4,30 +4,31 @@
 
 @* <CurrentParasha MediaQuery="@MediaQuery.XsOrSm" /> *@
 
-<div class="@MediaQuery.XsOrSm.DivClass"> <CurrentParasha MediaQuery="@MediaQuery.XsOrSm" /></div>
-<div class="@MediaQuery.MdOrLgOrXl.DivClass"><CurrentParasha MediaQuery="@MediaQuery.MdOrLgOrXl" /></div>
+<div class="mx-1">
+	<div class="@MediaQuery.XsOrSm.DivClass"> <CurrentParasha MediaQuery="@MediaQuery.XsOrSm" /></div>
+	<div class="@MediaQuery.MdOrLgOrXl.DivClass"><CurrentParasha MediaQuery="@MediaQuery.MdOrLgOrXl" /></div>
 
-<FilterPills CurrentFilter="@CurrentFilter"
-						 OnFilterSelected="@ReturnedFilter" />
+	<FilterPills CurrentFilter="@CurrentFilter"
+							 OnFilterSelected="@ReturnedFilter" />
 
-
-@if (CurrentFilter == ParashaButtonToShow.GridTab)
-{
-	<div class="@MediaQuery.XsOrSm.DivClass"> <Grid MediaQuery="@MediaQuery.XsOrSm" /></div>
-	<div class="@MediaQuery.MdOrLgOrXl.DivClass"><Grid MediaQuery="@MediaQuery.MdOrLgOrXl" /></div>
-}
-else
-{
-	if (CurrentFilter == ParashaButtonToShow.TableTab)
+	@if (CurrentFilter == ParashaButtonToShow.GridTab)
 	{
-		<div class="@MediaQuery.XsOrSm.DivClass"> <Table MediaQuery="@MediaQuery.XsOrSm" /></div>
-		<div class="@MediaQuery.MdOrLgOrXl.DivClass"><Table MediaQuery="@MediaQuery.MdOrLgOrXl" /></div>
+		<div class="@MediaQuery.XsOrSm.DivClass"> <Grid MediaQuery="@MediaQuery.XsOrSm" /></div>
+		<div class="@MediaQuery.MdOrLgOrXl.DivClass"><Grid MediaQuery="@MediaQuery.MdOrLgOrXl" /></div>
 	}
 	else
 	{
-		<PrintFriendlyTable />
+		if (CurrentFilter == ParashaButtonToShow.TableTab)
+		{
+			<div class="@MediaQuery.XsOrSm.DivClass"> <Table MediaQuery="@MediaQuery.XsOrSm" /></div>
+			<div class="@MediaQuery.MdOrLgOrXl.DivClass"><Table MediaQuery="@MediaQuery.MdOrLgOrXl" /></div>
+		}
+		else
+		{
+			<PrintFriendlyTable />
+		}
 	}
-}
+</div>
 
 @code {
 	public ParashaButtonToShow? CurrentFilter { get; set; } = ParashaButtonToShow.TableTab;

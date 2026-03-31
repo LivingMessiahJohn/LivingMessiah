@@ -10,7 +10,7 @@
 
 	@if (!String.IsNullOrEmpty(ImageFile))
 	{
-		<div class="d-flex justify-content-center">
+		<div class="card position-relative w-100" style='max-width: 700px;'>
 			<LunarMoonCard EventMoon="EventMonth" ImageFile="@ImageFile" DaysToGoText="@DaysToGoText" />
 		</div>
 	}
@@ -21,7 +21,9 @@
 		<ShabbatMeter />
 		@if (!String.IsNullOrEmpty(ImageFile))
 		{
-			<LunarMoonCard EventMoon="EventMonth" ImageFile="@ImageFile" DaysToGoText="@DaysToGoText" MaxWidth="max-width: 250px;" />
+			<div class="card position-relative" style='max-width: 250px;'>
+				<LunarMoonCard EventMoon="EventMonth" ImageFile="@ImageFile" DaysToGoText="@DaysToGoText" />
+			</div>
 		}
 
 	</div>
@@ -32,9 +34,10 @@
 		<ShabbatMeter />
 		@if (!String.IsNullOrEmpty(ImageFile))
 		{
-			<LunarMoonCard EventMoon="EventMonth" ImageFile="@ImageFile" DaysToGoText="@DaysToGoText" />
+			<div class="card position-relative" style='max-width: 500px;'>
+				<LunarMoonCard EventMoon="EventMonth" ImageFile="@ImageFile" DaysToGoText="@DaysToGoText" />
+			</div>
 		}
-
 	</div>
 </div>
 

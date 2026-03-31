@@ -1,20 +1,29 @@
 ﻿
-<div class="d-flex justify-content-between d-print-none my-2">
-	<button @onclick="ReturnToNormalViewClick" class="btn btn-outline-info" title="return to normal view">
-		<i class="far fa-arrow-alt-circle-left"></i> Return
-	</button>
+<div class="d-print-none my-2">
+	<div class="d-flex justify-content-between my-2">
+		<button @onclick="ReturnToNormalViewClick" class="btn btn-info @ButtonSize ms-1" title="return to normal view">
+			<i class="far fa-arrow-alt-circle-left"></i> Return
+		</button>
 
-	<p class="fs-5">Printer Friendly View</p>
+		<span class="@TitleSize">Printer Friendly View</span>
 
-	<a class="btn btn-outline-secondary" title="click to print" href="javascript:window.print()">
-		<span class="fas fa-print"></span>
-	</a>
+		<a class="btn btn-outline-secondary @ButtonSize me-1" title="click to print" href="javascript:window.print()">
+			<span class="fas fa-print"></span>
+		</a>
+
+	</div>
+
+	<p class="text-center my-2">
+		<a href='@Blobs.Pdf(@Language!.Pdf)' target="_blank" alt="@Language!.PdfDescription">@Language!.PdfDescription</a>
+	</p>
 
 </div>
 
+
+
 @foreach (var item in Enums.Content.List.ToList().OrderBy(o => o.Value))
 {
-	<div class="card border-primary p-2 mb-2">
+	<div class="card border border-2 border-primary p-2 mx-1 mb-2">
 
 		<div class="row">
 			<div class="col-12">@item!.EngTitle</div>
@@ -39,13 +48,17 @@
 }
 
 @code {
-	[Parameter, EditorRequired] public Enums.DisplayLanguage? Language { get; set; } // = Enums.DisplayLanguage.English;
+	[Parameter, EditorRequired] public Enums.DisplayLanguage? Language { get; set; }
+	[Parameter, EditorRequired] public bool IsXs { get; set; }
 	[Parameter, EditorRequired] public EventCallback OnReturn { get; set; }
 
-	protected string ComponentPath => 
-		Language == Enums.DisplayLanguage.Spanish 
-		? Constants.DynamicComponentPathEsp 
-		: Constants.DynamicComponentPathEng;	
+	protected string ButtonSize => IsXs ? " btn-sm" : "";
+	protected string TitleSize => IsXs ? " fs-6" : "fs-4";
+
+	protected string ComponentPath =>
+		Language == Enums.DisplayLanguage.Spanish
+		? Constants.DynamicComponentPathEsp
+		: Constants.DynamicComponentPathEng;
 
 	private void ReturnToNormalViewClick()
 	{

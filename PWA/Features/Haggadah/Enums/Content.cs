@@ -96,7 +96,7 @@ public abstract class Content : SmartEnum<Content>
 		public override string Title => "Passover Deliverance";
 		public override MarkupString EngTitle => (MarkupString)(@"
 			<h3 class='text-center'>
-				<span class='text-dark'>THIS  IS THE PASSOVER DELIVERANCE  OF Yehovah!</span>
+				<span class='text-dark'>THIS  IS THE PASSOVER DELIVERANCE  OF YAHWEH!</span>
 			</h3>
 			");
 		public override MarkupString EspTitle => (MarkupString)(@"
