@@ -13,9 +13,6 @@
 </div>
 
 <NavSkeleton Section="Section">
-	<JustifyStartRF></JustifyStartRF>
-
-
 	<PrevButtonDivRF>
 		<PreviousOrNextButton Section="Section" Direction=Enums.Direction.Previous OnSectionSelected="ReturnedSection" />
 	</PrevButtonDivRF>
@@ -35,7 +32,6 @@
 </NavSkeleton>
 
 <ModalSkeleton ShowMenuItem="CurrentModalToShow">
-	<!-- Instructions -->
 	<InstructionsRF>
 		<Template OnClose="ReturnedCloseEvent">
 			<HeaderRF>Liturgy Instructions</HeaderRF>
@@ -43,10 +39,7 @@
 				<PageInstructions />
 			</BodyRF>
 		</Template>
-
 	</InstructionsRF>
-
-	<!-- User Settings -->
 </ModalSkeleton>
 
 <Detail EnumContent="CurrentContent" ShowImages=ShowImages />
@@ -54,10 +47,10 @@
 
 @code {
 	protected Enums.Content? CurrentContent;
-	protected int Section;
+	protected int Section = 1;
 	protected bool ShowImages;
 
-	protected override void OnParametersSet()
+	protected override void OnInitialized()
 	{
 		CurrentContent = Enums.Content.CallToService;
 		ShowImages = true; 

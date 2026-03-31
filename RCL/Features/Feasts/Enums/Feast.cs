@@ -2,13 +2,9 @@
 
 using FeastDayType = RCL.Features.Calendar.Enums.FeastDay;
 
-
 namespace RCL.Features.Feasts.Enums;
 
 /*
-
-ToDo: Move to RCL
-
 Observations and what makes this SmartEnums unique from the others
 1. It's a annual event and therefore tied to KeyDate and Calendar
 2. These have special attributes or...

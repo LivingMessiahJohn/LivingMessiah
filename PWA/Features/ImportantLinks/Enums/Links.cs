@@ -116,8 +116,8 @@ public abstract class Links : SmartEnum<Links>
 	private sealed class AboveAllImagesSE : Links
 	{
 		public AboveAllImagesSE() : base($"{nameof(Id.AboveAllImages)}", Id.AboveAllImages) { }
-		public override string Title => "Israelite Return";
-		public override string Image => "IsrRtnHomePage.jpg";
+		public override string Title => "Above All Images";
+		public override string Image => "AboveAllImages.jpg";  
 		public override string Url => "http://aboveallimages.net/";
 		public override string UrlSimple => "www.AboveAllImages.net";
 		public override string UrlPacketDownload => "";
