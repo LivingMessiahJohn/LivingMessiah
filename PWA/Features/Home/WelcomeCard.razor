@@ -19,11 +19,23 @@
 		{
 			<hr />
 			
-			<TableOfContent BaseUrl="/#" />
-			<Introduction />
-			<Vision />
-			<Mission />
-			<Resolve />
+			@* <TableOfContent BaseUrl="/#" /> *@
+
+			<div class="@MediaQuery.Xs.DivClass">
+				<TableOfContent BaseUrl="/IntroductionAndWelcome#" />
+				<Introduction IsXs="true" />
+				<Vision IsXs="true" />
+				<Mission IsXs="true" />
+				<Resolve IsXs="true" />
+			</div>
+
+			<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+				<TableOfContent BaseUrl="/IntroductionAndWelcome#" />
+				<Introduction IsXs="false" />
+				<Vision IsXs="false" />
+				<Mission IsXs="false" />
+				<Resolve IsXs="false" />
+			</div>
 
 			<div class="card-footer float-end">
 				<ShowHideToggle ContentIsShowing="ShowingDetails"

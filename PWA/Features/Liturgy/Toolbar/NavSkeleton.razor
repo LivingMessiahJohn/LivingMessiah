@@ -1,15 +1,9 @@
 ﻿
 <nav class="navbar navbar-expand bg-primary-subtle">
-	<div class="d-flex justify-content-start">
-
-		<div class="px-1">
-			@JustifyStartRF
-		</div>
-	</div>
 
 	<div class="collapse navbar-collapse justify-content-between">
 
-		<div class="px-1">
+		<div class="mx-1">
 			@PrevButtonDivRF
 		</div>
 
@@ -22,32 +16,27 @@
 			{
 				<div class="col">Sec:@Section	</div>
 			}
-			
 		
 		</div>
 
-		<div class="px-1">
+		<div class="ms-1">
 			@NextButtonDivRF
 		</div>
 
 	</div>
 
-	<div class="d-flex justify-content-end pe-1">
+	<div class="d-flex justify-content-end me-1">
 		@JustifyEndRF
 	</div>
 
 </nav>
+
 <br />
 
-@* <dialog>@DialogRF</dialog> *@
-
 @code {
-	[Parameter, EditorRequired] public RenderFragment? JustifyStartRF { get; set; }
 	[Parameter, EditorRequired] public RenderFragment? PrevButtonDivRF { get; set; }
 	[Parameter, EditorRequired] public RenderFragment? ProgressBarDivRF { get; set; }
 	[Parameter, EditorRequired] public RenderFragment? NextButtonDivRF { get; set; }
 	[Parameter, EditorRequired] public RenderFragment? JustifyEndRF { get; set; }
-	// [Parameter, EditorRequired] public RenderFragment? DialogRF { get; set; }
 	[Parameter, EditorRequired] public int Section { get; set; }
-
 }
