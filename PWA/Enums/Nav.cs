@@ -456,8 +456,8 @@ public abstract class Nav : SmartEnum<Nav>
 	private sealed class SpecialEventsSE : Nav
 	{
 		public SpecialEventsSE() : base($"{nameof(Id.Location)}", Id.Location) { }
-		public override string Index => "/SpecialEventsS";
-		public override string Title => "Special EventsS";
+		public override string Index => "/SpecialEvents";
+		public override string Title => "Special Events";
 		public override string Icon => "far fa-clock";
 		public override int Sort => Id.SpecialEvents;
 		public override string HomeTitleSuffix => "Shofar H7782";

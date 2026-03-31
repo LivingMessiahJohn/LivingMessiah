@@ -97,7 +97,12 @@ else
 {
 	@if (CurrentView == ViewEnum.PrinterFriendlyView)
 	{
-		<PrintFriendlyView Language="Language" OnReturn="ReturnedNormalView" />
+		<div class="@MediaQuery.Xs.DivClass">
+			<PrintFriendlyView Language="Language" IsXs="true" OnReturn="ReturnedNormalView" />
+		</div>
+		<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+			<PrintFriendlyView Language="Language" IsXs="false" OnReturn="ReturnedNormalView" />
+		</div>
 	}
 	@* else { Not Possible	} *@
 }

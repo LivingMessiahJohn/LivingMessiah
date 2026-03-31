@@ -23,6 +23,8 @@ public abstract class DisplayLanguage : SmartEnum<DisplayLanguage>
 	#region Extra Fields
 	public abstract string Description { get; }
 	public abstract string Title { get; }
+	public abstract string Pdf { get; }
+	public abstract string PdfDescription { get; }
 	#endregion
 
 	private sealed class EnglishSE : DisplayLanguage
@@ -30,6 +32,8 @@ public abstract class DisplayLanguage : SmartEnum<DisplayLanguage>
 		public EnglishSE() : base(nameof(English), Id.English) { }
 		public override string Title => "English";
 		public override string Description => "Display content in English only.";
+		public override string Pdf => "haggadah-eng.pdf";
+		public override string PdfDescription => "Haggadah English PDF";
 	}
 
 	private sealed class SpanishSE : DisplayLanguage
@@ -37,6 +41,8 @@ public abstract class DisplayLanguage : SmartEnum<DisplayLanguage>
 		public SpanishSE() : base(nameof(Spanish), Id.Spanish) { }
 		public override string Title => "Español";
 		public override string Description => "Display content in Español only.";
+		public override string Pdf => "haggadah-esp.pdf";
+		public override string PdfDescription => "Haggadah Spanish PDF";
 	}
 }
 

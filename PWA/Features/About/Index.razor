@@ -3,14 +3,29 @@
 
 <PageHeader PageEnum="Nav.About" />
 
-<StatementOfFaith />
-<VisionStatement />
-<LivingTabernacle />
-<PersonalResolution />
-<WeeklyTorahStudy />
-<DavidicDancing />
-<OnegAbout />
-<FAQ />
+<div class="@MediaQuery.Xs.DivClass">
+	<StatementOfFaith IsXs="true" />
+	<VisionStatement IsXs="true" />
+	<LivingTabernacle IsXs="true" />
+	<PersonalResolution IsXs="true" />
+	<WeeklyTorahStudy IsXs="true" />
+	<DavidicDancing IsXs="true" />
+	<OnegAbout IsXs="true" />
+	<FAQ IsXs="true" />
+</div>
+
+<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+	<StatementOfFaith IsXs="false" />
+	<VisionStatement IsXs="false" />
+	<LivingTabernacle IsXs="false" />
+	<PersonalResolution IsXs="false" />
+	<WeeklyTorahStudy IsXs="false" />
+	<DavidicDancing IsXs="false" />
+	<OnegAbout IsXs="false" />
+	<FAQ IsXs="false" />
+</div>
+
+<ScrollToTop />
 
 @code {
 
