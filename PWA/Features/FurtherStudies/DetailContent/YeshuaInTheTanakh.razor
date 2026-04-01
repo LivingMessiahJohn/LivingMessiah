@@ -1,0 +1,105 @@
+﻿
+<h2><span class="badge bg-warning"><i class="fab fa-leanpub"></i> Yeshua in the Tanakh</span></h2>
+
+<p class="text-muted"><small><i>Tanakh</i> is the Old Testament</small></p>
+
+<p class="h5">
+	<b>Luke 24:13-34</b> tells the story of two disciples who were walking on the road to Emmaus, talking with each other about the recent death of Yeshua.
+	They were joined on their journey by the resurrected Messiah.
+</p>
+
+@*
+	THIS DOESN'T WORK, EVEN THOUGH I HAVE NO ISSUES AT https://localhost:5001/Leadership (see the quote from Psalms 19:1)
+	THE DIFFERENCE IS THAT HERE IT IS WRAPPED iNSIDE <ContentTemplate></ContentTemplate>
+	SOLUTION: Wrap the <i> and <blockquote> inside a <div>
+*@
+
+<p>
+	<BibleQuote Cite="Luke 24:27">
+		<p class="fs-5 text-primary">
+			Then beginning with Moses and with all the prophets, He explained to them the things concerning Himself in all the Scriptures.
+		</p>
+	</BibleQuote>
+</p>
+
+<p class="lead">
+	Listed below are some of the Scriptures in the Tanakh (Old Testament) that Yeshua probably used when speaking with these two men on the road to Emmaus.
+</p>
+
+<div class="row">
+	<div class="col-sm-3">
+
+		<button type="button" class="btn btn-info btn-sm" @onclick="@(e => ToggleVersePopupClick(IsCollapsed, 1))">
+			Genesis 49:10
+		</button>
+		<blockquote class="blockquote">
+			<sup>10</sup> The scepter shall not depart from Judah,<br />
+			Nor the ruler’s staff from between his feet,<br />
+			Until Shiloh comes*,<br />
+			And to him shall be the obedience of the peoples.<br /><br />
+			* Or <i>Until he comes to Shiloh</i>; or <i>Until he comes to whom it belongs</i><br /><br />
+			<small><b>Genesis 49:10</b></small>
+		</blockquote>
+
+	</div>
+
+	<div class="col-sm-3">
+		<button type="button" class="btn btn-info btn-sm" @onclick="@(e => ToggleVersePopupClick(IsCollapsed, 2))">
+			Deuteronomy 18:15
+		</button>
+		<blockquote class="blockquote">
+			<sup>15</sup> The LORD your God will raise up for you a prophet like me from among you, from your countrymen, you shall listen to him.
+			<small><b>Deuteronomy 18:15</b></small>
+		</blockquote>
+	</div>
+
+	<div class="col-sm-3">
+		<div class="card card-body bg-light">
+
+			<button type="button" class="btn btn-info btn-sm" @onclick="@(e => ToggleVersePopupClick(IsCollapsed, 3))">
+				Isaiah 7:14
+			</button>
+			<blockquote class="blockquote">
+				<sup>14</sup> Therefore the Lord Himself will give you a sign: Behold, a virgin will be with child and bear a son, and she will call His name Immanuel.
+				<small><b>Isaiah 7:14</b></small>
+			</blockquote>
+		</div>
+	</div>
+
+	<div class="col-sm-3">
+		<button type="button" class="btn btn-info btn-sm" @onclick="@(e => ToggleVersePopupClick(IsCollapsed, 4))">
+			Isaiah 9:6-7
+		</button>
+		<blockquote class="blockquote">
+			<sup>6</sup> For a child will be born to us, a son will be given to us;
+			And the government will rest on His shoulders;
+			And His name will be called Wonderful Counselor, Mighty God,
+			Eternal Father, Prince of Peace.<br />
+			<sup>7</sup> There will be no end to the increase of His government or of peace,
+			On the throne of David and over his kingdom,
+			To establish it and to uphold it with justice and righteousness
+			From then on and forevermore.
+			The zeal of the Lord of hosts will accomplish this.
+			<small><b>Isaiah 9:6-7</b></small>
+		</blockquote>
+	</div>
+</div>
+
+@* <div class="row col-12">
+	<p class="text-muted">ToDo: this modal function is not working yet</p>
+</div>
+ *@
+
+@code {
+	public bool IsCollapsed { get; set; } = true;
+	public int VerseId { get; set; }
+	public string ButtonText { get; set; } = "Details";
+	public string ButtonChevron { get; set; } = " fas fa-chevron-down";
+	protected void ToggleVersePopupClick(bool isCollapsed, int verseId)
+	{
+		IsCollapsed = !isCollapsed;
+		VerseId = verseId;
+		ButtonText = IsCollapsed ? "Details" : "Hide";
+		ButtonChevron = IsCollapsed ? "fas fa-chevron-down" : "fas fa-chevron-up";
+	}
+}
