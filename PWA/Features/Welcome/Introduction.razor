@@ -1,10 +1,19 @@
-﻿@inherits PWA.Features.Welcome.Base
+﻿<div id="welcome">
 
-<div id="welcome">
-	<h2 class="@Center text-primary mt-4 mb-1"><b>Introduction</b></h2>
+	<div class="@MediaQuery.Xs.DivClass">
+		<h2 class="text-center text-primary mt-4 mb-1"><b>Introduction</b></h2>
+	</div>
+
+	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+		<h2 class=" text-primary mt-4 mb-1"><b>Introduction</b></h2>
+	</div>
 
 	<p class="ms-3 fs-5">
 		Welcome to <b>Living Messiah Ministries</b>, located in Mesa, Arizona.
 		We are building community from a Hebraic understanding while acknowledging the redemptive and reconciling work of Yahushua Ha Mashiach (Jesus The Messiah).
 	</p>
 </div>
+
+@code {
+
+}
