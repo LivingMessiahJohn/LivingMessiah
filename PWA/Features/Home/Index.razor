@@ -11,32 +11,18 @@
 
 <HomeImage />
 
-<div class="@MediaQuery.Xs.DivClass">
-	<WelcomeCard />
-</div>
-
-<div class="container">
-	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
-		<div class="row">
-			<div class="col-1"></div>
-			<div class="col-10"><WelcomeCard /></div>
-			<div class="col-1"></div>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12 col-sm-10 offset-sm-1 px-0 px-sm-3">
+			<WelcomeCard />
 		</div>
 	</div>
 </div>
 
-<div class="@MediaQuery.Xs.DivClass">
-	<LyricsLiturgyTeachingCard />
-</div>
-
-<div class="container">
-	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
-		<div class="row">
-			<div class="col-1"></div>
-			<div class="col-10">
-				<LyricsLiturgyTeachingCard />
-			</div>
-			<div class="col-1"></div>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12 col-sm-10 offset-sm-1 px-0 px-sm-3">
+			<LyricsLiturgyTeachingCard />
 		</div>
 	</div>
 </div>
@@ -46,8 +32,7 @@
 <div class="@MediaQuery.Xs.DivClass"><FeastCards IsXs="true" /></div>
 <div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><FeastCards IsXs="false" /></div>
 
-<div class="@MediaQuery.XsOrSm.DivClass"><SocialMediaButtons IsXsOrSm=true /></div>
-<div class="@MediaQuery.MdOrLgOrXl.DivClass"><SocialMediaButtons IsXsOrSm=false /></div>
+<SocialMediaButtons/>
 
 @code {
 
