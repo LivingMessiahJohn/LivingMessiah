@@ -1,6 +1,4 @@
-﻿using PWA.Features.Home.WeeklyDownload;
-
-namespace PWA.Features.Home;
+﻿namespace PWA.Features.Home.Data;
 
 public static class ServiceCollectionExtensions
 {

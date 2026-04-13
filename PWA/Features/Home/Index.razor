@@ -1,38 +1,25 @@
 @page "/"
 
 @using PWA.Features.Home.UpcomingFeasts
-@using PWA.Features.Home.WeeklyDownload
-
-@using RCL.Features.Calendar.Enums
 
 <PageTitle>Home</PageTitle>
 
-@* <CurrentParashaTable /> *@
-
+@* 
 <HomeImage />
+ *@
 
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-12 col-sm-10 offset-sm-1 px-0 px-sm-3">
-			<WelcomeCard />
-		</div>
-	</div>
-</div>
+<CenteredContainer><WelcomeCard /></CenteredContainer>
+<CenteredContainer><ShabbatTeachingCard /></CenteredContainer>
+<CenteredContainer><MoonCard /></CenteredContainer>
+<CenteredContainer><OmerCard /></CenteredContainer>
 
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-12 col-sm-10 offset-sm-1 px-0 px-sm-3">
-			<LyricsLiturgyTeachingCard />
-		</div>
-	</div>
-</div>
 
-<DailyWrapper />
-
-<div class="@MediaQuery.Xs.DivClass"><FeastCards IsXs="true" /></div>
-<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><FeastCards IsXs="false" /></div>
-
-<SocialMediaButtons/>
+<CenteredContainer>
+	<div class="@MediaQuery.Xs.DivClass"><FeastCards IsXs="true" /></div>
+	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><FeastCards IsXs="false" /></div>
+</CenteredContainer>
+ 
+<SocialMediaButtons />
 
 @code {
 

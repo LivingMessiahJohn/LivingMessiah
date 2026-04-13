@@ -1,0 +1,25 @@
+﻿@if (Dto?.Exists == true)
+{
+	<a class="@ButtonCSS"
+		 target="_blank" title="Pdf @Dto?.Url"
+		 href="@Dto?.Url">
+		<span class="@FontSize">@Dto?.Parasha</span>
+		<i class="@FontCSS" aria-hidden="true"></i>
+	</a>
+}
+else
+{
+	<button class="@ButtonCSS" disabled title="File not available">
+		<span class="@FontSize">@Dto?.Parasha</span>
+		<i class="@FontCSS" aria-hidden="true"></i>
+	</button>
+}
+
+@code {
+	[Parameter, EditorRequired] public Dto? Dto { get; set; }
+	[Parameter, EditorRequired] public bool IsXs { get; set; }
+
+	protected string FontSize => IsXs ? "fs-5" : "fs-4";
+	const string ButtonCSS = "btn btn-outline-danger btn-xl";
+	const string FontCSS = "fas fa-file-download fa-fw fa-2x";
+}

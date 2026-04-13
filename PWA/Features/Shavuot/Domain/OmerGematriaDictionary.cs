@@ -1,7 +1,8 @@
 ﻿
-namespace PWA.Features.Shavuot.Domain;	
+namespace PWA.Features.Shavuot.Domain;
 //namespace PWA.Features.Home.Omer;
 
+// Not being used
 public class OmerGematriaDictionary
 {
 	public static string? GetHebrew(int count)

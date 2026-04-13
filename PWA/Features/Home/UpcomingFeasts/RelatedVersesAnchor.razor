@@ -1,10 +1,13 @@
-﻿<a href='@Index' class='btn btn-outline-primary btn-sm'
+﻿<a href='@Index' class='@ButtonCSS'
 	 title='Related verses for @Title'>
-	<span class=" @FontSize">@Title</span>
+	<span class=" @FontSize">@Title
+	&nbsp; <i class="fas fa-chevron-right"></i>
+	</span>
 </a>
 
 @code {
 	[Parameter, EditorRequired] public string Title { get; set; }
 	[Parameter, EditorRequired] public string Index { get; set; }
 	[Parameter, EditorRequired] public string FontSize { get; set; }
+	[Parameter, EditorRequired] public string ButtonCSS { get; set; }
 }

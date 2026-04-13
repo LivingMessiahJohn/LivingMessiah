@@ -4,28 +4,6 @@ using RoleEnum = Admin.Security.Enums.Role;
 
 namespace Admin.Enums;
 
-[Flags]
-public enum PageListType
-{
-	None = 0,
-	SitemapPage = 1, // Delete, or make it a cool search feature
-	Footer = 2, // Delete
-	Layout = 4,
-	HealthCheck = 8,
-	Reply = 16,
-	LayoutXs = 32,
-	LayoutSm = 64,
-	LayoutMd = 128,
-	LayoutLg = 256,
-	LayoutXl = 512
-	// SampleCode ??? 
-}
-
-/*
-- [ ] Calendar\ManageParashaCalendar
-- [ ] Contacts
- */
-
 public abstract class Nav : SmartEnum<Nav>
 {
 
@@ -38,6 +16,7 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int KeyDates = 4;
 		internal const int Database = 5;
 		internal const int HealthCheckCalendar = 6;
+		internal const int FeastTable = 7;
 		//internal const int PsalmsAndProverbs = 7;
 		internal const int SpecialEvents = 8;
 		internal const int Profile = 9;
@@ -50,6 +29,7 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav KeyDates = new KeyDatesSE();
 	public static readonly Nav Database = new DatabaseSE();
 	public static readonly Nav HealthCheckCalendar = new HealthCheckCalendarSE();
+	public static readonly Nav FeastTable = new FeastTableSE();
 	//public static readonly Nav PsalmsAndProverbs = new PsalmsAndProverbsSE();
 	public static readonly Nav SpecialEvents = new SpecialEventsSE();
 	public static readonly Nav Sukkot = new SukkotSE();
@@ -68,8 +48,6 @@ public abstract class Nav : SmartEnum<Nav>
 	public abstract string Title { get; }
 	public abstract string Icon { get; }
 	public abstract int Sort { get; }
-	public abstract bool IsPartOfList(PageListType pageListType);
-	public abstract PageListType PageListType { get; }
 	public abstract bool Disabled { get; }
 	public abstract int RequiredRoles { get; } // New property for bitwise role checking
 
@@ -100,8 +78,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Title => "Home";
 		public override string Icon => "fas fa-home";
 		public override int Sort => Id.Home;
-		public override PageListType PageListType => PageListType.Footer;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 		public override int RequiredRoles => 0; // No specific role required for Home
 	}
@@ -113,8 +89,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Title => "Key Dates";
 		public override string Icon => "far fa-calendar-check";
 		public override int Sort => Id.KeyDates;
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Footer | PageListType.Layout | PageListType.LayoutMd;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 		public override int RequiredRoles => RoleEnum.KeyDates.Value | RoleEnum.Admin.Value; // KeyDates or Admin role
 	}
@@ -126,8 +100,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Title => "Database Error Logs";
 		public override string Icon => "fas fa-bomb";
 		public override int Sort => Id.Database;
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Footer | PageListType.Layout | PageListType.LayoutMd;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 		public override int RequiredRoles => RoleEnum.Admin.Value; // Admin only
 	}
@@ -139,10 +111,19 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Title => "Health Check | Calendar";
 		public override string Icon => "fas fa-heartbeat";
 		public override int Sort => Id.HealthCheckCalendar;
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 		public override int RequiredRoles => RoleEnum.Admin.Value; // Admin only
+	}
+
+	private sealed class FeastTableSE : Nav
+	{
+		public FeastTableSE() : base($"{nameof(Id.FeastTable)}", Id.FeastTable) { }
+		public override string Index => "/FeastTable";
+		public override string Title => "Feast Table";
+		public override string Icon => "fas fa-glass-cheers";
+		public override int Sort => Id.FeastTable;
+		public override bool Disabled => false;
+		public override int RequiredRoles => RoleEnum.Admin.Value; 
 	}
 
 	/*
@@ -153,8 +134,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Title => "Upcoming Psalms And Proverbs";
 		public override string Icon => "fab fa-readme";
 		public override int Sort => Id.PsalmsAndProverbs;
-		public override PageListType PageListType => PageListType.SitemapPage;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 		public override int RequiredRoles => 0; // No specific role required
 	}
@@ -167,8 +146,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Title => "Special Events";
 		public override string Icon => "far fa-clock";
 		public override int Sort => Id.SpecialEvents;
-		public override PageListType PageListType => PageListType.SitemapPage; //  | PageListType.Layout
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 		public override int RequiredRoles => RoleEnum.Announcements.Value | RoleEnum.Admin.Value; // Announcements or Admin role
 	}
@@ -180,8 +157,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Title => Features.Sukkot.Enums.MenuBar.Home.Title;
 		public override string Icon => Features.Sukkot.Enums.MenuBar.Home.Icon;
 		public override int Sort => Id.Sukkot;
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 		public override int RequiredRoles => RoleEnum.Sukkot.Value | RoleEnum.SukkotHost.Value | RoleEnum.Admin.Value; // Sukkot, SukkotHost, or Admin role
 	}
@@ -193,8 +168,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Title => Features.Sukkot.Enums.MenuBar.Dashboard.Title;
 		public override string Icon => Features.Sukkot.Enums.MenuBar.Dashboard.Icon;
 		public override int Sort => Id.SukkotDashboard;
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.Layout;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 		public override int RequiredRoles => RoleEnum.Sukkot.Value | RoleEnum.SukkotHost.Value | RoleEnum.Admin.Value; 
 	}
@@ -206,8 +179,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Title => "Profile";
 		public override string Icon => "fab fa-superpowers";
 		public override int Sort => Id.Profile;
-		public override PageListType PageListType => PageListType.None;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 		public override int RequiredRoles => 0; // No specific role required
 	}
@@ -219,8 +190,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Title => "Weekly Download";
 		public override string Icon => "fas fa-file-pdf";
 		public override int Sort => Id.WeeklyDownload;
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 		public override int RequiredRoles => RoleEnum.KeyDates.Value | RoleEnum.Admin.Value; // KeyDates or Admin role
 	}

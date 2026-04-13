@@ -3,30 +3,6 @@
 namespace Admin.Features.Sukkot.Enums;
 
 
-/*
-By using `RoleFlag` can I make MenuBar more declaritve with regard to who can see what?
-
-	
-Extra Fields
-	public abstract bool HasAccess(PageListType pageListType);
-
-Example
-  public ReportSE() : base($"{nameof(Id.Report)}", Id.Report) { }
-	public override bool HasAccess(bool Role) => (aaa) || (bbb);
-
-[Flags]
-public enum RoleFlag
-{
-	//All = -1,
-	//None = 0,
-	Admin = 1,
-	Announcements = 2,
-	KeyDates = 4,
-	Sukkot = 8,
-	SukkotHost = 16
-}
-*/
-
 public abstract class MenuBar : SmartEnum<MenuBar>
 {
 	#region Id's

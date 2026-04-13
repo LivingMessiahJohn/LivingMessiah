@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using PWA;
-using PWA.Features.Home;
+using PWA.Components.Moon.Data;
+using PWA.Components.Omer.Data;
+using PWA.Features.Home.Data;
 using PWA.Features.FeastDayPlanner.Data;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 using Serilog;
@@ -40,7 +42,8 @@ var apiBaseAddress = builder.Configuration["services:api:https:0"]
 Log.Information("API Base Address: {ApiBaseAddress}", apiBaseAddress);
 
 builder.Services.AddBlobApiService(apiBaseAddress);
-
+builder.Services.AddMoon();
+builder.Services.AddOmer();
 builder.Services.AddFeastDayPlanner();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });

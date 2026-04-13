@@ -1,0 +1,67 @@
+﻿@inject Data.IBlobApiService BlobApiService
+@inject ILogger<WrapperCardBody>? Logger
+
+<div class="card-body py-1">
+	<div class="card bg-primary-subtle">
+
+		<div class="card-header fs-3"><i class="fas fa-file-pdf"></i> Pdf Download</div>
+
+		@if (ExceptionOccured)
+		{
+			<Alert>@Global.ToastShowError, ExceptionOccured=true</Alert>
+		}
+		else
+		{
+			@if(Dto is not null)
+			{
+				<div class="card-body text-center mt-0">
+					<div class="@MediaQuery.Xs.DivClass"><DownloadButton Dto="@Dto" IsXs="true" /></div>
+					<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><DownloadButton Dto="@Dto" IsXs="false" /></div>
+				</div>
+			}	
+		}
+
+	</div>
+</div>
+
+@code {
+	protected Dto? Dto;
+	bool ExceptionOccured = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		Logger!.LogInformation("{Method}, {Message}", $"{nameof(WrapperCardBody)}!{nameof(OnInitializedAsync)}", "Start");
+		try
+		{
+			await Task.Delay(500);
+			Dto = await BlobApiService.GetParasha(null);
+
+			if (Dto is null)
+			{
+				Logger!.LogError("{Method}, Dto is null", nameof(OnInitializedAsync));
+				ExceptionOccured = true;
+			}
+			else
+			{
+				if (Dto?.ExceptionOccurred == true)
+				{
+					Logger!.LogError("{Method}, Dto.ExceptionOccurred is TRUE", nameof(OnInitializedAsync));
+					ExceptionOccured = true;
+				}
+				else
+				{
+					Logger!.LogInformation("{Method}, {Message}", 
+						nameof(OnInitializedAsync), $"Url: {Dto!.Url}, Exists: {Dto!.Exists}, Parasha: {Dto!.Parasha}");
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+			ExceptionOccured = true;
+		}
+
+		Logger!.LogInformation("{Method}, {Message}", $"{nameof(WrapperCardBody)}!{nameof(OnInitializedAsync)}", "FINISHED!!!");
+	}
+
+}
