@@ -22,9 +22,17 @@ public class BlobInfoFunction
 
 	[Function("GetBlobInfo")]
 	public async Task<HttpResponseData> GetBlobInfo(
-			[HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "blob-info")] HttpRequestData req)
+		[HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", "options", Route = "blob-info")] HttpRequestData req)
 	{
-		_logger.LogInformation("GetBlobInfo function processing request");
+		_logger.LogInformation("GetBlobInfo function processing request. Method: {Method}", req.Method);
+
+		// Handle CORS preflight
+		if (req.Method.Equals("OPTIONS", StringComparison.OrdinalIgnoreCase))
+		{
+			var optionsResponse = req.CreateResponse(HttpStatusCode.OK);
+			AddCorsHeaders(optionsResponse);
+			return optionsResponse;
+		}
 
 		try
 		{
@@ -36,6 +44,7 @@ public class BlobInfoFunction
 			if (request is null || string.IsNullOrWhiteSpace(request.BlobName))
 			{
 				var badRequestResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+				AddCorsHeaders(badRequestResponse);
 				await badRequestResponse.WriteAsJsonAsync(new BlobInfoResponse(
 						Exists: false,
 						BlobInfo: null,
@@ -54,6 +63,7 @@ public class BlobInfoFunction
 			{
 				_logger.LogError("Azure Storage configuration is missing");
 				var errorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
+				AddCorsHeaders(errorResponse);
 				await errorResponse.WriteAsJsonAsync(new BlobInfoResponse(
 						Exists: false,
 						BlobInfo: null,
@@ -71,6 +81,7 @@ public class BlobInfoFunction
 			{
 				_logger.LogInformation("Blob does not exist: {BlobName}", blobName);
 				var notFoundResponse = req.CreateResponse(HttpStatusCode.OK);
+				AddCorsHeaders(notFoundResponse);
 				await notFoundResponse.WriteAsJsonAsync(new BlobInfoResponse(
 						Exists: false,
 						BlobInfo: null,
@@ -87,6 +98,7 @@ public class BlobInfoFunction
 			_logger.LogInformation("Blob info retrieved for {BlobName}: {Size} bytes", blobName, propertiesResponse.Value.ContentLength);
 
 			var successResponse = req.CreateResponse(HttpStatusCode.OK);
+			AddCorsHeaders(successResponse);
 			await successResponse.WriteAsJsonAsync(new BlobInfoResponse(
 					Exists: true,
 					BlobInfo: blobInfo,
@@ -98,6 +110,7 @@ public class BlobInfoFunction
 		{
 			_logger.LogWarning(ex, "Transient error occurred");
 			var response = req.CreateResponse(HttpStatusCode.ServiceUnavailable);
+			AddCorsHeaders(response);
 			await response.WriteAsJsonAsync(new BlobInfoResponse(
 					Exists: false,
 					BlobInfo: null,
@@ -109,6 +122,7 @@ public class BlobInfoFunction
 		{
 			_logger.LogError(ex, "Error processing GetBlobInfo request");
 			var response = req.CreateResponse(HttpStatusCode.InternalServerError);
+			AddCorsHeaders(response);
 			await response.WriteAsJsonAsync(new BlobInfoResponse(
 					Exists: false,
 					BlobInfo: null,
@@ -116,7 +130,15 @@ public class BlobInfoFunction
 			return response;
 		}
 	}
-
+	
+	private static void AddCorsHeaders(HttpResponseData response)
+	{
+		response.Headers.Add("Access-Control-Allow-Origin", "https://localhost:7211");
+		response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+		response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+		response.Headers.Add("Access-Control-Max-Age", "86400");
+	}
+	
 	private static bool IsTransientError(RequestFailedException ex) =>
 			ex.Status == 503 || // Service Unavailable
 			ex.Status == 408 || // Request Timeout

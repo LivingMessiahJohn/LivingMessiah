@@ -1,0 +1,48 @@
+﻿@using PWA.Components.Omer
+@inject PWA.Components.Omer.Data.IService Service;
+
+@if (omerCount > 0)
+{
+	<div class="card border border-primary border-3 rounded-top text-center mb-3 mt-3">
+
+		<div class="card-header text-center bg-primary-subtle">
+			<h2 class="text-center">
+				<b>Omer Count</b>:
+				<span class="fs-1 text-white badge bg-primary">@omerCount</span>
+			</h2>
+		</div>
+
+		<div class="card-body">
+			<img src="@Image" class="img-fluid rounded-start" alt="Omer Count Waive Offering">
+		</div>
+
+		<div class="card-footer bg-dark-subtle">
+
+			<ShowHidePrayerToggle ContentIsShowing="ShowingDetails" OnToggleSelected="ReturnedToggle" />
+
+		</div>
+
+		@if (ShowingDetails)
+		{
+			<PrayerCard  OmerCount="omerCount" />
+		}
+
+	</div>
+}
+
+@code {
+	bool ShowingDetails;
+	string Icon => "fas fa-sort-numeric-up";
+	const string Image = "/images/feasts/Weeks-400-x-400.jpg";
+
+	protected int omerCount { get; set; } = 0;
+	protected override void OnInitialized()
+	{
+		omerCount = Service.GetOmerCount(DateTime.UtcNow);
+	}
+
+	private async Task ReturnedToggle()
+	{
+		ShowingDetails = !ShowingDetails;
+	}
+}

@@ -138,7 +138,7 @@ public abstract class Feast : SmartEnum<Enums.Feast>
 		public override string Index => "/Weeks"; 
 		public override string Title => "Weeks";
 		public override string Icon => "fab fa-creative-commons-zero";
-		public override string Image => "/images/feasts/shavuot-moses-tablets-400-x-400.jpg"; // Weeks-400-x-400.jpg
+		public override string Image => "/images/feasts/shavuot-moses-tablets-400-x-400.jpg";
 		public override FeastDayType? FeastDay => FeastDayType.Weeks;
 		public override Enums.Hebrew Hebrew => new() { TitleSuffix = "Shavu'ot", FloatRightHebrew = "שָׁבוּעוֹת", Strongs = "H7620" };
 		public override string SpecialEventIndex => "";

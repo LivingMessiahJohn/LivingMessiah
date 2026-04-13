@@ -1,0 +1,41 @@
+﻿@using PWA.Components.Moon
+@inject PWA.Components.Moon.Data.IService Service;
+
+@if (dto is not null)
+{
+	<div class="card border border-3 border-black">
+
+		<div class="card-header text-center bg-primary-subtle">
+			<h2 class="text-center text-black ">Moon Phase</h2>
+		</div>
+
+		<div class="card-header text-center bg-primary-subtle">
+
+			<div class="d-flex justify-content-between">
+				<div class="">
+					<span class="fs-3">day @dto.DaysOld of</span><br /><span class="fs-5 fst-italic fw-bold">@dto.CurrentMonthName</span>
+				</div>
+
+				@* <div class=""><span class="fs-5">Moon</span><br /><span class="fs-5 ">Phase</span></div> *@
+
+				<div class="">
+					<span class="fs-3">@dto.DaysToGo days until </span><br /><span class="fs-5 fst-italic fw-bold">@dto.NextMonthName</span>
+				</div>
+
+			</div>
+		</div>
+
+		<img src='@dto.ImageFile' title="@dto.ImageFile" class="p-5 bg-black">
+
+	</div>
+
+}
+
+@code {
+	private PWA.Components.Moon.Data.DTO? dto;
+
+	protected override void OnInitialized()
+	{
+		dto = Service.GetEventMoon(DateTime.UtcNow);
+	}
+}

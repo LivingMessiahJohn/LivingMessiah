@@ -1,0 +1,20 @@
+﻿
+<button @onclick="ButtonClicked"
+				class="@ButtonCSS" type="button" title="@ButtonTitle">
+	@Title <i class='@Icon'></i>
+</button>
+
+@code {
+	[Parameter, EditorRequired] public bool ContentIsShowing { get; set; }
+	[Parameter] public EventCallback OnToggleSelected { get; set; }
+
+	private string Title = "Omer Prayer"; // => ContentIsShowing ? "Hide " : "Details";
+	private string ButtonTitle => ContentIsShowing ? "Hide " : $"Show the {Title}";
+	private string Icon => ContentIsShowing ? "fas fa-chevron-up" : "fas fa-chevron-down";
+	private string ButtonCSS = "btn btn-primary btn-lg py-1";
+
+	private void ButtonClicked()
+	{
+		OnToggleSelected.InvokeAsync();
+	}
+}

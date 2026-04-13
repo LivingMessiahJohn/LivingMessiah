@@ -1,0 +1,48 @@
+﻿@using RCL.Features.Calendar.Enums
+@using PWA.Components.Omer
+
+ <div class="card border border-1 border-warning m-2">
+		<div class="card-header bg-warning-subtle">
+			<h5 class="text-center">Omer Blessing</h5>
+
+			<div class="d-flex justify-content-around">
+				<span class="fs-6 text-center fst-italic my-0">Bracha for Sefirat HaOmer</span>
+				<span class="hebrew16">סְפִירַת הָעֹמֶר</span>
+			</div>
+
+		</div>
+
+		<div class="card-body">
+			<blockquote>
+
+				<p class="hebrew30">
+					בָּרוּךְ אַתָּה יְהוָה אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם אֲשֶׁר קִדְּשָׁנוּ בְּמִצְו‍ֹתָיו וְצִוָּנוּ עַל סְפִירַת הָעֹמֶר
+				</p>
+
+				<p class="fs-5">
+					BA-RUCH A-TAH ADO-NAI E-LO-HE-NU ME-LECH HA-OLAM ASHER KID-E-SHA-NU BE-MITZ-VO-TAV VETZI-VA-NU AL SEFI-RAT HA-OMER.
+				</p>
+
+				<p class="fs-5">
+					Blessed are You, Lord our God, King of the Universe, who has sanctified us with His commandments, and commanded us concerning the counting of the Omer.
+				</p>
+
+				<p class="fs-3 text-center">
+					<span class=" ">Today is day <b>@OmerCount</b> of the Omer.</span>
+				</p>
+
+				<hr />
+
+				<small class="float-end">
+					<a href="https://grokipedia.com/page/sfira" target="_blank">
+						<i>sfira</i> AKA <i>Sefirat HaOmer</i>
+						<i class="fas fa-external-link-alt"></i>
+					</a>
+				</small>
+			</blockquote>
+		</div>
+	</div>
+
+@code {
+	[Parameter, EditorRequired] public int OmerCount { get; set; }
+}

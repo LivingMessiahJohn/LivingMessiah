@@ -20,30 +20,29 @@ public abstract class Nav : SmartEnum<Nav>
 	{
 		internal const int Home = 1;
 		internal const int Calendar = 2;
-		internal const int FeastTable = 3;
-		internal const int Donate = 4;
-		internal const int Sitemap = 5;
-		internal const int Feasts = 6;
-		internal const int LunarMonth = 7;
-		internal const int Leadership = 8;
-		internal const int HeavensDeclare = 9;
-		internal const int ThresholdCovenant = 10;
-		internal const int Podcast = 11;
-		internal const int Parasha = 12;  // PageParasha.Archive
-		internal const int Welcome = 13;
-		internal const int Liturgy = 14;
-		internal const int TorahTuesday = 15;
-		internal const int About = 16;
-		internal const int BloodMoons = 17;
-		internal const int Articles = 18;
-		internal const int FurtherStudies = 19;
-		internal const int ImportantLinks = 20;
-		internal const int WeeklyDownload = 21;
-		internal const int CalendarExplanation = 22; 
-		internal const int Location = 23; 
-		internal const int SpecialEvents = 24; 
-		internal const int DonateReplyConfirm = 25;
-		internal const int Haggadah = 26;
+		internal const int Donate = 3;
+		internal const int Sitemap = 4;
+		internal const int Feasts = 5;
+		internal const int LunarMonth = 6;
+		internal const int Leadership = 7;
+		internal const int HeavensDeclare = 8;
+		internal const int ThresholdCovenant = 9;
+		internal const int Podcast = 10;
+		internal const int Parasha = 11;  // PageParasha.Archive
+		internal const int Welcome = 12;
+		internal const int Liturgy = 13;
+		internal const int TorahTuesday = 14;
+		internal const int About = 15;
+		internal const int BloodMoons = 16;
+		internal const int Articles = 17;
+		internal const int FurtherStudies = 18;
+		internal const int ImportantLinks = 19;
+		internal const int WeeklyDownload = 20;
+		internal const int CalendarExplanation = 21; 
+		internal const int Location = 22; 
+		internal const int SpecialEvents = 23; 
+		internal const int DonateReplyConfirm = 24;
+		internal const int Haggadah = 25;
 
 		//internal const int Profile = 27;
 		//internal const int PasswordChanged = 28;
@@ -56,7 +55,6 @@ public abstract class Nav : SmartEnum<Nav>
 	#region Declared Public Instances
 	public static readonly Nav Home = new HomeSE();
 	public static readonly Nav Calendar = new CalendarSE();
-	public static readonly Nav FeastTable = new FeastTableSE();
 	public static readonly Nav Donate = new DonateSE();
 	public static readonly Nav Sitemap = new SitemapSE();
 	public static readonly Nav Feasts = new FeastsSE();
@@ -149,20 +147,6 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string HomeTitleSuffix => " chôdeshim H2320";
 		public override string HomeFloatRightHebrew => "חֳדָשִׁים";
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TierOne;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => false;
-	}
-
-	private sealed class FeastTableSE : Nav
-	{
-		public FeastTableSE() : base($"{nameof(Id.FeastTable)}", Id.FeastTable) { }
-		public override string Index => "/FeastTable";
-		public override string Title => "Feast Table";
-		public override string Icon => "fas fa-glass-cheers";
-		public override int Sort => Id.FeastTable;
-		public override string HomeTitleSuffix => " ";
-		public override string HomeFloatRightHebrew => "";
-		public override PageListType PageListType => PageListType.SitemapPage | PageListType.HealthCheck;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}

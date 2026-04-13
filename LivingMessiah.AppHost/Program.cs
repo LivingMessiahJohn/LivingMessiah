@@ -15,7 +15,7 @@ var apiService = builder.AddProject<Projects.Api>("api")
 
 // Add PWA with reference to API
 builder.AddProject<Projects.PWA>("pwa").WithReference(apiService);
-builder.AddProject<Projects.LivingMessiah>("livingmessiah");
+//builder.AddProject<Projects.LivingMessiah>("livingmessiah");
 builder.AddProject<Projects.Admin>("admin");
 builder.AddProject<Projects.Sukkot>("sukkot");
 
