@@ -25,16 +25,29 @@ using Sukkot.Features.Components.LifeCycleAuthority;
 using Sukkot.Endpoints.Constants;
 using Sukkot.Features.Data;
 
+// OpenTelemetry
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using Azure.Monitor.OpenTelemetry.Exporter;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 string appSettingJson =
 	Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development
-	? appSettingJson = "appsettings.Development.json"
+	? "appsettings.Development.json"
 	: "appsettings.Production.json";
 
 var configuration = new ConfigurationBuilder().AddJsonFile(appSettingJson).Build();
-Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
+
+// Application Insights connection string (env var preferred)
+var aiConnectionString = Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING")
+	?? configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+
+Log.Logger = new LoggerConfiguration()
+	.ReadFrom.Configuration(configuration)
+	.CreateLogger();
 
 Log.Warning("{Class}, {Environment}, AppSettingJsonFile: {AppSettingJsonFile}; "
 			, nameof(Program), Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), appSettingJson);
@@ -43,8 +56,45 @@ try
 {
 	builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(configuration));
 
-	//ToDo: Why put this here?
-	//Sukkot.Helpers.StartupHelper.DumpSectionConfiguration(builder.Configuration.GetSection(nameof(StripeSettings)), nameof(StripeSettings);
+	#region added by AI
+	// Clear built-in providers and add OpenTelemetry logging which will export to Azure Monitor if configured
+	builder.Logging.ClearProviders();
+	builder.Logging.AddOpenTelemetry(options =>
+	{
+		options.IncludeScopes = true;
+		options.IncludeFormattedMessage = true;
+		options.ParseStateValues = true;
+		options.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Sukkot"));
+		if (!string.IsNullOrWhiteSpace(aiConnectionString))
+		{
+			options.AddAzureMonitorLogExporter(o => o.ConnectionString = aiConnectionString);
+		}
+		else
+		{
+			options.AddConsoleExporter();
+		}
+	});
+
+	builder.Services.AddOpenTelemetry()
+			.WithTracing(tracerProviderBuilder =>
+			{
+				tracerProviderBuilder
+					.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Sukkot"))
+					.AddAspNetCoreInstrumentation()
+					.AddHttpClientInstrumentation();
+
+				if (!string.IsNullOrWhiteSpace(aiConnectionString))
+				{
+					tracerProviderBuilder.AddAzureMonitorTraceExporter(o => o.ConnectionString = aiConnectionString);
+				}
+				else
+				{
+					tracerProviderBuilder.AddConsoleExporter(); // from OpenTelemetry.Exporter.Console
+				}
+			});
+
+	#endregion
+
 
 	// Services.Add
 	builder.Services.AddBlazoredToast();
@@ -53,7 +103,6 @@ try
 			.AddPolicy(Policy.Name, policy =>
 				policy.RequireClaim(Policy.Claim, "true"));
 
-	builder.Services.AddApplicationInsightsTelemetry();
 	builder.Services.AddSukkotData();
 		
 	builder.Services.AddAuth0Authentication(builder.Configuration);

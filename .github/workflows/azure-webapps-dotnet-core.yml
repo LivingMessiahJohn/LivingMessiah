@@ -54,9 +54,6 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
-      - name: Publish LivingMessiah
-        run: dotnet publish LivingMessiah/LivingMessiah.csproj -c Release -o ${{ github.workspace }}/publish/LivingMessiah
-
       - name: Publish Admin
         run: dotnet publish Admin/Admin.csproj -c Release -o ${{ github.workspace }}/publish/LivingMessiahAdmin
 
