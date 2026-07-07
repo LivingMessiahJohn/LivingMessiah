@@ -13,6 +13,8 @@
 
 		<div class="card-body bg-primary-subtle mb-1">
 			<h3 class="card-title text-center">Upload Parasha Teaching</h3>
+			<h6 class="text-danger text-center mt-1">Max: <b>@maxAllowedSizeString</b></h6>
+
 		</div>
 
 		<div class="card-body border border-3 border-warning mb-1">
@@ -239,6 +241,10 @@
 		}
 	}
 
+	//const long maxAllowedSize = 1024L * 1024L * 80; // 80 MB (adjust as needed)
+	const long maxAllowedSize = 1024L * 1024L * 200; // 200 MB
+	const string maxAllowedSizeString = "200 MB";
+
 	private async Task UploadFromFileToAzure()
 	{
 		if (selectedFile is null)
@@ -269,7 +275,6 @@
 			try
 			{
 				// Save the uploaded browser file to a temp file
-				const long maxAllowedSize = 1024L * 1024L * 80; // 80 MB (adjust as needed)
 				await using (var fs = File.Create(tempFilePath))
 				await using (var stream = selectedFile.OpenReadStream(maxAllowedSize))
 				{

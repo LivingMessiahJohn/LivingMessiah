@@ -37,6 +37,13 @@
 						<div class=""><RelatedVersesAnchor Title="Related Verses" Index="@item.Index" FontSize="@FontSize" ButtonCSS="btn btn-primary" /></div>
 					</div>
 
+					@if (item.FeastId == FeastEnums.Feast.Tabernacles.Value)
+					{
+						<div class="card-body">
+							<SukkotIndexCard />
+						</div>
+					}
+
 				</div>
 			</div>
 		}
@@ -80,7 +87,8 @@
 										 Image = feast.Image,
 										 FloatRightHebrew = feast.Hebrew.FloatRightHebrew ?? "",
 										 RangeFormatted = feastDay.RangeFormatted,
-										 DaysAway = feastDay.Date.DayNumber - CurrentDate.DayNumber
+										 DaysAway = feastDay.Date.DayNumber - CurrentDate.DayNumber,
+										 FeastId = feast.Value
 									 }).ToList();
 		}
 		catch (Exception ex)

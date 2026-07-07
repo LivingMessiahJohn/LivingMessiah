@@ -51,6 +51,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
   // This is a sanity check based on the idea for some feast days you can determine how many days are in between the dates
   // E.g. There's 9 days between Trumpets and Yom Kippur, so if the difference between those dates is off then one of the dates is wrong.
   public abstract int? DaysFromPrevFeast { get; }
+  public abstract DateOnly StartShowingCard { get; }  
+
   #endregion
 
 
@@ -64,9 +66,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		? $"{DateOnlyRange.Min.ToShortDateString()} - {DateOnlyRange.Max.ToShortDateString()}"
 		: Date.ToShortDateString();
 
-
-	public DateOnly StartShowingCard => DateOnlyRange.Min.AddDays(-45);
-
   // Using `Range.Min:dd MMM yyyy HH` instead of DateOnlyRange.Min.ToString("dd MMM yyyy HH")`
   // FormatException: String 'dd MMM yyyy HH' contains parts which are not specific to the DateOnly.
   public string FirstAndLastDates => $"DateRange: {DateOnlyRange.Min:dd MMM yyyy} - {DateOnlyRange.Max:dd MMM yyyy}";
@@ -76,6 +75,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
   public MarkupString HasCalendarDetailsFormatted => HasCalendarDetails 
     ? (MarkupString)"<mark><b><span>&#10003;</span></b></mark>" 
     : (MarkupString)string.Empty;
+
   #endregion
 
 
@@ -99,6 +99,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override int? DaysFromPrevFeast => null;  // This is the beginning of the year
 		public override DateOnly Date => FeastDayDates.Hanukkah;
     public override DateOnlyRange DateOnlyRange => new(Date, Date.AddDays(8)); // ToDo: Remove DateOnly.FromDateTime
+    
+    public override DateOnly StartShowingCard => DateOnlyRange.Min.AddDays(-45);
   } 
 
   private sealed class PurimSE : FeastDay
@@ -117,8 +119,9 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override bool HasCalendarDetails => false;
 		public override int? DaysFromPrevFeast => null;  // Hanukkah comes before and it's to fluid to track, so null
 
-		public override DateOnly Date => FeastDayDates.Purim;
+    public override DateOnly Date => FeastDayDates.Purim;
     public override DateOnlyRange DateOnlyRange => new(Date, Date);
+    public override DateOnly StartShowingCard => DateOnlyRange.Min.AddDays(-45);
   }
 
 	//ToDo, Rename this PassoverWeek(SE)
@@ -137,7 +140,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => true;
 		public override int? DaysFromPrevFeast => null;  // Purim comes before and it's to fluid to track, so null
-		public override DateOnly Date => FeastDayDates.Passover;
+    public override DateOnly StartShowingCard => DateOnlyRange.Min.AddDays(-45);
+    public override DateOnly Date => FeastDayDates.Passover;
     public override DateOnlyRange DateOnlyRange => new(Date, Date);
   }
 
@@ -156,7 +160,9 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => false;  // this is the only one that isn't true
 		public override int? DaysFromPrevFeast => 51;  // Pesach is before and so a hard business rule can be made ... I think ... why isn't it 50?
-		public override DateOnly Date => FeastDayDates.Weeks;
+    public override DateOnly StartShowingCard => DateOnlyRange.Min.AddDays(-45);
+
+    public override DateOnly Date => FeastDayDates.Weeks;
     public override DateOnlyRange DateOnlyRange => new(Date, Date);
   }
 
@@ -175,7 +181,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => true;
 		public override int? DaysFromPrevFeast => 113;  // Shavuot / Weeks is before and so a hard business rule can be made ... I think 
-		public override DateOnly Date => FeastDayDates.Trumpets;
+    public override DateOnly StartShowingCard => DateOnlyRange.Min.AddDays(-133);
+    public override DateOnly Date => FeastDayDates.Trumpets;
     public override DateOnlyRange DateOnlyRange => new(Date, Date);  
   }
 
@@ -194,7 +201,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => true;
 		public override int? DaysFromPrevFeast => 9;  // Trumpets is before and so a hard business rule can be made
-		public override DateOnly Date => FeastDayDates.YomKippur;
+    public override DateOnly StartShowingCard => DateOnlyRange.Min.AddDays(-133);
+    public override DateOnly Date => FeastDayDates.YomKippur;
     public override DateOnlyRange DateOnlyRange => new(Date, Date);
   }
 
@@ -213,7 +221,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 		public override bool HasCalendarDetails => true;
 		public override int? DaysFromPrevFeast => 5;  // Yom Kippur is before and so a hard business rule can be made 
-		public override DateOnly Date => FeastDayDates.Tabernacles;
+    public override DateOnly StartShowingCard => DateOnlyRange.Min.AddDays(-133);
+    public override DateOnly Date => FeastDayDates.Tabernacles;
     public override DateOnlyRange DateOnlyRange => new(Date, Date.AddDays(8)); 
   }
 

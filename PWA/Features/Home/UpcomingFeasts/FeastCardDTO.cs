@@ -8,6 +8,6 @@ public class FeastCardDTO
 	public string FloatRightHebrew { get; set; } = default!;
 	public string RangeFormatted { get; set; } = default!;	
 	public int DaysAway { get; set; } = 0;
-
+	public int FeastId { get; set; } = 0; // SmartEnum Value of RCL\Features\Feasts\Enums\Feast.cs
 
 }

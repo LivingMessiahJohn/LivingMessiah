@@ -26,9 +26,13 @@
         </NotAuthorized>
       </AuthorizeView>
     </div>
-
+@* 
     <div class="@MediaQuery.XsOrSm.DivClass"><Header IsXsOrSm=true /></div>
     <div class="@MediaQuery.MdOrLgOrXl.DivClass"><Header IsXsOrSm=false /></div>
+ *@
+    <div class="@MediaQuery.XsOrSm.DivClass"><HeaderWideBanner IsXsOrSm=true /></div>
+    <div class="@MediaQuery.MdOrLgOrXl.DivClass"><HeaderWideBanner IsXsOrSm=false /></div>
+
     <CalendarWeek />
     <Location />
     <Documents />
