@@ -8,8 +8,9 @@
       @foreach (var document in DocumentList)
       {
         <li class="list-group-item bg-warning-subtle">
-          <a href="@Constants.Documents.Url(document.FileName)"
-             target="_blank">
+          @* <a href="@Constants.Documents.Url(document.FileName)" target="_blank" *@
+          <a 
+             class="@disabled text-black-50">
             @document.Name
           </a>
         </li>
@@ -29,5 +30,7 @@
     };
 
   private record DocumentLink(string Name, string FileName);
+
+	const string disabled = " disabled";
 }
 

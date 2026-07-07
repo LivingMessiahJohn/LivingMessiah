@@ -174,8 +174,8 @@ public abstract class Feast : SmartEnum<Enums.Feast>
 		public override string Index => "/Tabernacles"; 
 		public override string Title => "Tabernacles";
 		public override string Icon => "fas fa-campground";
-		public override string Image => "/images/feasts/tabernacles-400-x-400.jpg";
-		public override FeastDayType? FeastDay => FeastDayType.Tabernacles;
+		public override string Image => "/images/feasts/sukkot-400-400.jpg"; // tabernacles-400-x-400.jpg
+    public override FeastDayType? FeastDay => FeastDayType.Tabernacles;
 		public override Enums.Hebrew Hebrew => new() { TitleSuffix = "Sukkot", FloatRightHebrew = "סֻּכּוֹת", Strongs = "H5523" };
 		public override string SpecialEventIndex => "";
 	}
