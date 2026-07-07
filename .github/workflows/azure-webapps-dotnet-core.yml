@@ -59,13 +59,7 @@ jobs:
 
       - name: Publish Sukkot
         run: dotnet publish Sukkot/Sukkot.csproj -c Release -o ${{ github.workspace }}/publish/Sukkot --self-contained true -r win-x64
-
-      - name: Upload LivingMessiah artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: LivingMessiah
-          path: ${{ github.workspace }}/publish/LivingMessiah
-
+        
       - name: Upload LivingMessiahAdmin artifact
         uses: actions/upload-artifact@v4
         with:
@@ -85,12 +79,6 @@ jobs:
       name: 'Development'
 
     steps:
-      - name: Download LivingMessiah artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: LivingMessiah
-          path: ./deploy-livingmessiah
-
       - name: Download LivingMessiahAdmin artifact  
         uses: actions/download-artifact@v4
         with:
@@ -102,13 +90,6 @@ jobs:
         with:
           name: LivingMessiahSukkot
           path: ./deploy-livingmessiahsukkot
-
-      - name: Deploy LivingMessiah to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'LivingMessiah'
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: './deploy-livingmessiah'
 
       - name: Deploy LivingMessiahAdmin to Azure Web App
         uses: azure/webapps-deploy@v3
