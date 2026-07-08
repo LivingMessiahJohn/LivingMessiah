@@ -2,77 +2,36 @@ name: Deploy PWA  to Azure Static Web App
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
     types: [opened, synchronize, reopened, closed]
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  cleanup-staging:
-    permissions:
-      id-token: write
-      contents: read
-    runs-on: ubuntu-latest
-    # Run cleanup on pushes and active PRs (before deploy)
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-    steps:
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Cleanup old staging environments (keep latest 2)
-        env:
-          SWA_NAME: LivingMessiahPWA  # Update to your exact Static Web App name
-          RG_NAME: LmmWebAppGroup     # Update to your resource group
-          KEEP_COUNT: 2               # Keep 1-3 newest; adjust as needed
-        run: |
-          echo "🔍 Listing environments for $SWA_NAME..."
-          ENV_LIST=$(az staticwebapp environment list --name $SWA_NAME --resource-group $RG_NAME --output json)
-          
-          echo "📊 Current environments:"
-          echo "$ENV_LIST" | jq -r '.[] | "\(.name) - \(.hostname) - Created: \(.createdTime)"'
-          
-          # Get non-production environments, sort by creation time (newest first), keep KEEP_COUNT
-          TO_DELETE=$(echo "$ENV_LIST" | jq -r --argjson keep "$KEEP_COUNT" '
-            map(select(.name != "production" and .name != null))
-            | sort_by(.createdTime) | reverse 
-            | .[$keep:][]?.name
-          ')
-          
-          if [ -n "$TO_DELETE" ] && [ "$TO_DELETE" != "null" ]; then
-            echo "🗑️ Deleting old environments: $TO_DELETE"
-            for env in $TO_DELETE; do
-              echo "Deleting: $env"
-              az staticwebapp environment delete --name $SWA_NAME --resource-group $RG_NAME --environment-name "$env" --yes || echo "Warning: Failed to delete $env (may not exist)"
-            done
-          else
-            echo "✅ No old environments to delete."
-          fi
-
   build_and_deploy_job:
-    needs: cleanup-staging
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - uses: actions/checkout@v4  # Update to v4 for better security/performance
+      - uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
-
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BLUE_OCEAN_00ABEE61E }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
-          app_location: "./PWA"
-          api_location: "Api"
-          output_location: "wwwroot"
+          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
+          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
+          app_location: "./PWA" # App source code path
+          api_location: "Api" # Api source code path - optional
+          output_location: "wwwroot" # Built app content directory - optional
+          ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
