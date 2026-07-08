@@ -10,6 +10,9 @@ on:
 jobs:
   cleanup-staging:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     # Run cleanup on pushes and active PRs (before deploy)
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     steps:
