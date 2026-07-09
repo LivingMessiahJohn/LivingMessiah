@@ -1,0 +1,41 @@
+name: Deploy Sukkot to Azure App Service (Linux)
+
+on:
+  push:
+    branches: [ main, john-135-deploy-to-linux ]
+    paths:
+      - 'Sukkot/**'
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: 'livingmessiah-sukkot'       # ← CHANGE TO YOUR ACTUAL LINUX APP NAME
+  AZURE_WEBAPP_PACKAGE_PATH: 'publish-Sukkot'
+  DOTNET_VERSION: '10.0'                          # ← Update if your project uses a different version
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore Sukkot/Sukkot.csproj
+
+      - name: Build
+        run: dotnet build Sukkot/Sukkot.csproj --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish Sukkot/Sukkot.csproj -c Release -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }} --no-build
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_SUKKOT }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
