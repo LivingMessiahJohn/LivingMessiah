@@ -175,3 +175,19 @@ span.verse-outline {
 hr.warning {
 	border-bottom: 3px solid #ece1c1;
 }
+
+.table-small-font {
+	font-size: 75%;
+}
+
+.table-tiny-font {
+	font-size: 50%;
+}
+
+.p-small-font {
+	font-size: 75%;
+}
+
+.p-tiny-font {
+	font-size: 50%;
+}

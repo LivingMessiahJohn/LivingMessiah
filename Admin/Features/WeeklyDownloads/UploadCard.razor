@@ -111,7 +111,7 @@
 	{
 		return RCL.Features.Parasha.Enums.Triennial.List
 		.OrderBy(o => o.Date)
-		.Select(triennial => triennial.WeeklyReadingParashaFile);
+		.Select(triennial => triennial.WeeklyReadingParashaFile + ".pdf");
 	}
 
 	protected BlobOperationResult? result;
@@ -125,7 +125,7 @@
 	protected override void OnInitialized()
 	{
 		TriennialEnum? currentReading = RCL.Features.Parasha.Helpers.GetCurrentReading();
-		string? s = currentReading!.WeeklyReadingParashaFile;
+		string? s = currentReading!.WeeklyReadingParashaFile + ".pdf";
 		fileName = string.IsNullOrWhiteSpace(s) ? "" : s;
 	}
 

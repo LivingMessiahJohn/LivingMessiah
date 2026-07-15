@@ -193,7 +193,7 @@ public static class CheckoutSession
 						UnitAmount = registrationFee.Pennies,
 						ProductData = new SessionLineItemPriceDataProductDataOptions
 						{
-							Name = "Registration Fee",
+							Name = "Registration Donation",
 						},
 					},
 					Quantity = 1,

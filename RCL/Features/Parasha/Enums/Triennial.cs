@@ -404,7 +404,12 @@ public abstract class Triennial : SmartEnum<Enums.Triennial>
   public string WeeklyReadingParashaFile =>
     $"{this.Date.ToString("yyyy-MM-dd")}-" +
     $"{BibleBook.FromValue(this.TorahVerse.BibleBook).Abrv}-" +
-    $"{this.TorahVerse.ChapterVerse.Replace("-", "-to-").Replace(":", "-").Replace(" & ", "-and-")}.pdf";
+    $"{this.TorahVerse.ChapterVerse.Replace("-", "-to-").Replace(":", "-").Replace(" & ", "-and-")}.pdf"; 
+
+  public string WeeklyReadingParashaFileTeachingOnly =>
+    $"{this.Date.ToString("yyyy-MM-dd")}-" +
+    $"{BibleBook.FromValue(this.TorahVerse.BibleBook).Abrv}-" +
+    $"{this.TorahVerse.ChapterVerse.Replace("-", "-to-").Replace(":", "-").Replace(" & ", "-and-")}-teaching.pdf"; 
 
 
   // ToDo: get of this and use DateOnly instead

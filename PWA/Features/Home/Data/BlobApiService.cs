@@ -1,13 +1,12 @@
 using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using RCL.Features.Parasha.Enums;
-using PWA.Features.Home.ParashaDiscovery;
 
 namespace PWA.Features.Home.Data;
 
 public interface IBlobApiService
 {
-	Task<Dto> GetParasha(Triennial? triennial, CancellationToken ct = default);
+	Task<BlobDTO> GetParasha(Triennial? triennial, bool isTeachingOnly, CancellationToken ct = default);
 }
 
 public class BlobApiService : IBlobApiService
@@ -21,19 +20,25 @@ public class BlobApiService : IBlobApiService
 		_logger = logger;
 	}
 
-	public async Task<Dto> GetParasha(Triennial? triennial, CancellationToken ct = default)
+	public async Task<BlobDTO> GetParasha(Triennial? triennial, bool isTeachingOnly, CancellationToken ct = default)
 	{
-		Dto dto = new(
+
+		BlobDTO dto = new(
 			Url: string.Empty, 
 			Parasha: string.Empty, 
+			isTeachingOnly: isTeachingOnly,
 			Exists: false, 
 			ExceptionOccurred: false
 		);
+
+
 		string blobName = string.Empty;
 		
 		try
 		{
-			(dto, blobName) = GetCurrentParasha(triennial);
+
+			(dto, blobName) = GetCurrentParasha(triennial, isTeachingOnly);
+
 			if (dto.ExceptionOccurred) { return dto; }
 
 			_logger!.LogDebug("{Method}, {Message}", nameof(GetParasha), $"blobName: {blobName}");
@@ -88,7 +93,7 @@ public class BlobApiService : IBlobApiService
 		}
 	}
 
-	private (Dto, string WeeklyReadingParashaFile) GetCurrentParasha(Triennial? triennial)
+	private (BlobDTO, string WeeklyReadingParashaFile) GetCurrentParasha(Triennial? triennial, bool isTeachingOnly)
 	{
 		if (triennial == null)
 		{
@@ -96,33 +101,60 @@ public class BlobApiService : IBlobApiService
 			if (currentTriennial is null)
 			{
 				_logger!.LogWarning("{Method}, {Message}", nameof(GetCurrentParasha), "Current triennial not found");
-				return (new Dto(
+				return (new BlobDTO(
 					Url: string.Empty, 
 					Parasha: string.Empty, 
+					isTeachingOnly: isTeachingOnly,
 					Exists: false, 
 					ExceptionOccurred: false
 				), string.Empty);
 			}
 			else
 			{
-				return (new Dto(
+				string baseName = NormalizeBaseName(currentTriennial.WeeklyReadingParashaFile);
+				string file = !string.IsNullOrEmpty(baseName)
+					? (isTeachingOnly ? $"{baseName}-teaching.pdf" : $"{baseName}.pdf")
+					: string.Empty;
+
+				return (new BlobDTO(
 					Url: string.Empty, 
 					Parasha: currentTriennial.Date.ToString("yyyy MMMM dd") + " | " + currentTriennial.BCV, 
+					isTeachingOnly: isTeachingOnly,
 					Exists: false, 
 					ExceptionOccurred: false
-				), currentTriennial.WeeklyReadingParashaFile);
+				), file);
 			}
 		}
 		else
 		{
-			return (new Dto(
+			string baseName = NormalizeBaseName(triennial.WeeklyReadingParashaFile);
+			string file = !string.IsNullOrEmpty(baseName)
+				? (isTeachingOnly ? $"{baseName}-teaching.pdf" : $"{baseName}.pdf")
+				: string.Empty;
+
+			return (new BlobDTO(
 				Url: string.Empty, 
 				Parasha: triennial.Date.ToString("yyyy MMMM dd") + " | " + triennial.BCV, 
+				isTeachingOnly: isTeachingOnly,
 				Exists: false, 
 				ExceptionOccurred: false
-			), triennial.WeeklyReadingParashaFile);
+			), file);
 		}
 	}
 
+	// helper to make filename generation idempotent
+	private static string NormalizeBaseName(string? baseName)
+	{
+		if (string.IsNullOrWhiteSpace(baseName)) return string.Empty;
+		baseName = baseName.Trim();
 
+		// if passed a full filename, strip .pdf and any trailing -teaching
+		if (baseName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+			baseName = baseName.Substring(0, baseName.Length - 4);
+
+		if (baseName.EndsWith("-teaching", StringComparison.OrdinalIgnoreCase))
+			baseName = baseName.Substring(0, baseName.Length - "-teaching".Length);
+
+		return baseName;
+	}
 }

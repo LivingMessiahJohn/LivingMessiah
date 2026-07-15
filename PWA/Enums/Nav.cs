@@ -399,8 +399,8 @@ public abstract class Nav : SmartEnum<Nav>
 	{
 		public WeeklyDownloadSE() : base($"{nameof(Id.WeeklyDownload)}", Id.WeeklyDownload) { }
 		public override string Index => "/WeeklyDownload";
-		public override string Title => "Weekly Download";
-		public override string Icon => "fas fa-file-pdf";
+		public override string Title => "PDF Download Archive";
+		public override string Icon => "fas fa-th";   //fa-solid fa-table-cells
 		public override int Sort => Id.WeeklyDownload;
 		public override string HomeTitleSuffix => "";
 		public override string HomeFloatRightHebrew => "";
