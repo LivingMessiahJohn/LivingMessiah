@@ -1,0 +1,31 @@
+﻿@using PWA.Features.Home.Data
+
+@if (Dto?.Exists == true)
+{
+	<a class="@ButtonCSS"
+		 target="_blank" title="Pdf @Dto!.Url"
+		 href="@Dto!.Url">
+		<span class="@FontSize">Complete Download</span>
+		<i class="@FontCSS" aria-hidden="true"></i>
+	</a>
+}
+else
+{
+	<button class="@ButtonCSS" disabled">
+		<span class="@FontSize">Complete Download</span>
+		<i class="@FontCSS" aria-hidden="true"></i>
+	</button>
+	<p class="p-small-font text-muted bg-warning-subtle">@(string.IsNullOrEmpty(Dto?.Url) ? "No URL available" : Dto.Url)</p>
+}
+
+@* <Alert>@Dto</Alert> *@
+
+@code {
+	[Parameter, EditorRequired] public BlobDTO Dto { get; set; }
+	protected string FontSize = "fs-6";
+	const string ButtonCSS = "btn btn-outline-danger ";
+	const string FontCSS = "fas fa-file-download";
+
+	// title makes no sense if disabled  title="@Dto?.Url File not available"
+
+}

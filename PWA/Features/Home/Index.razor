@@ -1,15 +1,16 @@
 @page "/"
 
+@using PWA.Features.Home.Shabbat
 @using PWA.Features.Home.UpcomingFeasts
 
 <PageTitle>Home</PageTitle>
 
-@* 
+@*
 <HomeImage />
  *@
 
 <CenteredContainer><WelcomeCard /></CenteredContainer>
-<CenteredContainer><ShabbatTeachingCard /></CenteredContainer>
+<CenteredContainer> <ShabbatCard /> </CenteredContainer>
 <CenteredContainer><MoonCard /></CenteredContainer>
 <CenteredContainer><OmerCard /></CenteredContainer>
 
@@ -18,7 +19,7 @@
 	<div class="@MediaQuery.Xs.DivClass"><FeastCards IsXs="true" /></div>
 	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><FeastCards IsXs="false" /></div>
 </CenteredContainer>
- 
+
 <SocialMediaButtons />
 
 @code {

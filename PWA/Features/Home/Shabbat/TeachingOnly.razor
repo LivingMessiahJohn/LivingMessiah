@@ -1,0 +1,76 @@
+﻿@using PWA.Features.Home.Data
+
+@inject Data.IBlobApiService BlobApiService
+@inject ILogger<TeachingOnly>? Logger
+
+
+@if (ExceptionOccurred)
+{
+	<div class="card-body text-center mt-0">
+
+		<button class="@ButtonCSS" disabled title="File not available">
+			<span class="@FontSize">Missing</span>
+			<i class="@FontCSS" aria-hidden="true"></i>
+		</button>
+		<p class="p-small-font text-muted bg-warning-subtle"><code>ExceptionOccurred</code></p>
+	</div>
+
+}
+else
+{
+	@if (Dto is not null)
+	{
+		<div class="card-body text-center mt-0">
+			<TeachingOnlyButton Dto="@Dto" />
+		</div>
+	}
+}
+
+@code {
+
+	protected string FontSize = "fs-6";
+	const string ButtonCSS = "btn btn-outline-danger ";
+	const string FontCSS = "fas fa-file-download";
+
+	protected BlobDTO? Dto;
+	bool ExceptionOccurred = false;
+
+	// ToDo: way to much code
+	protected override async Task OnInitializedAsync()
+	{
+		Logger!.LogInformation("{Method}, {Message}", $"{nameof(CompleteService)}!{nameof(OnInitializedAsync)}", "Start");
+		try
+		{
+			await Task.Delay(500);
+			Dto = await BlobApiService.GetParasha(null, true);
+
+			if (Dto is null)
+			{
+				Logger!.LogError("{Method}, Dto is null", nameof(OnInitializedAsync));
+				ExceptionOccurred = true;
+			}
+			else
+			{
+				if (Dto?.ExceptionOccurred == true)
+				{
+					Logger!.LogError("{Method}, Dto.ExceptionOccurred is TRUE", nameof(OnInitializedAsync));
+					ExceptionOccurred = true;
+				}
+				else
+				{
+					Logger!.LogInformation("{Method}, {Message}",
+						nameof(OnInitializedAsync), $"Url: {Dto!.Url}, Exists: {Dto!.Exists}, Parasha: {Dto!.Parasha}");
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+			ExceptionOccurred = true;
+		}
+
+		Logger!.LogInformation("{Method}, {Message}", $"{nameof(CompleteService)}!{nameof(OnInitializedAsync)}", "FINISHED!!!");
+	}
+
+
+}
