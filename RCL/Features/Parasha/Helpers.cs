@@ -84,7 +84,10 @@ public class Helpers
   }
 
   //public static DateTime TriennialSeedDate = DateTime.Parse("2021-10-02"); // 2021-09-25 Last date from previous triennial
-  public static DateTime TriennialSeedDate = DateTime.Parse("2024-10-26");
+
+  internal const string SeedDate = "2024-10-26";
+  public static DateTime TriennialSeedDate = DateTime.Parse(SeedDate);
+  public static DateOnly TriennialSeedDateOnly = DateOnly.Parse(SeedDate); // not used
 
   // Not used
   public static DateTime GetUsersUTC()

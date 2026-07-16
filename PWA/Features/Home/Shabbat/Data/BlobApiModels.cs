@@ -1,5 +1,4 @@
-
-namespace PWA.Features.Home.Data;
+namespace PWA.Features.Home.Shabbat.Data;
 
 public record BlobInfoRequest(string BlobName);
 

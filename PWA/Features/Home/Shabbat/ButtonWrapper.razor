@@ -1,7 +1,8 @@
-﻿@using PWA.Features.Home.Data
+﻿@using PWA.Features.Home.Shabbat.Data
+@using PWA.Features.Home.Shabbat.Enums
 
 @inject Data.IBlobApiService BlobApiService
-@inject ILogger<TeachingOnly>? Logger
+@inject ILogger<ButtonWrapper>? Logger
 
 
 @if (ExceptionOccurred)
@@ -21,12 +22,13 @@ else
 	@if (Dto is not null)
 	{
 		<div class="card-body text-center mt-0">
-			<TeachingOnlyButton Dto="@Dto" />
+			<PdfDownloadButton Dto="@Dto" />
 		</div>
 	}
 }
 
 @code {
+	[Parameter, EditorRequired] public PdfType PdfType { get; set; }
 
 	protected string FontSize = "fs-6";
 	const string ButtonCSS = "btn btn-outline-danger ";
@@ -38,11 +40,11 @@ else
 	// ToDo: way to much code
 	protected override async Task OnInitializedAsync()
 	{
-		Logger!.LogInformation("{Method}, {Message}", $"{nameof(CompleteService)}!{nameof(OnInitializedAsync)}", "Start");
+		Logger!.LogInformation("{Method}, {Message}", $"{nameof(ButtonWrapper)}!{nameof(OnInitializedAsync)}", $"Start, PdfType:{PdfType}	");
 		try
 		{
-			await Task.Delay(500);
-			Dto = await BlobApiService.GetParasha(null, true);
+			await Task.Delay(200);
+			Dto = await BlobApiService.GetParasha(null, PdfType);
 
 			if (Dto is null)
 			{
@@ -69,7 +71,7 @@ else
 			ExceptionOccurred = true;
 		}
 
-		Logger!.LogInformation("{Method}, {Message}", $"{nameof(CompleteService)}!{nameof(OnInitializedAsync)}", "FINISHED!!!");
+		Logger!.LogInformation("{Method}, {Message}", $"{nameof(ButtonWrapper)}!{nameof(OnInitializedAsync)}", "FINISHED!!!");
 	}
 
 
