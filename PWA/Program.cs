@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using PWA;
 using PWA.Components.Moon.Data;
 using PWA.Components.Omer.Data;
-using PWA.Features.Home.Data;
+using PWA.Features.Home.Shabbat.Data;
 using PWA.Features.FeastDayPlanner.Data;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 using Serilog;

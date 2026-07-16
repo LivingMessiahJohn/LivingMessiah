@@ -1,4 +1,4 @@
-﻿namespace PWA.Features.Home.Data;
+﻿namespace PWA.Features.Home.Shabbat.Data;
 
 public static class ServiceCollectionExtensions
 {

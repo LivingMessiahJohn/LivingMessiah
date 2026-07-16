@@ -1,12 +1,13 @@
 using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using RCL.Features.Parasha.Enums;
+using PWA.Features.Home.Shabbat.Constants;
 
-namespace PWA.Features.Home.Data;
+namespace PWA.Features.Home.Shabbat.Data;
 
 public interface IBlobApiService
 {
-	Task<BlobDTO> GetParasha(Triennial? triennial, bool isTeachingOnly, CancellationToken ct = default);
+	Task<BlobDTO> GetParasha(Triennial? triennial, Enums.PdfType pdfType, CancellationToken ct = default);
 }
 
 public class BlobApiService : IBlobApiService
@@ -20,13 +21,13 @@ public class BlobApiService : IBlobApiService
 		_logger = logger;
 	}
 
-	public async Task<BlobDTO> GetParasha(Triennial? triennial, bool isTeachingOnly, CancellationToken ct = default)
+	public async Task<BlobDTO> GetParasha(Triennial? triennial, Enums.PdfType pdfType, CancellationToken ct = default)
 	{
 
 		BlobDTO dto = new(
 			Url: string.Empty, 
 			Parasha: string.Empty, 
-			isTeachingOnly: isTeachingOnly,
+			PdfType: pdfType,
 			Exists: false, 
 			ExceptionOccurred: false
 		);
@@ -37,14 +38,14 @@ public class BlobApiService : IBlobApiService
 		try
 		{
 
-			(dto, blobName) = GetCurrentParasha(triennial, isTeachingOnly);
+			(dto, blobName) = GetCurrentParasha(triennial, pdfType);
 
 			if (dto.ExceptionOccurred) { return dto; }
 
 			_logger!.LogDebug("{Method}, {Message}", nameof(GetParasha), $"blobName: {blobName}");
 
 			var request = new BlobInfoRequest(blobName);
-			var response = await _httpClient.PostAsJsonAsync("/api/blob-info", request, ct);
+			var response = await _httpClient.PostAsJsonAsync(AzureFunctionAPI.HttpClientUri, request, ct);
 
 			if (!response.IsSuccessStatusCode)
 			{
@@ -93,7 +94,7 @@ public class BlobApiService : IBlobApiService
 		}
 	}
 
-	private (BlobDTO, string WeeklyReadingParashaFile) GetCurrentParasha(Triennial? triennial, bool isTeachingOnly)
+	private (BlobDTO, string WeeklyReadingParashaFile) GetCurrentParasha(Triennial? triennial, Enums.PdfType pdfType)
 	{
 		if (triennial == null)
 		{
@@ -104,7 +105,7 @@ public class BlobApiService : IBlobApiService
 				return (new BlobDTO(
 					Url: string.Empty, 
 					Parasha: string.Empty, 
-					isTeachingOnly: isTeachingOnly,
+					PdfType: pdfType,
 					Exists: false, 
 					ExceptionOccurred: false
 				), string.Empty);
@@ -113,13 +114,13 @@ public class BlobApiService : IBlobApiService
 			{
 				string baseName = NormalizeBaseName(currentTriennial.WeeklyReadingParashaFile);
 				string file = !string.IsNullOrEmpty(baseName)
-					? (isTeachingOnly ? $"{baseName}-teaching.pdf" : $"{baseName}.pdf")
+					? (pdfType == Enums.PdfType.TeachingOnly ? $"{baseName}-teaching.pdf" : $"{baseName}.pdf")
 					: string.Empty;
 
 				return (new BlobDTO(
 					Url: string.Empty, 
 					Parasha: currentTriennial.Date.ToString("yyyy MMMM dd") + " | " + currentTriennial.BCV, 
-					isTeachingOnly: isTeachingOnly,
+					PdfType: pdfType,
 					Exists: false, 
 					ExceptionOccurred: false
 				), file);
@@ -129,13 +130,13 @@ public class BlobApiService : IBlobApiService
 		{
 			string baseName = NormalizeBaseName(triennial.WeeklyReadingParashaFile);
 			string file = !string.IsNullOrEmpty(baseName)
-				? (isTeachingOnly ? $"{baseName}-teaching.pdf" : $"{baseName}.pdf")
+				? (pdfType == Enums.PdfType.TeachingOnly ? $"{baseName}-teaching.pdf" : $"{baseName}.pdf")
 				: string.Empty;
 
 			return (new BlobDTO(
 				Url: string.Empty, 
 				Parasha: triennial.Date.ToString("yyyy MMMM dd") + " | " + triennial.BCV, 
-				isTeachingOnly: isTeachingOnly,
+				PdfType: pdfType,
 				Exists: false, 
 				ExceptionOccurred: false
 			), file);

@@ -1,0 +1,39 @@
+﻿@using PWA.Features.Home.Shabbat.Data
+@using PWA.Features.Home.Shabbat.Enums
+
+@if (Dto!.Exists == true)
+{
+	<a class="@ButtonCSS"
+		 target="_blank" title="Pdf @Dto?.Url"
+		 href="@Dto!.Url">
+		<span class="@FontSize">@GetPdfTypeText()</span>
+		<i class="@FontCSS" aria-hidden="true"></i>
+	</a>
+}
+else
+{
+	<button class="@ButtonCSS" disabled>
+		<span class="@FontSize">@GetPdfTypeText()</span>
+		<i class="@FontCSS" aria-hidden="true"></i>
+	</button>
+	@* <p class="p-small-font text-muted bg-warning-subtle">@(string.IsNullOrEmpty(Dto?.Url) ? "No URL available" : Dto.Url)</p> *@
+}
+
+@code {
+	[Parameter, EditorRequired] public BlobDTO Dto { get; set; }
+
+	protected string FontSize = "fs-6";
+	const string ButtonCSS = "btn btn-outline-danger ";
+	const string FontCSS = "fas fa-file-download";
+
+	private string GetPdfTypeText()
+	{
+		return Dto?.PdfType switch
+		{
+			PdfType.CompleteService => "Complete Service",
+			PdfType.TeachingOnly => "Teaching Only",
+			_ => "Teaching Only"
+		};
+	}
+
+}

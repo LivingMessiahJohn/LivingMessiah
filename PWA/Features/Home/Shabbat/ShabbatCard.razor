@@ -1,4 +1,6 @@
-﻿@using RCL.Features.Parasha.Enums
+﻿@using PWA.Enums
+
+@using RCL.Features.Parasha.Enums
 
 <div class="card border border-danger border-3 rounded-top text-center mb-3 mt-3">
 	<div class="card-header bg-danger">
@@ -11,13 +13,11 @@
 
 	<div class="card-body fs-5 py-3 bg-primary-subtle rounded-1 m-1 ">
 		<a class="btn btn-outline-primary btn-lg"
-			 href="@Enums.Nav.Liturgy.Index" title="Go to the @Enums.Nav.Liturgy.Title wizard">
+			 href="@Nav.Liturgy.Index" title="Go to the @Nav.Liturgy.Title wizard">
 			<i class="@Nav.Liturgy.Icon"></i>
-			@Enums.Nav.Liturgy.Title &nbsp; <i class="fas fa-chevron-right"></i>
+			@Nav.Liturgy.Title &nbsp; <i class="fas fa-chevron-right"></i>
 		</a>
 	</div>
-
-	
 
 	<div class="card border border-primary border-2 rounded-top my-1 mx-1">
 
@@ -30,42 +30,54 @@
 			<div class="row">
 
 				<div class="col-4">
-					<CompleteService />
+					@if (currentTriennial is null)
+					{
+						<Alert><code>currentTriennial is null</code></Alert>
+					}
+					else
+					{
+						<ButtonWrapper PdfType="@Enums.PdfType.CompleteService" />
+					}
 				</div>
 
 				<div class="col-4">
-					<TeachingOnly />
+					@if (currentTriennial is null)
+					{
+						<Alert><code>currentTriennial is null</code></Alert>
+					}
+					else
+					{
+						<ButtonWrapper PdfType="@Enums.PdfType.TeachingOnly" />
+					}
 				</div>
 
 				<div class="col-4">
 					<MarksWebsite />
 				</div>
 
+
 			</div>
+
 		</div>
+	</div>
 
- 		<div class="card-footer bg-dark-subtle ">
-			
-			@* Archive <small>Work in Progress</small> *@
+	<div class="card-footer bg-dark-subtle ">
 
-			<a class="btn btn-outline-primary"
-				 href="@Enums.Nav.WeeklyDownload.Index" title="see previous parasha Teachings">
-				<i class="@Nav.WeeklyDownload.Icon"></i> &nbsp;
-				@Enums.Nav.WeeklyDownload.Title &nbsp; <i class="fas fa-chevron-right"></i>
-@* 			<br />	<span class="d-inline-block mb-0 px-2 p-small-font text-muted bg-warning-subtle">see previous parasha Teachings</span> *@		
-			</a>
-		
-		</div>
-
+		<a class="btn btn-outline-primary"
+			 href="@Nav.WeeklyDownload.Index" title="see previous parasha Teachings">
+			<i class="@Nav.WeeklyDownload.Icon"></i> &nbsp;
+			@Nav.WeeklyDownload.Title &nbsp; <i class="fas fa-chevron-right"></i>
+			@* 			<br />	<span class="d-inline-block mb-0 px-2 p-small-font text-muted bg-warning-subtle">see previous parasha Teachings</span> *@
+		</a>
 
 	</div>
+
 
 </div>
 
 
 
 @code {
-
 
 	string? Parasha;
 
@@ -76,15 +88,6 @@
 		if (currentTriennial is null)
 		{
 			Parasha = "NOT FOUND";
-			/*
-			_logger!.LogWarning("{Method}, {Message}", nameof(GetCurrentParasha), "Current triennial not found");
-			return (new Dto(
-			Url: string.Empty,
-			Parasha: string.Empty,
-			Exists: false,
-			ExceptionOccurred: false
-			), string.Empty);
-			*/
 		}
 		else
 		{
