@@ -1,4 +1,4 @@
-﻿namespace PWA.Features.Home.Shabbat.Constants;
+﻿namespace PWA.Features.Home.Shabbat.Teaching.Constants;
 
 public class Blob
 {

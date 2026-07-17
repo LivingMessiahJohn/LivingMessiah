@@ -1,13 +1,19 @@
-﻿@page "/WeeklyDownload"
-@using Microsoft.AspNetCore.Components.QuickGrid
+﻿@using Microsoft.AspNetCore.Components.QuickGrid
 @using ParashaEnums = RCL.Features.Parasha.Enums
-@using PWA.Features.Home.Shabbat.Constants
+@using PWA.Features.Home.Shabbat.Teaching.Constants
 
-@* @using RCL.Features.Parasha.Helpers *@
+<div class="d-flex justify-content-between">
+	<span class="text-dark pt-1">
+		<i class="far fa-file-pdf fa-fw fa-2x"></i>
+	</span>
+	<span class="fs-5 text-primary text-center fw-bold pt-1">PDF Archive</span>
+	<ShowHideGridToggle ContentIsShowing="ShowingDetails"
+											OnToggleSelected="ReturnedToggle" />
+</div>
 
-<PageHeader PageEnum="Nav.WeeklyDownload" BorderCSS="" />
-
-<div class="card border-info p-3">
+@if (ShowingDetails)
+{
+	<hr />
 
 	<div class="d-flex justify-content-between align-items-center mb-3">
 		<div>
@@ -27,11 +33,12 @@
 			</div>
 		</div>
 
-		<div>
-			<label class="me-2 mb-0">Items per page:</label>
-			<select @onchange="OnItemsPerPageChanged" 
-				class="form-select form-select-sm d-inline-block" style="width:auto;" 
-				value="@selectedItemsPerPage">
+		<div style="font-size: 75%;">
+			<label for="itemsPerPage" class="me-2 mb-0">Items / page</label>
+			<select id="itemsPerPage" name="itemsPerPage"
+							@onchange="OnItemsPerPageChanged"
+							class="form-select form-select-sm d-inline-block" style="width:auto;"
+							value="@selectedItemsPerPage">
 				<option value="5">5</option>
 				<option value="10">10</option>
 				<option value="20">20</option>
@@ -46,11 +53,29 @@
 						 Pagination="@pagination">
 
 		<TemplateColumn Sortable="false">
+
 			<HeaderTemplate>
-				Complete Service <i class="fas fa-file-download ms-1"></i>
+				<span class="@headerTemplate">Teaching Only <i class="fas fa-file-download ms-1"></i></span>
 			</HeaderTemplate>
 			<ChildContent>
-				<a class="text-decoration-none"
+				<a class="@anchorClass"
+					 target="_blank"
+					 href="@($"{Blob.BaseUrl}{context.WeeklyReadingParashaFileTeachingOnly}")"
+					 title="Download Teaching Only PDF">
+					@* <b>@context.TorahAbrv</b> <span class="p-small-font">@context.HaftorahAbrv | @context.BritAbrv</span> *@
+					<b>@context.TorahAbrv</b>
+				</a>
+			</ChildContent>
+		</TemplateColumn>
+
+		<TemplateColumn Sortable="false">
+			<HeaderTemplate>
+				<span class="@headerTemplate">
+					Complete Service <i class="fas fa-file-download ms-1"></i>
+				</span>
+			</HeaderTemplate>
+			<ChildContent>
+				<a class="@anchorClass"
 					 target="_blank"
 					 href="@($"{Blob.BaseUrl}{context.WeeklyReadingParashaFile}")"
 					 title="Download Complete Service PDF">
@@ -58,30 +83,21 @@
 				</a>
 			</ChildContent>
 		</TemplateColumn>
-
-		<TemplateColumn Sortable="false">
-
-			<HeaderTemplate>
-				Teach Only <i class="fas fa-file-download ms-1"></i>
-			</HeaderTemplate>
-			<ChildContent>
-			<a class="text-decoration-none"
-				 target="_blank"
-				 href="@($"{Blob.BaseUrl}{context.WeeklyReadingParashaFileTeachingOnly}")"
-				 title="Download Teaching Only PDF">
-				<b>@context.TorahAbrv</b> <span class="p-small-font">@context.HaftorahAbrv | @context.BritAbrv</span>
-			</a>
-			</ChildContent>
-		</TemplateColumn>
-
 	</QuickGrid>
 
 	<Paginator State="pagination" />
+}
 
-</div>
 
 @code {
+	[Parameter, EditorRequired] public ParashaEnums.Triennial? Triennial { get; set; }
 
+	//const string headerTemplate = "border border-bottom border-2";
+	const string headerTemplate = "text-primary fw-bold pb-1 border-bottom border-primary border-2";
+	// Class="table table-striped table-hover"
+	//const string anchorClass = "btn btn-sm py-0 m-0 btn-link";
+	const string anchorClass = "text-decoration-none";
+	//const string anchorClass = "btn btn-xs btn-outline-primary";
 
 	string? completeServiceFilter;
 
@@ -114,12 +130,12 @@
 		StateHasChanged();
 	}
 
-	PaginationState pagination = new PaginationState { ItemsPerPage = 20 };
-	string selectedItemsPerPage = "20";
+	PaginationState pagination = new PaginationState { ItemsPerPage = 5 };
+	string selectedItemsPerPage = "5";
 
 	private void OnItemsPerPageChanged(ChangeEventArgs e)
 	{
-		selectedItemsPerPage = e?.Value?.ToString() ?? "20";
+		selectedItemsPerPage = e?.Value?.ToString() ?? selectedItemsPerPage;
 
 		if (selectedItemsPerPage == "All")
 		{
@@ -133,5 +149,15 @@
 
 		StateHasChanged();
 	}
+
+	#region ShowHideToggle
+	bool ShowingDetails = false;
+
+	private async Task ReturnedToggle()
+	{
+		ShowingDetails = !ShowingDetails;
+	}
+
+	#endregion
 
 }

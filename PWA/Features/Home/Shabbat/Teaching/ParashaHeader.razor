@@ -1,0 +1,33 @@
+﻿@using ParashaEnums = RCL.Features.Parasha.Enums
+
+@if (Triennial is null)
+{
+	<div class="card-header bg-danger-subtle fs-5 text-black">
+		<b>Parasha:</b> @Parasha
+	</div>
+}
+else
+{
+	<div class="card-header bg-primary fs-6 text-white">
+		<b>Parasha:</b> @Parasha
+	</div>
+}
+
+@code {
+	[Parameter, EditorRequired] public ParashaEnums.Triennial? Triennial { get; set; }
+
+	string? Parasha;
+
+	protected override void OnParametersSet()
+	{
+		if (Triennial is null)
+		{
+			Parasha = "NOT FOUND! ";
+		}
+		else
+		{
+			Parasha = Triennial.Date.ToString("yyyy MMMM dd") + " | " + Triennial.BCV;
+		}
+	}
+
+}

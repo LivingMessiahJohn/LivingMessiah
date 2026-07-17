@@ -1,8 +1,10 @@
 ﻿@using PWA.Enums
-
+@using PWA.Features.Home.Shabbat.Teaching
+@using PWA.Features.Home.Shabbat.Teaching.Enums
 @using RCL.Features.Parasha.Enums
 
 <div class="card border border-danger border-3 rounded-top text-center mb-3 mt-3">
+
 	<div class="card-header bg-danger">
 		<h2 class="text-center text-white ">Shabbat</h2>
 	</div>
@@ -20,78 +22,46 @@
 	</div>
 
 	<div class="card border border-primary border-2 rounded-top my-1 mx-1">
-
-		<div class="card-header bg-primary fs-5 text-white">
-			<b>Parasha:</b> @Parasha
-		</div>
+		<ParashaHeader Triennial="@Triennial" />
 
 		<div class="card-body bg-primary-subtle ">
-
-			<div class="row">
+			<div class="row g-1">
 
 				<div class="col-4">
-					@if (currentTriennial is null)
-					{
-						<Alert><code>currentTriennial is null</code></Alert>
-					}
-					else
-					{
-						<ButtonWrapper PdfType="@Enums.PdfType.CompleteService" />
-					}
+					<ButtonWrapper PdfType="@PdfType.CompleteService" Triennial="@Triennial" />
 				</div>
 
 				<div class="col-4">
-					@if (currentTriennial is null)
-					{
-						<Alert><code>currentTriennial is null</code></Alert>
-					}
-					else
-					{
-						<ButtonWrapper PdfType="@Enums.PdfType.TeachingOnly" />
-					}
+					<ButtonWrapper PdfType="@PdfType.TeachingOnly" Triennial="@Triennial" />
 				</div>
 
 				<div class="col-4">
 					<MarksWebsite />
 				</div>
 
-
 			</div>
-
 		</div>
-	</div>
 
-	<div class="card-footer bg-dark-subtle ">
-
-		<a class="btn btn-outline-primary"
-			 href="@Nav.WeeklyDownload.Index" title="see previous parasha Teachings">
-			<i class="@Nav.WeeklyDownload.Icon"></i> &nbsp;
-			@Nav.WeeklyDownload.Title &nbsp; <i class="fas fa-chevron-right"></i>
-			@* 			<br />	<span class="d-inline-block mb-0 px-2 p-small-font text-muted bg-warning-subtle">see previous parasha Teachings</span> *@
-		</a>
+		<div class="bg-primary-subtle p-1 border-top border-dark-subtle">
+			<ArchiveGrid Triennial="@Triennial" />
+		</div>
 
 	</div>
-
 
 </div>
 
-
-
 @code {
 
-	string? Parasha;
+	Triennial? Triennial;
 
-	Triennial? currentTriennial;
+
+	/*
+	 ToDo: can this be a non async method?  It is just a calculation based on the current date.
+	 The argument for it is that ButtonWrapper is async because it calls `await BlobApiService.GetParasha(null, PdfType);`
+	 
+	*/
 	protected override async Task OnInitializedAsync()
 	{
-		currentTriennial = RCL.Features.Parasha.Helpers.GetCurrentReading();
-		if (currentTriennial is null)
-		{
-			Parasha = "NOT FOUND";
-		}
-		else
-		{
-			Parasha = currentTriennial.Date.ToString("yyyy MMMM dd") + " | " + currentTriennial.BCV;
-		}
+		Triennial = RCL.Features.Parasha.Helpers.GetCurrentReading();
 	}
 }

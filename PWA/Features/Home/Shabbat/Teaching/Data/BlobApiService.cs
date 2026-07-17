@@ -1,13 +1,14 @@
 using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using RCL.Features.Parasha.Enums;
-using PWA.Features.Home.Shabbat.Constants;
+using PWA.Features.Home.Shabbat.Teaching.Enums;
+using PWA.Features.Home.Shabbat.Teaching.Constants;
 
-namespace PWA.Features.Home.Shabbat.Data;
+namespace PWA.Features.Home.Shabbat.Teaching.Data;
 
 public interface IBlobApiService
 {
-	Task<BlobDTO> GetParasha(Triennial? triennial, Enums.PdfType pdfType, CancellationToken ct = default);
+	Task<BlobDTO> GetParasha(Triennial? triennial, PdfType pdfType, CancellationToken ct = default);
 }
 
 public class BlobApiService : IBlobApiService
@@ -21,7 +22,7 @@ public class BlobApiService : IBlobApiService
 		_logger = logger;
 	}
 
-	public async Task<BlobDTO> GetParasha(Triennial? triennial, Enums.PdfType pdfType, CancellationToken ct = default)
+	public async Task<BlobDTO> GetParasha(Triennial? triennial, PdfType pdfType, CancellationToken ct = default)
 	{
 
 		BlobDTO dto = new(
@@ -94,7 +95,7 @@ public class BlobApiService : IBlobApiService
 		}
 	}
 
-	private (BlobDTO, string WeeklyReadingParashaFile) GetCurrentParasha(Triennial? triennial, Enums.PdfType pdfType)
+	private (BlobDTO, string WeeklyReadingParashaFile) GetCurrentParasha(Triennial? triennial, PdfType pdfType)
 	{
 		if (triennial == null)
 		{
@@ -114,7 +115,7 @@ public class BlobApiService : IBlobApiService
 			{
 				string baseName = NormalizeBaseName(currentTriennial.WeeklyReadingParashaFile);
 				string file = !string.IsNullOrEmpty(baseName)
-					? (pdfType == Enums.PdfType.TeachingOnly ? $"{baseName}-teaching.pdf" : $"{baseName}.pdf")
+					? (pdfType == PdfType.TeachingOnly ? $"{baseName}-teaching.pdf" : $"{baseName}.pdf")
 					: string.Empty;
 
 				return (new BlobDTO(
@@ -130,7 +131,7 @@ public class BlobApiService : IBlobApiService
 		{
 			string baseName = NormalizeBaseName(triennial.WeeklyReadingParashaFile);
 			string file = !string.IsNullOrEmpty(baseName)
-				? (pdfType == Enums.PdfType.TeachingOnly ? $"{baseName}-teaching.pdf" : $"{baseName}.pdf")
+				? (pdfType == PdfType.TeachingOnly ? $"{baseName}-teaching.pdf" : $"{baseName}.pdf")
 				: string.Empty;
 
 			return (new BlobDTO(
