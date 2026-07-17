@@ -16,8 +16,6 @@
 					<span class="fs-3">day @dto.DaysOld of</span><br /><span class="fs-5 fst-italic fw-bold">@dto.CurrentMonthName</span>
 				</div>
 
-				@* <div class=""><span class="fs-5">Moon</span><br /><span class="fs-5 ">Phase</span></div> *@
-
 				<div class="">
 					<span class="fs-3">@dto.DaysToGo days until </span><br /><span class="fs-5 fst-italic fw-bold">@dto.NextMonthName</span>
 				</div>
@@ -25,11 +23,10 @@
 			</div>
 		</div>
 
-		@* <img src='@dto.ImageFile' title="@dto.ImageFile" class="p-5 bg-black"> *@
-		<img src='@dto.ImageFile' title="@dto.ImageFile" 
-			class="p-5 bg-black" style="max-width:1024px; max-height:1024px; width:100%; height:auto; display:block; margin:0 auto;" />
-
-
+		<div class="card-body bg-dark">
+			<img src='@dto.ImageFile' title="@dto.ImageFile"
+					 class="p-5 bg-black" style="max-width:500px; max-height:500px; width:100%; height:auto; display:block; margin:0 auto;" />
+		</div>
 	</div>
 
 }

@@ -37,7 +37,6 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int Articles = 17;
 		internal const int FurtherStudies = 18;
 		internal const int ImportantLinks = 19;
-		internal const int WeeklyDownload = 20;
 		internal const int CalendarExplanation = 21; 
 		internal const int Location = 22; 
 		internal const int SpecialEvents = 23; 
@@ -72,7 +71,6 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav Articles = new ArticlesSE();
 	public static readonly Nav FurtherStudies = new FurtherStudiesSE();
 	public static readonly Nav ImportantLinks = new ImportantLinksSE();
-	public static readonly Nav WeeklyDownload = new WeeklyDownloadSE();
 	public static readonly Nav CalendarExplanation = new CalendarExplanationSE();
 	public static readonly Nav Location = new LocationSE(); 
 	public static readonly Nav SpecialEvents = new SpecialEventsSE(); 
@@ -390,21 +388,6 @@ public abstract class Nav : SmartEnum<Nav>
 			public override string HomeFloatRightHebrew => "//סידור";
 		*/
 		public override PageListType PageListType => PageListType.SitemapPage | PageListType.TierOne;
-		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
-		public override bool Disabled => false;
-	}
-
-
-	private sealed class WeeklyDownloadSE : Nav
-	{
-		public WeeklyDownloadSE() : base($"{nameof(Id.WeeklyDownload)}", Id.WeeklyDownload) { }
-		public override string Index => "/WeeklyDownload";
-		public override string Title => "PDF Download Archive";
-		public override string Icon => "fas fa-th";   //fa-solid fa-table-cells
-		public override int Sort => Id.WeeklyDownload;
-		public override string HomeTitleSuffix => "";
-		public override string HomeFloatRightHebrew => "";
-		public override PageListType PageListType => PageListType.None;
 		public override bool IsPartOfList(PageListType pageListType) => (PageListType & pageListType) == pageListType;
 		public override bool Disabled => false;
 	}

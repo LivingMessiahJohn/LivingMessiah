@@ -1,4 +1,4 @@
-﻿namespace PWA.Features.Home.Shabbat.Enums;
+﻿namespace PWA.Features.Home.Shabbat.Teaching.Enums;
 
 public enum PdfType
 {
