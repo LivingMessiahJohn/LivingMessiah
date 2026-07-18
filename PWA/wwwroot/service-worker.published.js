@@ -9,7 +9,7 @@ self.addEventListener('message', event => { if (event.data?.type === 'SKIP_WAITI
 
 const cacheNamePrefix = 'offline-cache-';
 const cacheName = `${cacheNamePrefix}${self.assetsManifest.version}`;
-const offlineAssetsInclude = [ /\.dll$/, /\.pdb$/, /\.wasm/, /\.html/, /\.js$/, /\.json$/, /\.css$/, /\.woff$/, /\.png$/, /\.jpe?g$/, /\.gif$/, /\.ico$/, /\.blat$/, /\.dat$/, /\.svg$/, /\.webmanifest$/ ];
+const offlineAssetsInclude = [ /\.dll$/, /\.pdb$/, /\.wasm/, /\.html$/, /\.js$/, /\.json$/, /\.css$/, /\.woff$/, /\.png$/, /\.jpe?g$/, /\.gif$/, /\.ico$/, /\.blat$/, /\.dat$/, /\.svg$/, /\.webmanifest$/ ];
 const offlineAssetsExclude = [ /^service-worker\.js$/ ];
 
 // Replace with your base path if you are hosting on a subfolder. Ensure there is a trailing '/'.
@@ -39,18 +39,46 @@ async function onActivate(event) {
 }
 
 async function onFetch(event) {
-    let cachedResponse = null;
-    if (event.request.method === 'GET') {
-        // For all navigation requests, try to serve index.html from cache,
-        // unless that request is for an offline resource.
-        // If you need some URLs to be server-rendered, edit the following check to exclude those URLs
-        const shouldServeIndexHtml = event.request.mode === 'navigate'
-            && !manifestUrlList.some(url => url === event.request.url);
-
-        const request = shouldServeIndexHtml ? 'index.html' : event.request;
-        const cache = await caches.open(cacheName);
-        cachedResponse = await cache.match(request);
+    // Always hit the network for API calls (never serve stale/cached API responses).
+    const url = new URL(event.request.url);
+    if (url.pathname.startsWith('/api/')) {
+        return fetch(event.request);
     }
 
+    if (event.request.method !== 'GET') {
+        return fetch(event.request);
+    }
+
+    // Navigations: network-first when online so installed PWAs pick up new deploys.
+    // Fall back to cached index.html when offline.
+    const shouldServeIndexHtml = event.request.mode === 'navigate'
+        && !manifestUrlList.some(assetUrl => assetUrl === event.request.url);
+
+    if (shouldServeIndexHtml) {
+        try {
+            const networkResponse = await fetch(event.request);
+            if (networkResponse && networkResponse.ok) {
+                const cache = await caches.open(cacheName);
+                // Keep offline shell fresh for the next offline open.
+                cache.put('index.html', networkResponse.clone());
+                return networkResponse;
+            }
+        } catch {
+            // Offline or network failure — use cache below.
+        }
+
+        const cache = await caches.open(cacheName);
+        const cachedIndex = await cache.match('index.html');
+        if (cachedIndex) {
+            return cachedIndex;
+        }
+
+        // Last resort: try network again (may still fail offline).
+        return fetch(event.request);
+    }
+
+    // Static assets: cache-first, then network.
+    const cache = await caches.open(cacheName);
+    const cachedResponse = await cache.match(event.request);
     return cachedResponse || fetch(event.request);
 }

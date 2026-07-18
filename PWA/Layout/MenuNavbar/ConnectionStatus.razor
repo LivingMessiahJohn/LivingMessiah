@@ -1,4 +1,5 @@
 ﻿@inject IJSRuntime JS
+@inject ILogger<ConnectionStatus> Logger
 @implements IAsyncDisposable
 
 <a class="nav-link  ms-1 @GetBorder()" title="@GetTitle()">
@@ -10,7 +11,7 @@
 	private IJSObjectReference? moduleCleanup;
 
 	private string GetBorder() => $"{(isOnline ? "" : " border border-2 border-danger rounded-2")}";
-	private string GetIcon() => $"{(isOnline ? "fas fa-wifi" : "fas fa-slash")}";   
+	private string GetIcon() => $"{(isOnline ? "fas fa-wifi" : "fas fa-slash")}";
 	private string GetTitle() => $"{(isOnline ? "Online 👍" : "Offline 👎")}";
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -30,17 +31,16 @@
 
 			// Register event listeners
 			var dotNetRef = DotNetObjectReference.Create(this);
-			var cleanupRef = await JS.InvokeAsync<IJSObjectReference>(
+			moduleCleanup = await JS.InvokeAsync<IJSObjectReference>(
 					"connectionStatus.registerEvents",
 					dotNetRef);
 
-			moduleCleanup = cleanupRef;
-
 			StateHasChanged();
 		}
-		catch (Exception)
+		catch (Exception ex)
 		{
-			// Fallback to assuming online if check fails
+			// Fallback to assuming online if check fails (missing connectivity.js under stale SW cache).
+			Logger.LogWarning(ex, "ConnectionStatus init failed");
 			isOnline = true;
 		}
 	}
@@ -56,8 +56,15 @@
 	{
 		if (moduleCleanup != null)
 		{
-			await moduleCleanup.InvokeVoidAsync("call"); // executes the returned cleanup function
-			await moduleCleanup.DisposeAsync();
+			try
+			{
+				await moduleCleanup.InvokeVoidAsync("dispose");
+				await moduleCleanup.DisposeAsync();
+			}
+			catch (Exception ex)
+			{
+				Logger.LogDebug(ex, "ConnectionStatus dispose failed");
+			}
 		}
 	}
 }

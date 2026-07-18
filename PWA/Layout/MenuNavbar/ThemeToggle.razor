@@ -13,7 +13,14 @@
 	private async Task Toggle()
 	{
 		Current = Current == "dark" ? "light" : "dark";
-		await JS.InvokeVoidAsync("theme.set", Current);
+		try
+		{
+			await JS.InvokeVoidAsync("theme.set", Current);
+		}
+		catch
+		{
+			// theme.js missing under a stale PWA cache should not surface the global error bar.
+		}
 	}
 
 	private string GetTitle() => $"{(Current == "dark" ? "Return to light 🌞 👍" : "Go to the dark side 😦 👎")}";

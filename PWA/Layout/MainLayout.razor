@@ -4,6 +4,7 @@
 
 @inherits LayoutComponentBase
 @inject Microsoft.JSInterop.IJSRuntime JsRuntime
+@inject ILogger<MainLayout> Logger
 
 <DomIdsInitializer />
 
@@ -60,26 +61,46 @@
 </header>
 
 <div class="container-fluid px-0 px-sm-2">
-	@Body
+	@* Catch component exceptions and show the real message on phones (no remote debugger needed). *@
+	<ErrorBoundary @ref="_errorBoundary">
+		<ChildContent>
+			@Body
+		</ChildContent>
+		<ErrorContent Context="ex">
+			<div class="blazor-error-boundary" role="alert">
+				<div class="error-title">Something went wrong on this page</div>
+				<div class="error-detail">@ex.GetType().Name: @ex.Message</div>
+				<button type="button" class="btn btn-light btn-sm mt-2" @onclick="Recover">Try again</button>
+			</div>
+		</ErrorContent>
+	</ErrorBoundary>
 </div>
 
-<div id="blazor-error-ui" data-nosnippet>
-	An unhandled error has occurred.
-	<a href="." class="reload">Reload</a>
-	<span class="dismiss">🗙</span>
-</div>
+@* Keep a single blazor-error-ui in index.html for framework-level failures. *@
 
 <footer class="text-muted">
 	<Footer />
 </footer>
 
 @code {
+	private ErrorBoundary? _errorBoundary;
+
+	private void Recover() => _errorBoundary?.Recover();
+
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
-			// Initialize global keyboard shortcut to open the search modal (Ctrl+K / Cmd+K)
-			await JsRuntime.InvokeVoidAsync("searchHotkeys.init");
+			try
+			{
+				// Initialize global keyboard shortcut to open the search modal (Ctrl+K / Cmd+K)
+				await JsRuntime.InvokeVoidAsync("searchHotkeys.init");
+			}
+			catch (Exception ex)
+			{
+				// Missing site.js (stale service worker / partial cache) must not crash installed PWAs.
+				Logger.LogWarning(ex, "searchHotkeys.init failed");
+			}
 		}
 	}
 }
