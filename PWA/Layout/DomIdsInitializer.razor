@@ -1,4 +1,5 @@
 @inject IJSRuntime JS
+@inject ILogger<DomIdsInitializer> Logger
 @using PWA.Constants
 
 @code {
@@ -6,8 +7,16 @@
 	{
 		if (firstRender)
 		{
-			await JS.InvokeVoidAsync("window.initializeDomIds", 
-				DomIds.Menu.OffCanvas);
+			try
+			{
+				await JS.InvokeVoidAsync("window.initializeDomIds",
+					DomIds.Menu.OffCanvas);
+			}
+			catch (Exception ex)
+			{
+				// site.js may be missing after a bad service-worker cache; menu still works without this.
+				Logger.LogWarning(ex, "initializeDomIds failed");
+			}
 		}
 	}
 }

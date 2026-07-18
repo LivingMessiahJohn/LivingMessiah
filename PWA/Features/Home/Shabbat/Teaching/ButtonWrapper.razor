@@ -3,38 +3,42 @@
 @using ParashaEnums = RCL.Features.Parasha.Enums
 
 @inject Data.IBlobApiService BlobApiService
-@inject ILogger<ButtonWrapper>? Logger
+@inject ILogger<ButtonWrapper> Logger
+@inject IJSRuntime JS
 
 
 @if (Triennial is null)
 {
-	<button class="@ButtonCSS" disabled title="Current parasha is null">
+	<button class="@ButtonCSS" disabled title="Current parasha is not available">
 		<span class="@FontSize">No Parasha</span>
 		<i class="@FontCSS" aria-hidden="true"></i>
 	</button>
-	<p class="p-small-font text-muted bg-warning-subtle"><code>Triennial is null</code></p>
 }
-else
+else if (_loading)
 {
-	@if (ExceptionOccurred)
-	{
-		@* <div class="card-body text-center mt-0"> *@
-			<button class="@ButtonCSS" disabled title="File not available">
-			<span class="@FontSize">@PdfTypeHelper.GetPdfTypeText(Dto?.PdfType)</span>
-				<i class="@FontCSS" aria-hidden="true"></i>
-			</button>
-			<p class="p-small-font text-muted bg-warning-subtle"><code>ExceptionOccurred</code></p>
-		@* </div> *@
-	}
-	else
-	{
-		@if (Dto is not null)
+	<button class="@ButtonCSS" disabled title="Checking PDF availability">
+		<span class="@FontSize">@PdfTypeHelper.GetPdfTypeText(PdfType)</span>
+		<span class="spinner-border spinner-border-sm ms-1" role="status" aria-hidden="true"></span>
+	</button>
+}
+else if (ExceptionOccurred)
+{
+	<button class="@ButtonCSS" disabled title="@_disabledTitle">
+		<span class="@FontSize">@PdfTypeHelper.GetPdfTypeText(PdfType)</span>
+		@if (_isOffline)
 		{
-			@* <div class="card-body text-center mt-0"></div> *@
-				<PdfDownloadButton Dto="@Dto" />
+			<i class="fas fa-wifi" aria-hidden="true" title="Offline"></i>
+			<span class="visually-hidden">Offline</span>
 		}
-	}
-
+		else
+		{
+			<i class="@FontCSS" aria-hidden="true"></i>
+		}
+	</button>
+}
+else if (Dto is not null)
+{
+	<PdfDownloadButton Dto="@Dto" />
 }
 
 @code {
@@ -47,44 +51,57 @@ else
 	const string FontCSS = "fas fa-file-download";
 
 	protected BlobDTO? Dto;
-	bool ExceptionOccurred = false; 
+	bool ExceptionOccurred;
+	bool _loading = true;
+	bool _isOffline;
+	string _disabledTitle = "File not available";
 
-	// ToDo: way to much code
 	protected override async Task OnInitializedAsync()
 	{
-		Logger!.LogInformation("{Method}, {Message}", $"{nameof(ButtonWrapper)}!{nameof(OnInitializedAsync)}", $"Start, PdfType:{PdfType}	");
+		Logger.LogInformation("{Method}, Start, PdfType:{PdfType}",
+			$"{nameof(ButtonWrapper)}!{nameof(OnInitializedAsync)}", PdfType);
+
 		try
 		{
-			await Task.Delay(200);
-			Dto = await BlobApiService.GetParasha(null, PdfType);
-
-			if (Dto is null)
+			try
 			{
-				Logger!.LogError("{Method}, Dto is null", nameof(OnInitializedAsync));
+				_isOffline = !await JS.InvokeAsync<bool>("eval", "navigator.onLine ?? true");
+			}
+			catch
+			{
+				_isOffline = false;
+			}
+
+			if (_isOffline)
+			{
 				ExceptionOccurred = true;
+				_disabledTitle = "Offline — PDF check unavailable";
+				return;
+			}
+
+			Dto = await BlobApiService.GetParasha(Triennial, PdfType);
+
+			if (Dto is null || Dto.ExceptionOccurred)
+			{
+				Logger.LogWarning("{Method}, blob lookup failed or returned exception flag", nameof(OnInitializedAsync));
+				ExceptionOccurred = true;
+				_disabledTitle = "PDF temporarily unavailable";
 			}
 			else
 			{
-				if (Dto?.ExceptionOccurred == true)
-				{
-					Logger!.LogError("{Method}, Dto.ExceptionOccurred is TRUE", nameof(OnInitializedAsync));
-					ExceptionOccurred = true;
-				}
-				else
-				{
-					Logger!.LogInformation("{Method}, {Message}",
-						nameof(OnInitializedAsync), $"Url: {Dto!.Url}, Exists: {Dto!.Exists}, Parasha: {Dto!.Parasha}");
-				}
+				Logger.LogInformation("{Method}, Url: {Url}, Exists: {Exists}, Parasha: {Parasha}",
+					nameof(OnInitializedAsync), Dto.Url, Dto.Exists, Dto.Parasha);
 			}
 		}
 		catch (Exception ex)
 		{
-			Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+			Logger.LogError(ex, "{Method}", nameof(OnInitializedAsync));
 			ExceptionOccurred = true;
+			_disabledTitle = "PDF temporarily unavailable";
 		}
-
-		Logger!.LogInformation("{Method}, {Message}", $"{nameof(ButtonWrapper)}!{nameof(OnInitializedAsync)}", "FINISHED!!!");
+		finally
+		{
+			_loading = false;
+		}
 	}
-
-
 }

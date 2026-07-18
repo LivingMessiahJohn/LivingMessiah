@@ -1,8 +1,7 @@
 ﻿@using PWA.Features.Welcome
 @inject IJSRuntime JSRuntime
+@inject ILogger<WelcomeCard> Logger
 @implements IAsyncDisposable
-
-@* @inject ILogger<WelcomeCard>? Logger *@
 
 <div class="card bg-warning-subtle">
 	<div class="card-header">
@@ -35,8 +34,6 @@
 </div>
 
 @code {
-	//[Parameter, EditorRequired] public string IdPrefix { get; set; }
-	//protected string BaseUrl => "/#" + IdPrefix ;
 	private IJSObjectReference? _module;
 	bool ShowingDetails;
 
@@ -44,9 +41,18 @@
 	{
 		if (firstRender)
 		{
-			_module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Features/Home/WelcomeCard.razor.js");
-			ShowingDetails = await _module.InvokeAsync<bool>("getShowingDetails");
-			StateHasChanged();
+			try
+			{
+				_module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Features/Home/WelcomeCard.razor.js");
+				ShowingDetails = await _module.InvokeAsync<bool>("getShowingDetails");
+				StateHasChanged();
+			}
+			catch (Exception ex)
+			{
+				// Installed PWA with a stale/partial cache must still render Welcome without crashing.
+				Logger.LogWarning(ex, "WelcomeCard JS module failed to load; using default expand state");
+				ShowingDetails = false;
+			}
 		}
 	}
 
@@ -55,7 +61,14 @@
 		ShowingDetails = !ShowingDetails;
 		if (_module is not null)
 		{
-			await _module.InvokeVoidAsync("setShowingDetails", ShowingDetails);
+			try
+			{
+				await _module.InvokeVoidAsync("setShowingDetails", ShowingDetails);
+			}
+			catch (Exception ex)
+			{
+				Logger.LogWarning(ex, "WelcomeCard setShowingDetails failed");
+			}
 		}
 	}
 
@@ -63,7 +76,14 @@
 	{
 		if (_module is not null)
 		{
-			await _module.DisposeAsync();
+			try
+			{
+				await _module.DisposeAsync();
+			}
+			catch
+			{
+				// Ignore dispose races during navigation / SW reload.
+			}
 		}
 	}
 }
