@@ -1,14 +1,14 @@
 using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using RCL.Features.Parasha.Enums;
-using PWA.Features.Home.Shabbat.Teaching.Enums;
 using PWA.Features.Home.Shabbat.Teaching.Constants;
+using ParashaEnums = RCL.Features.Parasha.Enums;
 
 namespace PWA.Features.Home.Shabbat.Teaching.Data;
 
 public interface IBlobApiService
 {
-	Task<BlobDTO> GetParasha(Triennial? triennial, PdfType pdfType, CancellationToken ct = default);
+	Task<BlobDTO> GetParasha(Triennial? triennial, ParashaEnums.PdfType pdfType, CancellationToken ct = default);
 }
 
 public class BlobApiService : IBlobApiService
@@ -22,7 +22,7 @@ public class BlobApiService : IBlobApiService
 		_logger = logger;
 	}
 
-	public async Task<BlobDTO> GetParasha(Triennial? triennial, PdfType pdfType, CancellationToken ct = default)
+	public async Task<BlobDTO> GetParasha(Triennial? triennial, ParashaEnums.PdfType pdfType, CancellationToken ct = default)
 	{
 
 		BlobDTO dto = new(
@@ -95,68 +95,29 @@ public class BlobApiService : IBlobApiService
 		}
 	}
 
-	private (BlobDTO, string WeeklyReadingParashaFile) GetCurrentParasha(Triennial? triennial, PdfType pdfType)
+	private (BlobDTO, string blobName) GetCurrentParasha(Triennial? triennial, ParashaEnums.PdfType pdfType)
 	{
-		if (triennial == null)
+		Triennial? resolved = triennial ?? RCL.Features.Parasha.Helpers.GetCurrentReading();
+		if (resolved is null)
 		{
-			Triennial? currentTriennial = RCL.Features.Parasha.Helpers.GetCurrentReading();
-			if (currentTriennial is null)
-			{
-				_logger!.LogWarning("{Method}, {Message}", nameof(GetCurrentParasha), "Current triennial not found");
-				return (new BlobDTO(
-					Url: string.Empty, 
-					Parasha: string.Empty, 
-					PdfType: pdfType,
-					Exists: false, 
-					ExceptionOccurred: false
-				), string.Empty);
-			}
-			else
-			{
-				string baseName = NormalizeBaseName(currentTriennial.WeeklyReadingParashaFile);
-				string file = !string.IsNullOrEmpty(baseName)
-					? (pdfType == PdfType.TeachingOnly ? $"{baseName}-teaching.pdf" : $"{baseName}.pdf")
-					: string.Empty;
-
-				return (new BlobDTO(
-					Url: string.Empty, 
-					Parasha: currentTriennial.Date.ToString("yyyy MMMM dd") + " | " + currentTriennial.BCV, 
-					PdfType: pdfType,
-					Exists: false, 
-					ExceptionOccurred: false
-				), file);
-			}
-		}
-		else
-		{
-			string baseName = NormalizeBaseName(triennial.WeeklyReadingParashaFile);
-			string file = !string.IsNullOrEmpty(baseName)
-				? (pdfType == PdfType.TeachingOnly ? $"{baseName}-teaching.pdf" : $"{baseName}.pdf")
-				: string.Empty;
-
+			_logger!.LogWarning("{Method}, {Message}", nameof(GetCurrentParasha), "Current triennial not found");
 			return (new BlobDTO(
-				Url: string.Empty, 
-				Parasha: triennial.Date.ToString("yyyy MMMM dd") + " | " + triennial.BCV, 
+				Url: string.Empty,
+				Parasha: string.Empty,
 				PdfType: pdfType,
-				Exists: false, 
+				Exists: false,
 				ExceptionOccurred: false
-			), file);
+			), string.Empty);
 		}
-	}
 
-	// helper to make filename generation idempotent
-	private static string NormalizeBaseName(string? baseName)
-	{
-		if (string.IsNullOrWhiteSpace(baseName)) return string.Empty;
-		baseName = baseName.Trim();
+		string file = RCL.Features.Parasha.Helpers.GetPdfFile(resolved, pdfType);
 
-		// if passed a full filename, strip .pdf and any trailing -teaching
-		if (baseName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
-			baseName = baseName.Substring(0, baseName.Length - 4);
-
-		if (baseName.EndsWith("-teaching", StringComparison.OrdinalIgnoreCase))
-			baseName = baseName.Substring(0, baseName.Length - "-teaching".Length);
-
-		return baseName;
+		return (new BlobDTO(
+			Url: string.Empty,
+			Parasha: resolved.Date.ToString("yyyy MMMM dd") + " | " + resolved.BCV,
+			PdfType: pdfType,
+			Exists: false,
+			ExceptionOccurred: false
+		), file);
 	}
 }

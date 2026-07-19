@@ -1,6 +1,6 @@
 ﻿@using PWA.Features.Home.Shabbat.Teaching.Data
-@using PWA.Features.Home.Shabbat.Teaching.Enums
 @using ParashaEnums = RCL.Features.Parasha.Enums
+@using RCL.Features.Parasha
 
 @inject Data.IBlobApiService BlobApiService
 @inject ILogger<ButtonWrapper> Logger
@@ -17,14 +17,14 @@
 else if (_loading)
 {
 	<button class="@ButtonCSS" disabled title="Checking PDF availability">
-		<span class="@FontSize">@PdfTypeHelper.GetPdfTypeText(PdfType)</span>
+		<span class="@FontSize">@Helpers.GetPdfTypeText(PdfType)</span>
 		<span class="spinner-border spinner-border-sm ms-1" role="status" aria-hidden="true"></span>
 	</button>
 }
 else if (ExceptionOccurred)
 {
 	<button class="@ButtonCSS" disabled title="@_disabledTitle">
-		<span class="@FontSize">@PdfTypeHelper.GetPdfTypeText(PdfType)</span>
+		<span class="@FontSize">@Helpers.GetPdfTypeText(PdfType)</span>
 		@if (_isOffline)
 		{
 			<i class="fas fa-wifi" aria-hidden="true" title="Offline"></i>
@@ -43,7 +43,7 @@ else if (Dto is not null)
 
 @code {
 
-	[Parameter, EditorRequired] public PdfType PdfType { get; set; }
+	[Parameter, EditorRequired] public ParashaEnums.PdfType PdfType { get; set; }
 	[Parameter, EditorRequired] public ParashaEnums.Triennial? Triennial { get; set; }
 
 	protected string FontSize = "fs-6";

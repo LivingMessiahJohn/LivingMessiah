@@ -1,7 +1,8 @@
 ﻿@using PWA.Enums
 @using PWA.Features.Home.Shabbat.Teaching
-@using PWA.Features.Home.Shabbat.Teaching.Enums
 @using RCL.Features.Parasha.Enums
+@using RCL.Features.Parasha
+@using ParashaEnums = RCL.Features.Parasha.Enums
 
 <div class="card border border-danger border-3 rounded-top text-center mb-3 mt-3">
 
@@ -28,11 +29,11 @@
 			<div class="row g-1">
 
 				<div class="col-4">
-					<ButtonWrapper PdfType="@PdfType.CompleteService" Triennial="@Triennial" />
+					<ButtonWrapper PdfType="@ParashaEnums.PdfType.CompleteService" Triennial="@Triennial" />
 				</div>
 
 				<div class="col-4">
-					<ButtonWrapper PdfType="@PdfType.TeachingOnly" Triennial="@Triennial" />
+					<ButtonWrapper PdfType="@ParashaEnums.PdfType.TeachingOnly" Triennial="@Triennial" />
 				</div>
 
 				<div class="col-4">

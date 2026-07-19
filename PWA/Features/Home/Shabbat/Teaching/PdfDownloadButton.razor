@@ -1,19 +1,21 @@
 ﻿@using PWA.Features.Home.Shabbat.Teaching.Data
-@using PWA.Features.Home.Shabbat.Teaching.Enums
+@using ParashaEnums = RCL.Features.Parasha.Enums
+@using RCL.Features.Parasha
+
 
 @if (Dto!.Exists == true)
 {
 	<a class="@ButtonCSS"
 		 target="_blank" title="Pdf @Dto?.Url"
 		 href="@Dto!.Url">
-		<span class="@FontSize">@PdfTypeHelper.GetPdfTypeText(Dto?.PdfType)</span>
+		<span class="@FontSize">@Helpers.GetPdfTypeText(Dto?.PdfType)</span>
 		<i class="@FontCSS" aria-hidden="true"></i>
 	</a>
 }
 else
 {
 	<button class="@ButtonCSS" disabled>
-		<span class="@FontSize">@PdfTypeHelper.GetPdfTypeText(Dto?.PdfType)</span>
+		<span class="@FontSize">@Helpers.GetPdfTypeText(Dto?.PdfType)</span>
 		<i class="@FontCSS" aria-hidden="true"></i>
 	</button>
 	@* <p class="p-small-font text-muted bg-warning-subtle">@(string.IsNullOrEmpty(Dto?.Url) ? "No URL available" : Dto.Url)</p> *@

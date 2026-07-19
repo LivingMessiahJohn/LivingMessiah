@@ -264,7 +264,6 @@ public abstract class Nav : SmartEnum<Nav>
 	private sealed class ParashaSE : Nav
 	{
 		public ParashaSE() : base($"{nameof(Id.Parasha)}", Id.Parasha) { }
-		//public override string Index => ParashaEnums.Constants.GetUrl()! ?? this.Name;
 		public override string Index => "/Parasha";
 		public override string Title => "Parasha";
 		public override string Icon => "far fa-bookmark";

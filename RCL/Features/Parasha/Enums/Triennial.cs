@@ -357,61 +357,6 @@ public abstract class Triennial : SmartEnum<Enums.Triennial>
 
   #region Extra Properties
 
-  public bool HasPrevious => this.Value > ParashaFacts.FirstParashaId ? true : false;
-  public bool HasNext => this.Value < ParashaFacts.LastParashaId ? true : false;
-
-  public PrevNextVM? PreviousVM
-  {
-    get
-    {
-      if (HasPrevious)
-      {
-        Enums.Triennial _prev = Enums.Triennial.FromValue(this.Value - 1);
-        return new PrevNextVM(_prev, ParashaHelpers.PrevNextUrl(_prev), "fas fa-arrow-left");
-      }
-      else
-      {
-        return null;
-      }
-    }
-  }
-
-  public PrevNextVM? NextVM
-  {
-    get
-    {
-      if (HasNext)
-      {
-        Enums.Triennial _next = Enums.Triennial.FromValue(this.Value + 1);
-        return new PrevNextVM(_next, ParashaHelpers.PrevNextUrl(_next), "fas fa-arrow-right");
-      }
-      else
-      {
-        return null;
-      }
-    }
-  }
-
-  public string Url
-  {
-    get
-    {
-      string slug = $"{BibleBook.FromValue(this.TorahVerse.BibleBook).Abrv}_{this.TorahVerse.ChapterVerse.Replace("-", "-to-").Replace(":", "-")}";
-      return ($"{ParashaHelpers.BaseUrl}/{this.Value}/{slug}");
-    }
-  }
-
-  public string WeeklyReadingParashaFile =>
-    $"{this.Date.ToString("yyyy-MM-dd")}-" +
-    $"{BibleBook.FromValue(this.TorahVerse.BibleBook).Abrv}-" +
-    $"{this.TorahVerse.ChapterVerse.Replace("-", "-to-").Replace(":", "-").Replace(" & ", "-and-")}.pdf"; 
-
-  public string WeeklyReadingParashaFileTeachingOnly =>
-    $"{this.Date.ToString("yyyy-MM-dd")}-" +
-    $"{BibleBook.FromValue(this.TorahVerse.BibleBook).Abrv}-" +
-    $"{this.TorahVerse.ChapterVerse.Replace("-", "-to-").Replace(":", "-").Replace(" & ", "-and-")}-teaching.pdf"; 
-
-
   // ToDo: get of this and use DateOnly instead
   public DateTime Date
   {
