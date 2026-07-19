@@ -1,7 +1,9 @@
 ﻿@using TriennialEnum = RCL.Features.Parasha.Enums.Triennial
 @using RCL.Features.Storage
 @using RCL.Components
+@using RCL.Features.Parasha
 @using Microsoft.Extensions.DependencyInjection
+@using ParashaEnums = RCL.Features.Parasha.Enums
 
 @inject IServiceProvider ServiceProvider
 @inject ILogger<UploadCard>? Logger
@@ -109,9 +111,9 @@
 	protected string fileName = "";
 	private IEnumerable<string> GetStringArrays()
 	{
-		return RCL.Features.Parasha.Enums.Triennial.List
-		.OrderBy(o => o.Date)
-		.Select(triennial => triennial.WeeklyReadingParashaFile + ".pdf");
+		return TriennialEnum.List
+			.OrderBy(o => o.Date)
+			.Select(triennial => Helpers.GetPdfFile(triennial, ParashaEnums.PdfType.CompleteService));
 	}
 
 	protected BlobOperationResult? result;
@@ -124,9 +126,10 @@
 
 	protected override void OnInitialized()
 	{
-		TriennialEnum? currentReading = RCL.Features.Parasha.Helpers.GetCurrentReading();
-		string? s = currentReading!.WeeklyReadingParashaFile + ".pdf";
-		fileName = string.IsNullOrWhiteSpace(s) ? "" : s;
+		TriennialEnum? currentReading = Helpers.GetCurrentReading();
+		fileName = currentReading is null
+			? ""
+			: Helpers.GetPdfFile(currentReading, ParashaEnums.PdfType.CompleteService);
 	}
 
 	void ReturnedFilename(string returnFile)

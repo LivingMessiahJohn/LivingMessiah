@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Components.QuickGrid
+@using PWA.Features.Home.Shabbat.Teaching.Data
 @using ParashaEnums = RCL.Features.Parasha.Enums
 @using PWA.Features.Home.Shabbat.Teaching.Constants
+@using RCL.Features.Parasha
 
 <div class="d-flex justify-content-between">
 	<span class="text-dark pt-1">
@@ -58,13 +60,7 @@
 				<span class="@headerTemplate">Teaching Only <i class="fas fa-file-download ms-1"></i></span>
 			</HeaderTemplate>
 			<ChildContent>
-				<a class="@anchorClass"
-					 target="_blank"
-					 href="@($"{Blob.BaseUrl}{context.WeeklyReadingParashaFileTeachingOnly}")"
-					 title="Download Teaching Only PDF">
-					@* <b>@context.TorahAbrv</b> <span class="p-small-font">@context.HaftorahAbrv | @context.BritAbrv</span> *@
-					<b>@context.TorahAbrv</b>
-				</a>
+				<ArchiveGridAnchor PdfType="@ParashaEnums.PdfType.TeachingOnly" Triennial="@context"/>
 			</ChildContent>
 		</TemplateColumn>
 
@@ -75,12 +71,7 @@
 				</span>
 			</HeaderTemplate>
 			<ChildContent>
-				<a class="@anchorClass"
-					 target="_blank"
-					 href="@($"{Blob.BaseUrl}{context.WeeklyReadingParashaFile}")"
-					 title="Download Complete Service PDF">
-					@context.WeeklyReadingParashaFile
-				</a>
+				<ArchiveGridAnchor PdfType="@ParashaEnums.PdfType.CompleteService" Triennial="@context" />
 			</ChildContent>
 		</TemplateColumn>
 	</QuickGrid>
@@ -92,12 +83,7 @@
 @code {
 	[Parameter, EditorRequired] public ParashaEnums.Triennial? Triennial { get; set; }
 
-	//const string headerTemplate = "border border-bottom border-2";
 	const string headerTemplate = "text-primary fw-bold pb-1 border-bottom border-primary border-2";
-	// Class="table table-striped table-hover"
-	//const string anchorClass = "btn btn-sm py-0 m-0 btn-link";
-	const string anchorClass = "text-decoration-none";
-	//const string anchorClass = "btn btn-xs btn-outline-primary";
 
 	string? completeServiceFilter;
 
@@ -106,16 +92,17 @@
 	IQueryable<ParashaEnums.Triennial> filteredItems =>
 		string.IsNullOrEmpty(completeServiceFilter)
 			? allItems.OrderByDescending(o => o.DateOnly).Where(w => w.DateOnly <= currentReadingDate)
-			: allItems.Where(w => w.WeeklyReadingParashaFile != null &&
-														w.WeeklyReadingParashaFile.Contains(completeServiceFilter!, StringComparison.OrdinalIgnoreCase) &&
-														w.DateOnly <= currentReadingDate)
+			: allItems.Where(w =>
+					Helpers.GetPdfFile(w, ParashaEnums.PdfType.CompleteService)
+						.Contains(completeServiceFilter!, StringComparison.OrdinalIgnoreCase)
+					&& w.DateOnly <= currentReadingDate)
 								.OrderByDescending(o => o.DateOnly);
 
 	protected DateOnly currentReadingDate;
 	protected override void OnInitialized()
 	{
 		//  Use the null-conditional operator (?.) to make GetCurrentReading()?.DateOnly nullable:
-		currentReadingDate = RCL.Features.Parasha.Helpers.GetCurrentReading()?.DateOnly ?? DateOnly.MaxValue;
+		currentReadingDate = Helpers.GetCurrentReading()?.DateOnly ?? DateOnly.MaxValue;
 		allItems = ParashaEnums.Triennial.List.AsQueryable();
 	}
 

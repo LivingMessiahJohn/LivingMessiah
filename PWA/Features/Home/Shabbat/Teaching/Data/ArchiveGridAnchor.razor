@@ -1,0 +1,29 @@
+﻿@using ParashaEnums = RCL.Features.Parasha.Enums
+@using PWA.Features.Home.Shabbat.Teaching.Constants
+@using RCL.Features.Parasha
+
+@if (Triennial is not null)
+{
+	var pdfFile = Helpers.GetPdfFile(Triennial, PdfType);
+
+	<a class="@anchorClass"
+		 target="_blank"
+		 href="@($"{Blob.BaseUrl}{pdfFile}")"
+		 title="@pdfFile">
+		@if (PdfType == ParashaEnums.PdfType.TeachingOnly)
+		{
+			<b>@Triennial.TorahAbrv</b>
+		}
+		else
+		{
+			@pdfFile
+		}
+	</a>
+}
+
+@code {
+	[Parameter, EditorRequired] public ParashaEnums.Triennial? Triennial { get; set; }
+	[Parameter, EditorRequired] public ParashaEnums.PdfType PdfType { get; set; }
+
+	const string anchorClass = "text-decoration-none";
+}

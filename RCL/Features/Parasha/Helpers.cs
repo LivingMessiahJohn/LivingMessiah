@@ -8,10 +8,32 @@ public class Helpers
 {
   public const string BaseUrl = "Parasha";
 
-  public static string PrevNextUrl(Triennial triennial)
+  public static string GetPdfTypeText(PdfType? pdfType)
   {
-    return $"parasha/{triennial.Value}/{BibleBook.FromValue(triennial.TorahVerse.BibleBook).Abrv}_{triennial.TorahVerse.ChapterVerse.Replace("-", "-to-").Replace(":", "-")}";
+    return pdfType switch
+    {
+      PdfType.CompleteService => "Complete Service",
+      PdfType.TeachingOnly => "Teaching Only",
+      _ => "Teaching Only"
+    };
   }
+
+  // Input e.g.:  "1:1-2:3" or "38:11-40:2" or "1:1-5" (Triennial.ChapterVerse)
+  // returns e.g. : 2026-07-25-Lev-19-and-20.pdf
+  public static string GetPdfFile(Triennial triennial, PdfType pdfType)
+  {
+    var versePart = triennial.TorahVerse.ChapterVerse
+        .Replace("-", "-to-")
+        .Replace(":", "-")
+        .Replace(" & ", "-and-");
+
+    var suffix = pdfType == PdfType.TeachingOnly ? "-teaching.pdf" : ".pdf";
+
+    return $"{triennial.Date:yyyy-MM-dd}-" +
+           $"{BibleBook.FromValue(triennial.TorahVerse.BibleBook).Abrv}-" +
+           $"{versePart}{suffix}";
+  }
+
 
   public static Triennial? GetCurrentReading()
   {
@@ -28,46 +50,6 @@ public class Helpers
     {
       return null;
     }
-  }
-
-  public static string? GetUrl()
-  {
-    string? url = null;
-
-    try
-    {
-      Triennial? _reading =
-          Triennial.List
-          .Where(w => w.Date == GetNextShabbatDate())
-          .SingleOrDefault();
-
-      if (_reading is not null)
-      {
-        url = _reading.Url;
-      }
-      else
-      {
-        Triennial? _defaultReading = Triennial.List.FirstOrDefault();
-        if (_defaultReading is not null)
-        {
-          url = _defaultReading.Url;
-        }
-        else
-        {
-          //ToDo: add logging
-          Console.WriteLine($"Warning: {nameof(Constants)}!{nameof(GetUrl)}; {nameof(_defaultReading)} is null");
-          throw new InvalidOperationException($"{nameof(Constants)}!{nameof(GetUrl)}; {nameof(_defaultReading)} is null");
-        }
-      }
-    }
-    catch (Exception ex)
-    {
-      //ToDo: add logging
-      Console.WriteLine($"Exception: {nameof(Constants)}!{nameof(GetUrl)}; ex: {ex}");
-      throw;
-    }
-
-    return url;
   }
 
   public static string CurrentReadDateTextFormat(DateTime readDate)
