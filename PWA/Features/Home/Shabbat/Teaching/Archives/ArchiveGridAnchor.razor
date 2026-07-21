@@ -1,0 +1,23 @@
+﻿
+<a class="@anchorClass"
+	 target="_blank"
+	 href="@Href"
+	 title="@Title">
+	@if (Bold)
+	{
+		<u><b>@Text</b></u>
+	}
+	else
+	{
+		<u>@Text</u>
+	}
+</a>
+
+@code {
+	[Parameter, EditorRequired] public string Href { get; set; } = string.Empty;
+	[Parameter, EditorRequired] public string Text { get; set; } = string.Empty;
+	[Parameter] public string? Title { get; set; }
+	[Parameter] public bool Bold { get; set; }
+
+	const string anchorClass = "text-decoration-none";
+}

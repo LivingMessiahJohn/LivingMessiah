@@ -1,0 +1,174 @@
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using PWA.Features.Home.Shabbat.Teaching
+@using PWA.Features.Home.Shabbat.Teaching.Constants
+@using ParashaEnums = RCL.Features.Parasha.Enums
+@using RCL.Features.Parasha
+
+<div class="d-flex justify-content-between">
+	<span class="text-dark pt-1">
+		<i class="far fa-file-pdf fa-fw fa-2x"></i>
+	</span>
+	<span class="fs-5 text-primary text-center fw-bold pt-1">PDF Archive</span>
+	<ShowHideGridToggle ContentIsShowing="ShowingDetails"
+											OnToggleSelected="ReturnedToggle" />
+</div>
+
+@if (ShowingDetails)
+{
+	<hr />
+
+	<div class="fs-5 text-center mb-2">List of Previous Teachings</div>
+
+	<div class="d-flex justify-content-center">
+		<div>
+
+			<QuickGrid Items="@filteredItems"
+								 TGridItem="Projection"
+								 Pagination="@pagination">
+
+				<TemplateColumn Sortable="false">
+					<HeaderTemplate>
+						<span class="@headerTemplate">Teaching Only <i class="fas fa-file-download ms-1"></i></span>
+					</HeaderTemplate>
+					<ChildContent>
+						<ArchiveGridAnchor Href="@context.TeachingHref"
+															 Text="@context.TorahAbrv"
+															 Title="@context.TeachingPdfFile"
+															 Bold="true" />
+					</ChildContent>
+				</TemplateColumn>
+
+				<TemplateColumn Sortable="false">
+					<HeaderTemplate>
+						<span class="@headerTemplate">
+							Complete Service <i class="fas fa-file-download ms-1"></i>
+						</span>
+					</HeaderTemplate>
+					<ChildContent>
+						<ArchiveGridAnchor Href="@context.CompleteServiceHref"
+															 Text="@context.CompleteServicePdfFile"
+															 Title="@context.CompleteServicePdfFile" />
+					</ChildContent>
+				</TemplateColumn>
+
+			</QuickGrid>
+
+			<Paginator State="pagination" />
+		</div>
+	</div>
+
+	<hr class="my-1">
+
+	<!-- Items / page + filter -->
+	<div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+		<div class="input-group input-group-sm" style="max-width: 280px;">
+			<input type="text"
+						 class="form-control"
+						 placeholder="Type to filter filenames..."
+						 @bind="fileFilter"
+						 @bind:event="oninput"
+						 @bind:after="OnFilterChanged" />
+			<button class="btn btn-outline-secondary"
+							type="button"
+							@onclick="ClearFilter"
+							disabled="@string.IsNullOrEmpty(fileFilter)">
+				Clear
+			</button>
+		</div>
+
+		<div style="font-size: 75%;">
+			<label for="itemsPerPage" class="me-2 mb-0">Items / page</label>
+			<select id="itemsPerPage" name="itemsPerPage"
+							@onchange="OnItemsPerPageChanged"
+							class="form-select form-select-sm d-inline-block" style="width:auto;"
+							value="@selectedItemsPerPage">
+				<option value="5">5</option>
+				<option value="10">10</option>
+				<option value="20">20</option>
+				<option value="50">50</option>
+				<option value="All">All</option>
+			</select>
+		</div>
+	</div>
+
+}
+
+
+@code {
+	[Parameter, EditorRequired] public ParashaEnums.Triennial? Triennial { get; set; }
+
+	const string headerTemplate = "text-primary fw-bold pb-1 border-bottom border-primary border-2";
+
+	IQueryable<Projection> allItems = Enumerable.Empty<Projection>().AsQueryable();
+
+	string fileFilter = string.Empty;
+
+	IQueryable<Projection> filteredItems =>
+		string.IsNullOrEmpty(fileFilter)
+			? allItems
+			: allItems.Where(w =>
+					w.CompleteServicePdfFile.Contains(fileFilter!, StringComparison.OrdinalIgnoreCase));
+
+	protected override void OnInitialized()
+	{
+		var currentReadingDate = Helpers.GetCurrentReading()?.DateOnly ?? DateOnly.MaxValue;
+
+		allItems = ParashaEnums.Triennial.List
+			.Where(w => w.DateOnly <= currentReadingDate)
+			.OrderByDescending(o => o.DateOnly)
+			.Select(t =>
+			{
+				var teachingPdfFile = Helpers.GetPdfFile(t, ParashaEnums.PdfType.TeachingOnly);
+				var completeServicePdfFile = Helpers.GetPdfFile(t, ParashaEnums.PdfType.CompleteService);
+
+				return new Projection(
+					TorahAbrv: t.TorahAbrv,
+					TeachingHref: $"{Blob.BaseUrl}{teachingPdfFile}",
+					TeachingPdfFile: teachingPdfFile,
+					CompleteServiceHref: $"{Blob.BaseUrl}{completeServicePdfFile}",
+					CompleteServicePdfFile: completeServicePdfFile);
+			})
+			.AsQueryable();
+	}
+
+	PaginationState pagination = new PaginationState { ItemsPerPage = 5 };
+	string selectedItemsPerPage = "5";
+
+	private void OnFilterChanged()
+	{
+		StateHasChanged();
+	}
+
+	private void ClearFilter()
+	{
+		fileFilter = string.Empty;
+		StateHasChanged();
+	}
+
+	private void OnItemsPerPageChanged(ChangeEventArgs e)
+	{
+		selectedItemsPerPage = e?.Value?.ToString() ?? selectedItemsPerPage;
+
+		if (selectedItemsPerPage == "All")
+		{
+			// Show all items by setting a very large page size
+			pagination.ItemsPerPage = int.MaxValue;
+		}
+		else if (int.TryParse(selectedItemsPerPage, out var v))
+		{
+			pagination.ItemsPerPage = v;
+		}
+
+		StateHasChanged();
+	}
+
+	#region ShowHideToggle
+	bool ShowingDetails = false;
+
+	private Task ReturnedToggle()
+	{
+		ShowingDetails = !ShowingDetails;
+		return Task.CompletedTask;
+	}
+	#endregion
+}
