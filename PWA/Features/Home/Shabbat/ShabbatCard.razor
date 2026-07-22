@@ -57,12 +57,10 @@
 	Triennial? Triennial;
 
 
-	/*
-	 ToDo: can this be a non async method?  It is just a calculation based on the current date.
-	 The argument for it is that ButtonWrapper is async because it calls `await BlobApiService.GetParasha(null, PdfType);`
-	 
-	*/
-	protected override async Task OnInitializedAsync()
+	// Sync: current reading is a date-based lookup. ButtonWrapper / Grid are async for blob existence checks.
+	// Null Triennial: buttons hidden; Grid still lists older PDFs (no current-week existence check).
+	// Grid receives Triennial so it can list the current week only if either PdfType exists on Azure.
+	protected override void OnInitialized()
 	{
 		Triennial = RCL.Features.Parasha.Helpers.GetCurrentReading();
 	}

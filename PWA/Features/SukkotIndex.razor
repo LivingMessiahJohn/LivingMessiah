@@ -9,8 +9,12 @@
 	<h2 class="text-center">Registration Has Moved!</h2>
 </div>
 
-<SukkotIndexCard /> 
-
+<div class="@MediaQuery.Xs.DivClass">
+	<SukkotIndexCard IsXs="true" />
+</div>
+<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+	<SukkotIndexCard IsXs="false" />
+</div>
 
 @code {
 

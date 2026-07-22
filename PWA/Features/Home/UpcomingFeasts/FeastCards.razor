@@ -40,7 +40,12 @@
 					@if (item.FeastId == FeastEnums.Feast.Tabernacles.Value)
 					{
 						<div class="card-body">
-							<SukkotIndexCard />
+							<div class="@MediaQuery.Xs.DivClass">
+								<SukkotIndexCard IsXs="true" />
+							</div>
+							<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+								<SukkotIndexCard IsXs="false" />
+							</div>
 						</div>
 					}
 
@@ -57,7 +62,7 @@
 
 	const string Title = "Upcoming Feasts";
 	const string TitleColor = "bg-warning text-center text-black";
-	
+
 	protected string FontSize => IsXs ? " fs-1" : " fs-2";
 	protected string HebrewCSS => IsXs ? " hebrew36" : "  hebrew36";
 	protected string NothingUpcoming = "";

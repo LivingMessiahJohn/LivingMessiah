@@ -1,8 +1,12 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using PWA.Features.Home.Shabbat.Teaching
 @using PWA.Features.Home.Shabbat.Teaching.Constants
+@using PWA.Features.Home.Shabbat.Teaching.Data
 @using ParashaEnums = RCL.Features.Parasha.Enums
 @using RCL.Features.Parasha
+
+@inject IBlobApiService BlobApiService
+@inject ILogger<Grid> Logger
 
 <div class="d-flex justify-content-between">
 	<span class="text-dark pt-1">
@@ -31,7 +35,7 @@
 						<span class="@headerTemplate">Teaching Only <i class="fas fa-file-download ms-1"></i></span>
 					</HeaderTemplate>
 					<ChildContent>
-						<ArchiveGridAnchor Href="@context.TeachingHref"
+						<GridAnchor Href="@context.TeachingHref"
 															 Text="@context.TorahAbrv"
 															 Title="@context.TeachingPdfFile"
 															 Bold="true" />
@@ -45,7 +49,7 @@
 						</span>
 					</HeaderTemplate>
 					<ChildContent>
-						<ArchiveGridAnchor Href="@context.CompleteServiceHref"
+						<GridAnchor Href="@context.CompleteServiceHref"
 															 Text="@context.CompleteServicePdfFile"
 															 Title="@context.CompleteServicePdfFile" />
 					</ChildContent>
@@ -60,24 +64,10 @@
 	<hr class="my-1">
 
 	<!-- Items / page + filter -->
-	<div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
-		<div class="input-group input-group-sm" style="max-width: 280px;">
-			<input type="text"
-						 class="form-control"
-						 placeholder="Type to filter filenames..."
-						 @bind="fileFilter"
-						 @bind:event="oninput"
-						 @bind:after="OnFilterChanged" />
-			<button class="btn btn-outline-secondary"
-							type="button"
-							@onclick="ClearFilter"
-							disabled="@string.IsNullOrEmpty(fileFilter)">
-				Clear
-			</button>
-		</div>
+	<div class="d-flex flex-wrap justify-content-center align-items-center gap-5">
 
 		<div style="font-size: 75%;">
-			<label for="itemsPerPage" class="me-2 mb-0">Items / page</label>
+			<label for="itemsPerPage" class="me-1 mb-0">Items / page</label>
 			<select id="itemsPerPage" name="itemsPerPage"
 							@onchange="OnItemsPerPageChanged"
 							class="form-select form-select-sm d-inline-block" style="width:auto;"
@@ -89,12 +79,31 @@
 				<option value="All">All</option>
 			</select>
 		</div>
+
+		<div class="input-group input-group-sm" style="max-width: 150px;">
+			<input type="text"
+						 class="form-control"
+						 placeholder="filter filenames..."
+						 @bind="fileFilter"
+						 @bind:event="oninput"
+						 @bind:after="OnFilterChanged" />
+			<button class="btn btn-outline-secondary"
+							type="button"
+							@onclick="ClearFilter"
+							disabled="@string.IsNullOrEmpty(fileFilter)">
+				Clear
+			</button>
+		</div>
 	</div>
 
 }
 
 
 @code {
+	/// <summary>
+	/// Current week's reading from ShabbatCard. Used only to decide whether to include
+	/// that week on the list (if either PdfType exists on Azure). Older rows are not existence-checked.
+	/// </summary>
 	[Parameter, EditorRequired] public ParashaEnums.Triennial? Triennial { get; set; }
 
 	const string headerTemplate = "text-primary fw-bold pb-1 border-bottom border-primary border-2";
@@ -109,26 +118,92 @@
 			: allItems.Where(w =>
 					w.CompleteServicePdfFile.Contains(fileFilter!, StringComparison.OrdinalIgnoreCase));
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		var currentReadingDate = Helpers.GetCurrentReading()?.DateOnly ?? DateOnly.MaxValue;
+		// Older (or all, when there is no current reading): static URLs, no blob API.
+		var olderOrAll = BuildArchiveRows(olderThanExclusive: Triennial?.DateOnly);
 
-		allItems = ParashaEnums.Triennial.List
-			.Where(w => w.DateOnly <= currentReadingDate)
+		// Current week: include on the list only if TeachingOnly OR CompleteService exists on Azure.
+		// Do not existence-check the rest of the archive.
+		if (Triennial is not null && await CurrentWeekHasAnyPdfAsync(Triennial))
+		{
+			var currentRow = ToProjection(Triennial);
+			allItems = olderOrAll.Prepend(currentRow).AsQueryable();
+		}
+		else
+		{
+			allItems = olderOrAll.AsQueryable();
+		}
+	}
+
+	/// <summary>
+	/// Builds archive projections without calling Azure.
+	/// When <paramref name="olderThanExclusive"/> is set, only rows with DateOnly &lt; that date.
+	/// When null (no current Triennial), includes every reading in the enum list.
+	/// </summary>
+	private static List<Projection> BuildArchiveRows(DateOnly? olderThanExclusive)
+	{
+		IEnumerable<ParashaEnums.Triennial> source = ParashaEnums.Triennial.List;
+
+		if (olderThanExclusive is { } cutoff)
+		{
+			source = source.Where(w => w.DateOnly < cutoff);
+		}
+
+		return source
 			.OrderByDescending(o => o.DateOnly)
-			.Select(t =>
-			{
-				var teachingPdfFile = Helpers.GetPdfFile(t, ParashaEnums.PdfType.TeachingOnly);
-				var completeServicePdfFile = Helpers.GetPdfFile(t, ParashaEnums.PdfType.CompleteService);
+			.Select(ToProjection)
+			.ToList();
+	}
 
-				return new Projection(
-					TorahAbrv: t.TorahAbrv,
-					TeachingHref: $"{Blob.BaseUrl}{teachingPdfFile}",
-					TeachingPdfFile: teachingPdfFile,
-					CompleteServiceHref: $"{Blob.BaseUrl}{completeServicePdfFile}",
-					CompleteServicePdfFile: completeServicePdfFile);
-			})
-			.AsQueryable();
+	private static Projection ToProjection(ParashaEnums.Triennial t)
+	{
+		var teachingPdfFile = Helpers.GetPdfFile(t, ParashaEnums.PdfType.TeachingOnly);
+		var completeServicePdfFile = Helpers.GetPdfFile(t, ParashaEnums.PdfType.CompleteService);
+
+		return new Projection(
+			TorahAbrv: t.TorahAbrv,
+			TeachingHref: $"{Blob.BaseUrl}{teachingPdfFile}",
+			TeachingPdfFile: teachingPdfFile,
+			CompleteServiceHref: $"{Blob.BaseUrl}{completeServicePdfFile}",
+			CompleteServicePdfFile: completeServicePdfFile);
+	}
+
+	/// <summary>
+	/// Blob existence for the current week only (both PdfTypes, in parallel).
+	/// True if either file exists.
+	/// </summary>
+	private async Task<bool> CurrentWeekHasAnyPdfAsync(ParashaEnums.Triennial current)
+	{
+		try
+		{
+			var teachingTask = BlobApiService.GetParasha(current, ParashaEnums.PdfType.TeachingOnly);
+			var completeTask = BlobApiService.GetParasha(current, ParashaEnums.PdfType.CompleteService);
+			await Task.WhenAll(teachingTask, completeTask);
+
+			var teaching = await teachingTask;
+			var complete = await completeTask;
+
+			var anyExists =
+				(teaching is { ExceptionOccurred: false, Exists: true }) ||
+				(complete is { ExceptionOccurred: false, Exists: true });
+
+			Logger.LogInformation(
+				"{Method}, current={Name}, teachingExists={Teaching}, completeExists={Complete}, includeOnList={Include}",
+				nameof(CurrentWeekHasAnyPdfAsync),
+				current.Name,
+				teaching.Exists,
+				complete.Exists,
+				anyExists);
+
+			return anyExists;
+		}
+		catch (Exception ex)
+		{
+			Logger.LogWarning(ex, "{Method}, failed checking current week blobs; excluding current from list",
+				nameof(CurrentWeekHasAnyPdfAsync));
+			return false;
+		}
 	}
 
 	PaginationState pagination = new PaginationState { ItemsPerPage = 5 };

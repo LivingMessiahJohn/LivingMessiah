@@ -1,31 +1,17 @@
 ﻿@using PWA.Features.Home.Shabbat.Teaching.Data
-@using ParashaEnums = RCL.Features.Parasha.Enums
 @using RCL.Features.Parasha
 
-
-@if (Dto!.Exists == true)
+@* Caller (ButtonWrapper) only renders this when Dto.Exists is true. *@
+@if (Dto is not null && Dto.Exists)
 {
-	<a class="@ButtonCSS"
-		 target="_blank" title="Pdf @Dto?.Url"
-		 href="@Dto!.Url">
-		<span class="@FontSize">@Helpers.GetPdfTypeText(Dto?.PdfType)</span>
-		<i class="@FontCSS" aria-hidden="true"></i>
+	<a class="btn btn-success"
+		 target="_blank" title="Pdf @Dto.Url"
+		 href="@Dto.Url">
+		<span class="fs-6">@Helpers.GetPdfTypeText(Dto.PdfType)</span>
+		<i class="fas fa-file-download" aria-hidden="true"></i>
 	</a>
-}
-else
-{
-	<button class="@ButtonCSS" disabled>
-		<span class="@FontSize">@Helpers.GetPdfTypeText(Dto?.PdfType)</span>
-		<i class="@FontCSS" aria-hidden="true"></i>
-	</button>
-	@* <p class="p-small-font text-muted bg-warning-subtle">@(string.IsNullOrEmpty(Dto?.Url) ? "No URL available" : Dto.Url)</p> *@
 }
 
 @code {
-	[Parameter, EditorRequired] public BlobDTO Dto { get; set; }
-
-	protected string FontSize = "fs-6";
-	const string ButtonCSS = "btn btn-outline-danger ";
-	const string FontCSS = "fas fa-file-download";
-
+	[Parameter, EditorRequired] public BlobDTO Dto { get; set; } = default!;
 }

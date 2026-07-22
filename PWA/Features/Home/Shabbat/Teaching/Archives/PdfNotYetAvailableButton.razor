@@ -1,0 +1,10 @@
+﻿@using ParashaEnums = RCL.Features.Parasha.Enums
+@using RCL.Features.Parasha
+
+<button class="btn btn-outline-secondary" disabled title="No @Helpers.GetPdfTypeText(PdfType) yet">
+	<span class="fs-6">@Helpers.GetPdfTypeText(PdfType)</span>
+</button>
+
+@code {
+	[Parameter, EditorRequired] public ParashaEnums.PdfType PdfType { get; set; }
+}

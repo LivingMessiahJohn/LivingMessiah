@@ -1,4 +1,5 @@
-﻿@using PWA.Features.Home.Shabbat.Teaching.Data
+﻿@using PWA.Features.Home.Shabbat.Teaching.Archives
+@using PWA.Features.Home.Shabbat.Teaching.Data
 @using ParashaEnums = RCL.Features.Parasha.Enums
 @using RCL.Features.Parasha
 
@@ -6,39 +7,30 @@
 @inject ILogger<ButtonWrapper> Logger
 @inject IJSRuntime JS
 
+@* Current-week PDF actions: only render when Azure blob exists. Hide for null Triennial, offline, errors, or missing blob. *@
+@if (Triennial is not null)
+{
+	if (_loading)
+	{
+		<button class="btn btn-secondary" disabled title="Checking PDF availability">
+			<span class="fs-6">@Helpers.GetPdfTypeText(PdfType)</span>
+			<span class="spinner-border spinner-border-sm ms-1" role="status" aria-hidden="true"></span>
+		</button>
+	}
+	else if (Dto is not null && Dto.Exists)
+	{
+		<PdfDownloadButton Dto="@Dto" />
+	}
+	else
+	{
+		<PdfNotYetAvailableButton PdfType="PdfType" />
+	}
 
-@if (Triennial is null)
-{
-	<button class="@ButtonCSS" disabled title="Current parasha is not available">
-		<span class="@FontSize">No Parasha</span>
-		<i class="@FontCSS" aria-hidden="true"></i>
-	</button>
 }
-else if (_loading)
+else
 {
-	<button class="@ButtonCSS" disabled title="Checking PDF availability">
-		<span class="@FontSize">@Helpers.GetPdfTypeText(PdfType)</span>
-		<span class="spinner-border spinner-border-sm ms-1" role="status" aria-hidden="true"></span>
-	</button>
-}
-else if (ExceptionOccurred)
-{
-	<button class="@ButtonCSS" disabled title="@_disabledTitle">
-		<span class="@FontSize">@Helpers.GetPdfTypeText(PdfType)</span>
-		@if (_isOffline)
-		{
-			<i class="fas fa-wifi" aria-hidden="true" title="Offline"></i>
-			<span class="visually-hidden">Offline</span>
-		}
-		else
-		{
-			<i class="@FontCSS" aria-hidden="true"></i>
-		}
-	</button>
-}
-else if (Dto is not null)
-{
-	<PdfDownloadButton Dto="@Dto" />
+	@* Triennial IS null *@
+	<PdfNotYetAvailableButton PdfType="PdfType" />
 }
 
 @code {
@@ -46,36 +38,36 @@ else if (Dto is not null)
 	[Parameter, EditorRequired] public ParashaEnums.PdfType PdfType { get; set; }
 	[Parameter, EditorRequired] public ParashaEnums.Triennial? Triennial { get; set; }
 
-	protected string FontSize = "fs-6";
-	const string ButtonCSS = "btn btn-outline-danger ";
-	const string FontCSS = "fas fa-file-download";
-
 	protected BlobDTO? Dto;
-	bool ExceptionOccurred;
 	bool _loading = true;
-	bool _isOffline;
-	string _disabledTitle = "File not available";
 
 	protected override async Task OnInitializedAsync()
 	{
+		// No current reading: do not call blob API; render nothing.
+		if (Triennial is null)
+		{
+			_loading = false;
+			return;
+		}
+
 		Logger.LogInformation("{Method}, Start, PdfType:{PdfType}",
 			$"{nameof(ButtonWrapper)}!{nameof(OnInitializedAsync)}", PdfType);
 
 		try
 		{
+			bool isOffline;
 			try
 			{
-				_isOffline = !await JS.InvokeAsync<bool>("eval", "navigator.onLine ?? true");
+				isOffline = !await JS.InvokeAsync<bool>("eval", "navigator.onLine ?? true");
 			}
 			catch
 			{
-				_isOffline = false;
+				isOffline = false;
 			}
 
-			if (_isOffline)
+			if (isOffline)
 			{
-				ExceptionOccurred = true;
-				_disabledTitle = "Offline — PDF check unavailable";
+				Logger.LogInformation("{Method}, offline — skipping blob check", nameof(OnInitializedAsync));
 				return;
 			}
 
@@ -84,20 +76,17 @@ else if (Dto is not null)
 			if (Dto is null || Dto.ExceptionOccurred)
 			{
 				Logger.LogWarning("{Method}, blob lookup failed or returned exception flag", nameof(OnInitializedAsync));
-				ExceptionOccurred = true;
-				_disabledTitle = "PDF temporarily unavailable";
+				Dto = null;
+				return;
 			}
-			else
-			{
-				Logger.LogInformation("{Method}, Url: {Url}, Exists: {Exists}, Parasha: {Parasha}",
-					nameof(OnInitializedAsync), Dto.Url, Dto.Exists, Dto.Parasha);
-			}
+
+			Logger.LogInformation("{Method}, Url: {Url}, Exists: {Exists}, Parasha: {Parasha}",
+				nameof(OnInitializedAsync), Dto.Url, Dto.Exists, Dto.Parasha);
 		}
 		catch (Exception ex)
 		{
 			Logger.LogError(ex, "{Method}", nameof(OnInitializedAsync));
-			ExceptionOccurred = true;
-			_disabledTitle = "PDF temporarily unavailable";
+			Dto = null;
 		}
 		finally
 		{
