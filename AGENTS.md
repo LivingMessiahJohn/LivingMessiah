@@ -51,10 +51,12 @@ Feature UI and feature-local code live under each app’s `Features/` folder (e.
 
 ## Git & safety
 
+- **Ship process** (issues → PR → deploy → human gates): [`docs/SHIP-WORKFLOW.md`](docs/SHIP-WORKFLOW.md)
 - Do not force-push `main` or rewrite published history without an explicit ask
 - Do not change production config or Azure deploy settings unless requested
 - Prefer small, focused changes; avoid drive-by refactors
 - Confirm before: `git push`, opening/closing PRs, deleting branches, or changing secrets
+- Prefer issue-linked PRs (`Fixes #N`); human merges and smokes preview/prod per ship workflow
 
 ## When unsure
 
