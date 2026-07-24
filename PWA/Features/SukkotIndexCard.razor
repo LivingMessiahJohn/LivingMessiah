@@ -7,15 +7,19 @@
 			</a>
 		</div>
 	</div>
-	<div class="footer mt-0">
 
+	<div class="footer mt-0">
 		<span class="text-center @FontSize">
 			<a href="https://Sukkot.LivingMessiah.com" target="_blank">
-				<img src="/sukkot-favicon.ico" alt="Logo" width="32" height="32" class="rounded" />
+				@if (!IsXs)
+				{
+					<img src="/sukkot-favicon.ico" alt="Logo" width="32" height="32" class="rounded me-2" />
+				}
 				<u><b>Sukkot.LivingMessiah.com</b></u>
 			</a>
 			&nbsp;<i class="fas fa-arrow-right"></i>
 		</span>
+
 	</div>
 </div>
 
