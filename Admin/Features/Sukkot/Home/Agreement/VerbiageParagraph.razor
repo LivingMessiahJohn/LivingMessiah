@@ -1,4 +1,6 @@
-﻿<h2 class="text-primary">House Rules Confirmation</h2>
+﻿@using Admin.Features.Sukkot.Constants
+
+<h2 class="text-primary">House Rules Confirmation</h2>
 <ul class="fs-5">
 	<li>
 		<i>Living Messiah Sukkot @YearString </i> is an event wholly sponsored by Living Messiah and is a private event <b><u>NOT open to the public</u></b>.
@@ -25,5 +27,5 @@
 @code {
 	//@using LandingPageBlobs = LivingMessiah.Features.Sukkot.LandingPage.Constants
 	//@using Admin.Features.Sukkot.Constants
-	string YearString = "2025"; //<i>Living Messiah Sukkot @Year.String
+	string YearString = CurrentYear.Title; // Living Messiah Sukkot {year}
 }

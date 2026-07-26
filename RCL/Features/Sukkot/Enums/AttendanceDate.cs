@@ -11,16 +11,16 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 		//internal const int All = -1;
 
 		internal const int None = 0;
-		internal const int Sun_10_05 = 1;
-		internal const int Mon_10_06 = 2;
-		internal const int Tue_10_07 = 4;
-		internal const int Wed_10_08 = 8;
-		internal const int Thu_10_09 = 16;
-		internal const int Fri_10_10 = 32;
-		internal const int Sat_10_11 = 64;
-		internal const int Sun_10_12 = 128;
-		internal const int Mon_10_13 = 256;
-		internal const int Tue_10_14 = 512;
+		internal const int Fri_09_25 = 1;
+		internal const int Sat_09_26 = 2;
+		internal const int Sun_09_27 = 4;
+		internal const int Mon_09_28 = 8;
+		internal const int Tue_09_29 = 16;
+		internal const int Wed_09_30 = 32;
+		internal const int Thu_10_01 = 64;
+		internal const int Fri_10_02 = 128;
+		internal const int Sat_10_03 = 256;
+		internal const int Sun_10_04 = 512;
 	}
 	#endregion
 
@@ -29,16 +29,16 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 	//public static readonly AttendanceDate All = new AllSE();
 	public static readonly AttendanceDate None = new NoneSE();
 
-	public static readonly AttendanceDate Sun_10_05 = new Sun_10_05_SE();
-	public static readonly AttendanceDate Mon_10_06 = new Mon_10_06_SE();
-	public static readonly AttendanceDate Tue_10_07 = new Tue_10_07_SE();
-	public static readonly AttendanceDate Wed_10_08 = new Wed_10_08_SE();
-	public static readonly AttendanceDate Thu_10_09 = new Thu_10_09_SE();
-	public static readonly AttendanceDate Fri_10_10 = new Fri_10_10_SE();
-	public static readonly AttendanceDate Sat_10_11 = new Sat_10_11_SE();
-	public static readonly AttendanceDate Sun_10_12 = new Sun_10_12_SE();
-	public static readonly AttendanceDate Mon_10_13 = new Mon_10_13_SE();
-	public static readonly AttendanceDate Tue_10_14 = new Tue_10_14_SE();
+	public static readonly AttendanceDate Fri_09_25 = new Fri_09_25_SE();
+	public static readonly AttendanceDate Sat_09_26 = new Sat_09_26_SE();
+	public static readonly AttendanceDate Sun_09_27 = new Sun_09_27_SE();
+	public static readonly AttendanceDate Mon_09_28 = new Mon_09_28_SE();
+	public static readonly AttendanceDate Tue_09_29 = new Tue_09_29_SE();
+	public static readonly AttendanceDate Wed_09_30 = new Wed_09_30_SE();
+	public static readonly AttendanceDate Thu_10_01 = new Thu_10_01_SE();
+	public static readonly AttendanceDate Fri_10_02 = new Fri_10_02_SE();
+	public static readonly AttendanceDate Sat_10_03 = new Sat_10_03_SE();
+	public static readonly AttendanceDate Sun_10_04 = new Sun_10_04_SE();
 	// SE=SmartEnum
 	#endregion
 
@@ -80,95 +80,95 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
     public override int Day => 0;
   }
 
-	private sealed class Sun_10_05_SE : AttendanceDate
+	private sealed class Fri_09_25_SE : AttendanceDate
 	{
-		public Sun_10_05_SE() : base($"{nameof(BitwiseId.Sun_10_05)}", BitwiseId.Sun_10_05) { }
-		public override string Title => "Sun 10/05";
-		public override DateTime Date => Convert.ToDateTime("2025-10-05");
+		public Fri_09_25_SE() : base($"{nameof(BitwiseId.Fri_09_25)}", BitwiseId.Fri_09_25) { }
+		public override string Title => "Fri 09/25";
+		public override DateTime Date => Convert.ToDateTime("2026-09-25");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1;
-    public override int Day => 5;
+    public override int Day => 25;
   }
-	private sealed class Mon_10_06_SE : AttendanceDate
+	private sealed class Sat_09_26_SE : AttendanceDate
 	{
-		public Mon_10_06_SE() : base($"{nameof(BitwiseId.Mon_10_06)}", BitwiseId.Mon_10_06) { }
-		public override string Title => "Mon 10/06";
-		public override DateTime Date => Convert.ToDateTime("2025-10-06");
+		public Sat_09_26_SE() : base($"{nameof(BitwiseId.Sat_09_26)}", BitwiseId.Sat_09_26) { }
+		public override string Title => "Sat 09/26";
+		public override DateTime Date => Convert.ToDateTime("2026-09-26");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1;
-    public override int Day => 6;
+    public override int Day => 26;
   }
-	private sealed class Tue_10_07_SE : AttendanceDate
+	private sealed class Sun_09_27_SE : AttendanceDate
 	{
-		public Tue_10_07_SE() : base($"{nameof(BitwiseId.Tue_10_07)}", BitwiseId.Tue_10_07) { }
-		public override string Title => "Tue 10/07";
-		public override DateTime Date => Convert.ToDateTime("2025-10-07");
+		public Sun_09_27_SE() : base($"{nameof(BitwiseId.Sun_09_27)}", BitwiseId.Sun_09_27) { }
+		public override string Title => "Sun 09/27";
+		public override DateTime Date => Convert.ToDateTime("2026-09-27");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1;
-    public override int Day => 7;
+    public override int Day => 27;
   }
-	private sealed class Wed_10_08_SE : AttendanceDate
+	private sealed class Mon_09_28_SE : AttendanceDate
 	{
-		public Wed_10_08_SE() : base($"{nameof(BitwiseId.Wed_10_08)}", BitwiseId.Wed_10_08) { }
-		public override string Title => "Wed 10/08";
-		public override DateTime Date => Convert.ToDateTime("2025-10-08");
+		public Mon_09_28_SE() : base($"{nameof(BitwiseId.Mon_09_28)}", BitwiseId.Mon_09_28) { }
+		public override string Title => "Mon 09/28";
+		public override DateTime Date => Convert.ToDateTime("2026-09-28");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1;
-    public override int Day => 8;
+    public override int Day => 28;
   }
-	private sealed class Thu_10_09_SE : AttendanceDate
+	private sealed class Tue_09_29_SE : AttendanceDate
 	{
-		public Thu_10_09_SE() : base($"{nameof(BitwiseId.Thu_10_09)}", BitwiseId.Thu_10_09) { }
-		public override string Title => "Thu 10/09";
-		public override DateTime Date => Convert.ToDateTime("2025-10-09");
+		public Tue_09_29_SE() : base($"{nameof(BitwiseId.Tue_09_29)}", BitwiseId.Tue_09_29) { }
+		public override string Title => "Tue 09/29";
+		public override DateTime Date => Convert.ToDateTime("2026-09-29");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1;
-    public override int Day => 9;
+    public override int Day => 29;
   }
-	private sealed class Fri_10_10_SE : AttendanceDate
+	private sealed class Wed_09_30_SE : AttendanceDate
 	{
-		public Fri_10_10_SE() : base($"{nameof(BitwiseId.Fri_10_10)}", BitwiseId.Fri_10_10) { }
-		public override string Title => "Fri 10/10";
-		public override DateTime Date => Convert.ToDateTime("2025-10-10");
+		public Wed_09_30_SE() : base($"{nameof(BitwiseId.Wed_09_30)}", BitwiseId.Wed_09_30) { }
+		public override string Title => "Wed 09/30";
+		public override DateTime Date => Convert.ToDateTime("2026-09-30");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1;
-    public override int Day => 10;
+    public override int Day => 30;
   }
-	private sealed class Sat_10_11_SE : AttendanceDate
+	private sealed class Thu_10_01_SE : AttendanceDate
 	{
-		public Sat_10_11_SE() : base($"{nameof(BitwiseId.Sat_10_11)}", BitwiseId.Sat_10_11) { }
-		public override string Title => "Sat 10/11";
-		public override DateTime Date => Convert.ToDateTime("2025-10-11");
+		public Thu_10_01_SE() : base($"{nameof(BitwiseId.Thu_10_01)}", BitwiseId.Thu_10_01) { }
+		public override string Title => "Thu 10/01";
+		public override DateTime Date => Convert.ToDateTime("2026-10-01");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 1;
-    public override int Day => 11;
+    public override int Day => 1;
   }
-	private sealed class Sun_10_12_SE : AttendanceDate
+	private sealed class Fri_10_02_SE : AttendanceDate
 	{
-		public Sun_10_12_SE() : base($"{nameof(BitwiseId.Sun_10_12)}", BitwiseId.Sun_10_12) { }
-		public override string Title => "Sun 10/12";
-		public override DateTime Date => Convert.ToDateTime("2025-10-12");
+		public Fri_10_02_SE() : base($"{nameof(BitwiseId.Fri_10_02)}", BitwiseId.Fri_10_02) { }
+		public override string Title => "Fri 10/02";
+		public override DateTime Date => Convert.ToDateTime("2026-10-02");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 2;
-    public override int Day => 12;
+    public override int Day => 2;
   }
-	private sealed class Mon_10_13_SE : AttendanceDate
+	private sealed class Sat_10_03_SE : AttendanceDate
 	{
-		public Mon_10_13_SE() : base($"{nameof(BitwiseId.Mon_10_13)}", BitwiseId.Mon_10_13) { }
-		public override string Title => "Mon 10/13";
-		public override DateTime Date => Convert.ToDateTime("2025-10-13");
+		public Sat_10_03_SE() : base($"{nameof(BitwiseId.Sat_10_03)}", BitwiseId.Sat_10_03) { }
+		public override string Title => "Sat 10/03";
+		public override DateTime Date => Convert.ToDateTime("2026-10-03");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 2;
-    public override int Day => 13;
+    public override int Day => 3;
   }
-	private sealed class Tue_10_14_SE : AttendanceDate
+	private sealed class Sun_10_04_SE : AttendanceDate
 	{
-		public Tue_10_14_SE() : base($"{nameof(BitwiseId.Tue_10_14)}", BitwiseId.Tue_10_14) { }
-		public override string Title => "Tue 10/14";
-		public override DateTime Date => Convert.ToDateTime("2025-10-14");
+		public Sun_10_04_SE() : base($"{nameof(BitwiseId.Sun_10_04)}", BitwiseId.Sun_10_04) { }
+		public override string Title => "Sun 10/04";
+		public override DateTime Date => Convert.ToDateTime("2026-10-04");
 		public override DateRangeType DateRangeType => DateRangeType.Attendance;
 		public override int Week => 2;
-    public override int Day => 14;
+    public override int Day => 4;
   }
 
 	#endregion
@@ -179,4 +179,7 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 	DECLARE @RC int
 	EXEC @RC = Sukkot.stpAttendanceDateCodeGen 
 
+	-- 2026 note: when AttendanceMinDate is not Sunday, stpAttendanceDateCodeGen's
+	-- join to tvfAttendanceTwoWeeks can omit mid-range days. Fill those classes
+	-- from vwAttendanceDateSmartFlagEnumCodeGen (Week: first 7 days = 1, rest = 2).
  */
