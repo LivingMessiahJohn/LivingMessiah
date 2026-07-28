@@ -11,6 +11,7 @@
 | `Sukkot/` | Public/member Sukkot Blazor Server app (registration, Stripe) |
 | `RCL/` | Shared Razor Class Library (enums, calendar, components, blob abstractions) |
 | `Api/` | Azure Functions API for blob operations (used by PWA) |
+| `Database/` | SDK-style SQL projects (`Microsoft.Build.Sql`), one folder per Azure DB — start with `SpecialEvent/` |
 | `LivingMessiah.AppHost/` | .NET Aspire host — preferred local run entry |
 | `LivingMessiah.ServiceDefaults/` | Shared Aspire service defaults (health, OpenTelemetry, service discovery) |
 
