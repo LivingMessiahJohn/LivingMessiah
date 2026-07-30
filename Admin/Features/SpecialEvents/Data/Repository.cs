@@ -1,46 +1,53 @@
-﻿using Dapper;
+using Dapper;
+using Admin.Data;
 using System.Data;
-
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using DataEnumsDatabase = Admin.Data.Enums.Database;
 
 using static Admin.Features.SpecialEvents.Data.SqlServer;
-using Admin.Data;
-using DataEnumsDatabase = Admin.Data.Enums.Database;
+using Admin.Features.Database;
 
 namespace Admin.Features.SpecialEvents.Data;
 
 public interface IRepository
 {
 	string BaseSqlDump { get; }
+	string BaseServerId { get; }
 
-	Task<List<SpecialEventQuery>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd);
+	Task<List<EventQuery>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd);
 	Task<FormVM?> GetEventById(int id);
-	Task<List<FormVM>> GetCurrentEvents();  
+	Task<List<FormVM>> GetCurrentEvents();
 
 	Task<(int NewId, int SprocReturnValue, string ReturnMsg)> CreateSpecialEvent(FormVM formVM);
 	Task<(int Affectedrows, string ReturnMsg)> UpdateSpecialEvent(SpecialEvents.FormVM formVM);
 	Task<int> RemoveSpecialEvent(int id);
+
+	#region database test
+	Task<int> LogErrorTest();
+	Task<List<zvwErrorLog>> GetzvwErrorLog();
+	Task<int> EmptyErrorLog();
+	#endregion
 }
 
 public class Repository : BaseRepositoryAsync, IRepository
 {
 	public Repository(IConfiguration config, ILogger<Repository> logger)
-		: base(config, logger, DataEnumsDatabase.LivingMessiah.ConnectionStringKey)
+		: base(config, logger, DataEnumsDatabase.SpecialEvent.ConnectionStringKey)
 	{
 	}
 
 	public string BaseSqlDump { get { return base.SqlDump ?? ""; } }
+	public string BaseServerId => GetServerId();
+
 
 	public async Task<(int NewId, int SprocReturnValue, string ReturnMsg)> CreateSpecialEvent(SpecialEvents.FormVM formVM)
 	{
-		Sql = "SpecialEvent.stpSpecialEventInsert";
+		Sql = "dbo.stpEventInsert";
 		Parms = new DynamicParameters(new
 		{
 			formVM.EventDate,
 			formVM.ShowBeginDate,
 			formVM.ShowEndDate,
-			formVM.SpecialEventTypeId,
+			EventTypeId = formVM.EventTypeId,
 			formVM.Title,
 			formVM.SubTitle,
 			formVM.Description,
@@ -52,9 +59,6 @@ public class Repository : BaseRepositoryAsync, IRepository
 
 		Parms.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 		Parms.Add(ReturnValueParm, dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
-
-		base.Parms.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
-		base.Parms.Add(ReturnValueParm, dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
 
 		int newId = 0;
 		int sprocReturnValue = 0;
@@ -79,14 +83,14 @@ public class Repository : BaseRepositoryAsync, IRepository
 
 	public async Task<(int Affectedrows, string ReturnMsg)> UpdateSpecialEvent(SpecialEvents.FormVM formVM)
 	{
-		base.Sql = "SpecialEvent.stpSpecialEventUpdate";
+		base.Sql = "dbo.stpEventUpdate";
 		base.Parms = new DynamicParameters(new
 		{
 			formVM.Id,
 			EventDate = formVM.EventDate,
 			formVM.ShowBeginDate,
 			formVM.ShowEndDate,
-			formVM.SpecialEventTypeId,
+			EventTypeId = formVM.EventTypeId,
 			formVM.Title,
 			formVM.SubTitle,
 			formVM.Description,
@@ -105,9 +109,9 @@ public class Repository : BaseRepositoryAsync, IRepository
 			Logger.LogDebug("{Method} {Message}", nameof(UpdateSpecialEvent), $"Title: {formVM.Title}; about to execute SPROC: {Sql}");
 
 			var affectedrows = await connection.ExecuteAsync(sql: base.Sql, param: base.Parms, commandType: System.Data.CommandType.StoredProcedure);
-			
+
 			returnMsg = $"Special Event updated for {formVM.Title}; Id={formVM.Id}";
-			Logger.LogDebug("{Method} {Message}", nameof(CreateSpecialEvent), $"returnMsg: {returnMsg}, Affected Rows: {affectedrows}");
+			Logger.LogDebug("{Method} {Message}", nameof(UpdateSpecialEvent), $"returnMsg: {returnMsg}, Affected Rows: {affectedrows}");
 			return (affectedrows, returnMsg);
 
 		});
@@ -116,7 +120,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 	public async Task<int> RemoveSpecialEvent(int id)
 	{
 		base.Parms = new DynamicParameters(new { Id = id });
-		base.Sql = $"DELETE FROM SpecialEvent.Event WHERE Id=@Id";  
+		base.Sql = $"DELETE FROM dbo.Event WHERE Id=@Id";
 		return await WithConnectionAsync(async connection =>
 		{
 			Logger.LogDebug("{Method} {Message}", nameof(RemoveSpecialEvent), $"Sql: {Sql}; id={id}");
@@ -134,11 +138,11 @@ public class Repository : BaseRepositoryAsync, IRepository
 SELECT
   Id, [DateTime] AS EventDate
 , ShowBeginDate, ShowEndDate
-, SpecialEventTypeId
+, EventTypeId
 , Title, SubTitle
 , ISNULL(Description, '') AS Description 
 , ImageUrl, WebsiteUrl, WebsiteDescr, YouTubeId
-FROM SpecialEvent.Event
+FROM dbo.Event
 WHERE Id=@Id
 ";
 		return await WithConnectionAsync(async connection =>
@@ -147,18 +151,17 @@ WHERE Id=@Id
 			return row.SingleOrDefault();
 		});
 	}
-	
+
 	public async Task<List<FormVM>> GetCurrentEvents()  // Models.SpecialEventVM
 	{
 		Sql = $@"
 SELECT
   Id, EventDate
-, ShowBeginDate, ShowEndDate
-, SpecialEventTypeId
+, EventTypeId
 , DaysDiff, DaysDiffDescr
 , Title, SubTitle, ImageUrl, WebsiteUrl, WebsiteDescr, YouTubeId
 , ISNULL(Description, '') AS Description 
-FROM SpecialEvent.vwSpecialEvent
+FROM dbo.vwSpecialEvent
 WHERE DATEADD(d, -1, ShowBeginDate) <= GETUTCDATE() AND  
 			DATEADD(d, 1, ShowEndDate)		>= GETUTCDATE()
 ORDER BY EventDate
@@ -171,7 +174,7 @@ ORDER BY EventDate
 	}
 
 	//https://stackoverflow.com/questions/4331189/datetime-vs-datetimeoffset
-	public async Task<List<SpecialEventQuery>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd)
+	public async Task<List<EventQuery>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd)
 	{
 		base.Parms = new DynamicParameters(new
 		{
@@ -184,21 +187,54 @@ ORDER BY EventDate
 --DECLARE @DateBegin smalldatetime =  '2021-03-01', @DateEnd smalldatetime = '2023-01-31' 
 SELECT
   Id, EventDate
-, SpecialEventTypeId
+, EventTypeId
 , DaysDiff, DaysDiffDescr
 , Title, SubTitle, ImageUrl, WebsiteUrl, WebsiteDescr, YouTubeId
 , ISNULL(Description, '') AS Description 
 , ShowBeginDate, ShowEndDate
-FROM SpecialEvent.vwSpecialEvent
+FROM dbo.vwSpecialEvent
 WHERE EventDate >= @DateBegin AND EventDate <=  @DateEnd
 ORDER BY EventDate
 ";
 		return await WithConnectionAsync(async connection =>
 		{
-			var rows = await connection.QueryAsync<SpecialEventQuery>(sql: base.Sql, param: base.Parms);
+			var rows = await connection.QueryAsync<EventQuery>(sql: base.Sql, param: base.Parms);
 			return rows.ToList();
 		});
 	}
 
-}
 
+	#region database test
+	public async Task<int> LogErrorTest()
+	{
+		Sql = "dbo.stpLogErrorTest ";
+		return await WithConnectionAsync(async connection =>
+		{
+			var count = await connection.ExecuteAsync(sql: Sql, commandType: System.Data.CommandType.StoredProcedure);
+			return count;
+		});
+	}
+	
+	public async Task<List<zvwErrorLog>> GetzvwErrorLog()
+	{
+		Sql = $@"SELECT TOP 75 * FROM zvwErrorLog ORDER BY ErrorLogID DESC";
+		return await WithConnectionAsync(async connection =>
+		{
+			var rows = await connection.QueryAsync<zvwErrorLog>(sql: Sql);
+			return rows.ToList();
+		});
+	}
+
+	public async Task<int> EmptyErrorLog()
+	{
+		Sql = "dbo.stpLogErrorEmpty";
+		return await WithConnectionAsync(async connection =>
+		{
+			var affectedrows = await connection.ExecuteAsync(sql: Sql, commandType: System.Data.CommandType.StoredProcedure);
+			return affectedrows;
+		});
+	}
+	#endregion
+
+
+}

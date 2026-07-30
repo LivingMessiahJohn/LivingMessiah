@@ -6,7 +6,7 @@ public class FormVM
 	public DateTime? ShowBeginDate { get; set; }	// [Required]
 	public DateTime? ShowEndDate { get; set; }		// [Required]
 	public DateTime EventDate { get; set; }				// [Required]
-	public int SpecialEventTypeId { get; set; }   // [Required]
+	public int EventTypeId { get; set; }          // [Required]
 	public string? Title { get; set; }  
 	public string? SubTitle { get; set; }
 	public string? ImageUrl { get; set; }

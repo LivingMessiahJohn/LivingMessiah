@@ -18,7 +18,7 @@
 			<div class="card text-dark bg-light mb-5">
 				<div class="card-header text-center">
 					<h4>@item.Title</h4>
-					<p>Type: @item.SpecialEventTypeDescr</p>
+					<p>Type: @item.EventTypeDescr</p>
 				</div>
 				<div class="card-body">
 					<div class="float-start">
@@ -66,7 +66,7 @@ else
 			<td>@context.Title</td>
 			<td>@context.EventDate.ToShortDateString()</td>
 			<td>	@((MarkupString)context.DaysAheadMU) </td>
-			<td>@context.SpecialEventTypeDescr </td>
+			<td>@context.EventTypeDescr </td>
 			<td><YouTubeButton YouTubeId="@context.YouTubeId" IsXsOrSm="@IsXsOrSm" /></td>
 			<td class="text-center">
 				<div class="btn-group">
@@ -91,7 +91,7 @@ else
 	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
 	[Parameter] public EventCallback<CrudAndIdArgs> OnReturnedCrudAndIdArgs { get; set; }
 
-	protected List<Data.SpecialEventQuery>? data = new();
+	protected List<Data.EventQuery>? data = new();
 	protected override async Task OnInitializedAsync()
 	{
 		try

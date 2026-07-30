@@ -1,21 +1,20 @@
 ﻿
 
-// ToDo: move C:\Source\repos\LivingMessiahBlazor\LivingMessiah.Web\Features\SpecialEvents\Data\ to Admin
 
 using Microsoft.AspNetCore.Components;
-using PWA.Features.SpecialEvents.Enums;
+using Admin.Features.SpecialEvents.Enums;
 
-namespace PWA.Features.SpecialEvents.Data;
-
-public class SpecialEventQuery 
+namespace Admin.Features.SpecialEvents.Data;
+ 
+public class EventQuery 
 {
 	public int Id { get; set; } 
 	public DateTime EventDate { get; set; }
 
-	public int SpecialEventTypeId { get; set; }
-	public string SpecialEventTypeDescr
+	public int EventTypeId { get; set; }
+	public string EventTypeDescr
 	{
-		get { return SpecialEventType.FromValue(SpecialEventTypeId).Descr; }
+		get { return EventType.FromValue(EventTypeId).Descr; }
 	}
 
 	public int DaysDiff { get; set; }
@@ -76,7 +75,7 @@ public class SpecialEventQuery
 
 	public override string ToString()
 	{
-		return $"EventDate: {EventDate}, SpecialEventTypeId: {SpecialEventTypeId}";
+		return $"EventDate: {EventDate}, EventTypeId: {EventTypeId}";
 	}
 
 	public string EventDay()

@@ -23,13 +23,13 @@
 
 				<div class="col-sm-6">
 					<label for="eventTypeEnum" class="control-label">Event Type</label>
-					<InputSelect id="type" @bind-Value="data!.SpecialEventTypeId" class="form-control">
-						@foreach (var item in SpecialEventType.List.ToList())
+					<InputSelect id="type" @bind-Value="data!.EventTypeId" class="form-control">
+						@foreach (var item in EventType.List.ToList())
 						{
 							<option value="@item.Value">@item.Descr</option>
 						}
 					</InputSelect>
-					<ValidationMessage For="@(() => data.SpecialEventTypeId)" />
+					<ValidationMessage For="@(() => data.EventTypeId)" />
 				</div>
 
 				<div class="col-sm-6">
