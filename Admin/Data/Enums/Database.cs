@@ -9,12 +9,14 @@ public abstract class Database : SmartEnum<Database>
 	{
 		internal const int LivingMessiah = 1;
 		internal const int Sukkot = 2;
+		internal const int SpecialEvent = 3;
 	}
 	#endregion
 
 	#region  Declared Public Instances
 	public static readonly Database LivingMessiah = new LivingMessiahSE();
 	public static readonly Database Sukkot = new SukkotSE();
+	public static readonly Database SpecialEvent = new SpecialEventSE();
 	// SE=SmartEnum
 	#endregion
 
@@ -39,6 +41,13 @@ public abstract class Database : SmartEnum<Database>
 		public SukkotSE() : base("Sukkot", Id.Sukkot) { }
 		public override string Title => "Sukkot";
 		public override string ConnectionStringKey => "ConnectionStrings:Sukkot";
+	}
+
+	private sealed class SpecialEventSE : Database
+	{
+		public SpecialEventSE() : base("SpecialEvent", Id.SpecialEvent) { }
+		public override string Title => "Special Event";
+		public override string ConnectionStringKey => "ConnectionStrings:SpecialEvent";
 	}
 
 	#endregion

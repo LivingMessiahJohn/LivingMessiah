@@ -1,11 +1,17 @@
-﻿@inject ILogger<AuthorizedSection>? Logger
+@inject ILogger<AuthorizedSection>? Logger
 @inject IToastService? Toast
 @inject Sukkot.IRepository? dbSukkot
 @inject LM.IRepository? dbLivingMessiah
 
+@*
+  ToDo: rectify namespace differences between LM and Sukkot which is different than SpecialEvents
+*@
+@inject Admin.Features.SpecialEvents.Data.IRepository? dbSpecialEvent
+
 <div class="alert alert-info text-end" role="alert">
   <small><b>ServerIdSukkot:</b> @ServerIdSukkot</small>
   <small><b>ServerIdLivingMessiah:</b> @ServerIdLivingMessiah</small>
+  <small><b>ServerIdSpecialEvent:</b> @ServerIdSpecialEvent</small>
 </div>
 
 <DatabaseSelectorButton CurrentDatabase="CurrentDatabase" OnDatabaseSelected="ReturnedDatabase" />
@@ -21,6 +27,7 @@
 
   private string? ServerIdSukkot => dbSukkot!.BaseServerId;
   private string? ServerIdLivingMessiah => dbLivingMessiah!.BaseServerId;
+  private string? ServerIdSpecialEvent => dbSpecialEvent!.BaseServerId;
 
   protected override async Task OnInitializedAsync()
   {
@@ -74,15 +81,14 @@
     Logger!.LogDebug("{Method}", nameof(LogErrorTest));
     try
     {
-      if (CurrentDatabase == Data.Enums.Database.LivingMessiah)
+      AffectedRows = CurrentDatabase?.Name switch
       {
-        AffectedRows = await dbLivingMessiah!.LogErrorTest();
-      }
-      else
-      {
-        AffectedRows = await dbSukkot!.LogErrorTest();
-        Toast!.ShowInfo($"Called {nameof(LogErrorTest)}, AffectedRows: {AffectedRows}");
-      }
+        nameof(Data.Enums.Database.LivingMessiah) => await dbLivingMessiah!.LogErrorTest(),
+        nameof(Data.Enums.Database.Sukkot) => await dbSukkot!.LogErrorTest(),
+        nameof(Data.Enums.Database.SpecialEvent) => await dbSpecialEvent!.LogErrorTest(),
+        _ => throw new InvalidOperationException($"Unknown database: {CurrentDatabase?.Name}")
+      };
+      Toast!.ShowInfo($"Called {nameof(LogErrorTest)}, AffectedRows: {AffectedRows}");
     }
     catch (Exception ex)
     {
@@ -99,14 +105,13 @@
 
     try
     {
-      if (CurrentDatabase == Data.Enums.Database.LivingMessiah)
+      AffectedRows = CurrentDatabase?.Name switch
       {
-        AffectedRows = await dbLivingMessiah!.EmptyErrorLog();
-      }
-      else
-      {
-        AffectedRows = await dbSukkot!.EmptyErrorLog();
-      }
+        nameof(Data.Enums.Database.LivingMessiah) => await dbLivingMessiah!.EmptyErrorLog(),
+        nameof(Data.Enums.Database.Sukkot) => await dbSukkot!.EmptyErrorLog(),
+        nameof(Data.Enums.Database.SpecialEvent) => await dbSpecialEvent!.EmptyErrorLog(),
+        _ => throw new InvalidOperationException($"Unknown database: {CurrentDatabase?.Name}")
+      };
     }
     catch (Exception ex)
     {
@@ -124,14 +129,13 @@
     TurnSpinnerOff = false;
     try
     {
-      if (CurrentDatabase == Data.Enums.Database.LivingMessiah)
+      ErrorLogs = CurrentDatabase?.Name switch
       {
-        ErrorLogs = await dbLivingMessiah!.GetzvwErrorLog();
-      }
-      else
-      {
-        ErrorLogs = await dbSukkot!.GetzvwErrorLog();
-      }
+        nameof(Data.Enums.Database.LivingMessiah) => await dbLivingMessiah!.GetzvwErrorLog(),
+        nameof(Data.Enums.Database.Sukkot) => await dbSukkot!.GetzvwErrorLog(),
+        nameof(Data.Enums.Database.SpecialEvent) => await dbSpecialEvent!.GetzvwErrorLog(),
+        _ => throw new InvalidOperationException($"Unknown database: {CurrentDatabase?.Name}")
+      };
     }
     catch (Exception ex)
     {

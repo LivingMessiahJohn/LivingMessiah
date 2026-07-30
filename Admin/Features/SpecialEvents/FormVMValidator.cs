@@ -6,12 +6,12 @@ public class FormVMValidator : AbstractValidator<FormVM>
 {
 	public FormVMValidator()
 	{
-		RuleFor(x => x.SpecialEventTypeId).NotEmpty().WithMessage("Event type is required");
+		RuleFor(x => x.EventTypeId).NotEmpty().WithMessage("Event type is required");
 		RuleFor(x => x.EventDate).NotEmpty().WithMessage("Event date is required");
 		RuleFor(x => x.ShowBeginDate).NotNull().WithMessage("Show begin date is required");
 		RuleFor(x => x.ShowEndDate).NotNull().WithMessage("Show end date is required");
 		RuleFor(c => c.ShowEndDate).GreaterThanOrEqualTo(c => c.ShowBeginDate).WithMessage("Show end date is greater than or equal to show begin date");
-		RuleFor(x => x.SpecialEventTypeId).NotNull().WithMessage("An event type is required");
+		RuleFor(x => x.EventTypeId).NotNull().WithMessage("An event type is required");
 		RuleFor(p => p.Title)
 					.NotEmpty().WithMessage("Title is required")
 					.MaximumLength(100).WithMessage("Title cannot be longer than 100 characters");

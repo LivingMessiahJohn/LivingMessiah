@@ -43,7 +43,13 @@ VS Code: install **SQL Database Projects** + **SQL Server (mssql)** extensions.
 
 ## Build (dacpac)
 
-From repo root:
+**Prefer the CLI**, not Visual Studio Build Solution.
+
+`Microsoft.Build.Sql` restores as `netstandard2.1`. Classic SSDT / VS 2026 still often expects `net472`, which produces:
+
+`01005: Assets file '...SpecialEvent\obj\project.assets.json' doesn't have a target for 'net472'`
+
+That is a tooling mismatch, not a problem with Admin C# code. The `SpecialEvent` project is in the solution for navigation, but solution configurations do **not** build it. Build SQL with:
 
 ```powershell
 dotnet build Database/SpecialEvent/SpecialEvent.sqlproj
@@ -52,6 +58,8 @@ dotnet build Database/SpecialEvent/SpecialEvent.sqlproj
 Artifact:
 
 `Database/SpecialEvent/bin/Debug/SpecialEvent.dacpac`
+
+Optional: VS Code **SQL Database Projects** extension, or VS Installer component **SQL Server Data Tools SDK-Style** (when available for your VS version).
 
 ---
 
