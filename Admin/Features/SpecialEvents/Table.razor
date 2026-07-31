@@ -1,0 +1,73 @@
+﻿@inject ILogger<MasterQuickGrid>? Logger
+@inject IToastService? Toast
+@inject Data.IRepository? db;
+
+<LoadingComponentLIBRARY IsLoading="data == null">
+
+<TableTemplate Items="data" HeaderCSS="@HeaderCSS">
+	<TableHeader>
+		<th>Id</th>
+		<th>EventDate</th>
+		<th>ShowBeginDate</th>
+		<th>ShowEndDate</th>
+		<th>EventTypeId</th>
+		<th>Title</th>
+		<th>SubTitle</th>
+		<th>Description</th>
+		<th>ImageUrl</th>
+		<th>WebsiteUrl</th>
+		<th>WebsiteDescr</th>
+		<th>YouTubeId</th>
+	</TableHeader>
+	<RowTemplate>
+		<td>@context.Id</td>
+		<td>@context.EventDate</td>
+		<td>@context.ShowBeginDate</td>
+		<td>@context.ShowEndDate</td>
+		<td>@context.EventTypeId</td>
+		<td>@context.Title</td>
+		<td>@context.SubTitle</td>
+		<td>@context.Description</td>
+		<td>@context.ImageUrl</td>
+		<td>@context.WebsiteUrl</td>
+		<td>@context.WebsiteDescr</td>
+	</RowTemplate>
+
+</TableTemplate>
+</LoadingComponentLIBRARY>
+
+
+@code {
+	protected string? HeaderCSS = "table table-primary table-hover";
+	protected List<Data.EventQuery>? data = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			data = await db!.GetEventsByDateRange(DateTime.Parse(Constants.DateRange.Start), DateTime.Parse(Constants.DateRange.End));
+
+			if (data is null)
+			{
+				Logger!.LogWarning("{Method}, {Message}", nameof(OnInitializedAsync), "No Special Events found, data is null");
+				Toast!.ShowWarning("No Special Events found (data is null)");
+			}
+			else if (!data.Any())
+			{
+				Logger!.LogWarning("{Method}, {Message}", nameof(OnInitializedAsync), "No Special Events found, data is empty");
+				Toast!.ShowWarning("No Special Events found for the selected date range");
+			}
+			else
+			{
+				Toast!.ShowInfo($"Found {data.Count} Special Events");
+				Logger!.LogDebug("{Method}, {Message}", nameof(OnInitializedAsync), $"Count: {data.Count}");
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Class}!{Method}", nameof(MasterQuickGrid), nameof(OnInitializedAsync));
+			Toast!.ShowError($"{ex.Message} {nameof(MasterQuickGrid)}!{nameof(OnInitializedAsync)}");
+		}
+	}
+
+}
