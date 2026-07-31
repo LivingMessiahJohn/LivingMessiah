@@ -11,9 +11,11 @@ Public Blazor **WebAssembly** client (`net10.0`). Runs in the browser; keep secr
 
 ## API & blobs
 
-- Blob existence / storage checks go through the **Api** project, not Azure Storage from the client
+- Privileged data (blob existence, SpecialEvent SQL) goes through the **Api** project — never from the WASM client
 - Wiring: `Program.cs` resolves `services:api:https:0` / `http:0` under Aspire, falls back to `http://localhost:7071` in standalone dev, and base address in production
-- Client service pattern: `AddBlobApiService` and related types under feature `Data/` (e.g. Home Shabbat teaching)
+- Client service pattern: typed `HttpClient` + `Add*ApiService` under feature `Data/`
+  - Home Shabbat teaching: `AddBlobApiService` → `/api/blob-info`
+  - Special Events: `AddSpecialEventsApiService` → `/api/special-events` → `DisplayCardList`
 - Background: `docs/PWA-and-Api-Relationship.md`, `docs/ShabbatCard-and-BlobApiService.md`
 
 ## Conventions

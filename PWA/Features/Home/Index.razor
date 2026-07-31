@@ -20,6 +20,11 @@
 	<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass"><FeastCards IsXs="false" /></div>
 </CenteredContainer>
 
+@* Renders DisplayCard(s) only when the special-events API returns current events *@
+<CenteredContainer>
+	<SpecialEventsCard />
+</CenteredContainer>
+
 <SocialMediaButtons />
 
 @code {

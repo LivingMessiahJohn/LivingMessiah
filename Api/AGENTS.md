@@ -4,8 +4,9 @@ Azure **Functions** project that performs privileged Azure Blob operations for t
 
 ## Role
 
-- Server-side blob checks/operations so the WASM client never holds storage credentials
-- Consumed by PWA via HTTP; under Aspire, wired from `LivingMessiah.AppHost` with env vars for storage
+- Server-side privileged operations so the WASM client never holds storage or SQL credentials
+- Blob checks for teaching PDFs; `GetSpecialEvents` reads the SpecialEvent database for public display
+- Consumed by PWA via HTTP; under Aspire, wired from `LivingMessiah.AppHost` with env vars
 - See `docs/PWA-and-Api-Relationship.md`, `README.md`, `QUICK-START.md`
 
 ## Layout
@@ -17,10 +18,12 @@ Azure **Functions** project that performs privileged Azure Blob operations for t
 
 ## Conventions
 
-- Keep the surface small: blob info / existence style operations matching existing functions
-- Configuration keys: `AzureStorageConnectionString`, `BlobContainerName` (must stay aligned with AppHost)
+- Keep the surface small: HTTP functions matching existing patterns (`GetBlobInfo`, `GetSpecialEvents`)
+- Configuration keys (must stay aligned with AppHost / SWA app settings):
+  - `AzureStorageConnectionString`, `BlobContainerName`
+  - `SpecialEventConnectionString` — SQL connection for SpecialEvent DB (read-only use from API)
 - Do not expose raw connection strings to clients or logs
-- Prefer updating models + function together when the PWA contract changes; update PWA `BlobApiService` / models in the same change set when possible
+- Prefer updating models + function together when the PWA contract changes; update PWA client services in the same change set when possible
 
 ## Safety
 

@@ -7,15 +7,17 @@ This folder contains Azure Functions that provide backend API functionality for 
 ```
 Api/
 ├── Functions/
-│   └── BlobInfoFunction.cs      # HTTP function to check blob existence and get info
+│   ├── BlobInfoFunction.cs           # HTTP function to check blob existence and get info
+│   └── GetSpecialEventsFunction.cs   # HTTP function to read current Special Events
 ├── Models/
-│   ├── BlobInfo.cs              # Blob information model
-│   ├── BlobOperationResult.cs   # Operation result wrapper
-│   └── BlobInfoRequest.cs       # Request/response models
-├── Api.csproj                   # Project file
-├── host.json                    # Function host configuration
-├── local.settings.json          # Local development settings (not committed)
-└── Program.cs                   # Function app startup
+│   ├── BlobInfo.cs                   # Blob information model
+│   ├── BlobOperationResult.cs        # Operation result wrapper
+│   ├── BlobInfoRequest.cs            # Request/response models
+│   └── SpecialEventModels.cs         # Special event DTOs
+├── Api.csproj                        # Project file
+├── host.json                         # Function host configuration
+├── local.settings.json               # Local development settings (not committed)
+└── Program.cs                        # Function app startup
 
 ```
 
@@ -44,6 +46,36 @@ Api/
   }
   ```
 
+### GetSpecialEvents
+- **Endpoint**: `GET /api/special-events`
+- **Purpose**: Returns SpecialEvent rows whose show window includes the current UTC time (`ShowBeginDate`..`ShowEndDate`, with the same 1-day buffer as Admin)
+- **Auth**: Anonymous (public PWA read)
+- **Config**: `SpecialEventConnectionString` environment variable
+- **Response**:
+  ```json
+  {
+    "events": [
+      {
+        "id": 1,
+        "eventDate": "2026-08-15T18:00:00",
+        "showBeginDate": "2026-08-01T00:00:00",
+        "showEndDate": "2026-08-16T00:00:00",
+        "eventTypeId": 4,
+        "eventTypeDescr": "Community Dinner",
+        "title": "Community Dinner",
+        "subTitle": null,
+        "imageUrl": null,
+        "youTubeId": null,
+        "websiteUrl": null,
+        "websiteDescr": null,
+        "description": ""
+      }
+    ],
+    "message": "Special events retrieved successfully",
+    "isTransient": false
+  }
+  ```
+
 ## Local Development
 
 ### Prerequisites
@@ -60,7 +92,8 @@ Api/
        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
        "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
        "AzureStorageConnectionString": "YOUR_CONNECTION_STRING",
-       "BlobContainerName": "YOUR_CONTAINER_NAME"
+       "BlobContainerName": "YOUR_CONTAINER_NAME",
+       "SpecialEventConnectionString": "YOUR_SPECIAL_EVENT_SQL_CONNECTION_STRING"
      }
    }
    ```
@@ -73,12 +106,18 @@ Api/
 
 ### Testing Locally
 
-The function will be available at `http://localhost:7071/api/blob-info`. You can test it using:
+Blob info:
 
 ```bash
 curl -X POST http://localhost:7071/api/blob-info \
   -H "Content-Type: application/json" \
   -d '{"blobName": "your-file.pdf"}'
+```
+
+Special events:
+
+```bash
+curl http://localhost:7071/api/special-events
 ```
 
 ## Deployment to Azure Static Web Apps
@@ -90,6 +129,7 @@ curl -X POST http://localhost:7071/api/blob-info \
 3. **Add these settings**:
    - `AzureStorageConnectionString`: Your Azure Storage connection string
    - `BlobContainerName`: Your blob container name
+   - `SpecialEventConnectionString`: Connection string for the SpecialEvent SQL database
 
 ### Via Azure CLI
 
@@ -104,7 +144,8 @@ az staticwebapp appsettings set \
   --resource-group $RESOURCE_GROUP \
   --setting-names \
     AzureStorageConnectionString="YOUR_CONNECTION_STRING" \
-    BlobContainerName="YOUR_CONTAINER_NAME"
+    BlobContainerName="YOUR_CONTAINER_NAME" \
+    SpecialEventConnectionString="YOUR_SPECIAL_EVENT_SQL_CONNECTION_STRING"
 ```
 
 ### GitHub Actions Deployment

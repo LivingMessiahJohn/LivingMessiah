@@ -41,6 +41,7 @@ cd LivingMessiah.AppHost
 
 # Set your Azure Storage connection string
 dotnet user-secrets set "AzureStorageConnectionString" "DefaultEndpointsProtocol=https;AccountName=YOUR_ACCOUNT;AccountKey=YOUR_KEY;EndpointSuffix=core.windows.net"
+dotnet user-secrets set "SpecialEventConnectionString" "Server=YOUR_SERVER;Initial Catalog=SpecialEvent;..."
 
 # Set your blob container name
 dotnet user-secrets set "BlobContainerName" "your-container-name"
@@ -70,11 +71,13 @@ This will:
 // Reads from User Secrets
 var storageConnectionString = builder.Configuration["AzureStorageConnectionString"];
 var blobContainerName = builder.Configuration["BlobContainerName"];
+var specialEventConnectionString = builder.Configuration["SpecialEventConnectionString"];
 
 // Injects into API as environment variables
 var apiService = builder.AddProject<Projects.Api>("api")
     .WithEnvironment("AzureStorageConnectionString", storageConnectionString)
-    .WithEnvironment("BlobContainerName", blobContainerName);
+    .WithEnvironment("BlobContainerName", blobContainerName)
+    .WithEnvironment("SpecialEventConnectionString", specialEventConnectionString);
 
 // PWA references API
 builder.AddProject<Projects.PWA>("pwa")
@@ -102,7 +105,8 @@ If you need to run the API standalone (e.g., debugging just the function):
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "AzureStorageConnectionString": "DefaultEndpointsProtocol=https;AccountName=YOUR_ACCOUNT;AccountKey=YOUR_KEY;EndpointSuffix=core.windows.net",
-    "BlobContainerName": "your-container-name"
+    "BlobContainerName": "your-container-name",
+    "SpecialEventConnectionString": "Server=YOUR_SERVER;Initial Catalog=SpecialEvent;..."
   }
 }
 ```
@@ -115,7 +119,9 @@ cd Api
 func start
 ```
 
-The function will be at: `http://localhost:7071/api/blob-info`
+The functions will be at:
+- `http://localhost:7071/api/blob-info`
+- `http://localhost:7071/api/special-events`
 
 #### 3. Update PWA to use standalone API
 The PWA is already configured to use `http://localhost:7071` in development mode.
@@ -136,6 +142,7 @@ The PWA is already configured to use `http://localhost:7071` in development mode
 |------|-------|
 | `AzureStorageConnectionString` | Your Azure Storage connection string |
 | `BlobContainerName` | Your container name (e.g., "pdfs") |
+| `SpecialEventConnectionString` | Connection string for the SpecialEvent SQL database |
 
 ### How to Get Your Connection String
 

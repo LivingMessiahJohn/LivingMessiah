@@ -7,6 +7,7 @@
 cd LivingMessiah.AppHost
 dotnet user-secrets set "AzureStorageConnectionString" "YOUR_CONNECTION_STRING"
 dotnet user-secrets set "BlobContainerName" "YOUR_CONTAINER_NAME"
+dotnet user-secrets set "SpecialEventConnectionString" "YOUR_SPECIAL_EVENT_SQL_CONNECTION_STRING"
 
 # 2. Run everything via Aspire
 dotnet run
@@ -44,6 +45,7 @@ dotnet user-secrets clear
 2. Add Application settings:
    - `AzureStorageConnectionString`
    - `BlobContainerName`
+   - `SpecialEventConnectionString` (Azure SQL connection string for the SpecialEvent database)
 
 ## Remember
 
