@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{E0096E63-5207-411F-2649-837654E3C58A}"
 EndProject
-Project("{42EA0DBD-9CF1-443E-919E-BE9C484E4577}") = "SpecialEvent", "Database\SpecialEvent\SpecialEvent.sqlproj", "{A64C3F8D-A67B-464D-9975-D201EECC5385}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SpecialEvent", "Database\SpecialEvent\SpecialEvent.sqlproj", "{A64C3F8D-A67B-464D-9975-D201EECC5385}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

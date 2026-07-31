@@ -182,9 +182,9 @@ ORDER BY EventDate
 			DateEnd = dateEnd
 		});
 
+		// --Description is modified because MarkDig doesn't like nulls
+		//--DECLARE @DateBegin smalldatetime = '2021-03-01', @DateEnd smalldatetime = '2023-01-31'
 		base.Sql = $@"
---Description is modified because MarkDig doesn't like nulls
---DECLARE @DateBegin smalldatetime =  '2021-03-01', @DateEnd smalldatetime = '2023-01-31' 
 SELECT
   Id, EventDate
 , EventTypeId
@@ -196,6 +196,7 @@ FROM dbo.vwSpecialEvent
 WHERE EventDate >= @DateBegin AND EventDate <=  @DateEnd
 ORDER BY EventDate
 ";
+
 		return await WithConnectionAsync(async connection =>
 		{
 			var rows = await connection.QueryAsync<EventQuery>(sql: base.Sql, param: base.Parms);

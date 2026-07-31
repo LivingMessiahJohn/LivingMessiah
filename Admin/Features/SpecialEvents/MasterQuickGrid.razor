@@ -92,27 +92,33 @@ else
 	[Parameter] public EventCallback<CrudAndIdArgs> OnReturnedCrudAndIdArgs { get; set; }
 
 	protected List<Data.EventQuery>? data = new();
+
 	protected override async Task OnInitializedAsync()
 	{
 		try
 		{
-			data = await db!.GetEventsByDateRange(DateTime.Parse(Constants.DateRange.Start), DateTime.Parse(Constants.DateRange.End));
+			data = await db!.GetEventsByDateRange(DateTime.Parse(Constants.DateRange.Start),	DateTime.Parse(Constants.DateRange.End));
 
-			if (data is not null)
+			if (data is null)
 			{
-				Logger!.LogDebug("{Method}, {Message}", nameof(OnInitializedAsync), $"Count: {data.Count}");
+				Logger!.LogWarning("{Method}, {Message}",		nameof(OnInitializedAsync),	"No Special Events found, data is null");
+				Toast!.ShowWarning("No Special Events found (data is null)");
+			}
+			else if (!data.Any())
+			{
+				Logger!.LogWarning("{Method}, {Message}",	nameof(OnInitializedAsync),	"No Special Events found, data is empty");
+				Toast!.ShowWarning("No Special Events found for the selected date range");
 			}
 			else
 			{
-				Logger!.LogWarning("{Method}, {Message}", nameof(OnInitializedAsync), "No Special Events found, data is null");
-				Toast!.ShowWarning("No Special Events found, (data is null)");
+				Toast!.ShowInfo($"Found {data.Count} Special Events");
+				Logger!.LogDebug("{Method}, {Message}",	nameof(OnInitializedAsync),	$"Count: {data.Count}");
 			}
-
 		}
 		catch (Exception ex)
 		{
-			Logger!.LogError(ex, "{Class}!{Method}", nameof(MasterQuickGrid), nameof(OnInitializedAsync));
-			Toast!.ShowError($"{Global.ToastShowError} {nameof(MasterQuickGrid)}!{nameof(OnInitializedAsync)}");
+			Logger!.LogError(ex, "{Class}!{Method}",	nameof(MasterQuickGrid),	nameof(OnInitializedAsync));
+			Toast!.ShowError($"{ex.Message} {nameof(MasterQuickGrid)}!{nameof(OnInitializedAsync)}");
 		}
 	}
 
