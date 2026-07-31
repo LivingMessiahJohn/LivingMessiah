@@ -8,7 +8,9 @@ public class FormVM
 	public DateTime? ShowEndDate { get; set; }		// [Required]
 	public DateTime EventDate { get; set; }				// [Required]
 	public int EventTypeId { get; set; }          // [Required]
+	public string? EventTypeDescr { get; set; }   // From EventType.Descr (API join)
 	public string? Title { get; set; }  
+
 	public string? SubTitle { get; set; }
 	public string? ImageUrl { get; set; }
 	public string? YouTubeId { get; set; }

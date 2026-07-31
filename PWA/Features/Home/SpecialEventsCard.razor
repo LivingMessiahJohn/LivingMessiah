@@ -1,5 +1,40 @@
-﻿<h3>SpecialEventsCard</h3>
+@using PWA.Features.SpecialEvents
+@using PWA.Features.SpecialEvents.Data
+
+@inject ISpecialEventsApiService SpecialEventsApi
+@inject ILogger<SpecialEventsCard> Logger
+
+@if (SpecialEvents.Count > 0)
+{
+	@foreach (var item in SpecialEvents)
+	{
+		<DisplayCard FormVM="item" />
+	}
+}
 
 @code {
+	private List<FormVM> SpecialEvents { get; set; } = new();
 
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			var result = await SpecialEventsApi.GetCurrentEventsAsync();
+			if (result.Succeeded)
+			{
+				SpecialEvents = result.Events.ToList();
+			}
+			else
+			{
+				// Home stays quiet on API failure; dedicated /SpecialEvents page surfaces errors.
+				Logger.LogWarning("{Method} {Message}", nameof(OnInitializedAsync), result.ErrorMessage);
+				SpecialEvents = new();
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger.LogError(ex, "{Method} failed to load special events", nameof(OnInitializedAsync));
+			SpecialEvents = new();
+		}
+	}
 }

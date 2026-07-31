@@ -8,6 +8,7 @@ using Toolbelt.Blazor.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Core;
 using PWA.Features.Home.Shabbat.Teaching.Data;
+using PWA.Features.SpecialEvents.Data;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -33,6 +34,9 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 // Use Azure Function API for blob operations
 // When running under Aspire, the API endpoint is provided via service discovery
 // In production (Azure Static Web Apps), the API is at the same base address
+
+
+//var apiBaseAddress = "http://localhost:1"; // For testing, make  wrong port
 var apiBaseAddress = builder.Configuration["services:api:https:0"] 
 	?? builder.Configuration["services:api:http:0"]
 	?? (builder.HostEnvironment.IsDevelopment() 
@@ -42,6 +46,7 @@ var apiBaseAddress = builder.Configuration["services:api:https:0"]
 Log.Information("API Base Address: {ApiBaseAddress}", apiBaseAddress);
 
 builder.Services.AddBlobApiService(apiBaseAddress);
+builder.Services.AddSpecialEventsApiService(apiBaseAddress);
 builder.Services.AddMoon();
 builder.Services.AddOmer();
 builder.Services.AddFeastDayPlanner();

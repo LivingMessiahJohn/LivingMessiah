@@ -28,7 +28,7 @@ SELECT
 ,	ROW_NUMBER() OVER(ORDER BY [DateTime] ) AS RowNum
 , [DateTime] AS EventDate
 , e.EventTypeId
---, t.Descr AS EventTypeDescr
+, t.Descr AS EventTypeDescr
 , CASE WHEN  GETUTCDATE()  > [DateTime]
 		THEN DATEDIFF(DAY, [DateTime], GETUTCDATE())
 		ELSE DATEDIFF(DAY, GETUTCDATE(), [DateTime])

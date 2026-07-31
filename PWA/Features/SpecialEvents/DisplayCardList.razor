@@ -1,29 +1,64 @@
-﻿@* @using PWA.Features.SpecialEvents *@
+@using PWA.Features.SpecialEvents.Data
 
-@inject ILogger<DisplayCardList>? Logger
+@inject ISpecialEventsApiService SpecialEventsApi
+@inject ILogger<DisplayCardList> Logger
 
-@* Azure Function to call the database *@
-
-@foreach (var item in SpecialEvents)
+@if (_loading)
 {
-	<DisplayCard FormVM="item" />
+	<p class="text-muted">Loading special events…</p>
+}
+else if (!string.IsNullOrEmpty(_errorMessage))
+{
+	<div class="alert alert-warning" role="alert">
+		@_errorMessage
+	</div>
+}
+else if (SpecialEvents.Count == 0)
+{
+	<p class="text-muted text-center">No special events are currently scheduled.</p>
+
+	<img src="@Constants.Blobs.EventsLink("special-event-template.jpg")"
+			 alt="special event"
+			 class="img-fluid rounded mt-4 mx-auto d-block" />
+}
+else
+{
+	@foreach (var item in SpecialEvents)
+	{
+		<DisplayCard FormVM="item" />
+	}
 }
 
 @code {
 	protected List<FormVM> SpecialEvents = new();
+	private bool _loading = true;
+	private string? _errorMessage;
 
 	protected override async Task OnInitializedAsync()
 	{
-		Logger!.LogInformation("{Method}", nameof(OnInitializedAsync));
+		Logger.LogInformation("{Method}", nameof(OnInitializedAsync));
 		try
 		{
-			//SpecialEvents = await db!.GetCurrentEvents();
+			var result = await SpecialEventsApi.GetCurrentEventsAsync();
+			if (!result.Succeeded)
+			{
+				_errorMessage = result.ErrorMessage;
+				SpecialEvents = new();
+			}
+			else
+			{
+				SpecialEvents = result.Events.ToList();
+			}
 		}
 		catch (Exception ex)
 		{
-			//Toast!.ShowError($"{Global.ToastShowError}; inside: {inside}!{nameof(OnInitializedAsync)}");
-			Logger?.LogError(ex, ""); // " {Name}", name);
+			Logger.LogError(ex, "{Method} failed to load special events", nameof(OnInitializedAsync));
+			_errorMessage = "Unexpected error loading special events";
+			SpecialEvents = new();
+		}
+		finally
+		{
+			_loading = false;
 		}
 	}
-
 }
