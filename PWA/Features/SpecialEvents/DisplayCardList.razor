@@ -25,7 +25,17 @@ else
 {
 	@foreach (var item in SpecialEvents)
 	{
-		<DisplayCard FormVM="item" />
+		<SpecialEventDisplayCard EventDate="@item.EventDate"
+								 EventTypeId="@item.EventTypeId"
+								 EventTypeDescr="@item.EventTypeDescr"
+								 Title="@item.Title"
+								 SubTitle="@item.SubTitle"
+								 ImageUrl="@item.ImageUrl"
+								 YouTubeId="@item.YouTubeId"
+								 WebsiteUrl="@item.WebsiteUrl"
+								 WebsiteDescr="@item.WebsiteDescr"
+								 Description="@item.Description"
+								 RenderDescriptionAsMarkdown="true" />
 	}
 }
 

@@ -20,68 +20,16 @@
 
 <LoadingComponentLIBRARY IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
 
-	<div class="card border-primary my-1">
-
-		<div class="card-header bg-primary-subtle">
-
-			<div class="row">
-				<div class="col-6">
-					<h4>
-						<i class="far fa-calendar"></i>
-						<span class='badge bg-primary'>@data!.EventDate.ToString(DateFormat.ddd_mm_dd)</span>
-					</h4>
-				</div>
-				<div class="col-6 text-end">
-					Type: @Enums.EventType.FromValue(data.EventTypeId).Descr
-				</div>
-			</div>
-
-		</div>
-
-		<div class="card-body">
-			<h3 class="card-text text-center">
-				@data.Title
-			</h3>
-		</div>
-
-		@if (!String.IsNullOrEmpty(@data.ImageUrl))
-		{
-			<div class="card-body">
-				<img src="@data.ImageUrl" alt="Event Image" style="max-width: 500px; max-height: 300px;" class="d-block mx-auto img-fluid border border-3 border-primary rounded" />
-			</div>
-		}
-
-		<div class="card-body">
-
-			@if (!String.IsNullOrEmpty(@data.YouTubeId))
-			{
-				<a href="https://www.youtube.com/watch?v=@data.YouTubeId" target="_blank" title="@data.YouTubeId">
-					<img src='https://img.youtube.com/vi/@data.YouTubeId/mqdefault.jpg' class='mt-4' /> <br>  @data.Title
-				</a>
-			}
-
-
-			@if (!String.IsNullOrEmpty(@data.SubTitle))
-			{
-				<h4 class="card-title">@data.SubTitle</h4>
-			}
-
-			@if (!String.IsNullOrEmpty(@data.WebsiteUrl))
-			{
-				<Anchor Href="@data.WebsiteUrl" TargetIsBlank="true" Descr="@data.WebsiteDescr" />
-			}
-		</div>
-
-		<div class="row mt-n2 mb-3">
-			<div class="col-12">
-
-				@* <SfRichTextEditor *@
-				<p>@data.Description</p>
-
-			</div>
-		</div>
-
-	</div>
+	<SpecialEventDisplayCard EventDate="@data!.EventDate"
+							 EventTypeId="@data.EventTypeId"
+							 EventTypeDescr="@Enums.EventType.FromValue(data.EventTypeId).Descr"
+							 Title="@data.Title"
+							 SubTitle="@data.SubTitle"
+							 ImageUrl="@data.ImageUrl"
+							 YouTubeId="@data.YouTubeId"
+							 WebsiteUrl="@data.WebsiteUrl"
+							 WebsiteDescr="@data.WebsiteDescr"
+							 Description="@data.Description" />
 
 </LoadingComponentLIBRARY>
 
