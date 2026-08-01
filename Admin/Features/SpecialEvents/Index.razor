@@ -3,7 +3,8 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using Page = Admin.Enums.Nav
 @using Admin.Security.Constants
-@using RoleGroup = Admin.Security.Enums.RoleGroup;
+@using RoleGroup = Admin.Security.Enums.RoleGroup
+@using RCL.Features.Calendar
 
 @inject ILogger<Index>? Logger
 @inject IToastService? Toast
@@ -45,6 +46,14 @@
 			<DeleteModal Id="@id" Title="@title" OnDeleteResponse="ReturnedDeleteResponse" />
 		}
 
+		<div class="mt-4 d-print-none">
+			<ToggleButton ButtonLabel="Show PWA view">
+				<div class="alert alert-info mt-2 mb-2" role="alert">
+					<small>Preview of current special events as shown on the public PWA home / Special Events pages.</small>
+				</div>
+				<PwaDisplayPreview />
+			</ToggleButton>
+		</div>
 
 	</Authorized>
 	<NotAuthorized>

@@ -1,0 +1,79 @@
+@using RclFormVM = RCL.Features.SpecialEvents.FormVM
+
+@inject Data.IRepository? db
+@inject ILogger<PwaDisplayPreview>? Logger
+
+@if (_loading)
+{
+	<p class="text-muted">Loading current special events (PWA view)…</p>
+}
+else if (!string.IsNullOrEmpty(_errorMessage))
+{
+	<div class="alert alert-warning" role="alert">
+		@_errorMessage
+	</div>
+}
+else if (_events.Count == 0)
+{
+	<p class="text-muted text-center">No special events are currently scheduled to display on PWA.</p>
+}
+else
+{
+	@foreach (var item in _events)
+	{
+		@* Fully-qualified to avoid clash with Admin.Features.SpecialEvents.DisplayCard *@
+		<RCL.Features.SpecialEvents.DisplayCard FormVM="item" />
+	}
+}
+
+@code {
+	private List<RclFormVM> _events = new();
+	private bool _loading = true;
+	private string? _errorMessage;
+
+	protected override async Task OnInitializedAsync()
+	{
+		Logger?.LogInformation("{Method}", nameof(OnInitializedAsync));
+		try
+		{
+			var rows = await db!.GetCurrentEvents();
+			_events = rows.Select(ToDisplayVm).ToList();
+		}
+		catch (Exception ex)
+		{
+			Logger?.LogError(ex, "{Method} failed to load current special events", nameof(OnInitializedAsync));
+			_errorMessage = "Unexpected error loading current special events";
+			_events = new();
+		}
+		finally
+		{
+			_loading = false;
+		}
+	}
+
+	private static RclFormVM ToDisplayVm(FormVM source)
+	{
+		string? eventTypeDescr = null;
+		if (Enums.EventType.TryFromValue(source.EventTypeId, out var eventType))
+		{
+			eventTypeDescr = eventType.Descr;
+		}
+
+		return new RclFormVM
+		{
+			Id = source.Id,
+			ShowBeginDate = source.ShowBeginDate,
+			ShowEndDate = source.ShowEndDate,
+			EventDate = source.EventDate,
+			EventTypeId = source.EventTypeId,
+			EventTypeDescr = eventTypeDescr,
+			Title = source.Title,
+			SubTitle = source.SubTitle,
+			ImageUrl = source.ImageUrl,
+			YouTubeId = source.YouTubeId,
+			WebsiteUrl = source.WebsiteUrl,
+			WebsiteDescr = source.WebsiteDescr,
+			Description = source.Description
+		};
+	}
+}
