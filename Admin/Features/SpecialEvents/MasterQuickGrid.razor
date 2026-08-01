@@ -102,16 +102,16 @@ else
 			if (data is null)
 			{
 				Logger!.LogWarning("{Method}, {Message}",		nameof(OnInitializedAsync),	"No Special Events found, data is null");
-				Toast!.ShowWarning("No Special Events found (data is null)");
+				//Toast!.ShowWarning("No Special Events found (data is null)");
 			}
 			else if (!data.Any())
 			{
 				Logger!.LogWarning("{Method}, {Message}",	nameof(OnInitializedAsync),	"No Special Events found, data is empty");
-				Toast!.ShowWarning("No Special Events found for the selected date range");
+				//Toast!.ShowWarning("No Special Events found for the selected date range");
 			}
 			else
 			{
-				Toast!.ShowInfo($"Found {data.Count} Special Events");
+				//Toast!.ShowInfo($"Found {data.Count} Special Events");
 				Logger!.LogDebug("{Method}, {Message}",	nameof(OnInitializedAsync),	$"Count: {data.Count}");
 			}
 		}
