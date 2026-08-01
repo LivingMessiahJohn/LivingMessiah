@@ -1,7 +1,7 @@
 using Markdig;
 using Microsoft.AspNetCore.Components;
 
-namespace PWA.Helpers;
+namespace RCL.Helpers;
 
 /// <summary>
 /// Converts Markdown (e.g. Special Event descriptions from Admin) to HTML for Blazor MarkupString.

@@ -1,4 +1,5 @@
-﻿@using PWA.Helpers
+@using RCL.Constants
+@using RCL.Helpers
 
 @if (ShowPrintAnchor)
 {
@@ -52,10 +53,6 @@
 		@if (!String.IsNullOrEmpty(@FormVM.ImageUrl))
 		{
 			<img src='@FormVM.ImageUrl' alt="@FormVM.ImageUrl" class="img-fluid rounded mt-2 d-block mx-auto" />
-		}
-		else
-		{
-			@* <img src='@Constants.Blobs.EventsLink("special-event-template.jpg")' alt="special event" class="img-fluid rounded mt-4 mx-auto d-block" />	*@
 		}
 	</div>
 
