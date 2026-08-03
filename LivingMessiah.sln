@@ -21,6 +21,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{E0
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SpecialEvent", "Database\SpecialEvent\SpecialEvent.sqlproj", "{A64C3F8D-A67B-464D-9975-D201EECC5385}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ShabbatPdf", "ShabbatPdf", "{6243AE03-FBC2-4D61-A2EC-D6584B26F999}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivingMessiah.ShabbatPdf.Core", "ShabbatPdf\src\Core\LivingMessiah.ShabbatPdf.Core.csproj", "{B0B14B81-15A4-20C9-6440-41D84C25B71E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivingMessiah.ShabbatPdf.Cli", "ShabbatPdf\src\Cli\LivingMessiah.ShabbatPdf.Cli.csproj", "{50A92357-2153-C324-0400-BB729E96B04D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivingMessiah.ShabbatPdf.Functions", "ShabbatPdf\src\Functions\LivingMessiah.ShabbatPdf.Functions.csproj", "{23899D02-2186-2136-C109-BC647FBCF968}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivingMessiah.ShabbatPdf.Tests", "ShabbatPdf\tests\LivingMessiah.ShabbatPdf.Tests\LivingMessiah.ShabbatPdf.Tests.csproj", "{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,14 +131,67 @@ Global
 		{A64C3F8D-A67B-464D-9975-D201EECC5385}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A64C3F8D-A67B-464D-9975-D201EECC5385}.Release|x64.ActiveCfg = Release|Any CPU
 		{A64C3F8D-A67B-464D-9975-D201EECC5385}.Release|x86.ActiveCfg = Release|Any CPU
+		{B0B14B81-15A4-20C9-6440-41D84C25B71E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0B14B81-15A4-20C9-6440-41D84C25B71E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0B14B81-15A4-20C9-6440-41D84C25B71E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B0B14B81-15A4-20C9-6440-41D84C25B71E}.Debug|x64.Build.0 = Debug|Any CPU
+		{B0B14B81-15A4-20C9-6440-41D84C25B71E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B0B14B81-15A4-20C9-6440-41D84C25B71E}.Debug|x86.Build.0 = Debug|Any CPU
+		{B0B14B81-15A4-20C9-6440-41D84C25B71E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0B14B81-15A4-20C9-6440-41D84C25B71E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0B14B81-15A4-20C9-6440-41D84C25B71E}.Release|x64.ActiveCfg = Release|Any CPU
+		{B0B14B81-15A4-20C9-6440-41D84C25B71E}.Release|x64.Build.0 = Release|Any CPU
+		{B0B14B81-15A4-20C9-6440-41D84C25B71E}.Release|x86.ActiveCfg = Release|Any CPU
+		{B0B14B81-15A4-20C9-6440-41D84C25B71E}.Release|x86.Build.0 = Release|Any CPU
+		{50A92357-2153-C324-0400-BB729E96B04D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50A92357-2153-C324-0400-BB729E96B04D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50A92357-2153-C324-0400-BB729E96B04D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{50A92357-2153-C324-0400-BB729E96B04D}.Debug|x64.Build.0 = Debug|Any CPU
+		{50A92357-2153-C324-0400-BB729E96B04D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{50A92357-2153-C324-0400-BB729E96B04D}.Debug|x86.Build.0 = Debug|Any CPU
+		{50A92357-2153-C324-0400-BB729E96B04D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50A92357-2153-C324-0400-BB729E96B04D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50A92357-2153-C324-0400-BB729E96B04D}.Release|x64.ActiveCfg = Release|Any CPU
+		{50A92357-2153-C324-0400-BB729E96B04D}.Release|x64.Build.0 = Release|Any CPU
+		{50A92357-2153-C324-0400-BB729E96B04D}.Release|x86.ActiveCfg = Release|Any CPU
+		{50A92357-2153-C324-0400-BB729E96B04D}.Release|x86.Build.0 = Release|Any CPU
+		{23899D02-2186-2136-C109-BC647FBCF968}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23899D02-2186-2136-C109-BC647FBCF968}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23899D02-2186-2136-C109-BC647FBCF968}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{23899D02-2186-2136-C109-BC647FBCF968}.Debug|x64.Build.0 = Debug|Any CPU
+		{23899D02-2186-2136-C109-BC647FBCF968}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{23899D02-2186-2136-C109-BC647FBCF968}.Debug|x86.Build.0 = Debug|Any CPU
+		{23899D02-2186-2136-C109-BC647FBCF968}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23899D02-2186-2136-C109-BC647FBCF968}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23899D02-2186-2136-C109-BC647FBCF968}.Release|x64.ActiveCfg = Release|Any CPU
+		{23899D02-2186-2136-C109-BC647FBCF968}.Release|x64.Build.0 = Release|Any CPU
+		{23899D02-2186-2136-C109-BC647FBCF968}.Release|x86.ActiveCfg = Release|Any CPU
+		{23899D02-2186-2136-C109-BC647FBCF968}.Release|x86.Build.0 = Release|Any CPU
+		{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0}.Debug|x64.Build.0 = Debug|Any CPU
+		{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0}.Debug|x86.Build.0 = Debug|Any CPU
+		{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0}.Release|x64.ActiveCfg = Release|Any CPU
+		{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0}.Release|x64.Build.0 = Release|Any CPU
+		{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0}.Release|x86.ActiveCfg = Release|Any CPU
+		{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A64C3F8D-A67B-464D-9975-D201EECC5385} = {E0096E63-5207-411F-2649-837654E3C58A}
+		{B0B14B81-15A4-20C9-6440-41D84C25B71E} = {6243AE03-FBC2-4D61-A2EC-D6584B26F999}
+		{50A92357-2153-C324-0400-BB729E96B04D} = {6243AE03-FBC2-4D61-A2EC-D6584B26F999}
+		{23899D02-2186-2136-C109-BC647FBCF968} = {6243AE03-FBC2-4D61-A2EC-D6584B26F999}
+		{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0} = {6243AE03-FBC2-4D61-A2EC-D6584B26F999}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		FileExplorer = |ShabbatPdf\
 		SolutionGuid = {F7906031-9EBC-4421-809C-BC543F235128}
 	EndGlobalSection
 EndGlobal

@@ -14,6 +14,7 @@
 | `Database/` | SDK-style SQL projects (`Microsoft.Build.Sql`), one folder per Azure DB — start with `SpecialEvent/` |
 | `LivingMessiah.AppHost/` | .NET Aspire host — preferred local run entry |
 | `LivingMessiah.ServiceDefaults/` | Shared Aspire service defaults (health, OpenTelemetry, service discovery) |
+| `ShabbatPdf/` | Parses Living Messiah Shabbat service agenda PDFs |
 
 Feature UI and feature-local code live under each app’s `Features/` folder (e.g. `PWA/Features/Home/`, `Admin/Features/Sukkot/`). Shared domain types and reusable UI belong in `RCL/`.
 
