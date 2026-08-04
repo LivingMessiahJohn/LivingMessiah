@@ -1,12 +1,21 @@
 # Publish LivingMessiah.ShabbatPdf.Functions to Azure (Flex Consumption).
 #
+# Monorepo layout: this script lives under LivingMessiah/ShabbatPdf/scripts/.
+# "$repoRoot" is the ShabbatPdf product folder (parent of scripts/), not the
+# LivingMessiah solution root.
+#
 # Prerequisites:
-#   - az login
+#   - az login (subscription that owns the Function app)
 #   - Function app already exists (default: lmm-shabbat-pdf in LmmWebAppGroup)
 #
-# From repo root of ShabbatPdf:
+# From ShabbatPdf (product root):
+#   cd C:\Source\repos\LivingMessiah\ShabbatPdf
 #   .\scripts\deploy-function.ps1
 #   .\scripts\deploy-function.ps1 -AppName lmm-shabbat-pdf -ResourceGroup LmmWebAppGroup
+#
+# Staging (gitignored via ShabbatPdf/.gitignore out/):
+#   out\func-publish\     publish folder
+#   out\func-publish.zip  zip uploaded to Azure
 
 param(
     [string] $AppName = "lmm-shabbat-pdf",
@@ -16,12 +25,21 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 Set-Location $repoRoot
+
+# Resolve relative paths against ShabbatPdf root so invoke-from-anywhere works.
+if (-not [System.IO.Path]::IsPathRooted($ProjectPath)) {
+    $ProjectPath = Join-Path $repoRoot $ProjectPath
+}
+if (-not (Test-Path -LiteralPath $ProjectPath)) {
+    throw "Functions project not found: $ProjectPath"
+}
 
 $publishDir = Join-Path $repoRoot "out\func-publish"
 $zipPath = Join-Path $repoRoot "out\func-publish.zip"
 
+Write-Host "ShabbatPdf root: $repoRoot" -ForegroundColor DarkGray
 Write-Host "Publishing $ProjectPath ($Configuration) ..." -ForegroundColor Cyan
 if (Test-Path $publishDir) {
     Remove-Item -Recurse -Force $publishDir
