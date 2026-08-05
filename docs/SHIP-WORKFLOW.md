@@ -21,6 +21,119 @@ Issue → Branch → Implement → Verify → PR → Preview/CI → Smoke → Me
 | Production smoke | **Human** | Confirm live app |
 | Close issue / delete branch | Auto + human | `Fixes #N` on merge; delete remote branch |
 
+## Issues / branches / PRs
+
+Mental model:
+
+| Concept | Role |
+|---------|------|
+| **Issue** | What / why (intent, acceptance criteria) |
+| **Branch** | Where you implement (isolated code line) |
+| **PR** | Proposed solution (diff) for review and merge |
+| **Merge** | Lands on `main` → often deploys |
+
+```text
+                    has code change?
+                         │
+            ┌────────────┴────────────┐
+            No                        Yes
+            │                         │
+     Issue only                 Issue + Branch
+     (proposal, ops,            + PR (Fixes #N)
+      question, spike)                │
+            │                    human merges
+         close issue                  │
+         with comment            issue auto-closes
+```
+
+### When to create an Issue
+
+**Rule of thumb:** if an agent will implement it or it might hit `main`/Azure, open an issue first (even a short one).
+
+| Do create when… | Why |
+|-----------------|-----|
+| You’re about to change code, config, or deploy | Scope, AC, and a number for branch/PR (`Fixes #N`) |
+| Work spans sessions or is more than a quick fix | Memory and handoff for you and agents |
+| Risk exists (auth, Stripe, data, Azure, PWA offline) | Forces Out of scope / Risk / verify before coding |
+| You’ll want history later (“why did we do this?”) | Issues outlive chat and commits |
+| Ops cutover that must be remembered | Trackable even if half is not a PR |
+
+| Skip or defer when… | Why |
+|---------------------|-----|
+| Pure local experiment you’ll throw away | Branch or scratch folder is enough |
+| Typo / one-line fix under ~10 minutes | Optional; a PR with a clear title can stand alone |
+| Chat-only question with no product decision | Comment or Discussion, not an issue |
+| Duplicate of an open issue | Comment on the existing one |
+
+### Issue types (labels + intent)
+
+GitHub doesn’t force types; use labels for area (`pwa-proj`, `sukkot-proj`, …) and kind (`bug`, `enhancement`, `proposal`, `refactor`, `documentation`).
+
+| Type | Usually has code PR? | Branch? |
+|------|----------------------|---------|
+| Bug / enhancement / feature / refactor | Yes | Yes |
+| Documentation | Sometimes (docs-only PR) | Optional small branch |
+| Proposal | No until accepted | No |
+| Spike / research | Maybe notes PR; often no code PR | Optional |
+| Ops / cutover | Sometimes (script/docs); may be checklist only | Only if repo files change |
+| Chore / maintenance | Small PR or none | Optional |
+| Question | No — close when answered | No |
+| Tracking / epic | No single PR — children have PRs | No |
+
+### Issues that often have no PR
+
+Closing without a PR is fine: comment what was decided/done and close.
+
+1. **Proposal / decision** — accept or reject; then open an implementation issue if needed.
+2. **Question** — answered in comments → close.
+3. **Ops-only** — portal work, key rotation, role grants — checklist on the issue.
+4. **Spike** — write-up or decision; may spawn a feature issue.
+5. **Wontfix / duplicate** — closed without code.
+
+### Relationship with branches
+
+| Link | Guidance |
+|------|----------|
+| Name | `john-<issue#>-short-slug` (see [Branch naming](#branch-naming)) |
+| One issue → one branch (usual) | Keeps review and reverts simple |
+| Issue with no code | No branch |
+| Issue with only Azure portal work | No branch unless scripts/docs change |
+| No issue | Branch still possible for experiments; harder to track |
+
+**Always branch** for multi-file work, deploy-facing apps, or anything you’ll open a PR for.
+
+**When not to branch:** tiny local experiment; pure ops; pure discussion.
+
+Because `main` auto-deploys for several apps, treat “commit on main” as almost the same as shipping. Safer default: branch → PR → human merge.
+
+### Relationship with PRs
+
+| Link | Guidance |
+|------|----------|
+| PR body | `Fixes #N` (or `Closes #N`) so merge auto-closes the issue |
+| Prefer | One issue ↔ one PR |
+| Rare | One PR fixes several tiny issues → multiple `Fixes #` lines |
+| Don’t | One giant PR for five unrelated issues |
+
+### Scenario cheat sheet
+
+| Scenario | Issue? | Branch? | PR? |
+|----------|--------|---------|-----|
+| New feature / bug fix | Yes | Yes | Yes |
+| Rename / refactor | Yes | Yes (ideal) | Yes (ideal) |
+| Port + deploy ownership | Yes | Yes if multi-commit | Yes if via PR; else issue + tracked work |
+| “Archive old repo” (ops) | Yes | No | No |
+| “Should we use Key Vault?” (proposal/spike) | Yes | No | No (or docs PR later) |
+| Typo in README | Optional | Optional | Optional tiny PR |
+
+### Checklist before opening an Issue
+
+1. Might we ship or decide this for LivingMessiah? → Issue
+2. Will there be a code change? → plan branch + PR
+3. Only Azure/GitHub UI or a decision? → issue, no PR
+4. Fill Problem / AC / Risk / Verify (even briefly)
+5. Label: area + kind
+
 ## Branch naming
 
 ```text
@@ -28,6 +141,8 @@ john-<issue#>-short-slug
 ```
 
 Example: `john-161-pwa-installed-error`
+
+For issue-linked work that will become a PR, agents should default to this pattern when starting implementation (unless the human says otherwise).
 
 ## Issue (required)
 
