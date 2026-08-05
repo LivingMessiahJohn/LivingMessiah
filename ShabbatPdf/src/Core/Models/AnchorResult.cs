@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Models;
+namespace ShabbatPdf.Core.Models;
 
 /// <summary>
 /// Outer anchors (Welcome / Avinu) and the final content page range after intro skip.

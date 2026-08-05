@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Compression;
+namespace ShabbatPdf.Core.Compression;
 
 /// <summary>
 /// Ensures a full-agenda PDF in blob storage is under the mobile download size limit.

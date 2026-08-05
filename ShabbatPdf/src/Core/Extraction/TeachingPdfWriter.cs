@@ -1,7 +1,7 @@
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Writer;
 
-namespace LivingMessiah.ShabbatPdf.Core.Extraction;
+namespace ShabbatPdf.Core.Extraction;
 
 /// <summary>
 /// Copies a page range from a source PDF into a new PDF (teaching-only slice).

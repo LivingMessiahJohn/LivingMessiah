@@ -1,6 +1,6 @@
-using LivingMessiah.ShabbatPdf.Core.Models;
+using ShabbatPdf.Core.Models;
 
-namespace LivingMessiah.ShabbatPdf.Core.Pipeline;
+namespace ShabbatPdf.Core.Pipeline;
 
 /// <summary>
 /// Orchestrates extract → anchor → markdown → optional upload.

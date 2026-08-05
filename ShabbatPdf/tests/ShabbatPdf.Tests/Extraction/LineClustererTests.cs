@@ -1,8 +1,8 @@
-using LivingMessiah.ShabbatPdf.Core.Extraction;
-using LivingMessiah.ShabbatPdf.Core.Models;
-using LivingMessiah.ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Extraction;
+using ShabbatPdf.Core.Models;
+using ShabbatPdf.Core.Options;
 
-namespace LivingMessiah.ShabbatPdf.Tests.Extraction;
+namespace ShabbatPdf.Tests.Extraction;
 
 public class LineClustererTests
 {

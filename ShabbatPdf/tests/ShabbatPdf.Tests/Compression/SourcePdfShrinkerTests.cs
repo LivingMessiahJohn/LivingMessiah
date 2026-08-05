@@ -1,9 +1,9 @@
-using LivingMessiah.ShabbatPdf.Core.Compression;
-using LivingMessiah.ShabbatPdf.Core.Options;
-using LivingMessiah.ShabbatPdf.Tests.Storage;
+using ShabbatPdf.Core.Compression;
+using ShabbatPdf.Core.Options;
+using ShabbatPdf.Tests.Storage;
 using Microsoft.Extensions.Options;
 
-namespace LivingMessiah.ShabbatPdf.Tests.Compression;
+namespace ShabbatPdf.Tests.Compression;
 
 public class SourcePdfShrinkerTests
 {

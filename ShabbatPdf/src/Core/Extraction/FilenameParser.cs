@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace LivingMessiah.ShabbatPdf.Core.Extraction;
+namespace ShabbatPdf.Core.Extraction;
 
 /// <summary>
 /// Parses <c>YYYY-MM-DD-Citation.pdf</c> names and maps them to Markdown file names.

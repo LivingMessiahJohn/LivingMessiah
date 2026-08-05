@@ -1,12 +1,12 @@
-using LivingMessiah.ShabbatPdf.Core.Extraction;
-using LivingMessiah.ShabbatPdf.Core.Models;
-using LivingMessiah.ShabbatPdf.Core.Options;
-using LivingMessiah.ShabbatPdf.Core.Storage;
+using ShabbatPdf.Core.Extraction;
+using ShabbatPdf.Core.Models;
+using ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
-namespace LivingMessiah.ShabbatPdf.Core.Pipeline;
+namespace ShabbatPdf.Core.Pipeline;
 
 /// <summary>
 /// Orchestrates extract → anchors → teaching PDF slice → Markdown from teaching PDF → local/blob write.

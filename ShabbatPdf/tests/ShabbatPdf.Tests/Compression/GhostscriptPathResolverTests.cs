@@ -1,7 +1,7 @@
-using LivingMessiah.ShabbatPdf.Core.Compression;
-using LivingMessiah.ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Compression;
+using ShabbatPdf.Core.Options;
 
-namespace LivingMessiah.ShabbatPdf.Tests.Compression;
+namespace ShabbatPdf.Tests.Compression;
 
 public class GhostscriptPathResolverTests
 {

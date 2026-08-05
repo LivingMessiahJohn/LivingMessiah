@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace LivingMessiah.ShabbatPdf.Core.Models;
+namespace ShabbatPdf.Core.Models;
 
 /// <summary>
 /// Normalized text-layer lines for one PDF page (no image OCR, no layout recovery).

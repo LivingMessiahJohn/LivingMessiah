@@ -1,8 +1,8 @@
-using LivingMessiah.ShabbatPdf.Core.Compression;
-using LivingMessiah.ShabbatPdf.Core.Extraction;
-using LivingMessiah.ShabbatPdf.Core.Options;
-using LivingMessiah.ShabbatPdf.Core.Pipeline;
-using LivingMessiah.ShabbatPdf.Core.Storage;
+using ShabbatPdf.Core.Compression;
+using ShabbatPdf.Core.Extraction;
+using ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Pipeline;
+using ShabbatPdf.Core.Storage;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

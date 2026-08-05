@@ -1,14 +1,14 @@
-using LivingMessiah.ShabbatPdf.Core.Extraction;
-using LivingMessiah.ShabbatPdf.Core.Models;
-using LivingMessiah.ShabbatPdf.Core.Options;
-using LivingMessiah.ShabbatPdf.Core.Pipeline;
+using ShabbatPdf.Core.Extraction;
+using ShabbatPdf.Core.Models;
+using ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Pipeline;
 using Microsoft.Extensions.Options;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Core;
 using UglyToad.PdfPig.Fonts.Standard14Fonts;
 using UglyToad.PdfPig.Writer;
 
-namespace LivingMessiah.ShabbatPdf.Tests.Pipeline;
+namespace ShabbatPdf.Tests.Pipeline;
 
 public class ParsePipelineTests
 {

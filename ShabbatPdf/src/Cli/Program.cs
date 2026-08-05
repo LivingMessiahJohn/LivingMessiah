@@ -1,10 +1,10 @@
 using System.CommandLine;
 using System.Reflection;
-using LivingMessiah.ShabbatPdf.Core.Extraction;
-using LivingMessiah.ShabbatPdf.Core.Models;
-using LivingMessiah.ShabbatPdf.Core.Options;
-using LivingMessiah.ShabbatPdf.Core.Pipeline;
-using LivingMessiah.ShabbatPdf.Core.Storage;
+using ShabbatPdf.Core.Extraction;
+using ShabbatPdf.Core.Models;
+using ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Pipeline;
+using ShabbatPdf.Core.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -103,11 +103,11 @@ root.SetAction(async (parseResult, cancellationToken) =>
         Console.Error.WriteLine("Error: specify exactly one of --input (local) or --blob (Azure).");
         Console.Error.WriteLine("Examples:");
         Console.Error.WriteLine(
-            "  dotnet run --project src/LivingMessiah.ShabbatPdf.Cli -- --input agenda.pdf --output agenda.md");
+            "  dotnet run --project ShabbatPdf\\src\\Cli -- --input agenda.pdf --output agenda.md");
         Console.Error.WriteLine(
-            "  dotnet run --project src/LivingMessiah.ShabbatPdf.Cli -- --blob 2026-07-04-Lev-16.pdf");
+            "  dotnet run --project ShabbatPdf\\src\\Cli -- --blob 2026-07-04-Lev-16.pdf");
         Console.Error.WriteLine(
-            "  dotnet run --project src/LivingMessiah.ShabbatPdf.Cli -- --input agenda-teaching.pdf --from-teaching");
+            "  dotnet run --project ShabbatPdf\\src\\Cli -- --input agenda-teaching.pdf --from-teaching");
         return ExitValidation;
     }
 
@@ -194,7 +194,7 @@ root.SetAction(async (parseResult, cancellationToken) =>
             FromTeaching: fromTeaching);
     }
 
-    LivingMessiah.ShabbatPdf.Core.Models.ParseResult result;
+    ShabbatPdf.Core.Models.ParseResult result;
     try
     {
         result = await pipeline.RunAsync(request, cancellationToken).ConfigureAwait(false);

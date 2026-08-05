@@ -1,9 +1,9 @@
-using LivingMessiah.ShabbatPdf.Core.Models;
-using LivingMessiah.ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Models;
+using ShabbatPdf.Core.Options;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Content;
 
-namespace LivingMessiah.ShabbatPdf.Core.Extraction;
+namespace ShabbatPdf.Core.Extraction;
 
 /// <summary>
 /// Extracts text-layer words via PdfPig and builds lines with <see cref="LineClusterer"/>.

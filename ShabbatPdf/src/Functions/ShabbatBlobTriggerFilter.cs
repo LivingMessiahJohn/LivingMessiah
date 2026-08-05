@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Functions;
+namespace ShabbatPdf.Functions;
 
 /// <summary>
 /// Decides which blobs the Azure Function should process.

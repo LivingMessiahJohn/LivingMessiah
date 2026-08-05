@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Models;
+namespace ShabbatPdf.Core.Models;
 
 /// <summary>
 /// A single word from the PDF text layer with geometry in PDF user space

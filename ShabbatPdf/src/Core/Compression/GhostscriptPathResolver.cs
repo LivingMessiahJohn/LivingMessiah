@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
-using LivingMessiah.ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Options;
 
-namespace LivingMessiah.ShabbatPdf.Core.Compression;
+namespace ShabbatPdf.Core.Compression;
 
 /// <summary>
 /// Resolves the Ghostscript executable path from config, PATH, or common install locations.

@@ -1,7 +1,7 @@
 using System.Text;
-using LivingMessiah.ShabbatPdf.Core.Models;
+using ShabbatPdf.Core.Models;
 
-namespace LivingMessiah.ShabbatPdf.Core.Extraction;
+namespace ShabbatPdf.Core.Extraction;
 
 /// <summary>
 /// Builds minimal v1 Markdown from sliced PDF page text (no images, no OCR).

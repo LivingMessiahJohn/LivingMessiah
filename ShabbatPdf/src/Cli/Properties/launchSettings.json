@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "LivingMessiah.ShabbatPdf.Cli": {
+    "ShabbatPdf.Cli": {
       "commandName": "Project",
       "commandLineArgs":  "--blob 2026-07-04-Lev-16.pdf"
     }

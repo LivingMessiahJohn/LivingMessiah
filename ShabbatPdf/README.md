@@ -135,7 +135,7 @@ Exactly one of `--input` or `--blob` is required.
 
 ### Visual Studio
 
-1. Set **LivingMessiah.ShabbatPdf.Cli** as startup project  
+1. Set **ShabbatPdf.Cli** as startup project  
 2. Debug args examples:
 
 ```text
@@ -154,7 +154,7 @@ Thin isolated worker that runs when a full agenda PDF is uploaded to `shabbat-se
 
 | | |
 |---|---|
-| Project | `src/LivingMessiah.ShabbatPdf.Functions` |
+| Project | `src/Functions` (`ShabbatPdf.Functions`) |
 | Trigger | Event Grid `BlobCreated` on `shabbat-service` → `ProcessShabbatPdf` |
 | Skips | Non-PDF and `*-teaching.pdf` (avoids re-entry when teaching is written back) |
 | Work | Event Grid → **shrink if &gt; 65 MB** (Ghostscript) → download agenda → slice teaching PDF → Markdown from teaching PDF |
@@ -193,8 +193,8 @@ OK {Name} teaching=… md=… sourceBytes=29.4 MB
 ### Local settings
 
 ```powershell
-copy src\LivingMessiah.ShabbatPdf.Functions\local.settings.json.example `
-     src\LivingMessiah.ShabbatPdf.Functions\local.settings.json
+copy src\Functions\local.settings.json.example `
+     src\Functions\local.settings.json
 # Edit local.settings.json: set Blob and Blob__ConnectionString to your storage connection string
 ```
 
@@ -203,7 +203,7 @@ copy src\LivingMessiah.ShabbatPdf.Functions\local.settings.json.example `
 ### Run locally (needs Azure Functions Core Tools + Azurite or a real storage connection)
 
 ```powershell
-cd src\LivingMessiah.ShabbatPdf.Functions
+cd src\Functions
 func start
 ```
 

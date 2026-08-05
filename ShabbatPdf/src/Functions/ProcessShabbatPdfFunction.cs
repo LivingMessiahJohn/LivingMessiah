@@ -1,15 +1,15 @@
 using System.Text.Json;
 using Azure.Messaging.EventGrid;
 using Azure.Messaging.EventGrid.SystemEvents;
-using LivingMessiah.ShabbatPdf.Core.Compression;
-using LivingMessiah.ShabbatPdf.Core.Models;
-using LivingMessiah.ShabbatPdf.Core.Options;
-using LivingMessiah.ShabbatPdf.Core.Pipeline;
+using ShabbatPdf.Core.Compression;
+using ShabbatPdf.Core.Models;
+using ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Pipeline;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace LivingMessiah.ShabbatPdf.Functions;
+namespace ShabbatPdf.Functions;
 
 /// <summary>
 /// Thin host: Event Grid (blob created) → shrink oversized PDF → <see cref="IParsePipeline"/>.

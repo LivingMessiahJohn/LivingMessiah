@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Options;
+namespace ShabbatPdf.Core.Options;
 
 /// <summary>
 /// PDF size limits and Ghostscript settings. Binds from configuration section "PdfCompress".

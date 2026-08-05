@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Models;
+namespace ShabbatPdf.Core.Models;
 
 /// <summary>
 /// Input for a single parse pipeline run (local file, blob name, or provided stream).

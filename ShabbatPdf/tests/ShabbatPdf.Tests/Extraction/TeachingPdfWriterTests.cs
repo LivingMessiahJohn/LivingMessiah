@@ -1,10 +1,10 @@
-using LivingMessiah.ShabbatPdf.Core.Extraction;
+using ShabbatPdf.Core.Extraction;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Core;
 using UglyToad.PdfPig.Fonts.Standard14Fonts;
 using UglyToad.PdfPig.Writer;
 
-namespace LivingMessiah.ShabbatPdf.Tests.Extraction;
+namespace ShabbatPdf.Tests.Extraction;
 
 public class TeachingPdfWriterTests
 {

@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Compression;
+namespace ShabbatPdf.Core.Compression;
 
 /// <summary>
 /// Compresses a PDF on disk (typically via Ghostscript) to reduce mobile download size.

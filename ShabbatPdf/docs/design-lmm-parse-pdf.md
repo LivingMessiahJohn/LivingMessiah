@@ -134,7 +134,7 @@ flowchart LR
     FN["Functions: BlobTrigger optional"]
   end
 
-  subgraph core [LivingMessiah.ShabbatPdf.Core]
+  subgraph core [ShabbatPdf.Core]
     DL[BlobDownload to temp file]
     EX[PdfPigPageSource]
     AN[AnchorLocator + ContentSlicer]
@@ -396,7 +396,7 @@ LMM-Parse-PDF/
   LMM-Parse-PDF.sln
   .gitignore
   src/
-    LivingMessiah.ShabbatPdf.Core/
+    ShabbatPdf.Core/
       Models/
       Extraction/
         IPdfPageSource.cs
@@ -410,10 +410,10 @@ LMM-Parse-PDF/
       Pipeline/
         ParsePipeline.cs
       Options/
-    LivingMessiah.ShabbatPdf.Cli/
-    LivingMessiah.ShabbatPdf.Functions/   # optional later
+    ShabbatPdf.Cli/
+    ShabbatPdf.Functions/   # optional later
   tests/
-    LivingMessiah.ShabbatPdf.Tests/
+    ShabbatPdf.Tests/
       AnchorLocatorTests.cs
       LineClusterTests.cs
       IntroSkipTests.cs
@@ -432,12 +432,12 @@ LMM-Parse-PDF/
 
 ```bash
 # Local PDF → local MD
-dotnet run --project src/LivingMessiah.ShabbatPdf.Cli -- \
+dotnet run --project src/ShabbatPdf.Cli -- \
   --input "C:\Users\JohnM\Downloads\some-text-rich-agenda.pdf" \
   --output ".\out\agenda.md"
 
 # Azure blob → private MD
-dotnet run --project src/LivingMessiah.ShabbatPdf.Cli -- \
+dotnet run --project src/ShabbatPdf.Cli -- \
   --blob "2026-07-04-Lev-16.pdf"
 
 # Flags
@@ -522,7 +522,7 @@ OK 2026-07-04-Lev-16.pdf pages=88-113 anchors=86/114 introSkip=87 end=Line chars
 Greenfield; internal contracts:
 
 ```csharp
-namespace LivingMessiah.ShabbatPdf.Core.Models;
+namespace ShabbatPdf.Core.Models;
 
 public sealed record PdfPageText(
     int PageNumber,
@@ -802,7 +802,7 @@ flowchart TD
 
    ```powershell
    cd C:\Source\repos\LMM-Parse-PDF
-   dotnet run --project src/LivingMessiah.ShabbatPdf.Cli -- --blob "YYYY-MM-DD-Citation.pdf"
+   dotnet run --project src/ShabbatPdf.Cli -- --blob "YYYY-MM-DD-Citation.pdf"
    ```
 
 3. Confirm private MD; page range excludes intro; body is text-layer only.
@@ -856,13 +856,13 @@ Decisions to lock before coding
    • Default overwrite (same as MD)? => Yes
  A — Use teaching-relative pages in comments (simplest).
 
- dotnet run --project src/LivingMessiah.ShabbatPdf.Cli -- `
+ dotnet run --project src/ShabbatPdf.Cli -- `
   --input "C:\Users\JohnM\Downloads\2026-06-27-Lev-15.pdf" `
   --output ".\out\2026-06-27-Lev-15.pdf"
 
-dotnet run --project src/LivingMessiah.ShabbatPdf.Cli -- --blob "2026-07-04-Lev-16.pdf" --dry-run  
+dotnet run --project src/ShabbatPdf.Cli -- --blob "2026-07-04-Lev-16.pdf" --dry-run  
 
-dotnet run --project src/LivingMessiah.ShabbatPdf.Cli -- --blob "2026-07-04-Lev-16.pdf"
+dotnet run --project src/ShabbatPdf.Cli -- --blob "2026-07-04-Lev-16.pdf"
 
 ## Batch 100
 
@@ -880,7 +880,7 @@ $blobs = az storage blob list `
 $failed = @()
 foreach ($name in $blobs) {
   Write-Host "=== $name ===" -ForegroundColor Cyan
-  dotnet run --project src/LivingMessiah.ShabbatPdf.Cli --no-build -- `
+  dotnet run --project src/ShabbatPdf.Cli --no-build -- `
     --blob $name `
     --skip-existing
 
@@ -904,7 +904,7 @@ How to run
 
 Single blob:
 
-dotnet run --project src/LivingMessiah.ShabbatPdf.Cli -- `
+dotnet run --project src/ShabbatPdf.Cli -- `
   --blob "2026-07-04-Lev-16.pdf" --teaching-only
 
 
@@ -949,10 +949,10 @@ You don’t need a full container pass. Best options, simplest first:
 ```powershell
 cd C:\Source\repos\LMM-Parse-PDF
 
-dotnet run --project src/LivingMessiah.ShabbatPdf.Cli -- `
+dotnet run --project src/ShabbatPdf.Cli -- `
   --blob "2025-05-31-Gen-32-04-to-33-17.pdf" --teaching-only
 
-dotnet run --project src/LivingMessiah.ShabbatPdf.Cli -- `
+dotnet run --project src/ShabbatPdf.Cli -- `
   --blob "2025-08-02-Gen-42-18-to-43-23.pdf" --teaching-only
 ```  
 
@@ -961,7 +961,7 @@ All 59 tests pass; solution builds cleanly.
 
 What you got
 
-New project: src/LivingMessiah.ShabbatPdf.Functions
+New project: src/ShabbatPdf.Functions
 
 ┌──────────┬────────────────────────────────────────────────────────────────────────────────┐
 │ Piece    │ Behavior                                                                       │
@@ -989,8 +989,8 @@ Key files
 
 Try it locally
 
-copy src\LivingMessiah.ShabbatPdf.Functions\local.settings.json.example `
-     src\LivingMessiah.ShabbatPdf.Functions\local.settings.json
+copy src\ShabbatPdf.Functions\local.settings.json.example `
+     src\ShabbatPdf.Functions\local.settings.json
 
 Set both Blob and Blob__ConnectionString to your storage connection string, then:
 

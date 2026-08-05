@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Options;
+namespace ShabbatPdf.Core.Options;
 
 /// <summary>
 /// Anchor phrases, intro-skip patterns, and parse pipeline defaults.

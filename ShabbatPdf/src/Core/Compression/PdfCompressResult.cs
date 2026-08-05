@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Compression;
+namespace ShabbatPdf.Core.Compression;
 
 /// <summary>
 /// Outcome of compressing a single PDF file on disk.

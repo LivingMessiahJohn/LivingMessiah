@@ -28,7 +28,7 @@
 param(
     [string] $AccountName = "livingmessiahstorage",
     [string] $ContainerName = "shabbat-service",
-    [string] $ProjectPath = "src/Cli/LivingMessiah.ShabbatPdf.Cli.csproj",
+    [string] $ProjectPath = "src/Cli/ShabbatPdf.Cli.csproj",
     [string] $ConnectionString = "",
     [switch] $NoSkipExisting,
     [switch] $AllowNonstandardName,

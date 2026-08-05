@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Storage;
+namespace ShabbatPdf.Core.Storage;
 
 /// <summary>
 /// Blob download/upload used by the parse pipeline.

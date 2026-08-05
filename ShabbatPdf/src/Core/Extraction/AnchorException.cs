@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Extraction;
+namespace ShabbatPdf.Core.Extraction;
 
 /// <summary>
 /// Thrown when outer anchors are missing or the content slice is empty.

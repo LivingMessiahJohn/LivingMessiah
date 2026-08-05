@@ -2,9 +2,9 @@ using Azure;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using LivingMessiah.ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Options;
 
-namespace LivingMessiah.ShabbatPdf.Core.Storage;
+namespace ShabbatPdf.Core.Storage;
 
 /// <summary>
 /// Azure Blob Storage implementation of <see cref="IBlobStore"/>.
@@ -45,7 +45,7 @@ public sealed class AzureBlobStore : IBlobStore
         {
             throw new InvalidOperationException(
                 "Blob:ConnectionString is required (or set UseDefaultAzureCredential + ServiceUri). " +
-                "Use User Secrets: dotnet user-secrets set \"Blob:ConnectionString\" \"...\" --project src/LivingMessiah.ShabbatPdf.Cli");
+                "Use User Secrets: dotnet user-secrets set \"Blob:ConnectionString\" \"...\" --project ShabbatPdf\\src\\Cli");
         }
 
         return new BlobServiceClient(options.ConnectionString);

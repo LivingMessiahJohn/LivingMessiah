@@ -1,4 +1,4 @@
-# Publish LivingMessiah.ShabbatPdf.Functions to Azure (Flex Consumption).
+# Publish ShabbatPdf.Functions to Azure (Flex Consumption).
 #
 # Monorepo layout: this script lives under LivingMessiah/ShabbatPdf/scripts/.
 # "$repoRoot" is the ShabbatPdf product folder (parent of scripts/), not the
@@ -20,7 +20,7 @@
 param(
     [string] $AppName = "lmm-shabbat-pdf",
     [string] $ResourceGroup = "LmmWebAppGroup",
-    [string] $ProjectPath = "src/Functions/LivingMessiah.ShabbatPdf.Functions.csproj",
+    [string] $ProjectPath = "src/Functions/ShabbatPdf.Functions.csproj",
     [string] $Configuration = "Release"
 )
 

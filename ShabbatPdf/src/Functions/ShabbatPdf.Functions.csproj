@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -6,8 +6,8 @@
     <OutputType>Exe</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>LivingMessiah.ShabbatPdf.Functions</RootNamespace>
-    <AssemblyName>LivingMessiah.ShabbatPdf.Functions</AssemblyName>
+    <RootNamespace>ShabbatPdf.Functions</RootNamespace>
+    <AssemblyName>ShabbatPdf.Functions</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\LivingMessiah.ShabbatPdf.Core.csproj" />
+    <ProjectReference Include="..\Core\ShabbatPdf.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

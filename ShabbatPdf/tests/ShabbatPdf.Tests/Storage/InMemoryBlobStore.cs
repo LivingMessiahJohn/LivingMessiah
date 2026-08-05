@@ -1,6 +1,6 @@
-using LivingMessiah.ShabbatPdf.Core.Storage;
+using ShabbatPdf.Core.Storage;
 
-namespace LivingMessiah.ShabbatPdf.Tests.Storage;
+namespace ShabbatPdf.Tests.Storage;
 
 /// <summary>
 /// Test double for <see cref="IBlobStore"/> — no real Azure calls.

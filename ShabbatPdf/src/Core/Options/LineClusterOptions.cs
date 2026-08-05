@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Options;
+namespace ShabbatPdf.Core.Options;
 
 /// <summary>
 /// Options for full-page midY word → line clustering.

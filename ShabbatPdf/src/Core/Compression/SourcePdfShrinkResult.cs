@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Compression;
+namespace ShabbatPdf.Core.Compression;
 
 /// <summary>
 /// Outcome of ensuring a source agenda PDF is under the configured size limit.

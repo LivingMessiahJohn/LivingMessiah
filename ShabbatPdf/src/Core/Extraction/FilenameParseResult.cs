@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Extraction;
+namespace ShabbatPdf.Core.Extraction;
 
 /// <summary>
 /// Result of parsing a Shabbat agenda PDF file name.

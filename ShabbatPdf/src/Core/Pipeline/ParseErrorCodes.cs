@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Pipeline;
+namespace ShabbatPdf.Core.Pipeline;
 
 /// <summary>
 /// Stable error codes returned in <see cref="Models.ParseResult.Message"/> prefixes.

@@ -10,7 +10,7 @@
     },
     "logLevel": {
       "default": "Information",
-      "LivingMessiah.ShabbatPdf": "Information"
+      "ShabbatPdf": "Information"
     }
   },
   "extensions": {

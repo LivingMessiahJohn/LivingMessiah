@@ -1,7 +1,7 @@
-using LivingMessiah.ShabbatPdf.Core.Models;
-using LivingMessiah.ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Models;
+using ShabbatPdf.Core.Options;
 
-namespace LivingMessiah.ShabbatPdf.Core.Extraction;
+namespace ShabbatPdf.Core.Extraction;
 
 /// <summary>
 /// Full-page word → line clustering (midY greedy). No multi-column logic.

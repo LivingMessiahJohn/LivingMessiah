@@ -1,6 +1,6 @@
-using LivingMessiah.ShabbatPdf.Functions;
+using ShabbatPdf.Functions;
 
-namespace LivingMessiah.ShabbatPdf.Tests.Functions;
+namespace ShabbatPdf.Tests.Functions;
 
 public class ShabbatBlobTriggerFilterTests
 {

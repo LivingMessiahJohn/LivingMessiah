@@ -1,10 +1,10 @@
-using LivingMessiah.ShabbatPdf.Core.Options;
-using LivingMessiah.ShabbatPdf.Core.Storage;
+using ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
-namespace LivingMessiah.ShabbatPdf.Core.Compression;
+namespace ShabbatPdf.Core.Compression;
 
 /// <summary>
 /// Downloads an oversized source PDF, compresses it with <see cref="IPdfCompressor"/>,

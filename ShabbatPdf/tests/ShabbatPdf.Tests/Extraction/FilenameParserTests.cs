@@ -1,6 +1,6 @@
-using LivingMessiah.ShabbatPdf.Core.Extraction;
+using ShabbatPdf.Core.Extraction;
 
-namespace LivingMessiah.ShabbatPdf.Tests.Extraction;
+namespace ShabbatPdf.Tests.Extraction;
 
 public class FilenameParserTests
 {

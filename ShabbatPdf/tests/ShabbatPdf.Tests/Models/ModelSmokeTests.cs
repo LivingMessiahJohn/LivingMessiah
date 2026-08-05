@@ -1,7 +1,7 @@
-using LivingMessiah.ShabbatPdf.Core.Models;
-using LivingMessiah.ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Models;
+using ShabbatPdf.Core.Options;
 
-namespace LivingMessiah.ShabbatPdf.Tests.Models;
+namespace ShabbatPdf.Tests.Models;
 
 public class ModelSmokeTests
 {

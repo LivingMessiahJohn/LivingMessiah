@@ -1,11 +1,11 @@
 using System.Diagnostics;
 using System.Text;
-using LivingMessiah.ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
-namespace LivingMessiah.ShabbatPdf.Core.Compression;
+namespace ShabbatPdf.Core.Compression;
 
 /// <summary>
 /// Compresses PDFs by shelling out to Ghostscript (<c>pdfwrite</c> + <c>-dPDFSETTINGS</c>).

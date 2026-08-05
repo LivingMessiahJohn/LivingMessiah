@@ -1,4 +1,4 @@
-namespace LivingMessiah.ShabbatPdf.Core.Options;
+namespace ShabbatPdf.Core.Options;
 
 /// <summary>
 /// Azure Blob Storage settings. Binds from configuration section "Blob".

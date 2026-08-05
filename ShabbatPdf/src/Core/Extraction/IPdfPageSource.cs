@@ -1,6 +1,6 @@
-using LivingMessiah.ShabbatPdf.Core.Models;
+using ShabbatPdf.Core.Models;
 
-namespace LivingMessiah.ShabbatPdf.Core.Extraction;
+namespace ShabbatPdf.Core.Extraction;
 
 /// <summary>
 /// Opens a PDF and yields normalized text-layer lines per page.

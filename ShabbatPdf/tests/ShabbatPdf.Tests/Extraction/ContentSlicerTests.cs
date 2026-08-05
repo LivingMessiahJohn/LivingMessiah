@@ -1,7 +1,7 @@
-using LivingMessiah.ShabbatPdf.Core.Extraction;
-using LivingMessiah.ShabbatPdf.Core.Models;
+using ShabbatPdf.Core.Extraction;
+using ShabbatPdf.Core.Models;
 
-namespace LivingMessiah.ShabbatPdf.Tests.Extraction;
+namespace ShabbatPdf.Tests.Extraction;
 
 public class ContentSlicerTests
 {

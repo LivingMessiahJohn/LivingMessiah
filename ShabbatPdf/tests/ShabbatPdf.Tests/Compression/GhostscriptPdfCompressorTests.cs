@@ -1,9 +1,9 @@
-using LivingMessiah.ShabbatPdf.Core.Compression;
-using LivingMessiah.ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Compression;
+using ShabbatPdf.Core.Options;
 using Microsoft.Extensions.Options;
 using UglyToad.PdfPig.Writer;
 
-namespace LivingMessiah.ShabbatPdf.Tests.Compression;
+namespace ShabbatPdf.Tests.Compression;
 
 public class GhostscriptPdfCompressorTests
 {

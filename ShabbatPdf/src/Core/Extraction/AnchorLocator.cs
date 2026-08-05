@@ -1,8 +1,8 @@
-using LivingMessiah.ShabbatPdf.Core.Models;
-using LivingMessiah.ShabbatPdf.Core.Options;
+using ShabbatPdf.Core.Models;
+using ShabbatPdf.Core.Options;
 using System.Text.RegularExpressions;
 
-namespace LivingMessiah.ShabbatPdf.Core.Extraction;
+namespace ShabbatPdf.Core.Extraction;
 
 /// <summary>
 /// Locates Welcome/Bienvenido start, Avinu end, and applies intro-page skip.
