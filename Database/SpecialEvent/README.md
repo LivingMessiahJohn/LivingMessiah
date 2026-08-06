@@ -158,15 +158,15 @@ Fix any build errors (unsupported options, order issues are rare with DacFx). Co
 
 ---
 
-## Later: LivingMessiah & Sukkot
+## Sibling databases
 
 Same pattern under `Database/`:
 
 ```text
 Database/
-  SpecialEvent/     ← this project
-  LivingMessiah/    ← next
-  Sukkot/           ← next
+  SpecialEvent/          ← this project
+  SukkotRegistration/    ← Sukkot registration (dbo, Free Azure) — see #200
+  LivingMessiah/         ← optional later
 ```
 
 One SDK-style project per Azure database; add each to the **Database** solution folder.
