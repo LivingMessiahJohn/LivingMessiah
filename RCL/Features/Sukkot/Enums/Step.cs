@@ -86,5 +86,5 @@ public abstract class Step : SmartEnum<Enums.Step>
 
 
 /*
-SELECT * FROM Sukkot.Step
+SELECT * FROM dbo.Status
 */

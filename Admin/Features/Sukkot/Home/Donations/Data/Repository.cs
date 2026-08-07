@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using System.Data;
 
 using DataEnumsDatabase = Admin.Data.Enums.Database;
@@ -31,7 +31,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 	
 	public async Task<int> InsertDonation(DonationRecord donation)
 	{
-		Sql = "Sukkot.stpDonationInsert ";
+		Sql = "dbo.stpDonationInsert ";
 		Parms = new DynamicParameters(new
 		{
 			donation.RegistrationId,
@@ -77,7 +77,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 	public async Task<int> DeleteDonationDetail(int id)
 	{
 		Parms = new DynamicParameters(new { Id = id });
-		Sql = "DELETE FROM Sukkot.Donation WHERE Id=@Id";
+		Sql = "DELETE FROM dbo.Donation WHERE Id=@Id";
 
 		Logger!.LogDebug("{Method} {Message}", nameof(DeleteDonationDetail), $"Sql: {Sql}, id: {id}");
 

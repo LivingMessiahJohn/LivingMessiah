@@ -8,7 +8,7 @@
 */
 
 SET NOCOUNT ON;
-USE Sukkot;
+USE SukkotRegistration;
 GO
 
 :r 01-Update-Constants.sql

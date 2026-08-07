@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using System.Data;
 
 using DataEnumsDatabase = Admin.Data.Enums.Database;
@@ -39,7 +39,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 	#region HRA
 	public async Task<Tuple<int, int, string>> InsertHouseRulesAgreement(string email, string timeZone)
 	{
-		Sql = "Sukkot.stpHouseRulesAgreementInsert";
+		Sql = "dbo.stpHouseRulesAgreementInsert";
 		Parms = new DynamicParameters(new
 		{
 			EMail = email,
@@ -93,7 +93,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 SELECT Id, EMail, FullName, StatusId, Phone, Notes, AdminNotes, Adults, Children, DidNotAttend
 , TotalDonation, DonationRowCount
 , IdHra
-FROM Sukkot.vwManageRegistration
+FROM dbo.vwManageRegistration
 ORDER BY FullName
 ";
 		return await WithConnectionAsync(async connection =>
@@ -116,7 +116,7 @@ Id, FamilyName, FirstName, SpouseName, OtherNames
 , AttendanceBitwise
 , Notes
 --, Avatar
-FROM Sukkot.Registration
+FROM dbo.Registration
 WHERE Id = @Id";
 
 		return await WithConnectionAsync(async connection =>
@@ -129,7 +129,7 @@ WHERE Id = @Id";
 
 	public async Task<Tuple<int, int, string>> CreateRegistration(DTO formVM) // Form.razor
 	{
-		Sql = "Sukkot.stpRegistrationInsert";
+		Sql = "dbo.stpRegistrationInsert";
 		Parms = new DynamicParameters(new
 		{
 			formVM.FamilyName,
@@ -194,7 +194,7 @@ WHERE Id = @Id";
 
 	public async Task<Tuple<int, int, string>> UpdateRegistration(DTO formVM) // Registrant.FormVM 
 	{
-		Sql = "Sukkot.stpRegistrationUpdate";
+		Sql = "dbo.stpRegistrationUpdate";
 		Parms = new DynamicParameters(new
 		{
 			formVM.Id,
@@ -276,7 +276,7 @@ SELECT
     Notes,
     AttendanceBitwise,
     HouseRulesAgreementDate
-FROM Sukkot.vwRegistration
+FROM dbo.vwRegistration
 WHERE Id = @Id
 ";
 		return await WithConnectionAsync(async connection =>
@@ -288,7 +288,7 @@ WHERE Id = @Id
 				// Query for DonationQuery
 				var donationSql = @"
 SELECT Amount, ReferenceId, CreateDate
-FROM Sukkot.Donation
+FROM dbo.Donation
 WHERE RegistrationId = @Id
 ";
 				var donation = (await connection.QueryAsync<DonationQuery>(donationSql, Parms)).SingleOrDefault();

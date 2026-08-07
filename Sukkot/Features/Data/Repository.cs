@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using System.Data;
 //using static Sukkot.Constants.ConnectionString;
 //using static Sukkot.Constants;
@@ -46,7 +46,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 	/*	 */
 	public async Task<Tuple<int, int, string>> StripeMerge(string email, int registrationId)
 	{
-		Sql = "Sukkot.stpStripeMerge";
+		Sql = "dbo.stpStripeMerge";
 		Parms = new DynamicParameters(new
 		{
 			EMail = email,
@@ -87,7 +87,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 	#region HRA
 	public async Task<Tuple<int, int, string>> InsertHouseRulesAgreement(string email, string timeZone)
 	{
-		Sql = "Sukkot.stpHouseRulesAgreementInsert";
+		Sql = "dbo.stpHouseRulesAgreementInsert";
 		Parms = new DynamicParameters(new
 		{
 			EMail = email,
@@ -134,7 +134,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 
 	public async Task<int> DeleteHRA(int id)
 	{
-		Sql = "Sukkot.stpHRADelete";
+		Sql = "dbo.stpHRADelete";
 		Parms = new DynamicParameters(new { Id = id });
 		return await WithConnectionAsync(async connection =>
 		{
@@ -146,7 +146,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 
 	public async Task<Tuple<int, int, string>> DeleteRegistration(int id)
 	{
-		Sql = "Sukkot.stpRegistrationDelete";
+		Sql = "dbo.stpRegistrationDelete";
 		Parms = new DynamicParameters(new { RegistrationId = id });
 
 		Parms.Add("@ReturnValue", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
@@ -204,7 +204,7 @@ SELECT
     Notes,
     AttendanceBitwise,
     HouseRulesAgreementDate
-FROM Sukkot.vwRegistration
+FROM dbo.vwRegistration
 WHERE Id = @Id
 ";
 		return await WithConnectionAsync(async connection =>
@@ -216,7 +216,7 @@ WHERE Id = @Id
 				// Query for DonationQuery
 				var donationSql = @"
 SELECT Amount, ReferenceId, CreateDate
-FROM Sukkot.Donation
+FROM dbo.Donation
 WHERE RegistrationId = @Id
 ";
 				var donation = (await connection.QueryAsync<DonationQuery>(donationSql, Parms)).SingleOrDefault();
@@ -237,7 +237,7 @@ WHERE RegistrationId = @Id
 SELECT Id, EMail, Adults, FeeEnumValue
 , TimeZone AS HouseRulesAgreementTimeZone, AcceptedDate AS HouseRulesAgreementAcceptedDate
 , RegistrationId, FirstName, FamilyName, StepId
-FROM Sukkot.vwRegistrationStep 
+FROM dbo.vwRegistrationStep 
 WHERE EMail = @EMail
 ";
 		return await WithConnectionAsync(async connection =>
@@ -255,7 +255,7 @@ WHERE EMail = @EMail
 		Sql = $@"
 --DECLARE @EMail varchar(100) = 'info@test.com'
 SELECT Id 
-FROM Sukkot.Registration
+FROM dbo.Registration
 WHERE EMail = @EMail
 ";
 		return await WithConnectionAsync(async connection =>
@@ -275,7 +275,7 @@ Id, FamilyName, FirstName, SpouseName, OtherNames, EMail, Phone, Adults, ChildBi
 , StatusId AS StepId
 , AttendanceBitwise, Notes
 --, Avatar
-FROM Sukkot.Registration 
+FROM dbo.Registration 
 WHERE Id = @Id";
 		return await WithConnectionAsync(async connection =>
 		{
@@ -287,7 +287,7 @@ WHERE Id = @Id";
 
 	public async Task<Tuple<int, int, string>> Create(DTO registration)
 	{
-		Sql = "Sukkot.stpRegistrationInsert";
+		Sql = "dbo.stpRegistrationInsert";
 		Parms = new DynamicParameters(new
 		{
 			registration.FamilyName,
@@ -346,7 +346,7 @@ WHERE Id = @Id";
 
 	public async Task<Tuple<int, int, string>> Update(DTO registration)
 	{
-		Sql = "Sukkot.stpRegistrationUpdate";
+		Sql = "dbo.stpRegistrationUpdate";
 		Parms = new DynamicParameters(new
 		{
 			registration.Id,
@@ -419,7 +419,7 @@ WHERE Id = @Id";
 			return new Tuple<int, string>(NewId, ErrorMsg);
 		}
 
-		Sql = "Sukkot.stpDonationInsert ";
+		Sql = "dbo.stpDonationInsert ";
 		Parms = new DynamicParameters(new
 		{
 			donation.RegistrationId,
@@ -457,7 +457,7 @@ WHERE Id = @Id";
 	private async Task<int> GetDonationRowCountByRegistrationId(int registrationId)
 	{
 		Parms = new DynamicParameters(new { RegistrationId = registrationId });
-		Sql = $@"SELECT COUNT(Id) AS Rows FROM Sukkot.Donation WHERE RegistrationId = @RegistrationId";
+		Sql = $@"SELECT COUNT(Id) AS Rows FROM dbo.Donation WHERE RegistrationId = @RegistrationId";
 		return await WithConnectionAsync(async connection =>
 		{
 			var rows = await connection.QueryAsync<int>(sql: Sql, param: Parms);

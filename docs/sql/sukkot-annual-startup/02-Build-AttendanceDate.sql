@@ -6,18 +6,18 @@
 */
 
 SET NOCOUNT ON;
-USE Sukkot;
+USE SukkotRegistration;
 GO
 
 PRINT '=== BEFORE: AttendanceDate ===';
-SELECT Id, [Date], [Value] FROM Sukkot.AttendanceDate ORDER BY Id;
+SELECT Id, [Date], [Value] FROM dbo.AttendanceDate ORDER BY Id;
 
 DECLARE @RC int;
-EXEC @RC = Sukkot.stpBuildAttendanceDate;
+EXEC @RC = dbo.stpBuildAttendanceDate;
 PRINT '=== stpBuildAttendanceDate return code: ' + CAST(@RC AS nvarchar(12)) + ' ===';
 
 PRINT '=== AFTER: AttendanceDate ===';
-SELECT Id, [Date], [Value] FROM Sukkot.AttendanceDate ORDER BY Id;
+SELECT Id, [Date], [Value] FROM dbo.AttendanceDate ORDER BY Id;
 
 -- Optional markdown dump if dbo.Select2MD is installed:
 -- EXEC dbo.Select2MD @table_name = 'AttendanceDate', @schema_name = 'Sukkot';

@@ -2,8 +2,8 @@
   Sukkot Annual Startup — Step 1: Update Constants for the new feast year.
 
   Server:  JohnsDellDT\SQLEXPRESS (local)
-  Database: Sukkot
-  Schema:   Sukkot
+  Database: SukkotRegistration
+  Schema:   dbo
 
   2026 attendance window aligns with FeastDayDates.Tabernacles = 2026-09-26:
     min = Tabernacles - 1 day  => 2026-09-25
@@ -13,18 +13,18 @@
 */
 
 SET NOCOUNT ON;
-USE Sukkot;
+USE SukkotRegistration;
 GO
 
-PRINT '=== BEFORE: Sukkot.Constants ===';
+PRINT '=== BEFORE: dbo.Constants ===';
 SELECT SingleRowId,
        EarlyRegistrationFee, EarlyRegistrationLastDay,
        RegistrationFee, RegistrationLastDay,
        AttendanceMinDate, AttendanceMaxDate,
        RegistrationFeeSingle
-FROM Sukkot.Constants;
+FROM dbo.Constants;
 
-UPDATE Sukkot.Constants
+UPDATE dbo.Constants
 SET EarlyRegistrationFee      = 100.0,
     EarlyRegistrationLastDay  = '2026-09-15',
     RegistrationFee           = 100.0,
@@ -34,7 +34,7 @@ SET EarlyRegistrationFee      = 100.0,
 
 PRINT '=== Constants rows updated: ' + CAST(@@ROWCOUNT AS nvarchar(12)) + ' ===';
 
-PRINT '=== AFTER: Sukkot.vwConstants ===';
+PRINT '=== AFTER: dbo.vwConstants ===';
 SELECT RegistrationLastDayMDY,
        RegistrationFee,
        RegistrationFeeSingle,
@@ -47,5 +47,5 @@ SELECT RegistrationLastDayMDY,
        FirstWeekEndDate,
        SecondWeekStartDate,
        SecondWeekEndDate
-FROM Sukkot.vwConstants;
+FROM dbo.vwConstants;
 GO

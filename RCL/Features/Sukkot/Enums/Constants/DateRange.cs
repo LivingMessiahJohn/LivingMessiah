@@ -4,7 +4,7 @@ public static class DateRange
 {
 	public static class Attendance
 	{
-		// From Sukkot.vwDateRangeTypeCodeGen / Constants (2026)
+		// From dbo.vwDateRangeTypeCodeGen / Constants (2026)
 		public static DateTime Start { get; set; } = DateTime.Parse("2026-09-25");
 		public static DateTime Finish { get; set; } = DateTime.Parse("2026-10-04");
 	}
