@@ -11,7 +11,7 @@
 | `Sukkot/` | Public/member Sukkot Blazor Server app (registration, Stripe) |
 | `RCL/` | Shared Razor Class Library (enums, calendar, components, blob abstractions) |
 | `Api/` | Azure Functions API for blob operations (used by PWA) |
-| `Database/` | SDK-style SQL projects (`Microsoft.Build.Sql`), one folder per Azure DB — start with `SpecialEvent/` |
+| `Database/` | SDK-style SQL projects (`Microsoft.Build.Sql`), one folder per Azure DB (`SpecialEvent/`, `SukkotRegistration/`) |
 | `LivingMessiah.AppHost/` | .NET Aspire host — preferred local run entry |
 | `LivingMessiah.ServiceDefaults/` | Shared Aspire service defaults (health, OpenTelemetry, service discovery) |
 | `ShabbatPdf/` | Parses Living Messiah Shabbat service agenda PDFs |
@@ -66,3 +66,7 @@ Feature UI and feature-local code live under each app’s `Features/` folder (e.
 - Prefer extending `RCL` over copying enums/components into an app
 - Ask before large cross-project moves or auth/security changes
 - Deeper `AGENTS.md` files under app folders refine these rules for that project
+
+When writing Markdown lists, **always** use standard list markers:
+- Use `- ` (hyphen + space) for unordered lists
+- Never use the Unicode bullet `•`
