@@ -21,6 +21,7 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int SpecialEvents = 8;
 		internal const int Profile = 9;
 		internal const int WeeklyDownload = 10;
+		internal const int SukkotSchedule = 11;
 	}
 	#endregion
 
@@ -36,6 +37,7 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav SukkotDashboard = new SukkotDashboardSE(); 
 	public static readonly Nav Profile = new ProfileSE();
 	public static readonly Nav WeeklyDownload = new WeeklyDownloadSE();
+	public static readonly Nav SukkotSchedule = new SukkotScheduleSE();
 	#endregion
 
 
@@ -193,6 +195,18 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool Disabled => false;
 		public override int RequiredRoles => RoleEnum.KeyDates.Value | RoleEnum.Admin.Value; // KeyDates or Admin role
 	}
+
+	private sealed class SukkotScheduleSE : Nav
+	{
+		public SukkotScheduleSE() : base($"{nameof(Id.SukkotSchedule)}", Id.SukkotSchedule) { }
+		public override string Index => "/SukkotSchedule";
+		public override string Title => "Sukkot Daily Schedule";
+		public override string Icon => "far fa-calendar-alt";
+		public override int Sort => Id.SukkotSchedule;
+		public override bool Disabled => false;
+		public override int RequiredRoles => RoleEnum.Sukkot.Value | RoleEnum.SukkotHost.Value | RoleEnum.Admin.Value;
+	}
+
 	#endregion
 
 }

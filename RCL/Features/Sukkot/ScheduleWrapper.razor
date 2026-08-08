@@ -1,0 +1,53 @@
+@using Microsoft.Extensions.Logging
+@using RCL.Components
+
+@inject ILogger<ScheduleWrapper> Logger
+@inject IScheduleQueryLoader Loader
+
+<LoadingComponentLIBRARY IsLoading="_isLoading" TurnSpinnerOff="TurnSpinnerOff">
+
+	@if (string.IsNullOrEmpty(msg))
+	{
+		<Schedule ScheduleQuery="ScheduleQuery" />
+	}
+	else
+	{
+		<Alert AlertType="@alertType">@msg</Alert>
+	}
+
+</LoadingComponentLIBRARY>
+
+@code {
+	private ScheduleQuery? ScheduleQuery;
+	private bool _isLoading = true;
+
+	string msg = "";
+	string alertType = "alert-warning";
+
+	bool TurnSpinnerOff = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			ScheduleQuery = await Loader.GetAsync();
+			if (ScheduleQuery is null)
+			{
+				msg = "Unable to load the schedule. Please try again later.";
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+			alertType = "alert-danger";
+			msg = "Error; Unable to load the schedule. Please try again later.";
+		}
+		finally
+		{
+			_isLoading = false;
+			TurnSpinnerOff = true;
+		}
+
+		Logger.LogDebug("{Method} {Msg}", nameof(OnInitializedAsync), msg);
+	}
+}
