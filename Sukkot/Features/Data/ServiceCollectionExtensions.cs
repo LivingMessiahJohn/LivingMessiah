@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using RCL.Features.Sukkot.Data;
 using Sukkot.Features.Components.RegistrationForm;
 using Sukkot.Security;
 
@@ -12,7 +11,6 @@ public static class ServiceCollectionExtensions
 		services
 			.AddTransient<ISecurityHelper, SecurityHelper>()
 			.AddTransient<IRepository, Repository>()
-			.AddTransient<IScheduledEventsMarkdownRepository, ScheduledEventsMarkdownRepository>()
 			.AddTransient<IValidator<VM>, VMValidator>();
 		return services;
 	}

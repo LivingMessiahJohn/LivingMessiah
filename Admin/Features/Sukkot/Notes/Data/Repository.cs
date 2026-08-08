@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Admin.Data;
 using DataEnumsDatabase = Admin.Data.Enums.Database;
 
@@ -29,7 +29,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 	{
 		Sql = $@"
 SELECT TOP 500 Id, FirstName, FamilyName, AdminNotes, Notes AS UserNotes, Phone, EMail
-FROM Sukkot.vwRegistration
+FROM dbo.vwRegistration
 {filter.SqlWhere}
 {filter.SqlOrder}
 ";
@@ -44,7 +44,7 @@ FROM Sukkot.vwRegistration
 	public async Task<int> UpdateNotes(int id, string? adminNotes, string? notes)
 	{
 		Sql = @"
-UPDATE Sukkot.Registration
+UPDATE dbo.Registration
 SET AdminNotes = @AdminNotes,
     Notes = @Notes
 WHERE Id = @Id

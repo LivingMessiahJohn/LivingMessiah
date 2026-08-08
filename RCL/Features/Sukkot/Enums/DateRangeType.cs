@@ -86,5 +86,5 @@ public abstract class DateRangeType : SmartEnum<Enums.DateRangeType>
 public record DateRange(DateTime Min, DateTime Max);
 
 /*
-	SELECT DateRangeCodeGen FROM Sukkot.vwDateRangeTypeCodeGen
+	SELECT DateRangeCodeGen FROM dbo.vwDateRangeTypeCodeGen
 */

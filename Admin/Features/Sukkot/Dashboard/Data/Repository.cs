@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 
 using DataEnumsDatabase = Admin.Data.Enums.Database;
 using FilterEnums = Admin.Features.Sukkot.Dashboard.Enums.Filter;
@@ -44,7 +44,7 @@ SELECT Id, EMail, FullName, OtherNames, StepId, Phone, Notes, AdminNotes, Adults
 , TotalDonation, DonationRowCount
 , IdHra
 , AttendanceBitwise
-FROM Sukkot.vwDashboardGrid
+FROM dbo.vwDashboardGrid
 WHERE StepId = @StepId1 OR StepId = @StepId2
 ORDER BY FullName
 "; 
@@ -61,7 +61,7 @@ ORDER BY FullName
 	{
 		Sql = @"
 SELECT Id, Email, RegistrationId, ModificationCount, LastModifiedDate, FirstName, FamilyName
-FROM Sukkot.vwStripe
+FROM dbo.vwStripe
 ORDER BY RegistrationId
 ";
 		base.Logger.LogDebug("{Method}, Sql: {Sql}", nameof(GetAllStripe), Sql);
@@ -79,7 +79,7 @@ ORDER BY RegistrationId
 		Sql = @"
 SELECT
 Detail, Amount, Notes, ReferenceId, CreateDate, CreatedBy
-FROM Sukkot.Donation 
+FROM dbo.Donation 
 WHERE RegistrationId = @RegistrationId
 ";
 		base.Logger.LogDebug("{Method}, Sql: {Sql}", nameof(GetAllDonations), Sql);

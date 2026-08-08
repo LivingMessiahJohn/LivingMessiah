@@ -24,6 +24,7 @@ using Sukkot.Security.Constants;
 using Sukkot.Features.Components.LifeCycleAuthority;
 using Sukkot.Endpoints.Constants;
 using Sukkot.Features.Data;
+using Sukkot.Features.LandingPage.Data;
 
 // OpenTelemetry
 using OpenTelemetry.Logs;
@@ -104,7 +105,9 @@ try
 				policy.RequireClaim(Policy.Claim, "true"));
 
 	builder.Services.AddSukkotData();
-		
+	builder.Services.AddSukkotDailyScheduleData();	
+
+
 	builder.Services.AddAuth0Authentication(builder.Configuration);
 
 	builder.Services.Configure<EndpointsSetting>(options => configuration.GetSection(nameof(EndpointsSetting)).Bind(options));

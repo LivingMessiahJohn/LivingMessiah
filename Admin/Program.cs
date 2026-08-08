@@ -6,6 +6,7 @@ using Admin.Features.KeyDates.Data;
 using Admin.Features.SpecialEvents.Data;
 
 using Admin.Features.Sukkot.Dashboard.Data;
+using Admin.Features.Sukkot.DailySchedule.Data;  
 using Admin.Features.Sukkot.Home.Data;
 using Admin.Features.Sukkot.Home.Donations.Data;
 using Admin.Features.Sukkot.Notes.Data;
@@ -44,8 +45,9 @@ try
 
 	//Services
 	builder.Services.AddDatabase();
-	builder.Services.AddSukkotGridData();
 	builder.Services.AddSukkotData(); // CrUD
+	builder.Services.AddSukkotDailyScheduleData();
+	builder.Services.AddSukkotGridData();
 	builder.Services.AddSukkotDonationsData();
 	builder.Services.AddManageNotes();
 	builder.Services.AddReports();
