@@ -177,7 +177,7 @@ public abstract class AttendanceDate : SmartFlagEnum<AttendanceDate>
 
 /*
 	DECLARE @RC int
-	EXEC @RC = Sukkot.stpAttendanceDateCodeGen 
+	EXEC @RC = dbo.stpAttendanceDateCodeGen 
 
 	-- 2026 note: when AttendanceMinDate is not Sunday, stpAttendanceDateCodeGen's
 	-- join to tvfAttendanceTwoWeeks can omit mid-range days. Fill those classes

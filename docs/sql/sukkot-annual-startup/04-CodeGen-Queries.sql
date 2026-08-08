@@ -9,18 +9,18 @@
 */
 
 SET NOCOUNT ON;
-USE Sukkot;
+USE SukkotRegistration;
 GO
 
 PRINT '=== vwDateRangeTypeCodeGen (DateRange.cs / DateRangeType) ===';
 SELECT AttendanceMinDate, AttendanceMaxDate, DateRangeCodeGen
-FROM Sukkot.vwDateRangeTypeCodeGen;
+FROM dbo.vwDateRangeTypeCodeGen;
 
 PRINT '=== vwAttendanceDateSmartFlagEnumCodeGen ===';
 SELECT Id, [Date], Value, Title, DateYMD, DateRangeType, PermutationValue
-FROM Sukkot.vwAttendanceDateSmartFlagEnumCodeGen
+FROM dbo.vwAttendanceDateSmartFlagEnumCodeGen
 ORDER BY Id;
 
 PRINT '=== stpAttendanceDateCodeGen (RegionId / Decl / Instantiation) ===';
-EXEC Sukkot.stpAttendanceDateCodeGen;
+EXEC dbo.stpAttendanceDateCodeGen;
 GO

@@ -11,25 +11,25 @@
 */
 
 SET NOCOUNT ON;
-USE Sukkot;
+USE SukkotRegistration;
 GO
 
 PRINT '=== BEFORE counts ===';
 SELECT
-  (SELECT COUNT(*) FROM Sukkot.Donation)              AS DonationCount,
-  (SELECT COUNT(*) FROM Sukkot.Registration)          AS RegistrationCount,
-  (SELECT COUNT(*) FROM Sukkot.HouseRulesAgreement)   AS HouseRulesAgreementCount;
+  (SELECT COUNT(*) FROM dbo.Donation)              AS DonationCount,
+  (SELECT COUNT(*) FROM dbo.Registration)          AS RegistrationCount,
+  (SELECT COUNT(*) FROM dbo.HouseRulesAgreement)   AS HouseRulesAgreementCount;
 
 BEGIN TRY
   BEGIN TRAN;
 
-  DELETE FROM Sukkot.Donation;
+  DELETE FROM dbo.Donation;
   PRINT 'Donation deleted: ' + CAST(@@ROWCOUNT AS nvarchar(12));
 
-  DELETE FROM Sukkot.Registration;
+  DELETE FROM dbo.Registration;
   PRINT 'Registration deleted: ' + CAST(@@ROWCOUNT AS nvarchar(12));
 
-  DELETE FROM Sukkot.HouseRulesAgreement;
+  DELETE FROM dbo.HouseRulesAgreement;
   PRINT 'HouseRulesAgreement deleted: ' + CAST(@@ROWCOUNT AS nvarchar(12));
 
   COMMIT TRAN;
@@ -43,7 +43,7 @@ END CATCH;
 
 PRINT '=== AFTER counts (expect all 0) ===';
 SELECT
-  (SELECT COUNT(*) FROM Sukkot.Donation)              AS DonationCount,
-  (SELECT COUNT(*) FROM Sukkot.Registration)          AS RegistrationCount,
-  (SELECT COUNT(*) FROM Sukkot.HouseRulesAgreement)   AS HouseRulesAgreementCount;
+  (SELECT COUNT(*) FROM dbo.Donation)              AS DonationCount,
+  (SELECT COUNT(*) FROM dbo.Registration)          AS RegistrationCount,
+  (SELECT COUNT(*) FROM dbo.HouseRulesAgreement)   AS HouseRulesAgreementCount;
 GO

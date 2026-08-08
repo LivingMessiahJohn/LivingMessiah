@@ -1,0 +1,32 @@
+﻿@using RoleGroup = Admin.Security.Enums.RoleGroup;
+@using RCL.Features.Sukkot
+
+@page "/SukkotSchedule"
+
+@using Microsoft.AspNetCore.Components.Authorization
+
+<AuthorizeView Policy=@RoleGroup.Sukkot>
+  <Authorized>
+		<div class="mt-4 d-print-none">
+
+			<ToggleButton ButtonLabel="Show Daily Schedule">
+				<div class="alert alert-info mt-2 mb-2" role="alert">
+					<small>Preview of Daily Schedule as shown on the Sukkot home page</small>
+				</div>
+				<ScheduleWrapper />
+			</ToggleButton>
+
+		</div>
+
+  </Authorized>
+  <NotAuthorized>
+		<LoginRedirectCard Nav="Nav.SukkotSchedule" ReturnUrl=@Nav.SukkotSchedule.Index />
+    <div class="alert alert-warning text-end" role="alert">
+      <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small> 
+    </div>
+  </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}

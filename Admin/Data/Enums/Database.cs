@@ -40,6 +40,7 @@ public abstract class Database : SmartEnum<Database>
 	{
 		public SukkotSE() : base("Sukkot", Id.Sukkot) { }
 		public override string Title => "Sukkot";
+		// Config key remains ConnectionStrings:Sukkot; catalog is SukkotRegistration (dbo objects).
 		public override string ConnectionStringKey => "ConnectionStrings:Sukkot";
 	}
 

@@ -12,7 +12,7 @@ Admin can manage the empty-for-the-new-year registration set.
 
 | Layer | What to update |
 |-------|----------------|
-| SQL Server `Sukkot` DB | `Constants` dates; rebuild `AttendanceDate`; clear prior-year `Donation` / `Registration` / `HouseRulesAgreement` |
+| SQL Server `SukkotRegistration` DB | `Constants` dates; rebuild `AttendanceDate`; clear prior-year `Donation` / `Registration` / `HouseRulesAgreement` |
 | Shared C# (`RCL`) | `AttendanceDate` SmartFlagEnum; `Enums.Constants.DateRange` attendance window |
 | App C# | `Sukkot.Features.Constants.Year`; `Admin.Features.Sukkot.Constants.CurrentYear` |
 | Blobs / content | Banner images, schedule PDF, house-rules PDF (names in app constants) |
@@ -25,24 +25,24 @@ Admin can manage the empty-for-the-new-year registration set.
 
 | Env | Server / notes |
 |-----|----------------|
-| Local (this machine) | `JohnsDellDT\SQLEXPRESS`, database `Sukkot`, files under `C:\Databases\` |
-| Azure / prod | Separate DB — run the same SQL **only after** backup and intentional open-window |
+| Local (this machine) | `JohnsDellDT\SQLEXPRESS`, database `SukkotRegistration`, files under `C:\Databases\` |
+| Azure / prod | Free DB `SukkotRegistration` on `lmm-azure-sql` — run the same SQL **only after** backup and intentional open-window |
 
 Scripts live under [`docs/sql/sukkot-annual-startup/`](sql/sukkot-annual-startup/).
 
-## Production: backup Azure Sukkot **before** annual SQL
+## Production: backup Azure SukkotRegistration **before** annual SQL
 
 Azure SQL has automatic point-in-time restore, but for the annual wipe you also want a **named `.bacpac`** you can find later (schema + data).
 
-**Recommended:** SSMS → **Export Data-tier Application** while connected to the **Azure** Sukkot database (not local `SQLEXPRESS`).
+**Recommended:** SSMS → **Export Data-tier Application** while connected to the **Azure** `SukkotRegistration` database (not local `SQLEXPRESS`).
 
 Suggested local path:
 
-`C:\Databases\SukkotExportData\Sukkot-Azure-YYYY-MM-DD-pre-annual-startup.bacpac`
+`C:\Databases\SukkotExportData\SukkotRegistration-Azure-YYYY-MM-DD-pre-annual-startup.bacpac`
 
 ### 1. SSMS menu
 
-Right-click the **Sukkot** database → **Tasks** → **Export Data-tier Application…**  
+Right-click the **SukkotRegistration** database → **Tasks** → **Export Data-tier Application…**  
 (Do **not** choose *Deploy Database to Microsoft Azure SQL Database* — that is the opposite direction.)
 
 ![SSMS: Tasks → Export Data-tier Application](Sukkot-Azure-Backup-SSMS-Export-Menu.jpg)
@@ -74,10 +74,10 @@ Finish the wizard and verify every step is **Success** (file size &gt; 0).
 ## Ordered process
 
 ```text
-0. Backup Azure Sukkot (.bacpac) — see section above
+0. Backup Azure SukkotRegistration (.bacpac) — see section above
 1. Decide dates (align with FeastDayDates.Tabernacles)
-2. UPDATE Sukkot.Constants
-3. EXEC Sukkot.stpBuildAttendanceDate
+2. UPDATE dbo.Constants
+3. EXEC dbo.stpBuildAttendanceDate
 4. DELETE prior-year rows (Donation → Registration → HouseRulesAgreement)
 5. CodeGen → paste into RCL SmartEnums / DateRange
 6. Bump Year / CurrentYear in app projects
@@ -100,11 +100,11 @@ Historical pattern used by Living Messiah:
 
 Attendance is always **10 consecutive days** (bitwise flags `1…512`).
 
-### Step 2 — Update `Sukkot.Constants`
+### Step 2 — Update `dbo.Constants`
 
 ```sql
 -- See docs/sql/sukkot-annual-startup/01-Update-Constants.sql
-UPDATE Sukkot.Constants
+UPDATE dbo.Constants
 SET EarlyRegistrationFee = 100.0
   , EarlyRegistrationLastDay = '2026-09-15'
   , RegistrationFee = 100.0
@@ -116,7 +116,7 @@ SET EarlyRegistrationFee = 100.0
 **Verify**
 
 ```sql
-SELECT * FROM Sukkot.vwConstants;
+SELECT * FROM dbo.vwConstants;
 ```
 
 Expect:
@@ -134,8 +134,8 @@ Expect:
 
 ```sql
 -- See docs/sql/sukkot-annual-startup/02-Build-AttendanceDate.sql
-EXEC Sukkot.stpBuildAttendanceDate;
-SELECT Id, [Date], [Value] FROM Sukkot.AttendanceDate ORDER BY Id;
+EXEC dbo.stpBuildAttendanceDate;
+SELECT Id, [Date], [Value] FROM dbo.AttendanceDate ORDER BY Id;
 ```
 
 **Expected metrics (printed by the SP):**
@@ -152,16 +152,16 @@ SELECT Id, [Date], [Value] FROM Sukkot.AttendanceDate ORDER BY Id;
 
 ```sql
 -- See docs/sql/sukkot-annual-startup/03-Delete-Prior-Year-Registrations.sql
-DELETE FROM Sukkot.Donation;
-DELETE FROM Sukkot.Registration;
-DELETE FROM Sukkot.HouseRulesAgreement;
+DELETE FROM dbo.Donation;
+DELETE FROM dbo.Registration;
+DELETE FROM dbo.HouseRulesAgreement;
 ```
 
 **Metrics:** record `@@ROWCOUNT` after each delete (script prints them).
 
 Notes:
 
-- `Sukkot.stpHouseRulesAgreementDelete` deletes **one email** (Donation → Registration → HRA). Useful for ad-hoc cleanup, not the full annual wipe.
+- `dbo.stpHouseRulesAgreementDelete` deletes **one email** (Donation → Registration → HRA). Useful for ad-hoc cleanup, not the full annual wipe.
 - Local dev often only has test rows; **production** wipe is irreversible — backup first.
 - Do **not** truncate `Status` or `Constants`.
 
@@ -172,7 +172,7 @@ After steps 2–3, generate C# fragments and paste into RCL.
 #### 5a. Attendance date range (`DateRange.cs`)
 
 ```sql
-SELECT DateRangeCodeGen FROM Sukkot.vwDateRangeTypeCodeGen;
+SELECT DateRangeCodeGen FROM dbo.vwDateRangeTypeCodeGen;
 ```
 
 Update:
@@ -183,9 +183,9 @@ Update:
 #### 5b. `AttendanceDate` SmartFlagEnum
 
 ```sql
-EXEC Sukkot.stpAttendanceDateCodeGen;
+EXEC dbo.stpAttendanceDateCodeGen;
 -- Also useful:
-SELECT * FROM Sukkot.vwAttendanceDateSmartFlagEnumCodeGen ORDER BY Id;
+SELECT * FROM dbo.vwAttendanceDateSmartFlagEnumCodeGen ORDER BY Id;
 ```
 
 Paste into `RCL/Features/Sukkot/Enums/AttendanceDate.cs`:
@@ -202,7 +202,7 @@ Also set `Day` to the calendar day-of-month (not emitted by all CodeGen paths).
 
 ```mermaid
 flowchart TD
-  C[Sukkot.Constants] --> V[vwConstants]
+  C[dbo.Constants] --> V[vwConstants]
   C --> B[stpBuildAttendanceDate]
   B --> A[AttendanceDate]
   A --> VA[vwAttendanceDateSmartFlagEnumCodeGen]

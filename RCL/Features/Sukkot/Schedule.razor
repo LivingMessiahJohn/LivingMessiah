@@ -1,28 +1,10 @@
-@using Microsoft.Extensions.Logging
 @using RCL.Constants
-@using RCL.Features.Sukkot.Data
 @using RCL.Helpers
-
-@inject IScheduledEventsMarkdownRepository Repository
-@inject ILogger<Schedule> Logger
 
 <div class="card border border-warning border-4 bg-warning-subtle mt-4">
 	<h2 class="py-2 text-center text-black"><b>Schedule</b></h2>
 
-	@if (_isLoading)
-	{
-		<div class="card-body text-center">
-			<div class="spinner-border" role="status"></div>
-			<span class="ms-2 align-middle">Loading schedule...</span>
-		</div>
-	}
-	else if (!string.IsNullOrEmpty(_errorMessage))
-	{
-		<div class="card-body">
-			<div class="alert alert-danger mb-0" role="alert">@_errorMessage</div>
-		</div>
-	}
-	else if (_schedule is null || string.IsNullOrWhiteSpace(_schedule.Markdown))
+	@if (ScheduleQuery is null || string.IsNullOrWhiteSpace(ScheduleQuery.Markdown))
 	{
 		<div class="card-body">
 			<p class="text-center mb-0">Schedule is not available yet.</p>
@@ -31,33 +13,15 @@
 	else
 	{
 		<div class="card-body markdown-body">
-			@MarkdownHelper.ToMarkup(_schedule.Markdown)
+			@MarkdownHelper.ToMarkup(ScheduleQuery!.Markdown)
 		</div>
 		<div class="card-footer text-end small text-muted bg-warning-subtle border-0">
-			Last revised: @_schedule.LastRevised.ToString(DateFormat.ddd_MMM_dd_YYYY)
+			Last revised: @ScheduleQuery!.LastRevised.ToString(DateFormat.ddd_MMM_dd_YYYY)
 		</div>
 	}
 </div>
 
 @code {
-	private ScheduledEventsMarkdownQuery? _schedule;
-	private bool _isLoading = true;
-	private string? _errorMessage;
+	[Parameter] public ScheduleQuery? ScheduleQuery { get; set; }
 
-	protected override async Task OnInitializedAsync()
-	{
-		try
-		{
-			_schedule = await Repository.GetAsync();
-		}
-		catch (Exception ex)
-		{
-			Logger.LogError(ex, "{Method}", nameof(OnInitializedAsync));
-			_errorMessage = "Unable to load the schedule. Please try again later.";
-		}
-		finally
-		{
-			_isLoading = false;
-		}
-	}
 }

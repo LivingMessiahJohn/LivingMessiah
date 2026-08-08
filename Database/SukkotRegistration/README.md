@@ -137,7 +137,7 @@ Data migration from Azure legacy **`Sukkot`** DB is a separate, intentional step
 
 Constraint names may still contain the word `Sukkot` (e.g. `DF_Sukkot_Registration_FirstName`); only the **schema** was changed.
 
-**App code still references `Sukkot.*`** until a follow-up cutover updates repositories and connection strings to `SukkotRegistration` / `dbo`.
+**Apps (Sukkot + Admin):** config key remains `ConnectionStrings:Sukkot`; catalog is **`SukkotRegistration`**; SQL uses **`dbo.*`** (see issue #205).
 
 ---
 

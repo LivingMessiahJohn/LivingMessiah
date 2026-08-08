@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Admin.Data;
 using DataEnumsDatabase = Admin.Data.Enums.Database;
 
@@ -27,11 +27,11 @@ public class Repository : BaseRepositoryAsync, IRepository
 	{
 		base.Sql = @"
 			SELECT FeastDay2, Id, Adults, ChildBig, ChildSmall, TotalPeeps 
-			FROM Sukkot.vwAttendanceAllFeastDays 
+			FROM dbo.vwAttendanceAllFeastDays 
 			ORDER BY Id;
 			
 			SELECT Adults, ChildBig, ChildSmall, TotalPeeps 
-			FROM Sukkot.vwAttendancePeopleSummary;";
+			FROM dbo.vwAttendancePeopleSummary;";
 
 		return await WithConnectionAsync(async connection =>
 		{
