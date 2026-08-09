@@ -44,7 +44,7 @@ public abstract class Account : SmartEnum<Account>
 		public LogoutSE() : base($"{nameof(Id.Logout)}", Id.Logout) { }
 		public override string Index => "/Account/Logout";
 		public override string Title => "Log out";
-		public override string Icon => "fas fa-sign-in-alt";
+		public override string Icon => "fas fa-sign-out-alt";
 		public override string Action => "Account/LogOut";
 	}
 

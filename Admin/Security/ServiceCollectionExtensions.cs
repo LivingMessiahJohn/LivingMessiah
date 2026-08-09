@@ -21,6 +21,7 @@ public static class ServiceCollectionExtensions
 								context.User.HasClaim(Authentication.Claim, "true") &&
 								(context.User.IsInRole(RoleEnum.Announcements.Claim) ||
 								 context.User.IsInRole(RoleEnum.KeyDates.Claim) ||
+								 context.User.IsInRole(RoleEnum.WeeklyDownload.Claim) ||
 								 context.User.IsInRole(RoleEnum.Sukkot.Claim) ||
 								 context.User.IsInRole(RoleEnum.SukkotHost.Claim) ||
 								 context.User.IsInRole(RoleEnum.Admin.Claim))))
@@ -44,6 +45,11 @@ public static class ServiceCollectionExtensions
 				.AddPolicy(RoleGroup.SukkotHost, policy =>
 						policy.RequireAssertion(context =>
 								context.User.IsInRole(RoleEnum.SukkotHost.Claim) ||
+								context.User.IsInRole(RoleEnum.Admin.Claim)))
+
+				.AddPolicy(RoleGroup.WeeklyDownload, policy =>
+						policy.RequireAssertion(context =>
+								context.User.IsInRole(RoleEnum.WeeklyDownload.Claim) ||
 								context.User.IsInRole(RoleEnum.Admin.Claim)))
 
 				.AddPolicy(RoleEnum.Admin.Name, policy => policy.RequireRole(RoleEnum.Admin.Claim, "true"));

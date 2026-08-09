@@ -193,7 +193,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Icon => "fas fa-file-pdf";
 		public override int Sort => Id.WeeklyDownload;
 		public override bool Disabled => false;
-		public override int RequiredRoles => RoleEnum.KeyDates.Value | RoleEnum.Admin.Value; // KeyDates or Admin role
+		public override int RequiredRoles => RoleEnum.WeeklyDownload.Value | RoleEnum.Admin.Value; 
 	}
 
 	private sealed class SukkotScheduleSE : Nav

@@ -9,4 +9,5 @@ public static class RoleGroup
 	public const string KeyDates = "keydates";
 	public const string Sukkot = "sukkot";
 	public const string SukkotHost = "sukkothost";
+	public const string WeeklyDownload = "weeklydownload";
 }

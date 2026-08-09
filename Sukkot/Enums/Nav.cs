@@ -148,7 +148,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public LogoutSE() : base($"{nameof(Id.Logout)}", Id.Logout) { }
 		public override string Index => "/Account/Logout";
 		public override string Title => "Log out";
-		public override string Icon => "fas fa-sign-in-alt";
+		public override string Icon => "fas fa-sign-out-alt";
 		public override bool IsOnToolbar => false;
 	}
 
