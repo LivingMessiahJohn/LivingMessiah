@@ -10,7 +10,8 @@ public enum RoleFlag
 	Announcements = 2,
 	KeyDates = 4,
 	Sukkot = 8,
-	SukkotHost = 16
+	SukkotHost = 16,
+	Weeklydownload = 32
 }
 
 public abstract class Role : SmartEnum<Role>
@@ -24,6 +25,7 @@ public abstract class Role : SmartEnum<Role>
 		internal const int KeyDates = 4;  
 		internal const int Sukkot = 8;
 		internal const int SukkotHost = 16;
+		internal const int WeeklyDownload = 32;
 	}
 	#endregion
 
@@ -33,6 +35,7 @@ public abstract class Role : SmartEnum<Role>
 	public static readonly Role KeyDates = new KeyDatesSE();
 	public static readonly Role Sukkot = new SukkotSE();
 	public static readonly Role SukkotHost = new SukkotHostSE();
+	public static readonly Role WeeklyDownload = new WeeklyDownloadSE();
 	#endregion
 
 	private Role(string name, int value) : base(name, value)  // Constructor
@@ -73,6 +76,12 @@ public abstract class Role : SmartEnum<Role>
 	{
 		public SukkotHostSE() : base($"{nameof(BitwiseId.SukkotHost)}", BitwiseId.SukkotHost) { }
 		public override string Claim => "sukkothost";
+	}
+
+	private sealed class WeeklyDownloadSE : Role
+	{
+		public WeeklyDownloadSE() : base($"{nameof(BitwiseId.WeeklyDownload)}", BitwiseId.WeeklyDownload) { }
+		public override string Claim => "weeklydownload";
 	}
 
 	#endregion
