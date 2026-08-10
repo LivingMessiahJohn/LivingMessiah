@@ -23,7 +23,7 @@
   [Parameter, EditorRequired] public int RegistrationId { get; set; }
   [Parameter, EditorRequired] public string Email { get; set; }
 
-  string? Action => $"{DonationConstants.BaseSessionUrl}-sukkotregistration";
+  string? Action => DonationConstants.BaseSessionUrl;
 
   // protected override void OnInitialized()
   // {

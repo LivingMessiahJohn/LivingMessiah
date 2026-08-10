@@ -15,9 +15,6 @@
 
 <AuthorizeView Policy=@Policy.Name>
   <Authorized>
-    <div class="pb-2 mt-4 mb-2 border-bottom">
-      <h1><span class="text-secondary @Nav.ConfirmRegistration.Icon"></span> @Nav.ConfirmRegistration.Title</h1>
-    </div>
 
     <div class="d-flex justify-content-center mt-4">
 
@@ -112,7 +109,7 @@
   {
     if (id is not null)
     {
-      NavigationManager!.NavigateTo($"{Nav.Print.Index}/{id}/true");
+      NavigationManager!.NavigateTo($"{Nav.Print.Index}/{id}/");
     }
   }
 }
