@@ -31,4 +31,4 @@ Match existing Sukkot / KeyDates style when adding or extending admin features:
 
 - Prefer extending an existing feature’s `Data` layer over a new global data stack
 - Co-locate VM / DTO / validator next to the form that uses them
-- Health checks live under `HealthChecks/` when relevant
+- Health checks live under `HealthChecks/` when relevant — Sukkot Stripe webhook probe: [`docs/Sukkot-Stripe-Endpoints.md`](../docs/Sukkot-Stripe-Endpoints.md) (section *Admin.HealthChecks.Sukkot*)

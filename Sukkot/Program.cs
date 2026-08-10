@@ -31,6 +31,7 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Azure.Monitor.OpenTelemetry.Exporter;
+using Sukkot.Endpoints.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
@@ -105,6 +106,7 @@ try
 				policy.RequireClaim(Policy.Claim, "true"));
 
 	builder.Services.AddSukkotData();
+	builder.Services.AddEndpointsData();
 	builder.Services.AddSukkotDailyScheduleData();	
 
 

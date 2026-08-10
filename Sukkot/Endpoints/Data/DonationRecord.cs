@@ -1,4 +1,4 @@
-﻿namespace Sukkot.Features.Data;
+﻿namespace Sukkot.Endpoints.Data;
 
 public class DonationRecord
 {
