@@ -57,7 +57,9 @@ Routes (not secrets):
 | `DonationConstants.BaseSessionUrl` | `/api/stripe/create-session` | `Sukkot/Enums/DonationConstants.cs` |
 | `DonationConstants.WebHookUrl` | `/webhook/stripesukkotdonation` | same |
 
-Placeholder values appear in `Sukkot/appsettings.json`. Real keys come from user-secrets / Azure app settings — never commit live secrets. See `SECRETS-QUICK-REF.md` / `SECRETS-MANAGEMENT.md`.
+Placeholder values appear in `Sukkot/appsettings.json` (`sk_test_your_stripe_api_key`, `whsec_...`). Real keys come from user-secrets / Azure app settings — never commit live secrets. See `SECRETS-QUICK-REF.md` / `SECRETS-MANAGEMENT.md`.
+
+**Startup guard:** `StartupHelper.EnsureStripeSecretsConfigured` runs before the app hosts. If `Stripe:ApiKey` or `Stripe:WebhookSecret` is missing or still a known placeholder, startup **fails fast** with a clear `Log.Fatal` / `InvalidOperationException` (secret values are never logged). Set real values locally before `dotnet run` / Aspire, or the process will exit during bootstrap.
 
 ### Admin health check
 

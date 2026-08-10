@@ -32,6 +32,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Azure.Monitor.OpenTelemetry.Exporter;
 using Sukkot.Endpoints.Data;
+using Sukkot.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
@@ -119,8 +120,9 @@ try
 
 	builder.Services.AddLifeCyclePhaseSetting(configuration);
 
-	var stripeApiKey = builder.Configuration[StripeConstants.ApiKey];
-	StripeConfiguration.ApiKey = stripeApiKey;
+	// Fail fast if Stripe keys are missing or still appsettings placeholders (do not log secret values).
+	StartupHelper.EnsureStripeSecretsConfigured(builder.Configuration);
+	StripeConfiguration.ApiKey = builder.Configuration[StripeConstants.ApiKey];
 
 	var app = builder.Build();
 
