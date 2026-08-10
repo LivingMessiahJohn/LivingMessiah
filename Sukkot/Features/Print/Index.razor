@@ -17,17 +17,11 @@
 @inject ISecurityHelper? SecurityHelper
 @inject Data.IRepository? db
 
-<PageHeader PageEnum="Nav.Print" />
-
 <PhaseWrapper>
   <OpenContent>
 
     <AuthorizeView Policy=@Policy.Name>
       <Authorized>
-
-        <p class="fs-4 text-danger">ToDo: Remove Toolbar inside Print.Index</p>
-        @* <Toolbar /> *@
-        
         <LoadingComponent IsLoading="RegistrationQuery == null" TurnSpinnerOff=TurnSpinnerOff>
 
           @if (IsAuthorized)
