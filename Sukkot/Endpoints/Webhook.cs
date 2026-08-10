@@ -3,7 +3,7 @@ using Stripe.Checkout;
 using RegistrationFeeEnums = RCL.Features.Sukkot.Enums.RegistrationFee;
 using static Sukkot.Features.Constants.FormFields;
 using Sukkot.Endpoints.Constants;
-using Sukkot.Features.Data;
+using Sukkot.Endpoints.Data;
 
 namespace Sukkot.Endpoints;
 

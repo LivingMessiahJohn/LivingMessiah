@@ -5,7 +5,7 @@ Blazor **Server** app for Sukkot registration and related flows (`net10.0`). Inc
 ## Layout
 
 - Features: `Features/` (registration, donations, lifecycle authority, etc.)
-- Minimal APIs / Stripe: `Endpoints/` (checkout session, webhook)
+- Minimal APIs / Stripe: `Endpoints/` (checkout session, webhook) — flow & DB write path: [`docs/Sukkot-Stripe-Endpoints.md`](../docs/Sukkot-Stripe-Endpoints.md)
 - Auth / policies: `Security/`
 - Data helpers: `Data/`, feature `Data/` folders
 - Shared enums/helpers for Sukkot dates/fees: prefer `RCL/Features/Sukkot/` when shared; app-specific UI stays here
