@@ -47,9 +47,28 @@ dotnet user-secrets clear
    - `BlobContainerName`
    - `SpecialEventConnectionString` (Azure SQL connection string for the SpecialEvent database)
 
+## Sukkot daily schedule blob (Admin + Sukkot apps)
+
+Schedule markdown lives in private container `sukkot-content` (see `ScheduleBlob` constants). Only the connection string is secret.
+
+```powershell
+# Admin (user-secrets)
+cd Admin
+dotnet user-secrets set "AzureBlob:ConnectionString" "YOUR_STORAGE_CONNECTION_STRING"
+
+# Sukkot (user-secrets)
+cd ../Sukkot
+dotnet user-secrets set "AzureBlob:ConnectionString" "YOUR_STORAGE_CONNECTION_STRING"
+```
+
+- Config key: `AzureBlob:ConnectionString`
+- Not secret: container `sukkot-content`, blob path `sukkot/scheduled-events.md`, metadata key `lastrevised`
+- Placeholders may appear in `appsettings*.json`; real values go in user-secrets or Azure app settings
+
 ## Remember
 
 - ✅ PWA (Blazor WASM) = NO SECRETS (runs in browser)
 - ✅ API (Azure Functions) = HAS SECRETS (runs on server)
-- ✅ Aspire AppHost User Secrets = Best for local dev
+- ✅ Admin / Sukkot Blazor Server = connection strings in user-secrets or Azure settings
+- ✅ Aspire AppHost User Secrets = Best for local dev (Api storage today)
 - ❌ NEVER commit `local.settings.json` with real values

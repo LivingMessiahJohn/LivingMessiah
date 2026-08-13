@@ -1,8 +1,8 @@
 namespace RCL.Features.Sukkot;
 
 /// <summary>
-/// Host apps (Admin, Sukkot) implement this with their own repository/SQL.
-/// RCL only depends on the abstraction — no DB access in the library.
+/// Loads the Sukkot daily schedule. Hosts register a blob-backed implementation
+/// via <see cref="ScheduleBlobServiceCollectionExtensions.AddSukkotScheduleFromBlob"/> (#215).
 /// </summary>
 public interface IScheduleQueryLoader
 {
