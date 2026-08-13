@@ -26,6 +26,7 @@ public class AzureBlobService : IAzureBlobService
       Stream stream,
       string fileName,
       string? contentType = null,
+      IDictionary<string, string>? metadata = null,
       CancellationToken ct = default)
   {
     if (string.IsNullOrWhiteSpace(fileName))
@@ -41,8 +42,11 @@ public class AzureBlobService : IAzureBlobService
     {
       var blobClient = _container.GetBlobClient(fileName.Trim());
       var headers = new BlobHttpHeaders { ContentType = contentType ?? "application/octet-stream" };
-
-      await blobClient.UploadAsync(stream, new BlobUploadOptions { HttpHeaders = headers }, cancellationToken: ct);
+      // overwrite: true so Admin schedule save and re-uploads replace existing blobs
+      await blobClient.UploadAsync(stream, overwrite: true, cancellationToken: ct);
+      await blobClient.SetHttpHeadersAsync(headers, cancellationToken: ct);
+      if (metadata is { Count: > 0 })
+        await blobClient.SetMetadataAsync(new Dictionary<string, string>(metadata), cancellationToken: ct);
 
       Logger.LogInformation("Stream uploaded successfully to blob: {BlobName}", fileName);
       return BlobOperationResult.Success($"Stream uploaded to '{fileName}' successfully.");
@@ -207,7 +211,70 @@ public class AzureBlobService : IAzureBlobService
       return BlobOperationResult<BlobInfo>.Failure($"Failed to get info for '{blobName}'", ex);
     }
   }
-}
 
-//public record BlobInfo(string Name, string Url, long SizeBytes);
+  public async Task<BlobOperationResult<BlobTextContent>> DownloadTextAsync(
+      string blobName,
+      CancellationToken ct = default)
+  {
+    blobName = blobName?.Trim() ?? string.Empty;
+
+    if (string.IsNullOrEmpty(blobName))
+      return BlobOperationResult<BlobTextContent>.Failure("blobName cannot be null or empty");
+
+    try
+    {
+      BlobClient blob = _container.GetBlobClient(blobName);
+      Response<BlobDownloadResult> response = await blob.DownloadContentAsync(cancellationToken: ct);
+      BlobDownloadResult download = response.Value;
+      string text = download.Content.ToString();
+      DateTime lastRevised = ResolveLastRevised(download.Details.Metadata, download.Details.LastModified);
+
+      Logger.LogDebug("Downloaded text blob {BlobName}: {Length} chars, LastRevised {LastRevised}",
+          blobName, text.Length, lastRevised);
+      return BlobOperationResult<BlobTextContent>.Success(
+          new BlobTextContent(text, lastRevised),
+          "Blob text downloaded successfully.");
+    }
+    catch (RequestFailedException ex) when (ex.Status == 404)
+    {
+      Logger.LogDebug("Blob not found: {BlobName}", blobName);
+      return BlobOperationResult<BlobTextContent>.Failure($"Blob '{blobName}' does not exist.", ex);
+    }
+    catch (RequestFailedException ex) when (IsTransientError(ex))
+    {
+      return BlobOperationResult<BlobTextContent>.Failure(
+          $"Transient error downloading '{blobName}'",
+          ex,
+          isTransient: true);
+    }
+    catch (Exception ex)
+    {
+      Logger.LogWarning(ex, "Failed to download text blob: {BlobName}", blobName);
+      return BlobOperationResult<BlobTextContent>.Failure($"Failed to download '{blobName}'", ex);
+    }
+  }
+
+  /// <summary>
+  /// Prefer user metadata <c>lastrevised</c>; otherwise use blob LastModified (UTC → local).
+  /// </summary>
+  private static DateTime ResolveLastRevised(
+      IDictionary<string, string> metadata,
+      DateTimeOffset lastModified)
+  {
+    const string key = "lastrevised";
+    if (metadata is not null)
+    {
+      foreach (var pair in metadata)
+      {
+        if (!string.Equals(pair.Key, key, StringComparison.OrdinalIgnoreCase))
+          continue;
+        if (DateTime.TryParse(pair.Value, null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime parsed))
+          return parsed;
+        break;
+      }
+    }
+
+    return lastModified.LocalDateTime;
+  }
+}
 

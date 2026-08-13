@@ -126,14 +126,7 @@ WHERE NOT EXISTS (SELECT 1 FROM dbo.Stripe t WHERE t.Id = s.Id);
 SET IDENTITY_INSERT dbo.Stripe OFF;
 PRINT CONCAT('Stripe rows inserted: ', @@ROWCOUNT);
 
-IF OBJECT_ID(N'Sukkot.dbo.ScheduledEventsMarkdown', N'U') IS NOT NULL
-   AND NOT EXISTS (SELECT 1 FROM dbo.ScheduledEventsMarkdown)
-BEGIN
-    INSERT INTO dbo.ScheduledEventsMarkdown ([Lock], Markdown, LastRevised)
-    SELECT s.[Lock], s.Markdown, s.LastRevised
-    FROM Sukkot.dbo.ScheduledEventsMarkdown s;
-    PRINT CONCAT('ScheduledEventsMarkdown rows inserted: ', @@ROWCOUNT);
-END
+-- Schedule markdown is Azure Blob only (#215): sukkot-content / sukkot/scheduled-events.md
 
 COMMIT TRAN;
 
@@ -145,5 +138,4 @@ SELECT
   (SELECT COUNT(*) FROM dbo.HouseRulesAgreement) AS HraCount,
   (SELECT COUNT(*) FROM dbo.Registration) AS RegistrationCount,
   (SELECT COUNT(*) FROM dbo.Donation) AS DonationCount,
-  (SELECT COUNT(*) FROM dbo.Stripe) AS StripeCount,
-  (SELECT COUNT(*) FROM dbo.ScheduledEventsMarkdown) AS ScheduleRowCount;
+  (SELECT COUNT(*) FROM dbo.Stripe) AS StripeCount;

@@ -28,7 +28,11 @@ dbo/
   StoredProcedures/
 ```
 
-Includes registration tables, views, procs, ErrorLog helpers, and **`ScheduledEventsMarkdown`** (schedule markdown for #198).
+Includes registration tables, views, procs, and ErrorLog helpers.
+
+**Daily schedule** is **not** in this database. Admin/Sukkot use Azure Blob (#215):
+container `sukkot-content`, blob `sukkot/scheduled-events.md`
+(see `docs/sukkot/schedule-blob-phase0-decisions.md`).
 
 ---
 
@@ -85,16 +89,29 @@ After publish, optionally load rows from the existing local `Sukkot` database:
 sqlcmd -S "JohnsDellDT\SQLEXPRESS" -E -C -i docs/sql/sukkot-registration/01-Copy-Data-From-Legacy-Sukkot.sql
 ```
 
-That script inserts into `SukkotRegistration.dbo.*` from `Sukkot.Sukkot.*` (and `dbo.ScheduledEventsMarkdown` when present).
+That script inserts into `SukkotRegistration.dbo.*` from `Sukkot.Sukkot.*`.
 
 Smoke check:
 
 ```sql
 USE SukkotRegistration;
 SELECT TOP 5 Id, FamilyName, EMail FROM dbo.Registration;
-SELECT Markdown, LastRevised FROM dbo.ScheduledEventsMarkdown;
 SELECT * FROM dbo.vwConstants;
+-- Schedule is blob-backed; table must not exist after Phase 7 drop:
+SELECT OBJECT_ID(N'dbo.ScheduledEventsMarkdown', N'U');  -- expect NULL
 ```
+
+### Drop obsolete schedule table (local / Azure)
+
+`dbo.ScheduledEventsMarkdown` was removed from this project (#215). Default `sqlpackage` publish
+does **not** drop target-only objects, so run:
+
+```powershell
+sqlcmd -S "JohnsDellDT\SQLEXPRESS" -E -C -d SukkotRegistration `
+  -i docs/sql/sukkot-registration/03-Drop-ScheduledEventsMarkdown.sql
+```
+
+Same script against Azure when ready (use your Azure SQL auth; do not commit secrets).
 
 ---
 
@@ -164,4 +181,4 @@ dotnet build Database/SukkotRegistration/SukkotRegistration.sqlproj
 
 - Sibling project: `Database/SpecialEvent/`
 - Annual startup scripts (still use legacy `Sukkot` schema until cutover): `docs/sql/sukkot-annual-startup/`
-- Schedule table seed notes: issue #198 / #200 attachment `200-Create-ScheduledEventsMarkdown.md`
+- Daily schedule blob (#215): `docs/sukkot/schedule-blob-phase0-decisions.md`, baseline `docs/sukkot/scheduled-events.md`

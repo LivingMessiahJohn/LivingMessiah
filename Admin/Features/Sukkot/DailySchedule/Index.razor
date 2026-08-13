@@ -1,32 +1,179 @@
-﻿@using RoleGroup = Admin.Security.Enums.RoleGroup;
+@using RoleGroup = Admin.Security.Enums.RoleGroup
 @using RCL.Features.Sukkot
+@using RCL.Features.Sukkot.Constants
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Extensions.Logging
+@using Blazored.Toast.Services
+@using Page = Admin.Enums.Nav
 
 @page "/SukkotSchedule"
 
-@using Microsoft.AspNetCore.Components.Authorization
+@inject IScheduleQueryLoader Loader
+@inject IScheduleQueryWriter Writer
+@inject IToastService Toast
+@inject ILogger<Index> Logger
+
+<PageHeader PageEnum="Page.SukkotSchedule" />
 
 <AuthorizeView Policy=@RoleGroup.Sukkot>
-  <Authorized>
-		<div class="mt-4 d-print-none">
-
-			<ToggleButton ButtonLabel="Show Daily Schedule">
-				<div class="alert alert-info mt-2 mb-2" role="alert">
-					<small>Preview of Daily Schedule as shown on the Sukkot home page</small>
+	<Authorized>
+		@if (_isLoading)
+		{
+			<p class="text-muted">Loading schedule…</p>
+		}
+		else
+		{
+			<div class="card border-primary mb-4">
+				<div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+					<span>
+						<strong>Edit daily schedule</strong>
+						<small class="text-muted ms-2">@ScheduleBlob.BlobName</small>
+					</span>
+					<div class="d-flex gap-2">
+						<button type="button" class="btn btn-outline-secondary btn-sm" disabled="@_isSaving" @onclick="ReloadAsync">
+							<i class="fas fa-sync-alt"></i> Reload
+						</button>
+						<button type="button" class="btn btn-primary btn-sm" disabled="@(_isSaving || !_dirty)" @onclick="SaveAsync">
+							@if (_isSaving)
+							{
+								<span class="spinner-border spinner-border-sm me-1" role="status"></span>
+							}
+							else
+							{
+								<i class="fas fa-save me-1"></i>
+							}
+							Save
+						</button>
+					</div>
 				</div>
-				<ScheduleWrapper />
-			</ToggleButton>
+				<div class="card-body">
+					@if (!string.IsNullOrEmpty(_loadError))
+					{
+						<div class="alert alert-warning" role="alert">@_loadError</div>
+					}
+					<label class="form-label" for="scheduleMarkdown">Markdown</label>
+					<textarea id="scheduleMarkdown"
+										class="form-control font-monospace"
+										style="min-height: 22rem; white-space: pre;"
+										@bind="_markdown"
+										@bind:event="oninput"
+										@bind:after="OnMarkdownChanged"
+										disabled="@_isSaving"></textarea>
+					<div class="form-text">
+						Saves overwrite the private blob. “Last revised” uses save time (metadata + blob LastModified).
+						@if (_loadedLastRevised is not null)
+						{
+							<span> Previously loaded: @_loadedLastRevised.Value.ToString("g")</span>
+						}
+					</div>
+				</div>
+			</div>
 
-		</div>
-
-  </Authorized>
-  <NotAuthorized>
+			<div class="mb-4">
+				<div class="alert alert-info py-2" role="alert">
+					<small>Live preview (same component as the Sukkot home page)</small>
+				</div>
+				<Schedule ScheduleQuery="_previewQuery" />
+			</div>
+		}
+	</Authorized>
+	<NotAuthorized>
 		<LoginRedirectCard Nav="Nav.SukkotSchedule" ReturnUrl=@Nav.SukkotSchedule.Index />
-    <div class="alert alert-warning text-end" role="alert">
-      <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small> 
-    </div>
-  </NotAuthorized>
+		<div class="alert alert-warning text-end" role="alert">
+			<small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small>
+		</div>
+	</NotAuthorized>
 </AuthorizeView>
 
 @code {
+	private string _markdown = string.Empty;
+	private string _originalMarkdown = string.Empty;
+	private string? _loadError;
+	private DateTime? _loadedLastRevised;
+	private bool _isLoading = true;
+	private bool _isSaving;
+	private bool _dirty;
+	private ScheduleQuery? _previewQuery;
 
+	protected override async Task OnInitializedAsync()
+	{
+		await ReloadAsync();
+	}
+
+	private void OnMarkdownChanged()
+	{
+		_dirty = !string.Equals(_markdown, _originalMarkdown, StringComparison.Ordinal);
+		UpdatePreview();
+	}
+
+	private void UpdatePreview()
+	{
+		_previewQuery = new ScheduleQuery
+		{
+			Markdown = _markdown,
+			LastRevised = _dirty ? DateTime.Now : (_loadedLastRevised ?? DateTime.Now)
+		};
+	}
+
+	private async Task ReloadAsync()
+	{
+		_isLoading = true;
+		_loadError = null;
+		try
+		{
+			var query = await Loader.GetAsync();
+			if (query is null)
+			{
+				_markdown = string.Empty;
+				_originalMarkdown = string.Empty;
+				_loadedLastRevised = null;
+				_loadError = "Could not load the schedule blob (missing or error). You can still type and Save to create it.";
+			}
+			else
+			{
+				_markdown = query.Markdown ?? string.Empty;
+				_originalMarkdown = _markdown;
+				_loadedLastRevised = query.LastRevised;
+			}
+			_dirty = false;
+			UpdatePreview();
+		}
+		catch (Exception ex)
+		{
+			Logger.LogError(ex, "Failed to load schedule for edit");
+			_loadError = "Error loading schedule. See logs.";
+			Toast.ShowError("Failed to load schedule.");
+		}
+		finally
+		{
+			_isLoading = false;
+		}
+	}
+
+	private async Task SaveAsync()
+	{
+		if (_isSaving)
+			return;
+
+		_isSaving = true;
+		try
+		{
+			var lastRevised = DateTime.Now;
+			await Writer.SaveAsync(_markdown, lastRevised);
+			_originalMarkdown = _markdown;
+			_loadedLastRevised = lastRevised;
+			_dirty = false;
+			UpdatePreview();
+			Toast.ShowSuccess("Schedule saved.");
+		}
+		catch (Exception ex)
+		{
+			Logger.LogError(ex, "Failed to save schedule");
+			Toast.ShowError($"Save failed: {ex.Message}");
+		}
+		finally
+		{
+			_isSaving = false;
+		}
+	}
 }
