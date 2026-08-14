@@ -6,29 +6,35 @@
 
 <LoadingComponent IsLoading="StripeQuerys == null" TurnSpinnerOff=TurnSpinnerOff>
 
-<div class="mt-4">
-	<TableTemplate Items="StripeQuerys" HeaderCSS="@HeaderCSS">
-		<TableHeader>
-			<th>Id</th>
-			<th>Email</th>
-			<th>Registration Id</th>
-			<th>Modification Count</th>
-			<th>Last Modified</th>
-			<th>First Name</th>
-			<th>Family Name</th>
-		</TableHeader>
-		<RowTemplate>
-			<td>@context.Id</td>
-			<td>@context.Email</td>
-			<td>@context.RegistrationId</td>
-			<td>@context.ModificationCount</td>
-			<td>@context.LastModifiedDate.ToString("g")</td>
-			<td>@context.FirstName</td>
-			<td>@context.FamilyName</td>
-		</RowTemplate>
-	</TableTemplate>
-</div>
+	<h5 class="text-center">Stripe Table</h5>
+	<div class="mt-4">
+		<TableTemplate Items="StripeQuerys" HeaderCSS="@HeaderCSS">
+			<TableHeader>
+				<th>Id</th>
+				<th>Email</th>
+				<th>Registration Id</th>
+				<th>Modification Count</th>
+				<th>Last Modified</th>
+				<th>First Name</th>
+				<th>Family Name</th>
+			</TableHeader>
+			<RowTemplate>
+				<td>@context.Id</td>
+				<td>@context.Email</td>
+				<td>@context.RegistrationId</td>
+				<td>@context.ModificationCount</td>
+				<td>@context.LastModifiedDate.ToString("g")</td>
+				<td>@context.FirstName</td>
+				<td>@context.FamilyName</td>
+			</RowTemplate>
+		</TableTemplate>
+	</div>
 </LoadingComponent>
+
+@if (StripeQuerys is null)
+{
+	<Alert><card>No Stripe queries found.</card></Alert>
+}
 
 @code {
 	//[Parameter, EditorRequired] public List<StripeQuery>? ParamStripeList { get; set; }
