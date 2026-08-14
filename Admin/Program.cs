@@ -21,6 +21,10 @@ using Admin.SecurityRoot;  // Added for ServiceCollectionExtensions
 using Admin.Settings;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Azure.Monitor.OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Serilog;
 
 using AccountEnum = Admin.Enums.Account;
@@ -34,12 +38,53 @@ using WeeklyDownloadsSettings = Admin.Features.WeeklyDownloads.Settings;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+var aiConnectionString = Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING")
+	?? builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+
 Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
-Log.Warning("{Class}, Environment: {Environment}; ", nameof(Program), Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
+Log.Warning("{Class}, Environment: {Environment}; ApplicationInsightsConfigured: {ApplicationInsightsConfigured}",
+	nameof(Program),
+	Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
+	!string.IsNullOrWhiteSpace(aiConnectionString));
 
 try
 {
 	builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(builder.Configuration));
+
+	builder.Logging.AddOpenTelemetry(options =>
+	{
+		options.IncludeScopes = true;
+		options.IncludeFormattedMessage = true;
+		options.ParseStateValues = true;
+		options.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Admin"));
+		if (!string.IsNullOrWhiteSpace(aiConnectionString))
+		{
+			options.AddAzureMonitorLogExporter(o => o.ConnectionString = aiConnectionString);
+		}
+		else
+		{
+			options.AddConsoleExporter();
+		}
+	});
+
+	builder.Services.AddOpenTelemetry()
+		.WithTracing(tracerProviderBuilder =>
+		{
+			tracerProviderBuilder
+				.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Admin"))
+				.AddAspNetCoreInstrumentation()
+				.AddHttpClientInstrumentation();
+
+			if (!string.IsNullOrWhiteSpace(aiConnectionString))
+			{
+				tracerProviderBuilder.AddAzureMonitorTraceExporter(o => o.ConnectionString = aiConnectionString);
+			}
+			else
+			{
+				tracerProviderBuilder.AddConsoleExporter();
+			}
+		});
 
 	builder.Services.AddBlazoredToast();
 
@@ -62,7 +107,6 @@ try
 	builder.Services.AddAuth0Authentication(builder.Configuration);  // Added: configures Auth0 authentication
 
 	//builder.Services.AddFeastDayPlanner();
-	//builder.Services.AddApplicationInsightsTelemetry();
 
 	builder.Services.Configure<HealthChecksSukkot.Settings.Stripe>(builder.Configuration.GetSection(nameof(HealthChecksSukkot.Settings.Stripe)));
 	builder.Services.AddHealthChecks().AddCheck<HealthChecksSukkot.StripeWebhookHealthCheck>(HealthChecksSukkotEndPoint.HealthCheckName);

@@ -51,16 +51,16 @@ Log.Logger = new LoggerConfiguration()
 	.ReadFrom.Configuration(configuration)
 	.CreateLogger();
 
-Log.Warning("{Class}, {Environment}, AppSettingJsonFile: {AppSettingJsonFile}; "
-			, nameof(Program), Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), appSettingJson);
+Log.Warning("{Class}, {Environment}, AppSettingJsonFile: {AppSettingJsonFile}; ApplicationInsightsConfigured: {ApplicationInsightsConfigured}",
+	nameof(Program),
+	Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
+	appSettingJson,
+	!string.IsNullOrWhiteSpace(aiConnectionString));
 
 try
 {
 	builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(configuration));
 
-	#region added by AI
-	// Clear built-in providers and add OpenTelemetry logging which will export to Azure Monitor if configured
-	builder.Logging.ClearProviders();
 	builder.Logging.AddOpenTelemetry(options =>
 	{
 		options.IncludeScopes = true;
@@ -94,9 +94,6 @@ try
 					tracerProviderBuilder.AddConsoleExporter(); // from OpenTelemetry.Exporter.Console
 				}
 			});
-
-	#endregion
-
 
 	// Services.Add
 	builder.Services.AddBlazoredToast();
