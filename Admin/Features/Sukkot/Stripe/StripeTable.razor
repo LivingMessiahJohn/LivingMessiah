@@ -4,11 +4,11 @@
 @inject IToastService? Toast
 @inject IRepository? db
 
-<LoadingComponent IsLoading="StripeQuerys == null" TurnSpinnerOff=TurnSpinnerOff>
+<LoadingComponent IsLoading="StripeQueries == null" TurnSpinnerOff=TurnSpinnerOff>
 
 	<h5 class="text-center">Stripe Table</h5>
 	<div class="mt-4">
-		<TableTemplate Items="StripeQuerys" HeaderCSS="@HeaderCSS">
+		<TableTemplate Items="StripeQueries" HeaderCSS="@HeaderCSS">
 			<TableHeader>
 				<th>Id</th>
 				<th>Email</th>
@@ -31,7 +31,7 @@
 	</div>
 </LoadingComponent>
 
-@if (StripeQuerys is null)
+@if (StripeQueries is null)
 {
 	<Alert><card>No Stripe queries found.</card></Alert>
 }
@@ -41,13 +41,13 @@
 	protected string? HeaderCSS = "table table-primary table-hover";
 
 	bool TurnSpinnerOff = false;
-	public List<StripeQuery>? StripeQuerys { get; set; }
+	public List<StripeQuery>? StripeQueries { get; set; }
 	protected override async Task OnInitializedAsync()
 	{
 		Logger!.LogDebug("{Method}", nameof(OnInitializedAsync));
 		try
 		{
-			StripeQuerys = await db!.GetAllStripe();
+			StripeQueries = await db!.GetAllStripe();
 		}
 		catch (Exception ex)
 		{

@@ -1,0 +1,67 @@
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@using Sukkot.Security.Constants
+@using Sukkot.Features.Data
+
+@inject NavigationManager NavigationManager
+@inject IRepository? db
+
+@if (isVerifiedAndStartedRegistration)
+{
+  <li class="nav-item">
+
+    <button class="btn btn-outline-danger fw-bold"
+            @onclick="ButtonClick"
+            title="Print Registration">
+      <i class="@Nav.Print.Icon me-1"></i> Print Registration
+    </button>
+
+  </li>
+}
+
+
+
+@code {
+  [CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+
+  int id = 0;
+  bool isVerifiedAndStartedRegistration = false;
+
+  protected override async Task OnInitializedAsync()
+  {
+    if (authenticationState is null)
+    {
+      return;
+    }
+
+    var state = await authenticationState;
+    if (state.User.Identity is null || !state.User.Identity.IsAuthenticated)
+    {
+      return;
+    }
+
+    var isEmailVerified = state.User.FindFirst(Policy.Claim)?.Value == "true";
+    if (!isEmailVerified)
+    {
+      return;
+    }
+
+    var email = state.User.FindFirst(ClaimTypes.Email)?.Value;
+    if (string.IsNullOrEmpty(email) || db is null)
+    {
+      return;
+    }
+
+    var registrationId = await db.GetRegistrationIdByEmail(email);
+    if (registrationId is > 0)
+    {
+      id = registrationId.Value;
+      isVerifiedAndStartedRegistration = true;
+    }
+  }
+
+  void ButtonClick()
+  {
+    NavigationManager!.NavigateTo($"{Nav.Print.Index}/{id}/");
+  }
+}
