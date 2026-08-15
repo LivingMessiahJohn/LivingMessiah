@@ -13,6 +13,7 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 		internal const int Report = 3;  // or AttendanceReport
 		internal const int LegalAgreementVerbiage = 4;
 		internal const int Dashboard = 5;
+		internal const int StripeTable = 6;
 		//internal const int DeleteConfirmation = 2;
 
 	}
@@ -26,6 +27,8 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 	public static readonly MenuBar Report = new ReportSE();
 	public static readonly MenuBar LegalAgreementVerbiage = new LegalAgreementVerbiageSE();
 	public static readonly MenuBar Dashboard = new DashboardSE();
+	public static readonly MenuBar StripeTable = new StripeTableSE();
+
 	// SE=SmartEnum
 	#endregion
 
@@ -79,6 +82,15 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 		public override string Index => "/SukkotDashboard";
 		public override string Title => "Registration Dashboard";
 		public override string Icon => "fas fa-tachometer-alt";
+		public override string Css => "badge bg-danger text-black";
+	}
+
+	private sealed class StripeTableSE : MenuBar
+	{
+		public StripeTableSE() : base($"{nameof(Id.StripeTable)}", Id.StripeTable) { }
+		public override string Index => "/Sukkot/StripeTable";
+		public override string Title => "Stripe Table";
+		public override string Icon => "fab fa-cc-stripe"; 
 		public override string Css => "badge bg-danger text-black";
 	}
 

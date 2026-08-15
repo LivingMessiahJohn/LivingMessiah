@@ -75,7 +75,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Index => "/Print"; 
 		public override string Title => "Print"; 
 		public override string Icon => "fas fa-print";
-		public override bool IsOnToolbar => true;
+		public override bool IsOnToolbar => false;
 	}
 
 	private sealed class AboutSE : Nav
@@ -122,7 +122,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Index => "/Profile";
 		public override string Title => "Profile";
 		public override string Icon => "fab fa-superpowers";
-		public override bool IsOnToolbar => true;
+		public override bool IsOnToolbar => false; // if No Id, then this is not shown on the toolbar
 	}
 
 	private sealed class AuthCanceledSE : Nav

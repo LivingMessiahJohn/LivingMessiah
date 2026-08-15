@@ -31,7 +31,7 @@
   </div>
 
   @* House Rules Agreement *@
-  <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+  <div class="mt-1 mb-3 border-bottom border-dark-subtle border-2">
     <div class="d-flex justify-content-center">
       <b>House Rules Agreement</b>:
       Agreed on @data!.HouseRulesAgreementDate
@@ -41,7 +41,7 @@
 
   @* Attendance *@
 
-  <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+  <div class="mt-1 mb-3 border-bottom border-dark-subtle border-2">
     <div class="d-flex justify-content-center">
       <b>Attendance</b>:&nbsp;
       <ul class="list-inline">
@@ -53,7 +53,7 @@
 
     <div class="d-flex justify-content-center">
       <div class="mx-3">
-        AttendanceBitwise: @data.AttendanceBitwise; Count: @(data.AttendanceDateList?.Count() ?? 0)
+        @* AttendanceBitwise: @data.AttendanceBitwise; Count: @(data.AttendanceDateList?.Count() ?? 0) *@
         <AttendanceDateList SelectedDates="@data.AttendanceDateList" />
       </div>
     </div>
@@ -66,7 +66,7 @@
   </div>
 
   @* Cost *@
-  <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+  <div class="mt-1 mb-3 border-bottom border-dark-subtle border-2">
     <div class="d-flex justify-content-center mb-2">
       <span class="p-1"><b>Registration Fee</b>:&nbsp;</span>
       <span class="p-1 bg-warning-subtle text-black">
@@ -78,7 +78,7 @@
   @* Donation *@
   @if (data.DonationQuery is not null)
   {
-    <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+    <div class="mt-1 mb-3 border-bottom border-dark-subtle border-2">
       <div class="d-flex justify-content-center mb-2">
         <span class="p-1"><b>Paid Amount</b>:&nbsp;</span>
         <span class="p-1 bg-warning-subtle text-black">@(data.DonationQuery!.Amount.ToString("C2"))</span>
@@ -97,16 +97,16 @@
   @* Notes *@
   @if (!String.IsNullOrEmpty(data!.Notes))
   {
-    <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+    <div class="mt-1 mb-3">
       <div class="d-flex justify-content-center">
-        <b>Notes</b>: @data!.Notes
+        <b>Notes</b>: <span class="bg-info-subtle text-black">@data!.Notes</span>
       </div>
     </div>
   }
 
   @* Address (print only) *@
   <div class="d-none d-print-block">
-    <div class="mt-2 mb-4 border-bottom border-dark-subtle border-2">
+    <div class="mt-1 mb-3 border-bottom border-dark-subtle border-2">
       <div class="d-flex justify-content-center">
         <Address OnOneLine="true" UseLabel="true" />
       </div>
