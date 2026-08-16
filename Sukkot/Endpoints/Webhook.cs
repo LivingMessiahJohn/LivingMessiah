@@ -1,4 +1,4 @@
-﻿using Stripe;
+using Stripe;
 using Stripe.Checkout;
 using RegistrationFeeEnums = RCL.Features.Sukkot.Enums.RegistrationFee;
 using static Sukkot.Features.Constants.FormFields;
@@ -9,6 +9,9 @@ namespace Sukkot.Endpoints;
 
 public static class Webhook
 {
+	/// <summary>Fits dbo.Donation.CreatedBy nvarchar(25).</summary>
+	private const string DonationCreatedBy = "Stripe Webhook";
+
 	public static void WebhookConfig(this IEndpointRouteBuilder endpoints, string webhookUrl)
 	{
 		endpoints.MapPost(webhookUrl, async (
@@ -20,87 +23,133 @@ public static class Webhook
 			var Logger = loggerFactory.CreateLogger(nameof(Webhook));
 			var json = await new StreamReader(context.Request.Body).ReadToEndAsync();
 
-			//LogSecret(webhookUrl, config, Logger); // ToDo: comment out in production
+			if (string.IsNullOrWhiteSpace(json))
+			{
+				Logger.LogWarning("{Method}, Empty request body", nameof(WebhookConfig));
+				return Results.BadRequest("Empty body");
+			}
 
 			try
 			{
-				var stripeEvent = EventUtility.ConstructEvent(
-									json,
-									context.Request.Headers[StripeConstants.RequestHeaders],
-									config[StripeConstants.WebhookSecret],
-									throwOnApiVersionMismatch: false);
-
-				// Logger.LogInformation("...ET: {ET}", stripeEvent.Type);
-
-				if (stripeEvent.Type == StripeConstants.EventType)
+				var webhookSecret = config[StripeConstants.WebhookSecret];
+				if (string.IsNullOrWhiteSpace(webhookSecret))
 				{
-					Logger.LogDebug("{Method}, {Message}, {EventType}", nameof(WebhookConfig), $"webhookUrl: {webhookUrl}", stripeEvent.Type);
-					var session = stripeEvent.Data.Object as Session;
-
-					Logger.LogInformation("{Method}, {Message}", nameof(WebhookConfig), $"Email: {session!.CustomerEmail}"); 		
-
-					var (amountError, amount) = ValidateAmount(session);
-					if (!string.IsNullOrEmpty(amountError))
-					{
-						Logger.LogError("{Method}, Validation failed: {ErrorMessage}", nameof(WebhookConfig), amountError);
-						return Results.BadRequest($"{amountError}".Trim());
-					}
-
-					var (registrationIdError, registrationId) = ValidateRegistrationId(session);
-					if (!string.IsNullOrEmpty(registrationIdError))
-					{
-						Logger.LogError("{Method}, Validation failed: {ErrorMessage}", nameof(WebhookConfig), registrationIdError);
-						return Results.BadRequest($"{registrationIdError}".Trim());
-					}
-
-					var (insertError, newId) = await InsertDonation(db, Logger, session, amount, registrationId);
-					if (!string.IsNullOrEmpty(insertError))
-					{
-						Logger.LogError("{Method}, DB Insertion failed: {ErrorMessage}", nameof(WebhookConfig), insertError);
-						return Results.BadRequest($"{insertError}".Trim());
-					}
+					Logger.LogError("{Method}, Stripe:WebhookSecret is not configured", nameof(WebhookConfig));
+					return Results.BadRequest("Webhook secret not configured");
 				}
 
+				var signature = context.Request.Headers[StripeConstants.RequestHeaders].ToString();
+				if (string.IsNullOrWhiteSpace(signature))
+				{
+					Logger.LogWarning("{Method}, Missing Stripe-Signature header", nameof(WebhookConfig));
+					return Results.BadRequest("Missing Stripe-Signature");
+				}
+
+				var stripeEvent = EventUtility.ConstructEvent(
+									json,
+									signature,
+									webhookSecret,
+									throwOnApiVersionMismatch: false);
+
+				Logger.LogInformation("{Method}, Stripe event accepted: {EventId} type={EventType}",
+					nameof(WebhookConfig), stripeEvent.Id, stripeEvent.Type);
+
+				if (stripeEvent.Type != StripeConstants.EventType)
+				{
+					// Acknowledge other event types so Stripe does not retry forever.
+					Logger.LogDebug("{Method}, Ignoring event type {EventType}", nameof(WebhookConfig), stripeEvent.Type);
+					return Results.Ok();
+				}
+
+				if (stripeEvent.Data.Object is not Session session)
+				{
+					Logger.LogError("{Method}, Event data is not a Checkout Session", nameof(WebhookConfig));
+					return Results.BadRequest("Expected checkout Session payload");
+				}
+
+				Logger.LogInformation("{Method}, checkout.session.completed SessionId={SessionId} Email={Email}",
+					nameof(WebhookConfig), session.Id, session.CustomerEmail);
+
+				var (amountError, amount) = ValidateAmount(session);
+				if (!string.IsNullOrEmpty(amountError))
+				{
+					Logger.LogError("{Method}, Validation failed: {ErrorMessage}", nameof(WebhookConfig), amountError);
+					return Results.BadRequest(amountError.Trim());
+				}
+
+				var (registrationIdError, registrationId) = ValidateRegistrationId(session);
+				if (!string.IsNullOrEmpty(registrationIdError))
+				{
+					Logger.LogError("{Method}, Validation failed: {ErrorMessage} SessionId={SessionId}",
+						nameof(WebhookConfig), registrationIdError, session.Id);
+					return Results.BadRequest(registrationIdError.Trim());
+				}
+
+				var (insertError, newId, alreadyExists) = await InsertDonation(db, Logger, session, amount, registrationId);
+				if (alreadyExists)
+				{
+					// Idempotent: payment already recorded — tell Stripe success so it stops retrying.
+					Logger.LogInformation("{Method}, Donation already present for RegistrationId={RegistrationId}; treating as success",
+						nameof(WebhookConfig), registrationId);
+					return Results.Ok();
+				}
+
+				if (!string.IsNullOrEmpty(insertError))
+				{
+					Logger.LogError("{Method}, DB Insertion failed: {ErrorMessage}", nameof(WebhookConfig), insertError);
+					return Results.BadRequest(insertError.Trim());
+				}
+
+				Logger.LogInformation("{Method}, Donation inserted NewId={NewId} RegistrationId={RegistrationId}",
+					nameof(WebhookConfig), newId, registrationId);
 				return Results.Ok();
 			}
 			catch (StripeException ex)
 			{
-				Logger!.LogError(ex, "{Method}, {Message}", nameof(WebhookConfig), "Stripe error: {ex.Message}");
+				Logger.LogError(ex, "{Method}, Stripe signature/event error: {Message}", nameof(WebhookConfig), ex.Message);
 				return Results.BadRequest();
 			}
 			catch (Exception ex)
 			{
-				Logger!.LogError(ex, "{Method}, {Message}", nameof(WebhookConfig), "Error: {ex.Message}");
+				Logger.LogError(ex, "{Method}, Unhandled webhook error: {Message}", nameof(WebhookConfig), ex.Message);
 				return Results.BadRequest();
 			}
-		});
+		})
+		.AllowAnonymous()
+		.DisableAntiforgery();
 	}
 
-	private static async Task<(string ErrorMsg, int NewId)> InsertDonation(IRepository db, ILogger Logger, Session session, decimal amount, int registrationId)
+	private static async Task<(string ErrorMsg, int NewId, bool AlreadyExists)> InsertDonation(
+		IRepository db,
+		ILogger Logger,
+		Session session,
+		decimal amount,
+		int registrationId)
 	{
 		DonationRecord donation = new()
 		{
 			RegistrationId = registrationId,
 			Amount = amount,
 			Notes = "Stripe Checkout Session Completed",
-			Email = session.CustomerEmail,
+			Email = session.CustomerEmail ?? string.Empty,
 			ReferenceId = session.Id,
-			CreatedBy = $"Endpoint: {StripeConstants.EventType}",
+			CreatedBy = DonationCreatedBy,
 			CreateDate = DateTime.UtcNow
 		};
 
 		var (newId, errorMsg) = await db.DonationInsert(donation);
 
-		if (!string.IsNullOrEmpty(errorMsg)) 
-		{ 
-			Logger.LogWarning("{Method}, {Message}", nameof(WebhookConfig), $"Error message from {nameof(db.DonationInsert)}: {errorMsg}");
-		}
-		else
+		if (!string.IsNullOrEmpty(errorMsg))
 		{
-			Logger.LogInformation("{Method}, {Message}", nameof(WebhookConfig), $"Returned id: {newId}, Email: {session.CustomerEmail}");
+			bool alreadyExists = errorMsg.Contains("already exists", StringComparison.OrdinalIgnoreCase);
+			Logger.LogWarning("{Method}, {Message}", nameof(InsertDonation),
+				$"Error message from {nameof(db.DonationInsert)}: {errorMsg}");
+			return (errorMsg, newId, alreadyExists);
 		}
 
-		return (errorMsg ?? "", newId);
+		Logger.LogInformation("{Method}, Returned id: {NewId}, Email: {Email}",
+			nameof(InsertDonation), newId, session.CustomerEmail);
+		return (string.Empty, newId, false);
 	}
 
 	private static (string ReturnMsg, decimal amount) ValidateAmount(Session session)
@@ -110,14 +159,9 @@ public static class Webhook
 		if (session.AmountTotal.HasValue)
 		{
 			amount = session.AmountTotal.Value / 100m;
-			if (amount == RegistrationFeeEnums.Single.Fee || amount == RegistrationFeeEnums.Family.Fee)
+			if (amount != RegistrationFeeEnums.Single.Fee && amount != RegistrationFeeEnums.Family.Fee)
 			{
-				//returnMsg = "amount is valid";
-			}
-			else
-			{
-				//returnMsg = $"amount is invalid: {session.AmountTotal.Value}";
-				returnMsg = $"amount is invalid: {amount}";
+				returnMsg = $"amount is invalid: {amount} (expected {RegistrationFeeEnums.Single.Fee} or {RegistrationFeeEnums.Family.Fee})";
 			}
 		}
 		else
@@ -132,31 +176,9 @@ public static class Webhook
 		var str = session.Metadata?[RegistrationId];
 		_ = int.TryParse(str, out int registrationId);
 
-		string returnMsg = registrationId > 0 ? "" : "RegistrationId NOT FOUND";
+		string returnMsg = registrationId > 0
+			? string.Empty
+			: $"RegistrationId NOT FOUND in session metadata (raw='{str ?? "(null)"}')";
 		return (returnMsg, registrationId);
 	}
-
-	// ToDo: once I get this working, I need to remove it.
-	private static void LogSecret(string webhookUrl, IConfiguration config, ILogger Logger)
-	{
-		string? secret = config[StripeConstants.WebhookSecret] ?? string.Empty;
-		if (!string.IsNullOrEmpty(secret))
-		{
-			if (secret.Length >= 10)
-			{
-				secret = $"Length >=10; secret.Substring(0, 10)Value: {secret.Substring(0, 10)}";  // secret.Substring(0, 10);
-			}
-			else
-			{
-				secret = $"Length less than 10; secret: {secret}";
-			}
-		}
-		else
-		{
-			secret = "IsNullOrEmpty";
-		}
-		Logger.LogWarning("{Method}, {Message}, {Secret}", nameof(WebhookConfig), webhookUrl, secret);
-	}
-
 }
-

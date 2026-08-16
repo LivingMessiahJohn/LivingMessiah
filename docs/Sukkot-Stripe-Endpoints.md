@@ -15,7 +15,7 @@ Sukkot POST /api/stripe/create-session     ← CheckoutSession
 Stripe Checkout (hosted)
     │  card payment
     ▼
-Stripe → POST /webhook/stripesukkotdonation  ← Webhook
+Stripe → POST https://sukkot.livingmessiah.com/webhook/stripesukkotdonation  ← Webhook
     │  signature verify + checkout.session.completed
     │  dbo.stpDonationInsert → dbo.Donation
     │  Registration.StatusId → Complete; delete dbo.Stripe row
@@ -25,8 +25,10 @@ SukkotRegistration database
 Admin GET /health/sukkot/stripe
     │  StripeWebhookHealthCheck
     ▼
-HTTP POST https://livingmessiah.com/webhook/stripesukkotdonation
+HTTP POST https://sukkot.livingmessiah.com/webhook/stripesukkotdonation
 ```
+
+> **Host matters:** the webhook lives on the **Sukkot** App Service (`sukkot.livingmessiah.com`), not the public PWA (`livingmessiah.com`). Stripe Dashboard → Developers → Webhooks must use the Sukkot origin or events never reach `stpDonationInsert`.
 
 | Piece | Project | Role |
 |-------|---------|------|
@@ -64,7 +66,7 @@ Placeholder values appear in `Sukkot/appsettings.json`. Real keys come from user
 | Config / constant | Value | Notes |
 |-------------------|-------|-------|
 | `Stripe` section → `Admin.HealthChecks.Sukkot.Settings.Stripe` | `ApiKey`, `WebhookSecret` | Bound in Admin `Program.cs`; **currently unused** by the health check implementation |
-| `StripeConstants.WebhookUrl` | `https://livingmessiah.com/webhook/stripesukkotdonation` | Hard-coded production probe target |
+| `StripeConstants.WebhookUrl` | `https://sukkot.livingmessiah.com/webhook/stripesukkotdonation` | Hard-coded production probe target (Sukkot host) |
 | `StripeConstants.HealthCheckUrl` | `/health/sukkot/stripe` | Mapped health endpoint on Admin |
 | `StripeConstants.HealthCheckName` | `Is Stripe Webhook Enabled` | Name registered with `AddHealthChecks` |
 
@@ -154,7 +156,7 @@ Insert payload (`DonationRecord`):
 | `Notes` | `"Stripe Checkout Session Completed"` |
 | `Email` | `session.CustomerEmail` |
 | `ReferenceId` | `session.Id` (Stripe Checkout Session id) |
-| `CreatedBy` | `"Endpoint: checkout.session.completed"` |
+| `CreatedBy` | `"Stripe Webhook"` (fits `nvarchar(25)`) |
 | `CreateDate` | `DateTime.UtcNow` |
 
 On signature or processing failure → `400 Bad Request` (Stripe may retry). On success → `200 OK`.
@@ -238,7 +240,7 @@ Admin/HealthChecks/Sukkot/
 `StripeWebhookHealthCheck.CheckHealthAsync`:
 
 1. Builds `HttpClient` from `IHttpClientFactory`.
-2. `POST` body `{}` as `application/json` to the **hard-coded** production webhook URL (`https://livingmessiah.com/webhook/stripesukkotdonation`).
+2. `POST` body `{}` as `application/json` to the **hard-coded** production webhook URL (`https://sukkot.livingmessiah.com/webhook/stripesukkotdonation`).
 3. Does **not** send a valid `Stripe-Signature` header.
 4. Interprets **any success status code** as Healthy; non-success or exception as Unhealthy.
 
@@ -275,15 +277,21 @@ So this check is closer to a **reachability / deployment smoke** of the public w
 
 ## Local development tips
 
+**Full local webhook runbook (CLI login → listen → whsec → pay → verify):**  
+[`Sukkot-Stripe-Webhook-Local-Test.md`](Sukkot-Stripe-Webhook-Local-Test.md)
+
 1. **Domain:** set `EndpointsSetting:Domain` to the Sukkot HTTPS origin so success/cancel redirects work.
 2. **API key:** test mode `sk_test_…` via secrets.
 3. **Webhooks:** use [Stripe CLI](https://stripe.com/docs/stripe-cli) to forward events:
    ```bash
    stripe listen --forward-to https://localhost:<port>/webhook/stripesukkotdonation
    ```
-   Put the CLI `whsec_…` into `Stripe:WebhookSecret`.
-4. **Do not** enable `LogSecret` in `Webhook.cs` in production (debug helper; currently commented at call site).
+   Put the CLI `whsec_…` into `Stripe:WebhookSecret` (local only — not the Azure Dashboard secret).
+4. **Production Stripe Dashboard:** endpoint URL must be  
+   `https://sukkot.livingmessiah.com/webhook/stripesukkotdonation`  
+   Events: at least `checkout.session.completed`. Signing secret → Azure App Setting `Stripe__WebhookSecret` (or `Stripe:WebhookSecret`).
 5. **Fees:** webhook rejects amounts that are not exactly Single or Family fees from `RegistrationFee`.
+6. Startup **fails fast** if `Stripe:ApiKey` / `Stripe:WebhookSecret` are missing or still the committed placeholders.
 
 ---
 
@@ -294,15 +302,17 @@ So this check is closer to a **reachability / deployment smoke** of the public w
 | Create-session validation | Bad form fields | `400` with message |
 | `stpStripeMerge` | DB error | Logged; checkout still attempted |
 | Stripe session create | API / network | Logged; `400` |
+| Webhook never delivered | Wrong host (e.g. livingmessiah.com instead of sukkot.…) | No app logs; Stripe Dashboard shows delivery failures |
 | Webhook signature | Bad secret / body | `StripeException` → `400` |
 | Amount / registration metadata | Invalid | `400`; no insert |
-| Donation already exists | App guard | `400` with error string |
+| Donation already exists | App guard | **`200 OK`** (idempotent; stops Stripe retries) |
 | `stpDonationInsert` FK / error | `NewId` null | Error string; check `dbo.ErrorLog` |
 
 ---
 
 ## Related issues & code
 
+- Issue **#224** — webhook not inserting donations (wrong host / hardening)
 - Issue **#212** — this documentation
 - Issue **#210** — form action must match mapped create-session route (`DonationConstants.BaseSessionUrl`)
 - SQL project: `Database/SukkotRegistration/`
