@@ -71,7 +71,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 		int NewId = 0;
 		string ErrorMsg = "";
 
-		Logger.LogDebug("{Method}, {RegistrationId}, Calling: {Sql}", nameof(DonationInsert), donation.RegistrationId, nameof(GetDonationRowCountByRegistrationId));
+		Logger.LogDebug("{Method}, {RegistrationId}, Calling: {Calling}", nameof(DonationInsert), donation.RegistrationId, nameof(GetDonationRowCountByRegistrationId));
 		int rowCount = await GetDonationRowCountByRegistrationId(donation.RegistrationId);
 
 		if (rowCount > 0)
@@ -95,7 +95,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 
 		Parms.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-		//Logger.LogDebug("{Method}, {RegistrationId}, {Sql}", nameof(DonationInsert), donation.RegistrationId, Sql);
+		Logger.LogDebug("{Method}, {RegistrationId}, {Sql}", nameof(DonationInsert), donation.RegistrationId, Sql);
 
 		return await WithConnectionAsync(async connection =>
 		{
@@ -109,7 +109,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 			else
 			{
 				NewId = int.TryParse(x.ToString(), out NewId) ? NewId : 0;
-				Logger.LogDebug("{Method}, {Message}", nameof(DonationInsert), $"Returning NewId: {NewId}");
+				Logger.LogInformation("{Method}, {Message}", nameof(DonationInsert), $"Returning NewId: {NewId}");
 			}
 
 			return new Tuple<int, string>(NewId, ErrorMsg);
