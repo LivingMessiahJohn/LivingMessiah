@@ -5,7 +5,6 @@
 @using StepEnums = RCL.Features.Sukkot.Enums.Step;
 
 @inject ILogger<ActionButtonGroup>? Logger
-@inject IToastService? Toast
 
 @* @if (StatusId == RegStatusEnums.Status.StartRegistration.Value) *@
 
@@ -67,11 +66,10 @@ else
 				break;
 
 			case nameof(Crud.DeleteRegistration):
-				Toast!.ShowWarning($"{Crud.DeleteRegistration.Name} is not yet implemented; Inside{nameof(ActionButtonGroup)}");
+				await OnCrudActionSelected.InvokeAsync(args);
 				break;
 
 			case nameof(Crud.DeleteHRA):
-				Toast!.ShowWarning($"{Crud.DeleteHRA.Name} is not yet implemented; Inside{nameof(ActionButtonGroup)}");
 				await OnCrudActionSelected.InvokeAsync(args);
 				break;
 
@@ -84,17 +82,5 @@ else
 				break;
 		}
 	}
-
-	//[CascadingParameter] IModalService Modal { get; set; } = default!;
-
-	/*
-		private async Task<bool> IsModalConfirmed(string title, string label, string value)
-	{
-		var parameters = new ModalParameters { { nameof(ConfirmDeleteModal.Message), $"{title} for {label}: {value}" } };
-		var modal = Modal.Show<ConfirmDeleteModal>("Confirmation Required", parameters);
-		var result = await modal.Result;
-		return result.Confirmed;
-	}
-	 */
 
 }
