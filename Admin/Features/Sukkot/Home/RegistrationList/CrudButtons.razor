@@ -1,4 +1,4 @@
-﻿@using Admin.Features.Sukkot.Home
+@using Admin.Features.Sukkot.Home
 @using Admin.Features.Sukkot.Home.Enums
 @using Admin.Features.Sukkot.Home.RegistrationList.Enums
 
@@ -7,8 +7,8 @@
   <button @onclick="@OnButtonClicked" title="@Title"
           type="button" class="@ParmCrud.ButtonColor btn-sm position-relative me-2">
     <i class="@ParmCrud!.Icon"></i>
-    @* 
-		@ParmCrud.Text 
+    @*
+		@ParmCrud.Text
 		<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
 			@DonationRowCount
 			<span class="visually-hidden">Donation Row Count</span>
@@ -16,24 +16,28 @@
 		*@
   </button>
 }
+else if (ParmCrud == Crud.AddRegistration && RegistrationId != 0)
+{
+  <button title="Registration already exists for this email"
+          type="button" disabled class="@ParmCrud.ButtonColor btn-sm me-2">
+    <i class="@ParmCrud!.Icon"></i>
+  </button>
+}
+else if (ParmCrud == Crud.DeleteRegistration && DonationRowCount != 0)
+{
+  <button title="@Title"
+          type="button" disabled class="@ParmCrud.ButtonColor btn-sm me-2">
+    <i class="fas fa-hand-paper"></i>
+    @* Cant Delete *@
+  </button>
+}
 else
 {
-  @if (ParmCrud == Crud.DeleteRegistration && DonationRowCount != 0)
-  {
-    <button title="@Title"
-            type="button" disabled class="@ParmCrud.ButtonColor btn-sm me-2">
-      <i class="fas fa-hand-paper"></i>
-      @* Cant Delete *@
-    </button>
-  }
-  else
-  {
-    <button @onclick="@OnButtonClicked" title="@Title"
-            type="button" class="@ParmCrud!.ButtonColor btn-sm me-2">
-      <i class="@ParmCrud!.Icon"></i>
-      @* @ParmCrud!.Text *@
-    </button>
-  }
+  <button @onclick="@OnButtonClicked" title="@Title"
+          type="button" class="@ParmCrud!.ButtonColor btn-sm me-2">
+    <i class="@ParmCrud!.Icon"></i>
+    @* @ParmCrud!.Text *@
+  </button>
 }
 
 @code {
@@ -41,6 +45,7 @@ else
 
   [Parameter] public string? EMail { get; set; } // Required for Add
   [Parameter, EditorRequired] public int Id { get; set; } // Use 0 for Add and Repopulate
+  [Parameter] public int RegistrationId { get; set; } // 0 = no Registration row for this email
   [Parameter] public string? FullName { get; set; } // Required for Donation
   [Parameter] public int DonationRowCount { get; set; }
 
@@ -58,5 +63,8 @@ else
     await OnCrudActionSelected.InvokeAsync(args);
   }
 
-  private string Title => Id == 0 ? "" : $"Id: {Id}";
+  private string Title =>
+    ParmCrud == Crud.AddRegistration
+      ? (string.IsNullOrWhiteSpace(EMail) ? "Add Registration" : $"Add Registration: {EMail}")
+      : (Id == 0 ? "" : $"Id: {Id}");
 }

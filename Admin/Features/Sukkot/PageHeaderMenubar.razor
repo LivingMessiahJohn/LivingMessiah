@@ -1,4 +1,4 @@
-﻿@inject NavigationManager NavigationManager
+@inject NavigationManager NavigationManager
 
 <PageTitle>
   @if (String.IsNullOrEmpty(PageTitle))
@@ -17,10 +17,13 @@
   </div>
 
   <div class="d-flex align-items-center gap-2">
-    <button @onclick="@AddHraButtonClicked"
-            type="button" class="btn btn-outline-primary btn-sm">
-      Add HRA
-    </button>
+    @if (OnHraActionSelected.HasDelegate)
+    {
+      <button @onclick="@AddHraButtonClicked"
+              type="button" class="btn btn-outline-primary btn-sm">
+        Add HRA
+      </button>
+    }
 
     <div class="dropdown d-print-none">
       <button class="btn btn-outline-secondary dropdown-toggle btn-sm" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -61,4 +64,3 @@
     NavigationManager!.NavigateTo(nav.Index);
   }
 }
-

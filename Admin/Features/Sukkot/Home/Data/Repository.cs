@@ -56,7 +56,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 
 		return await WithConnectionAsync(async connection =>
 		{
-			Logger!.LogDebug("{Method} Sql: {Sql}", nameof(InsertHouseRulesAgreement), Sql);
+			Logger!.LogInformation("{Method} Sql: {Sql}", nameof(InsertHouseRulesAgreement), Sql);
 			var affectedRows = await connection.ExecuteAsync(sql: Sql, param: Parms, commandType: CommandType.StoredProcedure);
 			SprocReturnValue = base.Parms.Get<int>("ReturnValue");
 			int? x = Parms.Get<int?>("NewId");
@@ -78,7 +78,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 			{
 				NewId = int.TryParse(x.ToString(), out var tempId) ? tempId : 0;
 				ReturnMsg = $"House Rules Agreement created for {email}; NewId={NewId}";
-				Logger!.LogDebug("{Method} {NewId}", nameof(InsertHouseRulesAgreement), NewId);
+				Logger!.LogInformation("{Method} {NewId}", nameof(InsertHouseRulesAgreement), NewId);
 			}
 
 			return new Tuple<int, int, string>(NewId, SprocReturnValue, ReturnMsg);
@@ -92,7 +92,7 @@ public class Repository : BaseRepositoryAsync, IRepository
 		Parms = new DynamicParameters(new { Id = id });
 		return await WithConnectionAsync(async connection =>
 		{
-			Logger!.LogDebug("{Method} {Id}, {Sql}", nameof(DeleteHRA), id, Sql);
+			Logger!.LogInformation("{Method} {Id}, {Sql}", nameof(DeleteHRA), id, Sql);
 			var affectedRows = await connection.ExecuteAsync(sql: Sql, param: Parms, commandType: CommandType.StoredProcedure);
 			return affectedRows;
 		});
@@ -198,7 +198,7 @@ WHERE Id = @Id";
 			{
 				NewId = int.TryParse(x.ToString(), out NewId) ? NewId : 0;
 				ReturnMsg = $"Registration created for {formVM.FamilyName}/{formVM.EMail}; NewId={NewId}";
-				Logger!.LogDebug("{Method} {Message}", nameof(CreateRegistration), ReturnMsg);
+				Logger!.LogInformation("{Method} {Message}", nameof(CreateRegistration), ReturnMsg);
 			}
 
 			return new Tuple<int, int, string>(NewId, SprocReturnValue, ReturnMsg);

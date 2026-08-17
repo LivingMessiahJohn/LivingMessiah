@@ -1,4 +1,3 @@
-﻿
 @using Admin.Features.Sukkot.Home
 @using Admin.Features.Sukkot.Home.Enums
 @using Admin.Features.Sukkot.Home.RegistrationList.Enums
@@ -17,6 +16,7 @@
 		<CrudButtons OnCrudActionSelected="@ReturnedCrud"
 								 ParmCrud="Crud.FromValue(item)"
 								 Id="@IdHra"
+								 RegistrationId="@Id"
 								 FullName="@FullName"
 								 DonationRowCount="@DonationRowCount"
 								 EMail="@EMail" />
@@ -31,6 +31,7 @@ else
 		<CrudButtons OnCrudActionSelected="@ReturnedCrud"
 								 ParmCrud="Crud.FromValue(item)"
 								 Id="@Id"
+								 RegistrationId="@Id"
 								 FullName="@FullName"
 								 DonationRowCount="@DonationRowCount"
 								 EMail="@EMail" />

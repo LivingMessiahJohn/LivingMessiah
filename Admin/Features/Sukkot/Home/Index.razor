@@ -49,8 +49,8 @@
       {
         <div class="card mt-0 mb-3 @StepEnums.Registration.CardBodyCSS">
           <div class="card-body @StepEnums.Registration.CardBodyCSS">
-            @*  OnAddCompleted="ReturnedRegistrationAddCompleted"  *@
-            <Form Email="@Email" Id="@Id" CurrentStep="StepEnums.Registration" />
+            <Form Email="@Email" Id="@Id" CurrentStep="StepEnums.Registration"
+                  OnActionCompleted="ReturnedShowList" />
           </div>
         </div>
       }
@@ -152,9 +152,9 @@
   }
 
 
-  private void ReturnedShowList()
+  private async Task ReturnedShowList()
   {
-    VisibleComponent = Enums.VisibleComponent.RegistrationList;
+    await RefreshRegistrationList();
   }
 
   private void ReturnedShowAgreement()
@@ -176,7 +176,7 @@
       Id = 0;
       Email = args.EMail;
       VisibleComponent = Enums.VisibleComponent.Registrant;
-      DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
+      DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.EMail);
     }
     else if (args.Crud == Crud.Edit)
     {
@@ -255,6 +255,7 @@
         return;
       }
 
+      Logger!.LogInformation("{Method} Id: {Id}, FullName: {FullName}, Action:{Action}", nameof(DeleteRegistrationCommand), id, fullName, "reg. deleted");
       Toast!.ShowInfo($"Registration deleted for {fullName}");
       await RefreshRegistrationList();
     }

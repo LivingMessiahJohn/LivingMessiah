@@ -28,7 +28,7 @@
 
 	void DoNotAgree_ButtonClick()
 	{
-		Logger!.LogDebug("{Method}", nameof(DoNotAgree_ButtonClick));
+		Logger!.LogInformation("{Method}", nameof(DoNotAgree_ButtonClick));
 		Toast!.ShowWarning("Not agreeing to the House Rules Agreement terminates the Registration Process");
 		NavigationManager!.NavigateTo($"{Nav.Sukkot.Index}", forceLoad: false);
 	}
@@ -38,7 +38,7 @@
 		try
 		{
 			var sprocTuple = await db!.InsertHouseRulesAgreement(EmailParm!, GetLocalTimeZone());
-			Logger!.LogDebug("{Method} id: {id}", nameof(Agree_ButtonClick), sprocTuple.Item3);
+			Logger!.LogInformation("{Method} id: {id}", nameof(Agree_ButtonClick), sprocTuple.Item3);
 			
 			/*
 			ToDo: convert to named Tuples
