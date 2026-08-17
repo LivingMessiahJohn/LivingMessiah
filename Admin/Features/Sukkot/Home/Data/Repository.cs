@@ -16,9 +16,11 @@ public interface IRepository
 	Task<VM> Get(int id);
 
 	Task<Tuple<int, int, string>> InsertHouseRulesAgreement(string email, string timeZone);  // FN:1
+	Task<int> DeleteHRA(int id);
 	Task<Tuple<int, int, string>> CreateRegistration(DTO formVM);
 	Task<Tuple<int, int, string>> UpdateRegistration(DTO formVM);
-	
+	Task<Tuple<int, int, string>> DeleteRegistration(int id);
+
 	Task<RegistrationQuery> ById(int id);
 }
 
@@ -81,6 +83,18 @@ public class Repository : BaseRepositoryAsync, IRepository
 
 			return new Tuple<int, int, string>(NewId, SprocReturnValue, ReturnMsg);
 
+		});
+	}
+
+	public async Task<int> DeleteHRA(int id)
+	{
+		Sql = "dbo.stpHRADelete";
+		Parms = new DynamicParameters(new { Id = id });
+		return await WithConnectionAsync(async connection =>
+		{
+			Logger!.LogDebug("{Method} {Id}, {Sql}", nameof(DeleteHRA), id, Sql);
+			var affectedRows = await connection.ExecuteAsync(sql: Sql, param: Parms, commandType: CommandType.StoredProcedure);
+			return affectedRows;
 		});
 	}
 	#endregion
@@ -252,6 +266,45 @@ WHERE Id = @Id";
 			else
 			{
 				ReturnMsg = $"Registration updated for {formVM.FamilyName}/{formVM.EMail}";
+			}
+
+			return new Tuple<int, int, string>(RowsAffected, SprocReturnValue, ReturnMsg);
+		});
+	}
+
+	public async Task<Tuple<int, int, string>> DeleteRegistration(int id)
+	{
+		Sql = "dbo.stpRegistrationDelete";
+		Parms = new DynamicParameters(new { RegistrationId = id });
+
+		Parms.Add("@ReturnValue", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
+
+		int RowsAffected = 0;
+		int SprocReturnValue = 0;
+		string ReturnMsg = "";
+
+		return await WithConnectionAsync(async connection =>
+		{
+			Logger!.LogDebug("{Method} {id}, {Sql} ", nameof(DeleteRegistration), id, Sql);
+			RowsAffected = await connection.ExecuteAsync(sql: Sql, param: Parms, commandType: CommandType.StoredProcedure);
+			SprocReturnValue = Parms.Get<int>("ReturnValue");
+
+			if (SprocReturnValue != 0) // ReturnValueOk
+			{
+				if (SprocReturnValue == 51000) // Can not have donation rows when deleting registration
+				{
+					ReturnMsg = $"Database call did not delete the registration record because it has donation rows; RegistrationId: {id}; Manually delete the donation row(s) then delete the registration.";
+					Logger!.LogWarning("{Method} {ReturnMsg}", nameof(DeleteRegistration), ReturnMsg);
+				}
+				else
+				{
+					ReturnMsg = $"Database call failed to delete RegistrationId: {id}; SprocReturnValue: {SprocReturnValue}";
+					Logger!.LogError("{Method} {ReturnMsg}", nameof(DeleteRegistration), ReturnMsg);
+				}
+			}
+			else
+			{
+				ReturnMsg = $"Registration deleted for RegistrationId: {id}";
 			}
 
 			return new Tuple<int, int, string>(RowsAffected, SprocReturnValue, ReturnMsg);

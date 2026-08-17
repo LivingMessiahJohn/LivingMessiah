@@ -29,11 +29,11 @@
 
       <LoadingComponent IsLoading="RegistrationList == null" TurnSpinnerOff=TurnSpinnerOff>
         <div class="@MediaQuery.XsOrSm.DivClass">
-          <XsSmCard RegistrationList="RegistrationList"
+          <XsSmCard @key="refreshKey" RegistrationList="RegistrationList"
                     OnCrudActionSelected="ReturnedCrudActionSelected" />
         </div>
         <div class="@MediaQuery.MdOrLgOrXl.DivClass">
-          <MdLgXlTable RegistrationList="RegistrationList"
+          <MdLgXlTable @key="refreshKey" RegistrationList="RegistrationList"
                        OnCrudActionSelected="ReturnedCrudActionSelected" />
         </div>
 
@@ -88,6 +88,14 @@
         }
       }
     }
+
+    @if (showDeleteModal && pendingDelete is not null)
+    {
+      <DeleteModal Id="@Id"
+                   Title="@deleteModalTitle"
+                   Message="@deleteModalMessage"
+                   OnDeleteResponse="ReturnedDeleteResponse" />
+    }
   </Authorized>
   <NotAuthorized>
     <LoginRedirectCard Nav="Nav.Sukkot" ReturnUrl=@Nav.Sukkot.Index />
@@ -104,35 +112,43 @@
   protected Enums.VisibleComponent? VisibleComponent { get; set; } = Enums.VisibleComponent.RegistrationList;
 
   bool TurnSpinnerOff = false;
+  private Guid refreshKey = Guid.NewGuid();
+  private bool showDeleteModal = false;
+  private Crud? pendingDelete;
+  private string deleteModalTitle = string.Empty;
+  private string deleteModalMessage = string.Empty;
 
   protected List<Data.RegistrationListQuery>? RegistrationList;
 
 
   int Id { get; set; } = 0;
   string? Email { get; set; } = null;
+  string? FullName { get; set; } = null;
   DetailPageHeaderVM? DetailPageHeaderVM;
 
   protected override async Task OnInitializedAsync()
   {
     Logger!.LogDebug("{Method}", nameof(OnInitializedAsync));
+    await LoadRegistrationList();
+    TurnSpinnerOff = true;
+  }
 
+  private async Task LoadRegistrationList()
+  {
     try
     {
       RegistrationList = await db!.GetAll();
       if (RegistrationList is null)
       {
-        Logger!.LogWarning("{Method} {Message}", nameof(OnInitializedAsync), "RegistrationList is null");
+        Logger!.LogWarning("{Method} {Message}", nameof(LoadRegistrationList), "RegistrationList is null");
         Toast!.ShowWarning($"RegistrationList is null");
       }
-
     }
     catch (Exception ex)
     {
-      Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
-      Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(OnInitializedAsync)}");
+      Logger!.LogError(ex, "{Method}", nameof(LoadRegistrationList));
+      Toast!.ShowError($"An invalid operation occurred, contact your administrator | {nameof(LoadRegistrationList)}");
     }
-
-    TurnSpinnerOff = true;
   }
 
 
@@ -155,40 +171,121 @@
       VisibleComponent = Enums.VisibleComponent.RegistrationDetail;
       DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
     }
+    else if (args.Crud == Crud.AddRegistration)
+    {
+      Id = 0;
+      Email = args.EMail;
+      VisibleComponent = Enums.VisibleComponent.Registrant;
+      DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
+    }
+    else if (args.Crud == Crud.Edit)
+    {
+      Id = args.Id;
+      Email = args.EMail;
+      VisibleComponent = Enums.VisibleComponent.Registrant;
+      DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
+    }
+    else if (args.Crud == Crud.Donation)
+    {
+      Id = args.Id;
+      VisibleComponent = Enums.VisibleComponent.Donation;
+      DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
+    }
+    else if (args.Crud == Crud.DeleteRegistration)
+    {
+      Id = args.Id;
+      FullName = args.FullName;
+      pendingDelete = Crud.DeleteRegistration;
+      deleteModalTitle = "Delete Registration";
+      deleteModalMessage = $"Registration for Name: {args.FullName}";
+      showDeleteModal = true;
+    }
+    else if (args.Crud == Crud.DeleteHRA)
+    {
+      Id = args.Id; // IdHra from ActionButtonGroup
+      Email = args.EMail;
+      pendingDelete = Crud.DeleteHRA;
+      deleteModalTitle = "Delete HRA";
+      deleteModalMessage = $"HRA for e-mail: {args.EMail}";
+      showDeleteModal = true;
+    }
     else
     {
-      if (args.Crud == Crud.AddRegistration)
-      {
-        Id = 0;
-        Email = args.EMail;
-        VisibleComponent = Enums.VisibleComponent.Registrant;
-        DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
-      }
-      else
-      {
-        if (args.Crud == Crud.Edit)
-        {
-          Id = args.Id;
-          Email = args.EMail;
-          VisibleComponent = Enums.VisibleComponent.Registrant;
-          DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
-        }
-        else
-        {
-          if (args.Crud == Crud.Donation)
-          {
-            Id = args.Id;
-            VisibleComponent = Enums.VisibleComponent.Donation;
-            DetailPageHeaderVM = new DetailPageHeaderVM(args.Crud.Name, args.FullName);
-          }
-          else
-          {
-            Toast!.ShowWarning($"Unknown Crud Action: {args.Crud.Name}");
-            //  if (args.Crud == Crud.DeleteRegistration) { }
-          }
-        }
-      } 
-
+      Toast!.ShowWarning($"Unknown Crud Action: {args.Crud.Name}");
     }
+  }
+
+  private async Task ReturnedDeleteResponse(bool shouldDelete)
+  {
+    showDeleteModal = false;
+    var deleteAction = pendingDelete;
+    pendingDelete = null;
+
+    if (!shouldDelete || deleteAction is null)
+    {
+      return;
+    }
+
+    if (deleteAction == Crud.DeleteRegistration)
+    {
+      await DeleteRegistrationCommand(Id, FullName ?? "EMPTY");
+    }
+    else if (deleteAction == Crud.DeleteHRA)
+    {
+      await DeleteHraCommand(Id, Email ?? "EMPTY");
+    }
+  }
+
+  private async Task DeleteRegistrationCommand(int id, string fullName)
+  {
+    Logger!.LogDebug("{Method} Id: {Id}, FullName: {FullName}", nameof(DeleteRegistrationCommand), id, fullName);
+    try
+    {
+      var (rowsAffected, sprocReturnValue, returnMsg) = await db!.DeleteRegistration(id);
+
+      if (sprocReturnValue == 51000) // Can not have donation rows when deleting registration
+      {
+        Toast!.ShowWarning(returnMsg);
+        return;
+      }
+
+      if (sprocReturnValue != 0)
+      {
+        Toast!.ShowError(returnMsg);
+        return;
+      }
+
+      Toast!.ShowInfo($"Registration deleted for {fullName}");
+      await RefreshRegistrationList();
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method} Id: {Id}", nameof(DeleteRegistrationCommand), id);
+      Toast!.ShowError($"{Global.ToastShowError} | {nameof(DeleteRegistrationCommand)}");
+    }
+  }
+
+  private async Task DeleteHraCommand(int id, string email)
+  {
+    Logger!.LogDebug("{Method} Id: {Id}, Email: {Email}", nameof(DeleteHraCommand), id, email);
+    try
+    {
+      var affectedRows = await db!.DeleteHRA(id);
+      Logger!.LogInformation("{Method} affectedRows: {AffectedRows}", nameof(DeleteHraCommand), affectedRows);
+      Toast!.ShowInfo($"House Rules Agreement deleted for {email}");
+      await RefreshRegistrationList();
+    }
+    catch (Exception ex)
+    {
+      Logger!.LogError(ex, "{Method} Id: {Id}", nameof(DeleteHraCommand), id);
+      Toast!.ShowError($"{Global.ToastShowError} | {nameof(DeleteHraCommand)}");
+    }
+  }
+
+  private async Task RefreshRegistrationList()
+  {
+    await LoadRegistrationList();
+    refreshKey = Guid.NewGuid();
+    VisibleComponent = Enums.VisibleComponent.RegistrationList;
   }
 }
