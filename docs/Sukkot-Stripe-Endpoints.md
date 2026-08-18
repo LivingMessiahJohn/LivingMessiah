@@ -310,8 +310,21 @@ So this check is closer to a **reachability / deployment smoke** of the public w
 
 ---
 
+## Manual backfill (missed live webhooks)
+
+If Stripe charged but `dbo.Donation` is missing (e.g. live webhook was disabled):
+
+1. `scripts/Export-SukkotStripeSessions.ps1` — Stripe CLI → CSV of **Sukkot** live Checkout Sessions only (filters out PWA `confirm_donation` payments via success URL / `registrationId` metadata).
+2. `scripts/New-SukkotDonationInsertSql.ps1` — CSV → `EXECUTE dbo.stpDonationInsert ...` SQL.
+3. Review in SSMS against Azure **SukkotRegistration**; drop prior-year / already-donated rows; run remaining batches.
+
+Prefer the sproc over raw `INSERT` (sets registration Complete and deletes `dbo.Stripe`). No secrets are stored in these scripts (Stripe CLI login + your SSMS connection).
+
+---
+
 ## Related issues & code
 
+- Issue **#230** — live webhook disabled; backfill + verify
 - Issue **#224** — webhook not inserting donations (wrong host / hardening)
 - Issue **#212** — this documentation
 - Issue **#210** — form action must match mapped create-session route (`DonationConstants.BaseSessionUrl`)
