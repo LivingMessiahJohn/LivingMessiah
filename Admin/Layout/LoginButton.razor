@@ -1,5 +1,5 @@
 ﻿@using AccountEnum = Admin.Enums.Account
-@using NavEnum = Admin.Enums.Nav
+@using NavGroupEnum = Admin.Enums.NavGroup
 
 @inject NavigationManager NavigationManager
 @inject ILogger<LoginButton>? Logger
@@ -14,7 +14,7 @@
 	private void ButtonClick()
 	{
 		Logger!.LogInformation("{Method}, LoginIndex: {LoginIndex}, ReturnURL: {ReturnURL}"
-		, nameof(ButtonClick), AccountEnum.Login.Index, @NavEnum.Home.Index);
-		NavigationManager!.NavigateTo($"{AccountEnum.Login.Index}?returnUrl={@NavEnum.Home.Index}", true);
+		, nameof(ButtonClick), AccountEnum.Login.Index, @NavGroupEnum.Home.Index);
+		NavigationManager!.NavigateTo($"{AccountEnum.Login.Index}?returnUrl={@NavGroupEnum.Home.Index}", true);
 	}
 }

@@ -4,10 +4,10 @@
 @using Microsoft.AspNetCore.Components.Forms
 
 @using Microsoft.AspNetCore.Components.Authorization
-@using Page = Admin.Enums.Nav
+@using PageGroup = Admin.Enums.NavGroup
 @using RoleGroup = Admin.Security.Enums.RoleGroup;
 
-<PageHeader PageEnum="Page.WeeklyDownload" />
+<PageHeader PageEnum="PageGroup.WeeklyDownload" />
 
 @* ToDo: add different RoleGroup.UploadToBlo or something *@
 
@@ -19,7 +19,7 @@
 		<div class="alert alert-warning text-end" role="alert">
 			<small>Not Authorized; Role Group Policy: @RoleGroup.WeeklyDownload</small>
 		</div>
-		<LoginRedirectCard Nav="Nav.WeeklyDownload" ReturnUrl=@Nav.WeeklyDownload.Index />
+		<LoginRedirectCard NavGroup="PageGroup.WeeklyDownload" ReturnUrl=@PageGroup.WeeklyDownload.Index />
 	</NotAuthorized>
 </AuthorizeView>
 

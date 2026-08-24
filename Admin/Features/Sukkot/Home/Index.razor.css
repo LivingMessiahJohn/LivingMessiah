@@ -1,0 +1,12 @@
+.my-tabs.nav-tabs {
+	border-bottom: 3px solid #dee2e6; /* thicker base border */
+}
+
+.my-tabs .nav-link {
+	border-bottom-width: 3px;
+}
+
+	.my-tabs .nav-link.active {
+		border-bottom-color: #0d6efd; /* or your primary color */
+		border-bottom-width: 3px;
+	}

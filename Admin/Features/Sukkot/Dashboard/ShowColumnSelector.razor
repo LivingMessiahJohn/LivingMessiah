@@ -4,7 +4,7 @@
 
 @if (IsXsOrSm)
 {
-   <div class="btn-group-vertical btn-group-md dropend" role="group" aria-label="Show columns dropdown">
+  <div class="btn-group-vertical btn-group-md dropend d-print-none" role="group" aria-label="Show columns dropdown">
     <button type="button" class="btn btn-primary btn-md dropdown-toggle"
             data-bs-toggle="dropdown" aria-expanded="false">
       Show
@@ -25,7 +25,7 @@
 }
 else
 {
-  <div class="d-flex align-items-center gap-3 bg-body-secondary p-1">
+  <div class="d-flex align-items-center gap-3 bg-body-secondary p-1 d-print-none">
     <span><b>Show:</b></span>
     @foreach (var item in ShowColumn.List.OrderBy(c => c.Value))
     {

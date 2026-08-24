@@ -6,7 +6,8 @@
     <div class="card-body text-center">
       <p class="fs-5">
         To view...<br />
-        <b>@Nav!.Title</b>
+        
+        <b>@ReturnTitle</b>
         <br />you need to be logged in.
       </p>
     </div>
@@ -16,6 +17,10 @@
 </div>
 
 @code {
-  [Parameter, EditorRequired] public Nav? Nav { get; set; }
+  // @* <b>@NavGroup!.Title</b> *@
+  //[Parameter, EditorRequired] public NavGroup? NavGroup { get; set; }
+  //[Parameter, EditorRequired] public Enums.Nav? MenuBar { get; set; }
+  
+  [Parameter, EditorRequired] public string? ReturnTitle { get; set; }
   [Parameter, EditorRequired] public string? ReturnUrl { get; set; }
 }

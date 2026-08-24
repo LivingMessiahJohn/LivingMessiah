@@ -3,9 +3,9 @@
 @using Admin.Security.Constants
 @using Admin.Security.Policies
 @using Microsoft.AspNetCore.Components.Authorization
-@using NavEnum = Admin.Enums.Nav
+@using NavGroupEnum = Admin.Enums.NavGroup
 
-<a href="@NavEnum.Profile.Index" class="me-2"
+<a href="@NavGroupEnum.Profile.Index" class="me-2"
 	 title="Role(s): @Roles; Status: @Status">
 	@((MarkupString)NameTiny) @((MarkupString)BlueCheck) @((MarkupString)Thumbs)
 </a>

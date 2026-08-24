@@ -1,18 +1,20 @@
-﻿@using RoleGroup = Admin.Security.Enums.RoleGroup;
+﻿@page "/SukkotDashboard/StripeTable"
 
-@page "/Sukkot/StripeTable"
-
-@using Admin.Security.Constants
+@using RoleGroup = Admin.Security.Enums.RoleGroup;
 @using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar;
 @using Microsoft.AspNetCore.Components.Authorization
+@using Admin.Features.Sukkot.Dashboard
 
 <AuthorizeView Policy=@RoleGroup.Sukkot>
   <Authorized>
-    <PageHeaderMenubar MenuBarEnum=MenuBarEnums.StripeTable />
+    
+    <PageTitle>@MenuBarEnums.StripeTable.Title</PageTitle>
+    <DashboardHeader MenuBar="@MenuBarEnums.StripeTable" />
     <StripeTable />
+
   </Authorized>
   <NotAuthorized>
-    <LoginRedirectCard Nav="Nav.Sukkot" ReturnUrl=@Nav.Sukkot.Index />
+    <LoginRedirectCard ReturnTitle="@Nav.SukkotDashboard.Title" ReturnUrl=@Nav.SukkotDashboard.Index />
     <div class="alert alert-warning text-end" role="alert">
       <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small> 
     </div>

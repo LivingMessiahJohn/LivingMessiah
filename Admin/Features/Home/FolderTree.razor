@@ -1,0 +1,79 @@
+@using Admin.Features.Home.Data
+
+
+@inject IToastService? Toast
+@inject NavigationManager NavigationManager
+
+<ul class="nav flex-column list-unstyled mb-0">
+  @foreach (var item in Items)
+  {
+    <li class="nav-item">
+      <div class="d-flex align-items-center gap-1 py-1">
+
+        @* Expand / Collapse toggle (only for folders) *@
+        @if (item.IsFolder)
+        {
+          <button class="btn btn-sm btn-link p-0 text-decoration-none"
+                  @onclick="() => Toggle(item)"
+                  @onclick:stopPropagation="true"
+                  title="@(item.IsExpanded ? "Collapse" : "Expand")">
+            <i class="fas @(item.IsExpanded ? "fa-caret-down" : "fa-caret-right")"></i>
+          </button>
+        }
+        else
+        {
+          <span class="btn btn-sm p-0" style="width: 1.25rem;"></span> @* spacer *@
+        }
+
+        @* Icon *@
+        <i class="@(item.IsFolder && item.IsExpanded ? item.OpenIconClass : item.IconClass)"></i>
+
+        @* Clickable label *@
+        <button class="btn btn-lg text-start p-0 ms-1"
+                @onclick="() => HandleClick(item)"
+                title="@item.Title">
+          @item.Text
+        </button>
+      </div>
+
+      @* Recursive children — indented wrapper keeps siblings from looking nested *@
+      @if (item.IsFolder && item.IsExpanded)
+      {
+        <div class="ms-3 border-start ps-2">
+          <FolderTree Items="item.Children"
+                      IsRoot="false" />
+        </div>
+      }
+    </li>
+  }
+</ul>
+
+@code {
+  [Parameter] public List<NavTreeItem> Items { get; set; } = new();
+  [Parameter] public bool IsRoot { get; set; } = true;
+  // [CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+
+  protected override void OnInitialized()
+  {
+    if (IsRoot)
+    {
+      Items = PopulateTree.Get();
+    }
+  }
+
+  private void HandleClick(NavTreeItem item)
+  {
+    if (string.IsNullOrWhiteSpace(item.Index))
+    {
+      Toast!.ShowInfo($"No route for: {item.Text}");
+      return;
+    }
+
+    NavigationManager.NavigateTo(item.Index);
+  }
+
+  private void Toggle(NavTreeItem item)
+  {
+    item.IsExpanded = !item.IsExpanded;
+  }
+}

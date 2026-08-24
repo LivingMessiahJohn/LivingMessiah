@@ -1,9 +1,9 @@
-﻿@page "/Sukkot/AttendanceAllFeastDays"
+﻿@page "/SukkotDashboard/AttendanceAllFeastDays"
 
-@using Admin.Security.Constants
 @using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar;
 @using RoleGroup = Admin.Security.Enums.RoleGroup;
 @using Microsoft.AspNetCore.Components.Authorization
+@using Admin.Features.Sukkot.Dashboard
 
 @inject ILogger<Attendance>? Logger
 @inject IToastService? Toast
@@ -11,22 +11,11 @@
 
 <AuthorizeView Policy=@RoleGroup.Sukkot>
 	<Authorized>
-		<div class="alert alert-success text-end" role="alert">
-			<small>Authorized: Role Group Policy: @RoleGroup.Sukkot</small>
-		</div>
-	</Authorized>
-	<NotAuthorized>
-		<div class="alert alert-warning text-end" role="alert">
-			<small>Authorized: Role Group Policy: @RoleGroup.Sukkot</small>
-		</div>
-	</NotAuthorized>
-</AuthorizeView>
 
-
-<AuthorizeView Policy=@RoleGroup.Sukkot>
-	<Authorized>
-		<PageHeaderMenubar MenuBarEnum=MenuBarEnums.Report ShowPrintButton=true />
+		<PageTitle>@MenuBarEnums.Report.Title</PageTitle>
+		<DashboardHeader MenuBar="@MenuBarEnums.Report" />
 		<p class="text-center">The attendance for every day followed by a summary of people who attended regardless of which day(s).</p>
+		
 		<LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
 
 			@if (!data!.Any())
@@ -98,7 +87,7 @@
 		</LoadingComponent>
 	</Authorized>
 	<NotAuthorized>
-		<LoginRedirectCard Nav="Nav.Sukkot" ReturnUrl=@Nav.Sukkot.Index />
+		<LoginRedirectCard ReturnTitle="@Nav.SukkotDashboard.Title" ReturnUrl=@Nav.SukkotDashboard.Index />
 	</NotAuthorized>
 </AuthorizeView>
 

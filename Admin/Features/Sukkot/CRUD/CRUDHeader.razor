@@ -1,0 +1,29 @@
+﻿@using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar;
+
+<div class="pb-1 mt-2 mb-3 border-bottom border-info">
+	<div class="d-flex align-items-center">
+		<!-- Optional left icon -->
+
+		<!-- Centered title takes remaining space -->
+		<div class="fs-3 text-center flex-grow-1">
+			<i class="@MenuBar.Icon"></i> @MenuBar.Title
+		</div>
+
+		<button @onclick="@ButtonClicked"
+					 type="button" class="btn btn-outline-dark">
+			<span class="me-2"><i class="fas fa-arrow-alt-circle-left"></i></span>
+			Return To List
+		</button>
+
+	</div>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public MenuBarEnums MenuBar { get; set; } 
+	[Parameter, EditorRequired] public EventCallback OnActionShowRegistrationList { get; set; } //
+
+	private void ButtonClicked()
+	{
+		OnActionShowRegistrationList.InvokeAsync();
+	}
+}

@@ -1,0 +1,85 @@
+﻿
+@using Admin.Features.Sukkot.CRUD.Enums
+@using Admin.Features.Sukkot.CRUD.RegistrationList.Enums
+@using StepEnums = RCL.Features.Sukkot.Enums.Step;
+
+@inject ILogger<ActionButtonGroup>? Logger
+
+@* @if (StatusId == RegStatusEnums.Status.StartRegistration.Value) *@
+
+@if (StatusId == StepEnums.Registration.Value)
+{
+	@foreach (var item in Crud.List
+					.OrderBy(o => o.Sort)
+					.Where(w => w.IsStartRegistration == true))
+	{
+		<CrudButtons OnCrudActionSelected="@ReturnedCrud"
+								 ParmCrud="Crud.FromValue(item)"
+								 Id="@IdHra"
+								 FullName="@FullName"
+								 DonationRowCount="@DonationRowCount"
+								 EMail="@EMail" />
+	}
+}
+else
+{
+	@foreach (var item in Crud.List
+							.OrderBy(o => o.Sort)
+							.Where(w => w.IsStartRegistration == false))
+	{
+		<CrudButtons OnCrudActionSelected="@ReturnedCrud"
+								 ParmCrud="Crud.FromValue(item)"
+								 Id="@Id"
+								 FullName="@FullName"
+								 DonationRowCount="@DonationRowCount"
+								 EMail="@EMail" />
+	}
+}
+
+@code {
+	[Parameter] public string? EMail { get; set; }
+	[Parameter] public int Id { get; set; }
+	[Parameter] public int IdHra { get; set; }
+	[Parameter] public string? FullName { get; set; }
+	[Parameter] public int DonationRowCount { get; set; }
+	[Parameter, EditorRequired] public int StatusId { get; set; }
+
+	[Parameter] public EventCallback<CrudRecord> OnCrudActionSelected { get; set; }
+
+	private async Task ReturnedCrud(CrudRecord args)
+	{
+		Logger!.LogDebug("{Method}, {Crud}", nameof(ReturnedCrud), args.Crud.Name);
+
+		switch (args.Crud.Name)
+		{
+			case nameof(Crud.AddRegistration):
+				await OnCrudActionSelected.InvokeAsync(args);
+				break;
+
+			case nameof(Crud.Edit):
+				await OnCrudActionSelected.InvokeAsync(args);
+				break;
+
+			case nameof(Crud.Display):
+				await OnCrudActionSelected.InvokeAsync(args);
+				break;
+
+			case nameof(Crud.DeleteRegistration):
+				await OnCrudActionSelected.InvokeAsync(args);
+				break;
+
+			case nameof(Crud.DeleteHRA):
+				await OnCrudActionSelected.InvokeAsync(args);
+				break;
+
+			case nameof(Crud.Donation):
+				await OnCrudActionSelected.InvokeAsync(args);
+				break;
+
+			default:
+				Logger!.LogWarning("{Method}, {Crud}", nameof(ReturnedCrud), "Crud Name unknown!!!");
+				break;
+		}
+	}
+
+}

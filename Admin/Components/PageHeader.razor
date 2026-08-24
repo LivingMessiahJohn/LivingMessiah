@@ -10,11 +10,13 @@
 </PageTitle>
 
 <div class="pb-n1 mt-2 mb-3 @BorderCSS">
-	<h1 class=""><i class="@PageEnum.Icon"></i>&nbsp;&nbsp;@PageEnum.Title</h1> 
+	@* <h1 class=""><i class="@PageEnum.Icon"></i>&nbsp;&nbsp;@PageEnum.Title</h1>  *@
+	<div class="fs-2 text-center"><i class="@PageEnum.Icon"></i>&nbsp;&nbsp;@PageEnum.Title</div> 
 </div>
 
 @code {
-	[Parameter, EditorRequired] public Nav PageEnum { get; set; } = Nav.Home;
+	//[Parameter, EditorRequired] public Nav PageEnum { get; set; } = Nav.Home;
+	[Parameter, EditorRequired] public NavGroup PageEnum { get; set; } = NavGroup.Home;
 	[Parameter] public string? PageTitle { get; set; }
 	[Parameter] public string? BorderCSS { get; set; } = "border-bottom border-info";
 }

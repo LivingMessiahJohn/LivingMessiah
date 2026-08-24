@@ -1,107 +1,112 @@
-﻿@page "/Sukkot/Notes"
+﻿@page "/SukkotDashboard/Notes"
 
 @using Microsoft.AspNetCore.Components.Authorization
 @using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar;
+@using FilterEnums = Admin.Features.Sukkot.Notes.Enums.Filter
 @using RoleGroup = Admin.Security.Enums.RoleGroup;
+
+@* ToDo: This does not work for some reason *@
+@* @using Admin.Features.Sukkot.Dashboard *@
 
 @inject ILogger<Index>? Logger
 @inject IToastService? Toast
 @inject Data.IRepository? db
 
 <AuthorizeView Policy=@RoleGroup.Sukkot>
-  <Authorized>
+	<Authorized>
 
-    <div class="alert alert-secondary text-end" role="alert">
-      <small>Authorized: Role Group Policy: @RoleGroup.Sukkot</small>
-    </div>
+		<PageTitle>@MenuBarEnums.Notes.Title</PageTitle>
 
-    <PageHeaderMenubar MenuBarEnum=MenuBarEnums.Notes ShowPrintButton=true />
+		<Admin.Features.Sukkot.Dashboard.DashboardHeader MenuBar="@MenuBarEnums.Notes" />
+		@* <DashboardHeader MenuBar="@MenuBarEnums.Notes" /> *@
 
-    <LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
-      @if (ShowDetail)
-      {
-        <DetailsEditForm SelectedNote="CurrentNote" OnCommandDetailClosed="ReturnedCommandDetailClose" />
-      }
-      else
-      {
-        @* @if (data is not null)  {  } *@
-        <div class="row">
-          <div class="col-sm-6">
-            <Typeahead SelectedNote="CurrentNote"
-                       OnNotesQuerySelected="ReturnedNotesQuery"
-                       data="data" />
-          </div>
-          <div class="col-sm-6">
-            <FilterButtons Filter="Filter" OnFilterSelected="ReturnedFilter" />
-          </div>
-        </div>
+		<LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
+			@if (ShowDetail)
+			{
+				<DetailsEditForm SelectedNote="CurrentNote" OnCommandDetailClosed="ReturnedCommandDetailClose" />
+			}
+			else
+			{
+				@* @if (data is not null)  {  } *@
+				<div class="row">
+					<div class="col-sm-6">
+						<Typeahead SelectedNote="CurrentNote"
+											 OnNotesQuerySelected="ReturnedNotesQuery"
+											 data="data" />
+					</div>
+					<div class="col-sm-6">
+						<FilterButtons FilterEnum="FilterEnum" OnFilterSelected="ReturnedFilter" />
+					</div>
+				</div>
 
-        <ListCard Filter="Filter" data="data" />
-      }
-    </LoadingComponent>
+				<ListCard FilterEnum="FilterEnum" data="data" />
 
-  </Authorized>
-  <NotAuthorized>
-    <LoginRedirectCard Nav="Nav.Sukkot" ReturnUrl=@Nav.Sukkot.Index />
-  </NotAuthorized>
+				
+			}
+		</LoadingComponent>
+
+	</Authorized>
+	<NotAuthorized>
+		<LoginRedirectCard ReturnTitle="@Nav.SukkotDashboard.Title" ReturnUrl=@Nav.SukkotDashboard.Index />
+	</NotAuthorized>
 </AuthorizeView>
 
 
 @code {
 
-  List<NotesQuery>? data = new List<NotesQuery>();
+	List<NotesQuery>? data = new List<NotesQuery>();
 
-  protected bool TurnSpinnerOff = false;
-  protected override async Task OnInitializedAsync()
-  {
-    try
-    {
-      //Logger!.LogDebug("{Method}, Filter: {Message}", nameof(OnInitializedAsync), CurrentFilter?.Name);
-      await Task.Delay(500); // To allow the spinner to show
-      // ToDo: Note, Filter is always going to be All, because we are in OnInitializedAsync
-      data = await db!.GetAdminOrUserNotes(Filter!);
-      if (data is null)
-      {
-        Logger!.LogDebug("{Method} {Message}", nameof(OnInitializedAsync), "data is null");
-        Toast!.ShowInfo("No notes to display");
-      }
-    }
-    catch (Exception ex)
-    {
-      Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
-      Toast!.ShowError($"{Global.ToastShowError}");
-    }
-    finally
-    {
-      TurnSpinnerOff = true;
-    }
-  }
+	protected bool TurnSpinnerOff = false;
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			//Logger!.LogDebug("{Method}, Filter: {Message}", nameof(OnInitializedAsync), CurrentFilter?.Name);
+			await Task.Delay(500); // To allow the spinner to show
+														 // ToDo: Note, Filter is always going to be All, because we are in OnInitializedAsync
+			data = await db!.GetAdminOrUserNotes(FilterEnum!);
+			if (data is null)
+			{
+				Logger!.LogDebug("{Method} {Message}", nameof(OnInitializedAsync), "data is null");
+				Toast!.ShowInfo("No notes to display");
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+			Toast!.ShowError($"{Global.ToastShowError}");
+		}
+		finally
+		{
+			TurnSpinnerOff = true;
+		}
+	}
 
 
-  private bool ShowDetail = false;
-  protected NotesQuery? CurrentNote { get; set; }
-  // Called by Typeahead
-  void ReturnedNotesQuery(NotesQuery notesQuery)
-  {
-    ShowDetail = true;
-    CurrentNote = notesQuery;
-    /*
-    Logger!.LogDebug("{Method}, {Message}"
-    , nameof(ReturnedNotesQuery)
-    , $"{notesQuery?.FirstName} {notesQuery?.FamilyName}, Id: {notesQuery?.Id}; ShowDetail: {ShowDetail}");
-    */
-  }
+	private bool ShowDetail = false;
+	protected NotesQuery? CurrentNote { get; set; }
+	// Called by Typeahead
+	void ReturnedNotesQuery(NotesQuery notesQuery)
+	{
+		ShowDetail = true;
+		CurrentNote = notesQuery;
+		/*
+		Logger!.LogDebug("{Method}, {Message}"
+		, nameof(ReturnedNotesQuery)
+		, $"{notesQuery?.FirstName} {notesQuery?.FamilyName}, Id: {notesQuery?.Id}; ShowDetail: {ShowDetail}");
+		*/
+	}
 
-  private Enums.Filter? Filter = Enums.Filter.All;
-  void ReturnedFilter(Enums.Filter filter)
-  {
-    Filter = filter;
-  }
+	private FilterEnums? FilterEnum = FilterEnums.All;
+	void ReturnedFilter(FilterEnums filter)
+	{
+		FilterEnum = filter;
+	}
 
-  void ReturnedCommandDetailClose()
-  {
-    CurrentNote = null;
-    ShowDetail = false;
-  }
+	void ReturnedCommandDetailClose()
+	{
+		CurrentNote = null;
+		ShowDetail = false;
+	}
 
 }

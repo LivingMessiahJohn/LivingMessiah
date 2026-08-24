@@ -1,23 +1,32 @@
-﻿@page "/"
+@page "/"
 
 @using Admin.Security.Constants
 @using Microsoft.AspNetCore.Components.Authorization
 @using RoleGroup = Admin.Security.Enums.RoleGroup;
 
-@using Page = Admin.Enums.Nav
+@using Page = Admin.Enums.NavGroup
 <PageHeader PageEnum="Page.Home" />
 
+@* <div class="alert alert-dark " role="alert"> </div> *@
+
+@* 
 <AuthorizeView Policy=@RoleGroup.EmailVerifiedWithAtLeastOneRole>
-  <Authorized>
-    <NavList />
-  </Authorized>
-  <NotAuthorized>
-    <div class="alert alert-warning text-center" role="alert">
-      <small>Not Authorized</small>
-    </div>
-  </NotAuthorized>
+	<Authorized>
+		<NavGroupList />
+	</Authorized>
+	<NotAuthorized>
+		<Alert AlertType="alert-warning">Not Authorized, Login Required</Alert>
+	</NotAuthorized>
 </AuthorizeView>
 
-@code {
-  
-}
+<hr class="border-dark-subtle border-4 my-3">
+ *@
+
+<AuthorizeView Policy=@RoleGroup.EmailVerifiedWithAtLeastOneRole>
+	<Authorized>
+		<FolderTree />
+	</Authorized>
+	<NotAuthorized>
+		<Alert AlertType="alert-warning">Not Authorized, Login Required</Alert>
+	</NotAuthorized>
+</AuthorizeView>

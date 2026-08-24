@@ -197,3 +197,9 @@ hr.warning {
 	color: blue;
 	text-decoration: underline;
 }
+
+@media print {
+	.d-print-none {
+		display: none !important;
+	}
+}

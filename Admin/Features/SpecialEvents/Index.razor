@@ -1,7 +1,7 @@
 ﻿@page "/SpecialEvents"
 
 @using Microsoft.AspNetCore.Components.Authorization
-@using Page = Admin.Enums.Nav
+@using PageGroup = Admin.Enums.NavGroup
 @using Admin.Security.Constants
 @using RoleGroup = Admin.Security.Enums.RoleGroup
 
@@ -9,7 +9,7 @@
 @inject IToastService? Toast
 @inject Data.IRepository? db;
 
-<PageHeader PageEnum="Page.SpecialEvents" />
+<PageHeader PageEnum="PageGroup.SpecialEvents" />
 
 <AuthorizeView Policy=@RoleGroup.Announcements>
 	<Authorized>
@@ -59,7 +59,7 @@
 		<div class="alert alert-warning text-end" role="alert">
 			<small>Authorized: Role Group Policy: @RoleGroup.Announcements</small>
 		</div>
-		<LoginRedirectCard Nav="Nav.SpecialEvents" ReturnUrl=@Nav.SpecialEvents.Index />
+		<LoginRedirectCard NavGroup="PageGroup.SpecialEvents" ReturnUrl=@PageGroup.SpecialEvents.Index />
 	</NotAuthorized>
 </AuthorizeView>
 

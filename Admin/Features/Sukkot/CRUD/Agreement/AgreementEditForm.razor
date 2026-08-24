@@ -1,0 +1,60 @@
+﻿@using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar;
+
+@inject ILogger<AgreementEditForm>? Logger
+
+<PageTitle>@MenuBarEnums.AddAgreement.Title</PageTitle>
+<CRUDHeader MenuBar="@MenuBarEnums.AddAgreement" OnActionShowRegistrationList="ReturnedActionShowRegistrationList" />
+
+<Alert AlertType="alert-info">This is a two step process</Alert>
+
+<EditForm Model="@VM" OnValidSubmit="HandleValidSubmit">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+	<div class="mb-3">
+		<label for="emailInput" class="form-label">Email</label>
+		<div class="d-flex align-items-center gap-2">
+			<InputText id="emailInput" class="form-control" @bind-Value="VM.Email" />
+			<span class="text-muted text-nowrap"><b>Step 1</b>: Enter an email</span>
+		</div>
+		<ValidationMessage For="@(() => VM.Email)" />
+	</div>
+
+	<button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+<hr class="border-dark-subtle border-4 my-3">
+
+
+<VerbiageParagraph />
+
+@if (Email is not null)
+{
+	<YesNoButtons EmailParm="@Email" OnActionCompleted="ReturnedActionCompleted" />
+}
+
+@code {
+	[Parameter, EditorRequired] public EventCallback OnActionCompleted { get; set; }
+	[Parameter, EditorRequired] public EventCallback OnActionShowRegistrationList { get; set; }
+	
+		private AgreementEditFormVM VM = new();
+
+	private void HandleValidSubmit()
+	{
+		Email = VM.Email;
+	}
+
+	string? Email { get; set; }
+
+	private void ReturnedActionCompleted()
+	{
+		Logger!.LogDebug("{Method}", nameof(ReturnedActionCompleted));
+		OnActionCompleted.InvokeAsync();
+	}
+
+	private void ReturnedActionShowRegistrationList()
+	{
+		Logger!.LogDebug("{Method}", nameof(ReturnedActionShowRegistrationList));
+		OnActionShowRegistrationList.InvokeAsync();
+	}
+
+}

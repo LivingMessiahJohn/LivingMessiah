@@ -1,0 +1,34 @@
+﻿
+@using MenuBarDBEnums = Admin.Features.Sukkot.Dashboard.Enums.MenuBarDB;
+
+@inject NavigationManager NavigationManager
+
+<div class="d-print-none d-flex align-items-center gap-2">
+  <div class="dropdown">
+    <button class="btn btn-outline-secondary dropdown-toggle btn-sm" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="fas fa-bars"></i> Nav
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
+      @foreach (var item in MenuBarDBEnums.List.ToList().OrderBy(o => o.Value))
+      {
+        <li>
+          <a class="dropdown-item"
+             @onclick="@(e => ButtonClicked(item))"
+             title="@item.Title">
+            <span class="me-2"><i class="@item.Icon"></i></span>
+            @item.Title
+          </a>
+        </li>
+      }
+    </ul>
+  </div>
+</div>
+
+@code {
+
+  private void ButtonClicked(MenuBarDBEnums nav)
+  {
+    NavigationManager!.NavigateTo(nav.Index);
+  }
+  // <a class="dropdown-item @(item == MenuBarDB ? "active" : "")"
+}

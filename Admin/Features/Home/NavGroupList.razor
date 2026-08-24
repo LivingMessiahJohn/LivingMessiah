@@ -1,0 +1,124 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Authorization
+@using Admin.Enums
+@using Admin.Security.Constants
+@using RoleEnum = Admin.Security.Enums.Role
+
+@using System.Security.Claims
+
+
+@inject NavigationManager NavigationManager
+@inject ILogger<NavGroupList>? Logger
+@inject IToastService? Toast
+
+<ul class="nav flex-column">
+	@if (authorizedNavGroupItems != null)
+	{
+
+		@foreach (var item in authorizedNavGroupItems)
+		{
+			<li class="nav-item">
+				<i class="@item.Icon"></i>
+				<button @onclick="@(e => ButtonClicked(item))"
+								title="@item.Title" class="p-0 text-primary text-decoration-underline btn btn-lg">
+					@item.Title
+				</button>
+			</li>
+		}
+	}
+</ul>
+
+
+@code {
+	[CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+
+	private IEnumerable<NavGroup>? authorizedNavGroupItems;
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (authenticationState is null)
+		{
+			Logger!.LogWarning("{Method} {Message}", nameof(GetUserRoleBitmask), "authenticationState is null");
+		}
+
+		authorizedNavGroupItems = await GetAuthorizedNavItems();
+
+		if (authorizedNavGroupItems is null)
+		{
+			Logger!.LogWarning("{Method} {Message}", nameof(OnInitializedAsync), $"{nameof(authorizedNavGroupItems)} is null");
+		}
+		else if (!authorizedNavGroupItems.Any())
+		{
+			Logger!.LogWarning("{Method} {Message}", nameof(OnInitializedAsync), $"{nameof(authorizedNavGroupItems)} is empty");
+		}
+
+	}
+
+	private void ButtonClickedTest()
+	{
+		//NavigationManager!.NavigateTo(navGroup.Index);
+	}
+
+	private void ButtonClicked(NavGroup navGroup)
+	{
+		NavigationManager!.NavigateTo(navGroup.Index);
+	}
+
+	private async Task<IEnumerable<NavGroup>> GetAuthorizedNavItems()
+	{
+		if (authenticationState == null)
+		{
+			return NavGroup.List.ToList()
+				.Where(w => w.Value != NavGroup.Home.Value && w.Value != NavGroup.Profile.Value && w.RequiredRoles == 0)
+				.OrderBy(o => o.Value);
+		}
+
+		var state = await authenticationState;
+		var userRoles = GetUserRoleBitmask(state.User);
+
+		return NavGroup.List.ToList()
+			.Where(w => w.Value != NavGroup.Home.Value && w.Value != NavGroup.Profile.Value && HasRequiredRole(w.RequiredRoles, userRoles))
+			.OrderBy(o => o.Value);
+	}
+
+	private int GetUserRoleBitmask(ClaimsPrincipal user)
+	{
+		if (user == null || !user.Identity!.IsAuthenticated)
+		{
+			Logger!.LogWarning("{Method} {Message}", nameof(GetUserRoleBitmask), "user is null or not Authenticated, return 0;");
+			return 0;
+		}
+
+		int userRoles = 0;
+
+		// Check for each role claim and build the bitmask
+		var roleClaims = user!.Claims.Where(c => c.Type == Configuration.MicrosoftSchemaIdentityClaimsRole);
+
+		foreach (var roleClaim in roleClaims)
+		{
+			if (roleClaim.Value == RoleEnum.Admin.Claim)
+				userRoles |= RoleEnum.Admin.Value;
+			else if (roleClaim.Value == RoleEnum.KeyDates.Claim)
+				userRoles |= RoleEnum.KeyDates.Value;
+			else if (roleClaim.Value == RoleEnum.Sukkot.Claim)
+				userRoles |= RoleEnum.Sukkot.Value;
+			else if (roleClaim.Value == RoleEnum.WeeklyDownload.Claim)
+				userRoles |= RoleEnum.WeeklyDownload.Value;
+			else if (roleClaim.Value == RoleEnum.SukkotHost.Claim)
+				userRoles |= RoleEnum.SukkotHost.Value;
+			else if (roleClaim.Value == RoleEnum.Announcements.Claim)
+				userRoles |= RoleEnum.Announcements.Value;
+		}
+		return userRoles;
+	}
+
+	private bool HasRequiredRole(int requiredRoles, int userRoles)
+	{
+		// If no roles are required (requiredRoles == 0), allow access
+		if (requiredRoles == 0)
+			return true;
+
+		// Check if user has any of the required roles using bitwise AND
+		return (userRoles & requiredRoles) != 0;
+	}
+}

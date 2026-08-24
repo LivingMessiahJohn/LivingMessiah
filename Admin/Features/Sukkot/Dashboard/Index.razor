@@ -1,24 +1,28 @@
-﻿@using RoleGroup = Admin.Security.Enums.RoleGroup;
+@using RoleGroup = Admin.Security.Enums.RoleGroup;
+@using NavEnums = Admin.Enums.Nav;
+@using Microsoft.AspNetCore.Components.Authorization
+
+@* ToDo: Can this Index.razor get deleted? *@
 
 @page "/SukkotDashboard"
 
-@using Admin.Security.Constants
-@using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar;
-@using Microsoft.AspNetCore.Components.Authorization
-
 <AuthorizeView Policy=@RoleGroup.Sukkot>
-  <Authorized>
-    <PageHeaderMenubar MenuBarEnum=MenuBarEnums.Dashboard />
-    <Grid />
-  </Authorized>
-  <NotAuthorized>
-    <LoginRedirectCard Nav="Nav.SukkotDashboard" ReturnUrl=@Nav.SukkotDashboard.Index />
-    <div class="alert alert-warning text-end" role="alert">
-      <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small> 
-    </div>
-  </NotAuthorized>
-</AuthorizeView>
+	<Authorized>
+		
+		<PageHeaderChild NavEnum="@NavEnums.SukkotDashboard" />
+		<Main />
 
+	</Authorized>
+	<NotAuthorized>
+		
+		@* ToDo: can this return to the SukkotDashboard page instead of SukkotHome page *@
+		<LoginRedirectCard ReturnTitle="@NavEnums.SukkotDashboard.Title" ReturnUrl=@NavEnums.SukkotDashboard.Index />
+		<div class="alert alert-warning text-end" role="alert">
+			<small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small>
+		</div>
+
+	</NotAuthorized>
+</AuthorizeView>
 
 @code {
 

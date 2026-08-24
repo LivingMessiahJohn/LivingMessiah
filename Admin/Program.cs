@@ -6,9 +6,7 @@ using Admin.Features.KeyDates.Data;
 using Admin.Features.SpecialEvents.Data;
 
 using Admin.Features.Sukkot.Dashboard.Data;
-using Admin.Features.Sukkot.DailySchedule.Data;  
-using Admin.Features.Sukkot.Home.Data;
-using Admin.Features.Sukkot.Home.Donations.Data;
+using Admin.Features.Sukkot.DailySchedule.Data;
 using Admin.Features.Sukkot.Notes.Data;
 using Admin.Features.Sukkot.Reports.Data;
 
@@ -34,6 +32,8 @@ using HealthChecksSukkotEndPoint = Admin.HealthChecks.Sukkot.Endpoints.Constants
 
 using SpecialEventsSettings = Admin.Features.SpecialEvents.Settings;
 using WeeklyDownloadsSettings = Admin.Features.WeeklyDownloads.Settings;
+using Admin.Features.Sukkot.CRUD.Data;
+using Admin.Features.Sukkot.CRUD.Donations.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
