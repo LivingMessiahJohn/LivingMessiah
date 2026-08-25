@@ -4,27 +4,15 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using RoleGroup = Admin.Security.Enums.RoleGroup;
 
-@using Page = Admin.Enums.NavGroup
-<PageHeader PageEnum="Page.Home" />
+@using PageNav = Admin.Enums.Nav
+<PageHeader PageEnum="PageNav.Home" />
 
 @* <div class="alert alert-dark " role="alert"> </div> *@
 
-@* 
-<AuthorizeView Policy=@RoleGroup.EmailVerifiedWithAtLeastOneRole>
-	<Authorized>
-		<NavGroupList />
-	</Authorized>
-	<NotAuthorized>
-		<Alert AlertType="alert-warning">Not Authorized, Login Required</Alert>
-	</NotAuthorized>
-</AuthorizeView>
-
-<hr class="border-dark-subtle border-4 my-3">
- *@
 
 <AuthorizeView Policy=@RoleGroup.EmailVerifiedWithAtLeastOneRole>
 	<Authorized>
-		<FolderTree />
+		<NavTree />
 	</Authorized>
 	<NotAuthorized>
 		<Alert AlertType="alert-warning">Not Authorized, Login Required</Alert>

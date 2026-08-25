@@ -2,10 +2,10 @@
 
 @using Microsoft.AspNetCore.Components.Authorization
 @using Admin.Security.Policies
-@using Page = Admin.Enums.NavGroup
+@using PageNav = Admin.Enums.Nav
 
 
-<PageHeader PageEnum="Page.Alerts" />
+<PageHeader PageEnum="PageNav.Alerts" />
 
 <AuthorizeView Policy=@Authentication.Name>
   <Authorized>
@@ -20,7 +20,7 @@
     <div class="alert alert-warning text-end" role="alert">   
       <small>Not Authorized; Policy: @Authentication.Name</small>
     </div>
-    <LoginRedirectCard ReturnTitle="@Page.Alerts.Title" ReturnUrl="@Page.Alerts.Index" />
+    <LoginRedirectCard ReturnTitle="@PageNav.Alerts.Title" ReturnUrl="@PageNav.Database.Index" />
   </NotAuthorized>
 </AuthorizeView>
 

@@ -1,5 +1,4 @@
-@using Admin.Features.Home.Data
-
+@using Admin.Enums
 
 @inject IToastService? Toast
 @inject NavigationManager NavigationManager
@@ -40,7 +39,7 @@
       @if (item.IsFolder && item.IsExpanded)
       {
         <div class="ms-3 border-start ps-2">
-          <FolderTree Items="item.Children"
+          <NavTree Items="item.Children"
                       IsRoot="false" />
         </div>
       }
@@ -51,18 +50,40 @@
 @code {
   [Parameter] public List<NavTreeItem> Items { get; set; } = new();
   [Parameter] public bool IsRoot { get; set; } = true;
-  // [CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
 
   protected override void OnInitialized()
   {
     if (IsRoot)
     {
-      Items = PopulateTree.Get();
+      Items = [Map(Nav.Home)];
     }
   }
 
+  private static NavTreeItem Map(Nav nav) => new()
+  {
+    Text = nav.Title,
+    Title = nav.Title,
+    Index = nav.Index,
+    IconClass = nav.IsFolder ? FolderConstants.FolderIcon : nav.Icon,
+    OpenIconClass = "far fa-folder-open",
+    IsExpanded = nav.ExpandByDefault,
+    RequiredRoles = nav.RequiredRoles,
+    Children = Nav.List
+      .Where(c => c.Parent == nav.Value)
+      .OrderBy(c => c.Sort)
+      .ThenBy(c => c.Value)
+      .Select(Map)
+      .ToList()
+  };
+
   private void HandleClick(NavTreeItem item)
   {
+    if (item.IsFolder)
+    {
+      Toggle(item);
+      return;
+    }
+
     if (string.IsNullOrWhiteSpace(item.Index))
     {
       Toast!.ShowInfo($"No route for: {item.Text}");

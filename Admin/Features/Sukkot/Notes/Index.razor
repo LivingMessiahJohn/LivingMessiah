@@ -1,7 +1,8 @@
 ﻿@page "/SukkotDashboard/Notes"
 
 @using Microsoft.AspNetCore.Components.Authorization
-@using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar;
+@using NavEnums = Admin.Features.Sukkot.Dashboard.Enums.Nav;
+
 @using FilterEnums = Admin.Features.Sukkot.Notes.Enums.Filter
 @using RoleGroup = Admin.Security.Enums.RoleGroup;
 
@@ -12,13 +13,16 @@
 @inject IToastService? Toast
 @inject Data.IRepository? db
 
+@* <PageTitle>@MenuBarEnums.Notes.Title</PageTitle>
+ *@
+
 <AuthorizeView Policy=@RoleGroup.Sukkot>
 	<Authorized>
 
-		<PageTitle>@MenuBarEnums.Notes.Title</PageTitle>
+		<PageTitle>@NavEnums.Notes.Title</PageTitle>
 
-		<Admin.Features.Sukkot.Dashboard.DashboardHeader MenuBar="@MenuBarEnums.Notes" />
-		@* <DashboardHeader MenuBar="@MenuBarEnums.Notes" /> *@
+		<Admin.Features.Sukkot.Dashboard.DashboardHeader MenuBar="@NavEnums.Notes" />
+
 
 		<LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>
 			@if (ShowDetail)

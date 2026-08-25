@@ -1,5 +1,5 @@
 ﻿
-@using MenuBarDBEnums = Admin.Features.Sukkot.Dashboard.Enums.MenuBarDB;
+@using NavEnums = Admin.Features.Sukkot.Dashboard.Enums.Nav;
 
 @inject NavigationManager NavigationManager
 
@@ -9,7 +9,7 @@
       <i class="fas fa-bars"></i> Nav
     </button>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
-      @foreach (var item in MenuBarDBEnums.List.ToList().OrderBy(o => o.Value))
+      @foreach (var item in NavEnums.List.ToList().OrderBy(o => o.Value))
       {
         <li>
           <a class="dropdown-item"
@@ -26,7 +26,7 @@
 
 @code {
 
-  private void ButtonClicked(MenuBarDBEnums nav)
+  private void ButtonClicked(NavEnums nav)
   {
     NavigationManager!.NavigateTo(nav.Index);
   }

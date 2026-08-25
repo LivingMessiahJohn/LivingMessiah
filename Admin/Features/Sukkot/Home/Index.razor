@@ -1,9 +1,12 @@
 @page "/SukkotHome"
+@page "/SukkotHome/{TabName}"
 
-@using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar;
-@using RoleGroup = Admin.Security.Enums.RoleGroup;
+@using TabEnum = Admin.Features.Sukkot.Home.Enums.Tab
+@using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar
+@using RoleGroup = Admin.Security.Enums.RoleGroup
 @using Microsoft.AspNetCore.Components.Authorization
 
+@inject NavigationManager NavigationManager
 
 <AuthorizeView Policy=@RoleGroup.Sukkot>
   <Authorized>
@@ -12,55 +15,37 @@
       @SelectedTab.Title
     </PageTitle>
 
-    @* bg-secondary *@
     <ul class="nav nav-tabs mb-3 fs-6 my-tabs d-print-none" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button type="button"
-                class="nav-link @ActiveTab(MenuBarEnums.Dashboard)"
-                role="tab"
-                aria-selected="@(SelectedTab == MenuBarEnums.Dashboard)"
-                @onclick="() => SelectTab(MenuBarEnums.Dashboard)">
-          <i class="@MenuBarEnums.Dashboard.Icon"></i>&nbsp; <span class="@MenuBarEnums.Dashboard.Css">@MenuBarEnums.Dashboard.Title</span> 
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button type="button"
-                class="nav-link @ActiveTab(MenuBarEnums.CRUD)"
-                role="tab"
-                aria-selected="@(SelectedTab == MenuBarEnums.CRUD)"
-                @onclick="() => SelectTab(MenuBarEnums.CRUD)">
-          <i class="@MenuBarEnums.CRUD.Icon"></i>&nbsp; <span class="@MenuBarEnums.CRUD.Css">@MenuBarEnums.CRUD.Title</span> 
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-
-        <button type="button"
-                class="nav-link @ActiveTab(MenuBarEnums.DailySchedule)"
-                role="tab"
-                aria-selected="@(SelectedTab == MenuBarEnums.DailySchedule)"
-                @onclick="() => SelectTab(MenuBarEnums.DailySchedule)">
-          <i class="@MenuBarEnums.DailySchedule.Icon"></i>&nbsp; <span class="@MenuBarEnums.DailySchedule.Css">@MenuBarEnums.DailySchedule.Title</span>
-        </button>
-      </li>
-
+      @foreach (var tab in TabEnum.List.OrderBy(t => t.Value))
+      {
+        <li class="nav-item" role="presentation">
+          <button type="button"
+                  class="nav-link @ActiveTab(tab)"
+                  role="tab"
+                  aria-selected="@(SelectedTab == tab)"
+                  @onclick="() => SelectTab(tab)">
+            <i class="@tab.Icon"></i>&nbsp; <span class="@tab.Css">@tab.Title</span>
+          </button>
+        </li>
+      }
     </ul>
 
-    @if (SelectedTab == MenuBarEnums.Dashboard)
+    @if (SelectedTab == TabEnum.Dashboard)
     {
       <Admin.Features.Sukkot.Dashboard.Main />
     }
-    else if (SelectedTab == MenuBarEnums.CRUD)
+    else if (SelectedTab == TabEnum.CRUD)
     {
       <Admin.Features.Sukkot.CRUD.Main />
     }
-    else if (SelectedTab == MenuBarEnums.DailySchedule)
+    else if (SelectedTab == TabEnum.DailySchedule)
     {
       <Admin.Features.Sukkot.DailySchedule.Main />
     }
 
   </Authorized>
   <NotAuthorized>
-    <LoginRedirectCard ReturnTitle="@MenuBarEnums.Home.Title" ReturnUrl=@MenuBarEnums.Home.Index />
+    <LoginRedirectCard ReturnTitle="@MenuBarEnums.Home.Title" ReturnUrl=@SelectedTab.Index />
     <div class="alert alert-warning text-end" role="alert">
       <small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small>
     </div>
@@ -69,9 +54,25 @@
 
 
 @code {
-  private MenuBarEnums SelectedTab { get; set; } = MenuBarEnums.Dashboard;
+  [Parameter] public string? TabName { get; set; }
 
-  private string ActiveTab(MenuBarEnums tab) => SelectedTab == tab ? "active" : "";
+  private TabEnum SelectedTab { get; set; } = TabEnum.Dashboard;
 
-  private void SelectTab(MenuBarEnums tab) => SelectedTab = tab;
+  protected override void OnParametersSet()
+  {
+    SelectedTab = ResolveTab(TabName);
+  }
+
+  private static TabEnum ResolveTab(string? tabName) =>
+    !string.IsNullOrWhiteSpace(tabName) && TabEnum.TryFromName(tabName, ignoreCase: true, out var tab)
+      ? tab
+      : TabEnum.Dashboard;
+
+  private string ActiveTab(TabEnum tab) => SelectedTab == tab ? "active" : "";
+
+  private void SelectTab(TabEnum tab)
+  {
+    if (SelectedTab == tab) return;
+    NavigationManager.NavigateTo(tab.Index);
+  }
 }

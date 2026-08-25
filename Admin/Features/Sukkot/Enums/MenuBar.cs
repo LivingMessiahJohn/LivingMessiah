@@ -1,4 +1,5 @@
 ﻿using Ardalis.SmartEnum;
+using TabEnum = Admin.Features.Sukkot.Home.Enums.Tab;
 
 namespace Admin.Features.Sukkot.Enums;
 
@@ -11,12 +12,9 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 		internal const int Home = 1;
 		internal const int Dashboard = 2;
 		internal const int CRUD = 3;
-		internal const int Notes = 4;
-		internal const int Report = 5;  // or AttendanceReport
-		internal const int StripeTable = 6;
-		internal const int DailySchedule = 7;
-		internal const int AddAgreement = 8;
-		internal const int AgreementVerbiage = 9;
+		internal const int DailySchedule = 4;
+		internal const int AddAgreement = 5;
+		internal const int AgreementVerbiage = 6;
 
 	}
 	#endregion
@@ -27,9 +25,6 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 	public static readonly MenuBar Home = new HomeSE();
 	public static readonly MenuBar Dashboard = new DashboardSE(); // ToDo: Delete, as it's a Tab under SukkotHome
 	public static readonly MenuBar CRUD = new CRUDSE();           // ToDo: Delete, as it's a Tab under SukkotHome
-	public static readonly MenuBar Notes = new NotesSE();
-	public static readonly MenuBar Report = new ReportSE();
-	public static readonly MenuBar StripeTable = new StripeTableSE();
 	public static readonly MenuBar DailySchedule = new DailyScheduleSE();
 	public static readonly MenuBar AddAgreement = new AddAgreementSE();
 	public static readonly MenuBar AgreementVerbiage = new AgreementVerbiageSE();
@@ -48,7 +43,7 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 	private sealed class HomeSE : MenuBar
 	{
 		public HomeSE() : base($"{nameof(Id.Home)}", Id.Home) { }
-		public override string Index => "/SukkotHome";
+		public override string Index => TabEnum.Dashboard.Index;
 		public override string Title => "Registration Home";
 		public override string Icon => "fas fa-campground";
 		public override string Css => "badge bg-danger text-black";
@@ -57,43 +52,16 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 	private sealed class DashboardSE : MenuBar
 	{
 		public DashboardSE() : base($"{nameof(Id.Dashboard)}", Id.Dashboard) { }
-		public override string Index => "/SukkotDashboard";  // ToDo: Delete, as it's a Tab under SukkotHome
+		public override string Index => TabEnum.Dashboard.Index;  // ToDo: Delete, as it's a Tab under SukkotHome
 		public override string Title => "Registration Dashboard";
 		public override string Icon => "fas fa-tachometer-alt";
 		public override string Css => "badge bg-primary text-white";
 	}
 
-	private sealed class NotesSE : MenuBar
-	{
-		public NotesSE() : base($"{nameof(Id.Notes)}", Id.Notes) { }
-		public override string Index => "/SukkotDashboard/Notes";
-		public override string Title => "Registration Notes";
-		public override string Icon => "far fa-sticky-note";
-		public override string Css => "badge bg-info text-black";
-	}
-
-	private sealed class ReportSE : MenuBar
-	{
-		public ReportSE() : base($"{nameof(Id.Report)}", Id.Report) { }
-		public override string Index => "/SukkotDashboard/AttendanceAllFeastDays";
-		public override string Title => "Attendance Count";
-		public override string Icon => "fas fa-calculator";   // ToDo: use this with Chart fas fa-chart-line
-		public override string Css => "badge bg-warning text-black";
-	}
-
-	private sealed class StripeTableSE : MenuBar
-	{
-		public StripeTableSE() : base($"{nameof(Id.StripeTable)}", Id.StripeTable) { }
-		public override string Index => "/SukkotDashboard/StripeTable";
-		public override string Title => "Stripe Table";
-		public override string Icon => "fab fa-cc-stripe"; 
-		public override string Css => "badge bg-dark";
-	}
-
 	private sealed class CRUDSE : MenuBar
 	{
 		public CRUDSE() : base($"{nameof(Id.CRUD)}", Id.CRUD) { }
-		public override string Index => "/SukkotCRUD";  // ToDo: Delete, as it's a Tab under SukkotHome
+		public override string Index => TabEnum.CRUD.Index;  // ToDo: Delete, as it's a Tab under SukkotHome
 		public override string Title => "Registration CRUD";
 		public override string Icon => "fas fa-hammer"; //fas fa-home fas fa-mask  
 		public override string Css => "badge bg-danger text-white";
@@ -102,7 +70,7 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 	private sealed class DailyScheduleSE : MenuBar
 	{
 		public DailyScheduleSE() : base($"{nameof(Id.DailySchedule)}", Id.DailySchedule) { }
-		public override string Index => "/SukkotSchedule";
+		public override string Index => TabEnum.DailySchedule.Index;
 		public override string Title => "Sukkot Daily Schedule";
 		public override string Icon => "fas fa-tasks";
 		public override string Css => "badge bg-warning text-black";
