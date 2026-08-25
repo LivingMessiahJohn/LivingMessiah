@@ -75,7 +75,15 @@ Admin uses a single `Nav` SmartEnum (no separate `NavGroup`). Hierarchy is expre
 `Nav.IsFolder` is true when any other `Nav` has `Parent == this.Value`. Folders often use an empty `Index` (expand/collapse only in `NavTree`). Sukkot leaf routes delegate to `Admin.Features.Sukkot.Home.Enums.Tab` (`/SukkotHome/{TabName}`).
 
 ### Security
-For those apps that have authentication and authorization it manages 
+
+Admin Home nav uses bitwise `RequiredRoles` on each `Nav` entry:
+
+- `0` — no special role; visible to authenticated users who already pass `EmailVerifiedWithAtLeastOneRole` on Home
+- Non-zero — user must have **any** overlapping role bit (`(userRoles & RequiredRoles) != 0`)
+
+`Admin/Security/NavRoleAuthorization` builds the user bitmask from Auth0 role claims by matching `Role.Claim` values in `Role.List`. `Admin/Features/Home/NavTree.razor` applies that filter recursively and **hides empty folders** after children are removed.
+
+Nav visibility is UX only. Feature pages must still gate with `<AuthorizeView Policy=@RoleGroup.…>` (or equivalent); hiding a tree link does not replace page policies.
 
 ## Features
 Because it's declarative and centralized the use of LINQ makes it easy to do things ...

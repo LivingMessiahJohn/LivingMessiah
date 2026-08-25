@@ -7,9 +7,6 @@
 @using PageNav = Admin.Enums.Nav
 <PageHeader PageEnum="PageNav.Home" />
 
-@* <div class="alert alert-dark " role="alert"> </div> *@
-
-
 <AuthorizeView Policy=@RoleGroup.EmailVerifiedWithAtLeastOneRole>
 	<Authorized>
 		<NavTree />
