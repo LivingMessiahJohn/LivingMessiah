@@ -1,15 +1,15 @@
 ﻿@page "/SukkotDashboard/StripeTable"
 
 @using RoleGroup = Admin.Security.Enums.RoleGroup;
-@using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar;
+@using NavEnums = Admin.Features.Sukkot.Dashboard.Enums.Nav;
 @using Microsoft.AspNetCore.Components.Authorization
 @using Admin.Features.Sukkot.Dashboard
 
 <AuthorizeView Policy=@RoleGroup.Sukkot>
   <Authorized>
     
-    <PageTitle>@MenuBarEnums.StripeTable.Title</PageTitle>
-    <DashboardHeader MenuBar="@MenuBarEnums.StripeTable" />
+    <PageTitle>@NavEnums.StripeTable.Title</PageTitle>
+    <DashboardHeader MenuBar="@NavEnums.StripeTable" />     
     <StripeTable />
 
   </Authorized>

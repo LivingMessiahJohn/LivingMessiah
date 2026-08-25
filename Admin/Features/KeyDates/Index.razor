@@ -8,14 +8,14 @@
 @using FeastDatEnum = RCL.Features.Calendar.Enums.FeastDay;
 @using RoleGroup = Admin.Security.Enums.RoleGroup;
 
-@using PageGroup = Admin.Enums.NavGroup	
+@using PageNav = Admin.Enums.Nav
 
 @inject ILogger<Index>? Logger
 @inject Data.IRepository? db;
 @inject IToastService? Toast
 @inject IOptions<AppSettings>? AppSettings
 
-<PageHeader PageEnum="PageGroup.KeyDates" />
+<PageHeader PageEnum="PageNav.KeyDates" />
 
 <AuthorizeView Policy=@RoleGroup.KeyDates>
 	<Authorized>
@@ -100,7 +100,7 @@
 		<div class="alert alert-warning text-end" role="alert">
 			<small>Not Authorized; Role Group Policy: @RoleGroup.KeyDates</small>
 		</div>
-		<LoginRedirectCard ReturnTitle="@PageGroup.KeyDates.Title" ReturnUrl=@PageGroup.KeyDates.Index />
+		<LoginRedirectCard ReturnTitle="@PageNav.KeyDates.Title" ReturnUrl=@PageNav.KeyDates.Index />
 	</NotAuthorized>
 </AuthorizeView>
 

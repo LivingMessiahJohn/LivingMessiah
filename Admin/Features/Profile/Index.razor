@@ -1,9 +1,9 @@
 ﻿@page "/profile"
 
 @using Microsoft.AspNetCore.Components.Authorization
-@using Page = Admin.Enums.NavGroup
+@using PageNav = Admin.Enums.Nav
 
-<PageHeader PageEnum="Page.Profile" />
+<PageHeader PageEnum="PageNav.Profile" />
 
 <AuthorizeView>
 	<Authorized>
@@ -22,8 +22,8 @@ The name 'Authentication' does not exist in the current context
 		<div class="card border-warning my-5">
 			<div class="card-header">Not Authorized</div>
 			<div class="card-body">
-				<h5 class="">To view <b>@Page.Profile.Title</b> you need to be logged in.</h5>
-				<LoginRedirectButton ReturnUrl="@Page.Profile.Index" />
+				<h5 class="">To view <b>@PageNav.Profile.Title</b> you need to be logged in.</h5>
+				<LoginRedirectButton ReturnUrl="@PageNav.Profile.Index" />
 			</div>
 		</div>
 	</NotAuthorized>

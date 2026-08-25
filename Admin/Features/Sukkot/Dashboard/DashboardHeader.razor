@@ -1,4 +1,5 @@
-﻿@using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar;
+﻿@using NavEnums = Admin.Features.Sukkot.Dashboard.Enums.Nav;
+@using SukkotHomeTab = Admin.Features.Sukkot.Home.Enums.Tab;
 
 @inject NavigationManager NavigationManager
 
@@ -14,19 +15,21 @@
 		<!-- Button on the right -->
 		<div class="d-flex gap-2">
 			<button @onclick="@ButtonClicked"
-							class="btn btn-outline-bg-secondary btn-sm me-1">
-				<i class="fas fa-arrow-alt-circle-left"></i> Return
+							class="btn btn-outline-dark" type="button">
+				<span class="me-2"><i class="fas fa-arrow-alt-circle-left"></i></span>
+				Return To Dashboard
 			</button>
 		</div>
+
 
 	</div>
 </div>
 
 @code {
-	[Parameter, EditorRequired] public MenuBarEnums MenuBar { get; set; }
+	[Parameter, EditorRequired] public NavEnums MenuBar { get; set; }
 
 	private void ButtonClicked()
 	{
-		NavigationManager!.NavigateTo(Nav.SukkotHome.Index);
+		NavigationManager!.NavigateTo(SukkotHomeTab.Dashboard.Index);
 	}
 }

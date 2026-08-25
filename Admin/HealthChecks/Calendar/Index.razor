@@ -2,9 +2,9 @@
 
 @using Admin.Security.Policies
 @using Microsoft.AspNetCore.Components.Authorization
-@using PageGroup = Admin.Enums.NavGroup
+@using PageNav = Admin.Enums.Nav
 
-<PageHeader PageEnum="PageGroup.HealthChecks" />
+<PageHeader PageEnum="PageNav.HealthChecks" />
 
 <div class="alert alert-warning text-center" role="alert">
 	<b>Note:</b> This page has not yet been ported over from an older version
@@ -21,7 +21,7 @@
     <div class="alert alert-warning text-end" role="alert">
       <small>Not Authorized; Policy: @Authentication.Name</small>
     </div>
-    <LoginRedirectCard ReturnTitle="@PageGroup.HealthChecks.Title" ReturnUrl=@PageGroup.HealthChecks.Index />
+    <LoginRedirectCard ReturnTitle="@PageNav.HealthChecks.Title" ReturnUrl=@PageNav.HealthCheckCalendar.Index />
   </NotAuthorized>
 </AuthorizeView>
 

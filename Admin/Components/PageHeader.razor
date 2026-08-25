@@ -1,4 +1,6 @@
-﻿<PageTitle>
+﻿@using Admin.Enums
+
+<PageTitle>
 	@if (String.IsNullOrEmpty(PageTitle))
 	{
 		@PageEnum.Title
@@ -15,8 +17,7 @@
 </div>
 
 @code {
-	//[Parameter, EditorRequired] public Nav PageEnum { get; set; } = Nav.Home;
-	[Parameter, EditorRequired] public NavGroup PageEnum { get; set; } = NavGroup.Home;
+	[Parameter, EditorRequired] public Nav PageEnum { get; set; } = Nav.Home;
 	[Parameter] public string? PageTitle { get; set; }
 	[Parameter] public string? BorderCSS { get; set; } = "border-bottom border-info";
 }

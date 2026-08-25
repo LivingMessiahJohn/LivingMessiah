@@ -1,6 +1,6 @@
 ﻿@page "/SukkotDashboard/AttendanceAllFeastDays"
 
-@using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar;
+@using NavEnums = Admin.Features.Sukkot.Dashboard.Enums.Nav;
 @using RoleGroup = Admin.Security.Enums.RoleGroup;
 @using Microsoft.AspNetCore.Components.Authorization
 @using Admin.Features.Sukkot.Dashboard
@@ -12,8 +12,8 @@
 <AuthorizeView Policy=@RoleGroup.Sukkot>
 	<Authorized>
 
-		<PageTitle>@MenuBarEnums.Report.Title</PageTitle>
-		<DashboardHeader MenuBar="@MenuBarEnums.Report" />
+		<PageTitle>@NavEnums.Report.Title</PageTitle>
+		<DashboardHeader MenuBar="@NavEnums.Report" />
 		<p class="text-center">The attendance for every day followed by a summary of people who attended regardless of which day(s).</p>
 		
 		<LoadingComponent IsLoading="data == null" TurnSpinnerOff=TurnSpinnerOff>

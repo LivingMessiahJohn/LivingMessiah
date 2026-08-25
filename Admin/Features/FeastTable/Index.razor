@@ -1,7 +1,9 @@
 ﻿@page "/FeastTable"
 @using RCL.Features.Calendar
 
-<PageHeader PageEnum="NavGroup.HealthChecks" />
+@using PageNav = Admin.Enums.Nav
+
+<PageHeader PageEnum="PageNav.HealthChecks" />
 	<FeastTable /> 
 @code {
 
