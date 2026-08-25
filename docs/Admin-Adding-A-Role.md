@@ -22,7 +22,7 @@ Use a short **PascalCase** name (e.g. `WeeklyDownload`) and a lowercase **claim 
 | 3 | `Admin/Security/Enums/RoleGroup.cs` | Policy name constant (usually same string as claim) |
 | 4 | `Admin/Security/ServiceCollectionExtensions.cs` | Dedicated policy + include in `EmailVerifiedWithAtLeastOneRole` |
 | 5 | `Admin/Enums/Nav.cs` | `RequiredRoles` on the nav item (role \| Admin) |
-| 6 | `Admin/Features/Home/NavList.razor` | Map claim → bitmask in the role loop |
+| 6 | (automatic) | `NavRoleAuthorization` maps claims via `Role.List` — no Home tree edit for a new role |
 | 7 | Feature page(s) | `<AuthorizeView Policy=@RoleGroup.YourRole>` |
 | 8 | Verify | User with only the new claim; Admin; user with neither |
 
@@ -30,7 +30,6 @@ Optional / only if needed:
 
 | When | Where |
 |------|--------|
-| Re-enable layout nav role filtering | `Admin/Layout/NavList.razor` has a similar claim→bitmask loop (currently stubbed; keep it aligned if you restore it) |
 | Multi-role page access | OR extra roles in both the **policy** and `Nav.RequiredRoles` (see Sukkot + SukkotHost) |
 
 ---
@@ -123,18 +122,15 @@ public override int RequiredRoles => RoleEnum.WeeklyDownload.Value | RoleEnum.Ad
 - Use `|` for “any of these roles.”
 - Keep the same set of roles as the page policy when possible.
 
-### 6. Claim → bitmask — `Admin/Features/Home/NavList.razor`
+### 6. Home tree filtering — automatic via `NavRoleAuthorization`
 
-Home builds a bitmask from the signed-in user’s role claims, then compares it to `Nav.RequiredRoles`. Add a branch:
+`Admin/Features/Home/NavTree.razor` filters nodes with `Admin/Security/NavRoleAuthorization`:
 
-```csharp
-else if (roleClaim.Value == RoleEnum.WeeklyDownload.Claim)
-    userRoles |= RoleEnum.WeeklyDownload.Value;
-```
+- Builds a user bitmask from role claims by matching each claim to `Role.List` / `Role.Claim`
+- Keeps items where `HasRequiredRole(RequiredRoles, userRoles)` is true (`RequiredRoles == 0` or bitwise overlap)
+- Hides empty folders after filtering
 
-Without this, the user may pass `<AuthorizeView>` if they navigate by URL, but the **home nav card/list will not show** the link.
-
-> **Note:** `Admin/Layout/NavList.razor` has a parallel loop that is currently commented / returns `0`. If you restore layout-side role filtering, add the same mapping there.
+Adding a role to `Role.cs` (step 2) and setting `Nav.RequiredRoles` (step 5) is enough — **do not** add a hardcoded claim→bitmask branch in the tree. If the home link is missing, check that Auth0’s claim string equals `Role.Claim` exactly and that `RequiredRoles` ORs the new flag.
 
 ### 7. Gate the page — feature `Index.razor` (etc.)
 
@@ -163,7 +159,7 @@ Use the same `RoleGroup.*` constant as in `AddPolicy`. Point `LoginRedirectCard`
 | Logged in, no relevant role | No nav item (or hidden); direct URL → Not Authorized |
 | Logged out | Login / redirect behavior as today |
 
-Also re-check **Profile claims** so the claim string matches `Role.Claim` exactly (case-sensitive string compare in the nav loop and `IsInRole`).
+Also re-check **Profile claims** so the claim string matches `Role.Claim` exactly (case-sensitive string compare in `NavRoleAuthorization` and `IsInRole`).
 
 ---
 
@@ -180,7 +176,8 @@ Admin/Security/ServiceCollectionExtensions.cs
         └─ RoleGroup.YourRole               (feature policy)
 
 Admin/Enums/Nav.cs                    RequiredRoles bitmask
-Admin/Features/Home/NavList.razor     claim → bitmask
+Admin/Security/NavRoleAuthorization.cs  claim → bitmask via Role.List
+Admin/Features/Home/NavTree.razor     filters tree with NavRoleAuthorization
 Admin/Features/<Feature>/Index.razor  AuthorizeView Policy=...
 ```
 
@@ -200,7 +197,7 @@ Admin/Features/<Feature>/Index.razor  AuthorizeView Policy=...
 | Symptom | Likely miss |
 |---------|-------------|
 | Always Not Authorized | Auth0 claim ≠ `Role.Claim`, or policy not registered |
-| Page OK by URL, no home link | Forgot `Home/NavList.razor` claim mapping or `Nav.RequiredRoles` |
+| Page OK by URL, no home link | Auth0 claim ≠ `Role.Claim`, or forgot `Nav.RequiredRoles` |
 | Home shows link, page Not Authorized | Policy uses different claim/policy name than nav |
 | User with only this role bounced from home | Not added to `EmailVerifiedWithAtLeastOneRole` |
 | Wrong users can open the page | Policy too broad (e.g. reused KeyDates) or Admin-only intended but role ORed in |
@@ -216,7 +213,8 @@ Concrete files updated when introducing `weeklydownload`:
 2. `Admin/Security/Enums/RoleGroup.cs` — `WeeklyDownload = "weeklydownload"`
 3. `Admin/Security/ServiceCollectionExtensions.cs` — policy + at-least-one-role
 4. `Admin/Enums/Nav.cs` — `RequiredRoles` for Weekly Download nav
-5. `Admin/Features/Home/NavList.razor` — claim mapping
-6. `Admin/Features/WeeklyDownloads/Index.razor` — `AuthorizeView` policy (was KeyDates)
+5. `Admin/Features/WeeklyDownloads/Index.razor` — `AuthorizeView` policy (was KeyDates)
+
+Home tree visibility uses `NavRoleAuthorization` + `Role.List` (no per-role edit in `NavTree`).
 
 Unrelated polish in the same PR (logout icon) is **not** part of the role recipe.
