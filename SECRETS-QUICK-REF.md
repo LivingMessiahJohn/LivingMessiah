@@ -83,8 +83,19 @@ dotnet user-secrets set "Auth0M2M:ClientId" "YOUR_M2M_CLIENT_ID"
 dotnet user-secrets set "Auth0M2M:ClientSecret" "YOUR_M2M_CLIENT_SECRET"
 ```
 
-- Config keys: `Auth0M2M:Domain`, `Auth0M2M:ClientId`, `Auth0M2M:ClientSecret`
-- Production: same key names as Azure App Settings on the Admin app
+- Config keys (local user-secrets): `Auth0M2M:Domain`, `Auth0M2M:ClientId`, `Auth0M2M:ClientSecret`
+- Production (Azure **Linux** App Service — use double underscores):
+
+```text
+Auth0M2M__Domain=your-tenant.us.auth0.com
+Auth0M2M__ClientId=<M2M client id>
+Auth0M2M__ClientSecret=<M2M client secret>
+```
+
+- `Domain` must be the **canonical Auth0 tenant host** (e.g. `xxx.us.auth0.com`), not a custom login domain
+- Use the **M2M** app credentials — not the Regular Web App `auth0__*` login client
+- After changing App Settings, restart the Admin app
+- `401 access_denied` / `Unauthorized` on token request usually means wrong ClientId/Secret, trailing whitespace, or the login client was pasted by mistake
 - See also: `docs/Admin-Auth0-Users.md`
 
 ## Remember

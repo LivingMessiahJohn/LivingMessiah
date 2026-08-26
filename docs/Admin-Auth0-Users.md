@@ -15,9 +15,12 @@ Admin route **`/Users`** (nav: **Auth0 Users**) lists Auth0 tenant users in a Qu
   - `read:users` (user list)
   - **and** `read:roles` (per-user roles via `/users/{id}/roles`)  
     — Auth0 also accepts `read:role_members` as an alternative to the pair above
-- Credentials: `Auth0M2M:Domain`, `Auth0M2M:ClientId`, `Auth0M2M:ClientSecret`  
-  (see `SECRETS-QUICK-REF.md` — separate from login `auth0:*` settings)
-- After changing M2M scopes, **restart Admin** so the cached access token is refreshed
+- Credentials (see `SECRETS-QUICK-REF.md` — separate from login `auth0:*` settings):
+  - Local: `Auth0M2M:Domain`, `Auth0M2M:ClientId`, `Auth0M2M:ClientSecret`
+  - Azure Linux App Service: `Auth0M2M__Domain`, `Auth0M2M__ClientId`, `Auth0M2M__ClientSecret`
+- `Domain` = canonical tenant host (`your-tenant.us.auth0.com`), not a custom domain
+- After changing M2M scopes or App Settings, **restart Admin** so the cached access token is refreshed
+- Prod `401 access_denied` on `/oauth/token`: re-copy M2M Client Id/Secret from Auth0 (not the Regular Web App), trim spaces, confirm `__` setting names, restart
 - Note: Auth0 returns a JSON **array** unless `include_totals=true` (object with `users`). The page requests totals and also accepts either shape.
 - If role scopes are missing, the grid still loads users; the Roles column stays empty and a warning is logged
 
