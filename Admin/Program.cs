@@ -11,6 +11,8 @@ using Admin.Features.Sukkot.Notes.Data;
 using Admin.Features.Sukkot.Reports.Data;
 
 using Admin.Features.WeeklyDownloads.Data;
+using Admin.Features.Users.Data;
+using UsersSettings = Admin.Features.Users.Settings;
 
 using Admin.Security;
 using Admin.SecurityRoot;  // Added for ServiceCollectionExtensions
@@ -116,6 +118,10 @@ try
 
 	builder.Services.AddSpecialEvents();
 	builder.Services.AddWeeklyDownloads();
+
+	builder.Services.Configure<UsersSettings.Auth0M2M>(
+		builder.Configuration.GetSection(UsersSettings.Auth0M2M.Section));
+	builder.Services.AddUsersFeature();
 
 	var app = builder.Build();
 	app.MapDefaultEndpoints();

@@ -65,6 +65,28 @@ dotnet user-secrets set "AzureBlob:ConnectionString" "YOUR_STORAGE_CONNECTION_ST
 - Not secret: container `sukkot-content`, blob path `sukkot/scheduled-events.md`, metadata key `lastrevised`
 - Placeholders may appear in `appsettings*.json`; real values go in user-secrets or Azure app settings
 
+## Auth0 Management API (Admin Auth0 Users page)
+
+Read-only user directory (`/Users`) uses a **dedicated M2M** app — not the Regular Web App login client (`auth0:ClientId` / `auth0:ClientSecret`).
+
+Auth0 dashboard (once):
+
+1. Create a Machine to Machine application (e.g. `LivingMessiah-Admin-Management-Readonly`)
+2. Authorize it for **Auth0 Management API**
+3. Enable scopes: `read:users` **and** `read:roles` (needed for `/users/{id}/roles`; Auth0 may also accept `read:role_members`)
+
+```powershell
+# Admin (user-secrets)
+cd Admin
+dotnet user-secrets set "Auth0M2M:Domain" "YOUR_TENANT.auth0.com"
+dotnet user-secrets set "Auth0M2M:ClientId" "YOUR_M2M_CLIENT_ID"
+dotnet user-secrets set "Auth0M2M:ClientSecret" "YOUR_M2M_CLIENT_SECRET"
+```
+
+- Config keys: `Auth0M2M:Domain`, `Auth0M2M:ClientId`, `Auth0M2M:ClientSecret`
+- Production: same key names as Azure App Settings on the Admin app
+- See also: `docs/Admin-Auth0-Users.md`
+
 ## Remember
 
 - ✅ PWA (Blazor WASM) = NO SECRETS (runs in browser)

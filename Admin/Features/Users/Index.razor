@@ -1,0 +1,19 @@
+@page "/Users"
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using PageNav = Admin.Enums.Nav
+@using RoleEnum = Admin.Security.Enums.Role
+
+<PageHeader PageEnum="PageNav.Users" />
+
+<AuthorizeView Policy="@RoleEnum.Admin.Name">
+	<Authorized>
+		<QuickGrid />
+	</Authorized>
+	<NotAuthorized>
+		<div class="alert alert-warning text-end" role="alert">
+			<small>Not Authorized; Policy: @RoleEnum.Admin.Name</small>
+		</div>
+		<LoginRedirectCard ReturnTitle="@PageNav.Users.Title" ReturnUrl="@PageNav.Users.Index" />
+	</NotAuthorized>
+</AuthorizeView>

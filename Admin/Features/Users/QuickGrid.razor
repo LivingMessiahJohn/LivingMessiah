@@ -1,0 +1,91 @@
+@using Admin.Features.Users.Data
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+@inject ILogger<QuickGrid>? Logger
+@inject IToastService? Toast
+@inject IAuth0UserDirectory Directory
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+	<small class="text-muted">
+		@if (items is not null)
+		{
+			<span>@FilteredItems.Count() of @items.Count user(s)</span>
+		}
+		<span class="ms-2">Read-only · last 20 by last login</span>
+	</small>
+	<button type="button" class="btn btn-sm btn-outline-secondary" @onclick="ReloadAsync" disabled="@IsBusy">
+		<i class="fas fa-sync-alt"></i> Refresh
+	</button>
+</div>
+
+<LoadingComponent IsLoading="items is null" TurnSpinnerOff="TurnSpinnerOff" LoadingText="Loading Auth0 users">
+	@if (items is not null)
+	{
+		<div class="table-responsive">
+			<QuickGrid Items="FilteredItems" TGridItem="UserListItem" Class="table table-striped table-hover">
+				<PropertyColumn Property="@(u => u.EmailOrEmpty)" Title="Email" Sortable="true">
+					<ColumnOptions>
+						<div class="search-box">
+							<input type="search" autofocus @bind="filterText" @bind:event="oninput" placeholder="filter email or name" />
+						</div>
+					</ColumnOptions>
+				</PropertyColumn>
+				<PropertyColumn Property="@(u => u.NameOrEmpty)" Title="Name" Sortable="true" />
+				<PropertyColumn Property="@(u => u.EmailVerifiedDisplay)" Title="Verified" Sortable="true" Align="Align.Center" />
+				<PropertyColumn Property="@(u => u.Roles)" Title="Roles" Sortable="true" />
+				<PropertyColumn Property="@(u => u.LastLogin)" Title="Last Login" Format="g" Sortable="true" IsDefaultSortColumn="true" InitialSortDirection="SortDirection.Descending" />
+				<PropertyColumn Property="@(u => u.LoginsCount)" Title="Logins" Sortable="true" Align="Align.Center" />
+				<PropertyColumn Property="@(u => u.CreatedAt)" Title="Created" Format="d" Sortable="true" />
+				<PropertyColumn Property="@(u => u.BlockedDisplay)" Title="Status" Sortable="true" />
+				<PropertyColumn Property="@(u => u.UserId)" Title="User Id" Sortable="true" />
+			</QuickGrid>
+		</div>
+	}
+</LoadingComponent>
+
+@code {
+	private string filterText = string.Empty;
+	private bool TurnSpinnerOff;
+	private bool IsBusy;
+	private List<UserListItem>? items;
+
+	private IQueryable<UserListItem> FilteredItems =>
+		(items ?? [])
+			.AsQueryable()
+			.Where(u =>
+				string.IsNullOrWhiteSpace(filterText) ||
+				u.EmailOrEmpty.Contains(filterText, StringComparison.CurrentCultureIgnoreCase) ||
+				u.NameOrEmpty.Contains(filterText, StringComparison.CurrentCultureIgnoreCase) ||
+				u.Roles.Contains(filterText, StringComparison.CurrentCultureIgnoreCase));
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadAsync();
+	}
+
+	private async Task ReloadAsync() => await LoadAsync();
+
+	private async Task LoadAsync()
+	{
+		Logger!.LogDebug("{Method}", nameof(LoadAsync));
+		IsBusy = true;
+		TurnSpinnerOff = false;
+		items = null;
+
+		try
+		{
+			items = (await Directory.GetUsersAsync()).ToList();
+		}
+		catch (Exception ex)
+		{
+			Logger!.LogError(ex, "{Method}", nameof(LoadAsync));
+			Toast!.ShowError($"{Global.ToastShowError} | {nameof(LoadAsync)}: {ex.Message}");
+			items = [];
+		}
+		finally
+		{
+			TurnSpinnerOff = true;
+			IsBusy = false;
+		}
+	}
+}

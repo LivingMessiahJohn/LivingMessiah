@@ -22,6 +22,7 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int WeeklyDownload = 6;
 		internal const int SpecialEvents = 7;
 		internal const int KeyDates = 8;
+		internal const int Users = 15;
 		internal const int Alerts = 9;
 		internal const int HealthChecks = 10;
 		internal const int Profile = 11;
@@ -40,6 +41,7 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav WeeklyDownload = new WeeklyDownloadSE();
 	public static readonly Nav SpecialEvents = new SpecialEventsSE();
 	public static readonly Nav KeyDates = new KeyDatesSE();
+	public static readonly Nav Users = new UsersSE();
 	public static readonly Nav Alerts = new AlertsSE();
 	public static readonly Nav HealthChecks = new HealthChecksSE();
 	public static readonly Nav Profile = new ProfileSE();
@@ -157,6 +159,17 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int RequiredRoles => RoleEnum.KeyDates.Value | RoleEnum.Admin.Value;
 	}
 
+	private sealed class UsersSE : Nav
+	{
+		public UsersSE() : base($"{nameof(Id.Users)}", Id.Users) { }
+		public override string Index => "/Users";
+		public override string Title => "Auth0 Users";
+		public override string Icon => "fas fa-users";
+		public override int Parent => Home.Value;
+		public override int Sort => 5;
+		public override int RequiredRoles => RoleEnum.Admin.Value;
+	}
+
 	private sealed class AlertsSE : Nav
 	{
 		public AlertsSE() : base($"{nameof(Id.Alerts)}", Id.Alerts) { }
@@ -164,7 +177,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Title => "Logs and Alerts";
 		public override string Icon => "fas fa-bell";
 		public override int Parent => Home.Value;
-		public override int Sort => 5;
+		public override int Sort => 6;
 		public override int RequiredRoles => RoleEnum.Admin.Value;
 	}
 
@@ -175,7 +188,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Title => "Health Checks";
 		public override string Icon => "fas fa-heartbeat";
 		public override int Parent => Home.Value;
-		public override int Sort => 6;
+		public override int Sort => 7;
 		public override int RequiredRoles => RoleEnum.Admin.Value;
 	}
 
