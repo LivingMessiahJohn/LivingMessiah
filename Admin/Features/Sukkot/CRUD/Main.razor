@@ -55,7 +55,9 @@ else
 	{
 		<div class="card mt-0 mb-3 @StepEnums.Registration.CardBodyCSS">
 			<div class="card-body @StepEnums.Registration.CardBodyCSS">
-				<Form Email="@Email" Id="@Id" CurrentStep="StepEnums.Registration" />
+				<Form Email="@Email" Id="@Id" CurrentStep="StepEnums.Registration"
+							OnActionCompleted="RefreshRegistrationList"
+							OnActionShowRegistrationList="ReturnedShowList" />
 			</div>
 		</div>
 	}

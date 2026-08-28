@@ -15,6 +15,8 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 		internal const int DailySchedule = 4;
 		internal const int AddAgreement = 5;
 		internal const int AgreementVerbiage = 6;
+		internal const int AddRegistration = 7;
+		internal const int EditRegistration = 8;
 
 	}
 	#endregion
@@ -28,6 +30,8 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 	public static readonly MenuBar DailySchedule = new DailyScheduleSE();
 	public static readonly MenuBar AddAgreement = new AddAgreementSE();
 	public static readonly MenuBar AgreementVerbiage = new AgreementVerbiageSE();
+	public static readonly MenuBar AddRegistration = new AddRegistrationSE();
+	public static readonly MenuBar EditRegistration = new EditRegistrationSE();
 	// SE=SmartEnum
 	#endregion
 
@@ -94,6 +98,24 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 		public override string Title => "Legal Agreement Verbiage";
 		public override string Icon => "fas fa-balance-scale";   // "fas fa-handshake" "far fa-handshake"
 		public override string Css => "badge bg-secondary";
+	}
+
+	private sealed class AddRegistrationSE : MenuBar
+	{
+		public AddRegistrationSE() : base($"{nameof(Id.AddRegistration)}", Id.AddRegistration) { }
+		public override string Index => "";
+		public override string Title => "Add Registration";
+		public override string Icon => "fas fa-plus";
+		public override string Css => "badge bg-success text-white";
+	}
+
+	private sealed class EditRegistrationSE : MenuBar
+	{
+		public EditRegistrationSE() : base($"{nameof(Id.EditRegistration)}", Id.EditRegistration) { }
+		public override string Index => "";
+		public override string Title => "Edit Registration";
+		public override string Icon => "fas fa-pencil-alt";
+		public override string Css => "badge bg-primary text-white";
 	}
 
 	#endregion

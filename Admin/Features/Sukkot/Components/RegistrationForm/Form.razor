@@ -1,6 +1,8 @@
 ﻿@using Blazored.FluentValidation
+@using Admin.Features.Sukkot.CRUD
 @using Admin.Features.Sukkot.CRUD.Data
 @using Admin.Features.Sukkot.CRUD.RegistrationDetail
+@using MenuBarEnums = Admin.Features.Sukkot.Enums.MenuBar
 
 @using StepEnums = RCL.Features.Sukkot.Enums.Step
 @using DateRangeTypeEnums = RCL.Features.Sukkot.Enums.DateRangeType
@@ -12,8 +14,11 @@
 
 @* Hack: I'm using LoadingComponent because AddOrEditState (a record) can't be null  *@
 
+<CRUDHeader MenuBar="@(Id == 0 ? MenuBarEnums.AddRegistration : MenuBarEnums.EditRegistration)"
+            Subtitle="@Email"
+            OnActionShowRegistrationList="ReturnedShowRegistrationList" />
+
 <LoadingComponent IsLoading="AddOrEditState == null" TurnSpinnerOff=TurnSpinnerOff>
-  <h4>@AddOrEditState!.Title <span class="float-end"><sup><i>@AddOrEditState!.Title2</i></sup></span></h4>
 
   <EditForm Model="@VM" OnValidSubmit="@SubmitValidForm">
     <FluentValidationValidator @ref="_fluentValidationValidator" DisableAssemblyScanning="@true" />
@@ -162,6 +167,19 @@
       </div>
     </fieldset>
 
+    <fieldset class="mt-3">
+      <legend class="text-warning">Admin Notes</legend>
+      <div class="row mt-n2">
+        <div class="col-12">
+          <div class="form-floating mb-3">
+            <InputTextArea id="adminNotes" class="form-control" @bind-Value="VM.AdminNotes" placeholder="Admin Notes" style="height:150px;" />
+            <label for="adminNotes" class="form-label"><small>Admin Notes</small></label>
+            <ValidationMessage For="@(() => VM.AdminNotes)" />
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
     <button type="submit" class="btn btn-primary btn-sm mt-2">
       <i class="fas fa-save"></i> @AddOrEditState!.SubmitButtonText
     </button>
@@ -175,6 +193,8 @@
   [Parameter, EditorRequired] public int Id { get; set; }
   [Parameter, EditorRequired] public string? Email { get; set; }
   [Parameter, EditorRequired] public StepEnums? CurrentStep { get; set; }
+  [Parameter, EditorRequired] public EventCallback OnActionCompleted { get; set; }
+  [Parameter, EditorRequired] public EventCallback OnActionShowRegistrationList { get; set; }
 
   protected VM? VM { get; set; } = new VM();
 
@@ -256,18 +276,26 @@
           Toast!.ShowError("Error creating registration");
           return;
         }
-        else
-        {
-          Logger!.LogInformation("{Method} Registration created! Id2:{id}", nameof(SubmitValidForm), Id2);
-          Toast!.ShowInfo($"Registration Added!");
-        }
+
+        Logger!.LogInformation("{Method} Registration created! Id2:{id}", nameof(SubmitValidForm), Id2);
+        Toast!.ShowInfo($"Registration Added!");
       }
       else
       {
         var (rowsAffected, sprocReturnValue, returnMsg) = await db!.UpdateRegistration(DTO_From_VM_To_DB(VM!));
+        if (sprocReturnValue != 0)
+        {
+          Logger!.LogWarning("{Method} {Message} {Sql} {ReturnValue} {ReturnMsg}"
+            , nameof(SubmitValidForm), "Registration NOT UPDATED!", nameof(db.UpdateRegistration), sprocReturnValue, returnMsg);
+          Toast!.ShowError(string.IsNullOrWhiteSpace(returnMsg) ? "Error updating registration" : returnMsg);
+          return;
+        }
+
         Logger!.LogInformation("{Method}; Registration updated!", nameof(SubmitValidForm));
         Toast!.ShowInfo($"Registration updated!");
       }
+
+      await OnActionCompleted.InvokeAsync();
     }
     catch (Exception ex)
     {
@@ -295,9 +323,15 @@
       AttendanceBitwise = SukkotEnumsHelpers.EntryFormHelper.GetDaysBitwise(
         vm.AttendanceDateList!, vm.AttendanceDateList2ndMonth!, DateRangeTypeEnums.Attendance),
       Notes = Admin.Data.Helper.Scrub(vm.Notes),
+      AdminNotes = vm.AdminNotes,
       Avatar = string.Empty
     };
     return poco;
+  }
+
+  private Task ReturnedShowRegistrationList()
+  {
+    return OnActionShowRegistrationList.InvokeAsync();
   }
 
 }

@@ -128,7 +128,7 @@ Id, FamilyName, FirstName, SpouseName, OtherNames
 , FeeEnumValue
 , StatusId AS StepId
 , AttendanceBitwise
-, Notes
+, Notes, AdminNotes
 --, Avatar
 FROM dbo.Registration
 WHERE Id = @Id";
@@ -161,7 +161,6 @@ WHERE Id = @Id";
 			formVM.StatusId, //	change to 	formVM.StepId, after updating stp
 			//LmmDonation = 0,
 			formVM.Notes,
-			//formVM.AdminNotes,
 			//formVM.DidNotAttend,
 			formVM.Avatar 	//Avatar = string.Empty
 		});
@@ -197,6 +196,10 @@ WHERE Id = @Id";
 			else
 			{
 				NewId = int.TryParse(x.ToString(), out NewId) ? NewId : 0;
+				if (NewId != 0)
+				{
+					await UpdateAdminNotes(connection, NewId, formVM.AdminNotes);
+				}
 				ReturnMsg = $"Registration created for {formVM.FamilyName}/{formVM.EMail}; NewId={NewId}";
 				Logger!.LogDebug("{Method} {Message}", nameof(CreateRegistration), ReturnMsg);
 			}
@@ -227,7 +230,6 @@ WHERE Id = @Id";
 			formVM.StatusId, //	change to 	formVM.StepId, after updating stp
 			formVM.Notes,
 			formVM.Avatar   //Avatar = string.Empty
-			//AdminNotes = Admin.Data.Helper.Scrub(formVM.AdminNotes),
 			//formVM.DidNotAttend,
 		});
 
@@ -243,9 +245,6 @@ WHERE Id = @Id";
 			Logger!.LogDebug("{Method} {Message}", nameof(UpdateRegistration), $"Id: {formVM.Id}; Email: {formVM.EMail}; about to execute SPROC: {Sql}");
 
 			Logger!.LogWarning($" Notes: {formVM.Notes}");
-			//Logger!.LogWarning($" AdminNotes: {formVM.AdminNotes}");
-			//Logger!.LogWarning($" DidNotAttend: {formVM.DidNotAttend}");
-
 
 			RowsAffected = await connection.ExecuteAsync(sql: Sql, param: Parms, commandType: CommandType.StoredProcedure);
 			SprocReturnValue = Parms.Get<int>("ReturnValue");
@@ -265,6 +264,7 @@ WHERE Id = @Id";
 			}
 			else
 			{
+				await UpdateAdminNotes(connection, formVM.Id, formVM.AdminNotes);
 				ReturnMsg = $"Registration updated for {formVM.FamilyName}/{formVM.EMail}";
 			}
 
@@ -309,6 +309,15 @@ WHERE Id = @Id";
 
 			return new Tuple<int, int, string>(RowsAffected, SprocReturnValue, ReturnMsg);
 		});
+	}
+
+	private static Task<int> UpdateAdminNotes(IDbConnection connection, int id, string? adminNotes)
+	{
+		return connection.ExecuteAsync(
+			@"UPDATE dbo.Registration
+SET AdminNotes = @AdminNotes
+WHERE Id = @Id",
+			new { Id = id, AdminNotes = adminNotes });
 	}
 
 	#endregion
