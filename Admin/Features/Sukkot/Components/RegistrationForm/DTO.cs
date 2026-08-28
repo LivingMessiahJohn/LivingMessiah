@@ -20,5 +20,6 @@ public record DTO
 	public int AttendanceBitwise { get; set; }
 
 	public string? Notes { get; set; }
+	public string? AdminNotes { get; set; }
 	public string? Avatar { get; set; }
 }

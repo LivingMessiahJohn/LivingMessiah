@@ -112,7 +112,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Icon => SukkotHomeTab.CRUD.Icon;
 		public override int Parent => Sukkot.Value;
 		public override int Sort => 2;
-		public override int RequiredRoles => RoleEnum.Sukkot.Value | RoleEnum.SukkotHost.Value;
+		public override int RequiredRoles => RoleEnum.Sukkot.Value | RoleEnum.SukkotHost.Value | RoleEnum.Admin.Value;
 	}
 
 	private sealed class SukkotScheduleSE : Nav

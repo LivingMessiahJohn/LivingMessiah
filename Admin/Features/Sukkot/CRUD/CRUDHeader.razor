@@ -7,6 +7,10 @@
 		<!-- Centered title takes remaining space -->
 		<div class="fs-3 text-center flex-grow-1">
 			<i class="@MenuBar.Icon"></i> @MenuBar.Title
+			@if (!string.IsNullOrWhiteSpace(Subtitle))
+			{
+				<sup class="ms-2"><i>@Subtitle</i></sup>
+			}
 		</div>
 
 		<button @onclick="@ButtonClicked"
@@ -19,8 +23,9 @@
 </div>
 
 @code {
-	[Parameter, EditorRequired] public MenuBarEnums MenuBar { get; set; } 
-	[Parameter, EditorRequired] public EventCallback OnActionShowRegistrationList { get; set; } //
+	[Parameter, EditorRequired] public MenuBarEnums MenuBar { get; set; }
+	[Parameter] public string? Subtitle { get; set; }
+	[Parameter, EditorRequired] public EventCallback OnActionShowRegistrationList { get; set; }
 
 	private void ButtonClicked()
 	{
