@@ -9,7 +9,8 @@ using Microsoft.Extensions.Options;
 namespace ShabbatPdf.Core.Pipeline;
 
 /// <summary>
-/// Orchestrates extract → anchors → teaching PDF slice → Markdown from teaching PDF → local/blob write.
+/// Orchestrates extract → anchors → teaching PDF slice → optional local Markdown.
+/// Blob mode writes the teaching-only PDF to the destination container with the same file name.
 /// </summary>
 public sealed class ParsePipeline : IParsePipeline
 {
@@ -99,54 +100,43 @@ public sealed class ParsePipeline : IParsePipeline
             }
 
             // Front-matter / MD names always use the agenda base (teaching suffix stripped by parser).
+            // Blob teaching PDF uses the same name in the destination container (no -teaching suffix).
             var agendaSourceName = nameMeta.SourceFileName;
             var mdBlobName = nameMeta.MarkdownFileName;
-            var teachingBlobName = nameMeta.TeachingPdfFileName;
+            var teachingBlobName = blobMode ? nameMeta.SourceFileName : nameMeta.TeachingPdfFileName;
             var localOutputPath = ResolveLocalOutputPath(request, nameMeta);
             var localTeachingPath = ResolveLocalTeachingPdfPath(request, nameMeta, localOutputPath);
             var destUriPreview = blobMode && _blobStore is not null
-                ? (request.TeachingOnly
-                    ? _blobStore.GetBlobUri(_blobOptions.SourceContainer, teachingBlobName)
-                    : _blobStore.GetBlobUri(_blobOptions.DestinationContainer, mdBlobName))
+                ? _blobStore.GetBlobUri(_blobOptions.DestinationContainer, teachingBlobName)
                 : (request.TeachingOnly ? localTeachingPath : localOutputPath);
 
             // Skip-if-exists early exit:
-            // - TeachingOnly: skip when teaching PDF already exists
-            // - Full run / FromTeaching: skip when Markdown destination already exists
+            // - Blob / TeachingOnly: skip when teaching PDF already exists
+            // - Local full run / FromTeaching: skip when Markdown destination already exists
             if (request.SkipIfDestinationExists)
             {
-                if (request.TeachingOnly)
+                if (blobMode && _blobStore is not null)
                 {
-                    if (blobMode && _blobStore is not null)
+                    if (await _blobStore.ExistsAsync(
+                            _blobOptions.DestinationContainer, teachingBlobName, ct).ConfigureAwait(false))
                     {
-                        if (await _blobStore.ExistsAsync(
-                                _blobOptions.SourceContainer, teachingBlobName, ct).ConfigureAwait(false))
-                        {
-                            var uri = _blobStore.GetBlobUri(_blobOptions.SourceContainer, teachingBlobName);
-                            _logger.LogInformation("Skip existing teaching blob: {Uri}", uri);
-                            return new ParseResult(
-                                true,
-                                "Skipped: teaching PDF already exists.",
-                                TeachingPdfUri: uri);
-                        }
+                        var uri = _blobStore.GetBlobUri(_blobOptions.DestinationContainer, teachingBlobName);
+                        _logger.LogInformation("Skip existing teaching blob: {Uri}", uri);
+                        return new ParseResult(
+                            true,
+                            "Skipped: teaching PDF already exists.",
+                            TeachingPdfUri: uri);
                     }
-                    else if (!string.IsNullOrWhiteSpace(localTeachingPath) && File.Exists(localTeachingPath))
+                }
+                else if (request.TeachingOnly)
+                {
+                    if (!string.IsNullOrWhiteSpace(localTeachingPath) && File.Exists(localTeachingPath))
                     {
                         _logger.LogInformation("Skip existing teaching PDF: {Path}", localTeachingPath);
                         return new ParseResult(
                             true,
                             "Skipped: teaching PDF already exists.",
                             TeachingPdfUri: localTeachingPath);
-                    }
-                }
-                else if (blobMode && _blobStore is not null)
-                {
-                    if (await _blobStore.ExistsAsync(
-                            _blobOptions.DestinationContainer, mdBlobName, ct).ConfigureAwait(false))
-                    {
-                        var uri = _blobStore.GetBlobUri(_blobOptions.DestinationContainer, mdBlobName);
-                        _logger.LogInformation("Skip existing blob: {Uri}", uri);
-                        return new ParseResult(true, "Skipped: destination already exists.", DestinationUri: uri);
                     }
                 }
                 else if (!string.IsNullOrWhiteSpace(localOutputPath) && File.Exists(localOutputPath))
@@ -158,7 +148,6 @@ public sealed class ParsePipeline : IParsePipeline
 
             if (blobMode
                 && request.EnsureDestinationContainer
-                && !request.TeachingOnly
                 && _blobStore is not null)
             {
                 _logger.LogInformation(
@@ -269,9 +258,9 @@ public sealed class ParsePipeline : IParsePipeline
             if (request.DryRun)
             {
                 string? dryMarkdown = null;
-                if (!request.TeachingOnly)
+                if (!request.TeachingOnly && !blobMode)
                 {
-                    // Preview MD from teaching bytes (same as production path).
+                    // Preview MD from teaching bytes (local path only).
                     dryMarkdown = BuildMarkdownFromTeachingBytes(teachingBytes, agendaSourceName);
                 }
 
@@ -309,7 +298,8 @@ public sealed class ParsePipeline : IParsePipeline
             // Prefer export bytes; when skip reused an existing file, load it for step 2.
             var teachingForMarkdown = teachingExport.Bytes ?? teachingBytes;
 
-            if (request.TeachingOnly)
+            // Blob mode publishes teaching PDF only (same name in destination container).
+            if (request.TeachingOnly || blobMode)
             {
                 _logger.LogInformation(
                     "OK teaching-only {Source} pages={Start}-{End} anchors={AStart}/{AEnd} introSkip={Intro} end={Method} teaching={Teaching}",
@@ -463,23 +453,18 @@ public sealed class ParsePipeline : IParsePipeline
             }
             else if (request.BlobMode)
             {
-                // Blob name may be agenda or teaching; prefer the teaching blob name from metadata.
-                var teachingBlobName = FilenameParser.Parse(sourceName).TeachingPdfFileName;
-                // If the operator passed the teaching name as SourceName, use it as-is.
-                var blobToDownload = FilenameParser.IsTeachingPdfName(sourceName)
-                    ? Path.GetFileName(sourceName)
-                    : teachingBlobName;
+                var blobToDownload = FilenameParser.Parse(sourceName).SourceFileName;
 
                 tempTeachingPath = CreateTempPdfPath(blobToDownload);
                 _logger.LogInformation(
                     "Downloading teaching {Container}/{Blob} for Markdown",
-                    _blobOptions.SourceContainer,
+                    _blobOptions.DestinationContainer,
                     blobToDownload);
 
                 try
                 {
                     await _blobStore!.DownloadToFileAsync(
-                        _blobOptions.SourceContainer,
+                        _blobOptions.DestinationContainer,
                         blobToDownload,
                         tempTeachingPath,
                         ct).ConfigureAwait(false);
@@ -660,7 +645,7 @@ public sealed class ParsePipeline : IParsePipeline
             try
             {
                 await _blobStore.DownloadToFileAsync(
-                    _blobOptions.SourceContainer,
+                    _blobOptions.DestinationContainer,
                     teachingBlobName,
                     temp,
                     ct).ConfigureAwait(false);
@@ -784,15 +769,15 @@ public sealed class ParsePipeline : IParsePipeline
         var start = anchors.ContentStartPage;
         var end = anchors.ContentEndPage;
 
-        // Skip existing teaching artifact only (MD may still be written from that file).
+        // Skip existing teaching artifact only (local MD may still be written from that file).
         if (request.SkipIfDestinationExists)
         {
             if (blobMode && _blobStore is not null)
             {
                 if (await _blobStore.ExistsAsync(
-                        _blobOptions.SourceContainer, teachingBlobName, ct).ConfigureAwait(false))
+                        _blobOptions.DestinationContainer, teachingBlobName, ct).ConfigureAwait(false))
                 {
-                    var uri = _blobStore.GetBlobUri(_blobOptions.SourceContainer, teachingBlobName);
+                    var uri = _blobStore.GetBlobUri(_blobOptions.DestinationContainer, teachingBlobName);
                     _logger.LogInformation("Skip existing teaching blob: {Uri}", uri);
                     return TeachingExportResult.Skipped(uri);
                 }
@@ -831,13 +816,13 @@ public sealed class ParsePipeline : IParsePipeline
                 localTeachingPath);
         }
 
-        // Azure: upload to source container (same as full agenda)
+        // Azure: teaching PDF → destination container, same file name as the agenda.
         if (blobMode && _blobStore is not null)
         {
             try
             {
                 await _blobStore.UploadBinaryAsync(
-                        _blobOptions.SourceContainer,
+                        _blobOptions.DestinationContainer,
                         teachingBlobName,
                         teachingBytes,
                         contentType: "application/pdf",
@@ -856,7 +841,7 @@ public sealed class ParsePipeline : IParsePipeline
                 return TeachingExportResult.Fail(ParseErrorCodes.UploadFailed, ex.Message);
             }
 
-            teachingUri = _blobStore.GetBlobUri(_blobOptions.SourceContainer, teachingBlobName);
+            teachingUri = _blobStore.GetBlobUri(_blobOptions.DestinationContainer, teachingBlobName);
             _logger.LogInformation(
                 "Uploaded teaching PDF pages={Start}-{End} -> {Uri}",
                 start,

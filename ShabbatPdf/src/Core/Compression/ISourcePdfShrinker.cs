@@ -1,17 +1,20 @@
 namespace ShabbatPdf.Core.Compression;
 
 /// <summary>
-/// Ensures a full-agenda PDF in blob storage is under the mobile download size limit.
-/// Oversized blobs are compressed and overwritten in place.
+/// Publishes a staging agenda PDF into the public service container, compressing when oversized.
 /// </summary>
 public interface ISourcePdfShrinker
 {
     /// <summary>
-    /// If the blob is larger than <c>PdfCompress:MaxBytes</c>, download → compress → upload overwrite.
-    /// Idempotent for already-small blobs (re-entry after overwrite is a no-op).
+    /// Copy <paramref name="blobName"/> from <paramref name="sourceContainer"/> (staging)
+    /// to <paramref name="destinationContainer"/> (shabbat-service).
+    /// If the blob is larger than <c>PdfCompress:MaxBytes</c>, Ghostscript compresses first.
+    /// Staging is never overwritten. Already-small files are copied as-is so the extract
+    /// function still sees a BlobCreated event on the service container.
     /// </summary>
-    Task<SourcePdfShrinkResult> EnsureUnderMaxSizeAsync(
-        string container,
+    Task<SourcePdfShrinkResult> PublishAsync(
+        string sourceContainer,
+        string destinationContainer,
         string blobName,
         CancellationToken cancellationToken = default);
 }

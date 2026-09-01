@@ -7,6 +7,7 @@
     "Blob": "<same-storage-connection-string-as-CLI>",
     "Blob__ConnectionString": "<same-storage-connection-string-as-CLI>",
     "Blob__ServiceUri": "https://livingmessiahstorage.blob.core.windows.net",
+    "Blob__StagingContainer": "shabbat-service-staging",
     "Blob__SourceContainer": "shabbat-service",
     "Blob__DestinationContainer": "shabbat-service-md",
     "Blob__UseDefaultAzureCredential": "false",

@@ -2,14 +2,15 @@ namespace ShabbatPdf.Core.Options;
 
 /// <summary>
 /// PDF size limits and Ghostscript settings. Binds from configuration section "PdfCompress".
-/// Used by the Azure Function to shrink oversized weekly service PDFs before parse/export.
+/// Used by the compress Function to publish staging PDFs into <c>shabbat-service</c>.
 /// </summary>
 public sealed class PdfCompressOptions
 {
     public const string SectionName = "PdfCompress";
 
     /// <summary>
-    /// When false, the shrink step is skipped entirely.
+    /// When false, Ghostscript is skipped and the staging blob is copied uncompressed
+    /// into the service container.
     /// </summary>
     public bool Enabled { get; set; } = true;
 

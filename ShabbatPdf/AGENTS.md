@@ -1,6 +1,7 @@
-• Role: parse Shabbat agenda PDFs → teaching PDF + private MD
-• Hosts: Cli (manual/batch), Functions (prod blob trigger)
-• Never merge into Api/
-• Skip *-teaching.pdf on triggers
-• No committed connection strings
-• Prefer dotnet test + CLI dry-run before deploy
+- Role: parse Shabbat agenda PDFs → compressed full PDF + teaching-only PDF
+- Flow: Admin → `shabbat-service-staging` → compress to `shabbat-service` → teaching slice to `shabbat-service-md` (same file name)
+- Hosts: Cli (manual/batch), Functions (`CompressStagingPdf`, `ProcessShabbatPdf`)
+- Never merge into Api/
+- Skip `*-teaching.pdf` on service-container triggers (legacy names)
+- No committed connection strings
+- Prefer dotnet test + CLI dry-run before deploy

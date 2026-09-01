@@ -14,8 +14,9 @@ public sealed record FilenameParseResult(
     public string MarkdownFileName => BaseNameWithoutExtension + ".md";
 
     /// <summary>
-    /// Teaching-only PDF name: same base with <c>-teaching</c> before the extension
-    /// (e.g. <c>2026-07-04-Lev-16-teaching.pdf</c>).
+    /// Local teaching-only PDF name: same base with <c>-teaching</c> before the extension
+    /// so it does not overwrite the full agenda file in the same folder.
+    /// Blob mode uses <see cref="SourceFileName"/> in the destination container instead.
     /// </summary>
     public string TeachingPdfFileName => BaseNameWithoutExtension + "-teaching.pdf";
 }

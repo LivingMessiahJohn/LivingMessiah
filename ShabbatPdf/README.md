@@ -1,12 +1,13 @@
 # LMM Parse PDF
 
-Parses Living Messiah Shabbat service agenda PDFs and saves the teaching block as Markdown.
+Parses Living Messiah Shabbat service agenda PDFs: compress the full service PDF, then save a teaching-only PDF.
 
 | | |
 |---|---|
-| **Source** | Local PDF or Azure `shabbat-service` (`YYYY-MM-DD-Citation.pdf`) |
-| **Destination** | Local `.md` or private Azure `shabbat-service-md` |
-| **Stack** | .NET 8, Core + Console CLI + optional Azure Function |
+| **Staging** | Admin uploads to Azure `shabbat-service-staging` (`YYYY-MM-DD-Citation.pdf`) |
+| **Service** | Compressed full agenda in `shabbat-service` (same name) |
+| **Teaching** | Teaching-only PDF in `shabbat-service-md` (same name) |
+| **Stack** | .NET 8, Core + Console CLI + Azure Functions |
 
 ## Status
 
@@ -17,11 +18,11 @@ Parses Living Messiah Shabbat service agenda PDFs and saves the teaching block a
 | Anchors + intro skip | Done |
 | Markdown builder | Done |
 | CLI local mode | Done |
-| **Azure blob I/O** | **Done** (`--blob`, temp download, MD upload) |
-| **Teaching PDF slice** | **Done** (`*-teaching.pdf` next to `.md` / in `shabbat-service`) |
-| **Azure Function Event Grid** | **Done** (Flex; `ProcessShabbatPdf`) |
-| **Markdown from teaching PDF** | **Done** (step 2 uses teaching PDF pages 1…N; `--from-teaching` optional) |
-| **Shrink oversized service PDF** | **Done** (Function only; Ghostscript `/ebook`; target &lt; 65 MB) |
+| **Azure blob I/O** | **Done** (`--blob` extracts teaching PDF) |
+| **Teaching PDF slice** | **Done** (local `*-teaching.pdf`; Azure same name in `shabbat-service-md`) |
+| **Azure Function Event Grid** | **Done** (`CompressStagingPdf` + `ProcessShabbatPdf`) |
+| **Markdown from teaching PDF** | Local CLI `--output` only (not the Azure path) |
+| **Shrink oversized service PDF** | **Done** (`CompressStagingPdf`; Ghostscript `/ebook`; target &lt; 65 MB) |
 
 See [docs/design-lmm-parse-pdf.md](docs/design-lmm-parse-pdf.md) for the full design.
 
@@ -34,15 +35,23 @@ dotnet test LivingMessiah.sln
 
 ## Configure Azure (one-time)
 
-### 1. Create private destination container
+### 1. Create staging and teaching containers
 
 ```bash
+az storage container create \
+  --name shabbat-service-staging \
+  --account-name livingmessiahstorage \
+  --auth-mode login \
+  --public-access off
+
 az storage container create \
   --name shabbat-service-md \
   --account-name livingmessiahstorage \
   --auth-mode login \
   --public-access off
 ```
+
+`shabbat-service` already exists (public Current Service downloads). Admin Weekly Downloads must upload to **`shabbat-service-staging`** (`AzureBlob:WeeklyDownloadContainer`).
 
 ### 2. Store the connection string (do not commit secrets)
 
@@ -67,12 +76,14 @@ Or set environment variable: `Blob__ConnectionString`
   --output ".\out\2026-08-08-Lev-22-and-23.md"
 ```
 
-### Azure blob → Azure Markdown
+### Azure compressed agenda → teaching PDF in `shabbat-service-md`
 
 ```powershell
 dotnet run --project ShabbatPdf\src\Cli -- `
   --blob "2026-08-08-Lev-22-and-23.pdf"
 ```
+
+Reads `shabbat-service/2026-08-08-Lev-22-and-23.pdf` and writes the teaching-only PDF to `shabbat-service-md/2026-08-08-Lev-22-and-23.pdf` (same name).
 
 ### Batch teaching PDFs for all agendas
 
@@ -85,7 +96,7 @@ One-time (or rare) backfill of `*-teaching.pdf` only — **no Markdown**. Uses t
 # First 5 (smoke)
 .\scripts\batch-blob-parse.ps1 -MaxCount 5
 
-# Full container → uploads *-teaching.pdf to shabbat-service only
+# Full container → uploads same-name teaching PDFs to shabbat-service-md only
 .\scripts\batch-blob-parse.ps1
 ```
 
@@ -98,15 +109,15 @@ dotnet run --project ShabbatPdf\src\Cli -- `
 
 Logs go under `out\batch-blob-parse-*.log`. See the script header for more parameters.
 
-Downloads the PDF to a **temp file** (handles large agendas), then:
+Production chain (Azure Functions):
 
-1. **Step 1:** Anchors on the full agenda → upload **teaching-only PDF** to the **source** container:  
-   `…/shabbat-service/2026-08-08-Lev-22-and-23-teaching.pdf`
-2. **Step 2:** Extract text from that **teaching PDF** (pages 1…N) → upload Markdown to the **destination** container:  
-   `…/shabbat-service-md/2026-08-08-Lev-22-and-23.md`  
-   with content-type `text/markdown; charset=utf-8`.
+1. Admin uploads the full agenda to **`shabbat-service-staging`**.
+2. **`CompressStagingPdf`:** if over 65 MB, Ghostscript `/ebook`; always publish the (possibly compressed) file to **`shabbat-service`** with the **same name**. Staging is not overwritten.
+3. **`ProcessShabbatPdf`:** slice teaching pages → **`shabbat-service-md/{same-name}.pdf`**.
 
-Local mode also writes `*-teaching.pdf` in the same folder as the `.md`.
+Local CLI still writes `*-teaching.pdf` next to the input (so it does not overwrite the agenda file). Azure uses the same name in a different container.
+
+PWA Teaching Only buttons still look for `shabbat-service/*-teaching.pdf` until a follow-up retargets them.
 
 ### Flags
 
@@ -114,13 +125,13 @@ Local mode also writes `*-teaching.pdf` in the same folder as the `.md`.
 |------|---------|
 | `--input` / `-i` | Local PDF path |
 | `--output` / `-o` | Local Markdown path (local mode) |
-| `--blob` / `-b` | Source blob name in `shabbat-service` |
+| `--blob` / `-b` | Compressed agenda name in `shabbat-service` |
 | `--dry-run` | Parse only; no write/upload |
 | `--skip-existing` | Skip if destination already exists |
 | `--ensure-container` | Create `shabbat-service-md` if missing |
 | `--allow-nonstandard-name` | Allow non `YYYY-MM-DD-…` names in blob mode |
-| `--teaching-only` | Export `*-teaching.pdf` only; do not build or write Markdown |
-| `--from-teaching` | Input is already `*-teaching.pdf`; Markdown only (no anchors/slice) |
+| `--teaching-only` | Local: write `*-teaching.pdf` only. Blob mode already does this. |
+| `--from-teaching` | Local: input is already a teaching PDF; Markdown only (no anchors/slice) |
 
 Exactly one of `--input` or `--blob` is required.
 
@@ -150,15 +161,15 @@ Exactly one of `--input` or `--blob` is required.
 
 ## Azure Function (optional)
 
-Thin isolated worker that runs when a full agenda PDF is uploaded to `shabbat-service`.
+Two isolated-worker functions on Flex. Event Grid is required (classic blob triggers are not supported).
 
-| | |
-|---|---|
-| Project | `src/Functions` (`ShabbatPdf.Functions`) |
-| Trigger | Event Grid `BlobCreated` on `shabbat-service` → `ProcessShabbatPdf` |
-| Skips | Non-PDF and `*-teaching.pdf` (avoids re-entry when teaching is written back) |
-| Work | Event Grid → **shrink if &gt; 65 MB** (Ghostscript) → download agenda → slice teaching PDF → Markdown from teaching PDF |
-| Outputs | Overwrites source PDF when compressed; `*-teaching.pdf` in source container + `*.md` in `shabbat-service-md` |
+| | Compress | Extract |
+|---|---|---|
+| Function | `CompressStagingPdf` | `ProcessShabbatPdf` |
+| Trigger | Event Grid `BlobCreated` on `shabbat-service-staging` | Event Grid `BlobCreated` on `shabbat-service` |
+| Skips | Non-PDF and `*-teaching.pdf` | Non-PDF and `*-teaching.pdf` (legacy names in the service container) |
+| Work | If &gt; 65 MB, Ghostscript `/ebook`; always publish to `shabbat-service` (copy if already small) | Anchors + teaching page slice |
+| Outputs | Same name in `shabbat-service` | Same name teaching PDF in `shabbat-service-md` |
 
 ### PDF size limit (issue #50)
 
@@ -166,10 +177,10 @@ Weekly service decks can be 150–250+ MB (image-heavy). Mobile download needs t
 
 | | |
 |---|---|
-| **Where** | Azure Function only (`ProcessShabbatPdf`) — not the CLI |
+| **Where** | `CompressStagingPdf` only — not the CLI |
 | **Engine** | [Ghostscript](https://www.ghostscript.com/) `pdfwrite` with `-dPDFSETTINGS=/ebook` |
 | **License** | Ghostscript is **AGPL v3** (or Artifex commercial). Confirm that is acceptable for your deployment before enabling in production. |
-| **Behavior** | If blob size ≤ `PdfCompress:MaxBytes` (default 65 MiB), skip. If larger: download → compress → **overwrite the same blob** → then run teaching + Markdown. Re-entry after overwrite sees a small file and skips compress. |
+| **Behavior** | Read staging. If blob size ≤ `PdfCompress:MaxBytes` (default 65 MiB), **copy** to `shabbat-service`. If larger: compress then **write to `shabbat-service`**. Staging is never overwritten. That write triggers extract. |
 | **Local** | Install Ghostscript so `gswin64c` is on PATH, or set `PdfCompress__GhostscriptPath` |
 | **Azure Flex** | Flex is Linux and does not ship Ghostscript. Mount a Linux `gs` binary (Azure Files OS mount is supported on Flex) and set `PdfCompress__GhostscriptPath` to that path. Raise function timeout if needed (250 MB decks can take 1–3 minutes). |
 
@@ -186,8 +197,8 @@ App settings (examples):
 Smoke-test log lines to look for (Aspire / Application Insights):
 
 ```text
-Shrink {Name}: compressed=True original=261.9 MB final=29.4 MB
-OK {Name} teaching=… md=… sourceBytes=29.4 MB
+Published {Name}: compressed=True copied=False original=261.9 MB final=29.4 MB
+OK {Name} teaching=… pages=…
 ```
 
 ### Local settings
@@ -231,18 +242,21 @@ Redeploy after code changes:
 1. Prefer **Flex Consumption** or **Premium** (agendas can be tens of MB).  
 2. App settings already configured on `lmm-shabbat-pdf` (connection string style for trigger + uploads):
    - `Blob` / `Blob__ConnectionString` → storage connection string  
+   - `Blob__StagingContainer` = `shabbat-service-staging`  
    - `Blob__SourceContainer` = `shabbat-service`  
    - `Blob__DestinationContainer` = `shabbat-service-md`  
 3. Later hardening: switch to Managed Identity (`Blob__UseDefaultAzureCredential=true` + RBAC) and remove keys from app settings.  
 4. CLI remains fully supported for manual / batch runs.  
-5. Smoke-test: upload a full agenda PDF to `shabbat-service` (not `*-teaching.pdf`), then confirm `*-teaching.pdf` and `.md` appear.
+5. Smoke-test: upload a full agenda PDF to `shabbat-service-staging`, then confirm the same name in `shabbat-service` (compressed if it was large) and a teaching-only PDF of the same name in `shabbat-service-md`.
+6. After deploying the new `CompressStagingPdf` function, run `.\scripts\setup-function-eventgrid.ps1` so staging has an Event Grid subscription.
 
 ## Operator checklist (first Azure success)
 
-1. Create **private** `shabbat-service-md`  
-2. Set `Blob:ConnectionString` (read source + write destination)  
-3. Run `--blob 2026-07-04-Lev-16.pdf` (or your weekly file)  
-4. Confirm MD blob exists, content-type, and page range in front matter  
+1. Create **private** `shabbat-service-staging` (and `shabbat-service-md` if missing)  
+2. Set Admin `AzureBlob:WeeklyDownloadContainer` = `shabbat-service-staging`  
+3. Set Function `Blob:ConnectionString` (read staging + write service + teaching)  
+4. Upload a weekly PDF in Admin, or `--blob` against an existing `shabbat-service` file  
+5. Confirm same-name blobs in `shabbat-service` and `shabbat-service-md`  
 
 ## Extract rules
 

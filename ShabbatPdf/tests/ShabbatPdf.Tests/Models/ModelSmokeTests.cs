@@ -92,6 +92,7 @@ public class ModelSmokeTests
     {
         var options = new BlobOptions();
 
+        Assert.Equal("shabbat-service-staging", options.StagingContainer);
         Assert.Equal("shabbat-service", options.SourceContainer);
         Assert.Equal("shabbat-service-md", options.DestinationContainer);
         Assert.False(options.UseDefaultAzureCredential);
