@@ -18,7 +18,7 @@ public class ParsePipelineBlobTests
     private const string PdfName = "2026-07-04-Lev-16.pdf";
 
     [Fact]
-    public async Task RunAsync_BlobMode_DownloadsTemp_UploadsMarkdown()
+    public async Task RunAsync_BlobMode_UploadsSameNameTeachingPdf_NotMarkdown()
     {
         var store = new InMemoryBlobStore();
         await store.EnsureContainerExistsAsync(SourceContainer);
@@ -34,32 +34,26 @@ public class ParsePipelineBlobTests
         Assert.True(result.Success, result.Message);
         Assert.NotNull(result.Anchors);
         Assert.Equal(3, result.Anchors!.ContentStartPage);
-        Assert.Contains("2026-07-04-Lev-16.md", result.DestinationUri);
-        Assert.True(store.Blobs.ContainsKey($"{DestContainer}/2026-07-04-Lev-16.md"));
+        Assert.Null(result.Markdown);
+        Assert.Contains($"{DestContainer}/{PdfName}", result.TeachingPdfUri);
+        Assert.True(store.Blobs.ContainsKey($"{DestContainer}/{PdfName}"));
+        Assert.False(store.Blobs.ContainsKey($"{DestContainer}/2026-07-04-Lev-16.md"));
+        Assert.False(store.Blobs.ContainsKey($"{SourceContainer}/2026-07-04-Lev-16-teaching.pdf"));
 
-        var md = System.Text.Encoding.UTF8.GetString(
-            store.Blobs[$"{DestContainer}/2026-07-04-Lev-16.md"]);
-        Assert.Contains("Jude 6 teaching text", md);
-        Assert.Contains("source_pdf: 2026-07-04-Lev-16.pdf", md);
-
-        // Teaching PDF uploaded to source container
-        var teachingKey = $"{SourceContainer}/2026-07-04-Lev-16-teaching.pdf";
-        Assert.True(store.Blobs.ContainsKey(teachingKey));
-        Assert.Contains("2026-07-04-Lev-16-teaching.pdf", result.TeachingPdfUri);
-        using var teachDoc = PdfDocument.Open(store.Blobs[teachingKey]);
+        using var teachDoc = PdfDocument.Open(store.Blobs[$"{DestContainer}/{PdfName}"]);
         Assert.Equal(1, teachDoc.NumberOfPages);
         Assert.Contains("Jude 6 teaching text", teachDoc.GetPage(1).Text);
     }
 
     [Fact]
-    public async Task RunAsync_BlobMode_SkipExisting_SkipsTeachingWhenPresent()
+    public async Task RunAsync_BlobMode_SkipExisting_DoesNotReuploadTeaching()
     {
         var store = new InMemoryBlobStore();
         await store.EnsureContainerExistsAsync(SourceContainer);
         await store.EnsureContainerExistsAsync(DestContainer);
         store.Seed(SourceContainer, PdfName, CreateAgendaPdf());
         var existingTeaching = CreateTeachingOnlyPdf("blob existing teaching");
-        store.Seed(SourceContainer, "2026-07-04-Lev-16-teaching.pdf", existingTeaching);
+        store.Seed(DestContainer, PdfName, existingTeaching);
 
         var pipeline = CreatePipeline(store);
         var result = await pipeline.RunAsync(new ParseRequest(
@@ -69,44 +63,9 @@ public class ParsePipelineBlobTests
             RequireStandardBlobName: true));
 
         Assert.True(result.Success, result.Message);
-        Assert.True(store.Blobs.ContainsKey($"{DestContainer}/2026-07-04-Lev-16.md"));
-        Assert.Equal(existingTeaching, store.Blobs[$"{SourceContainer}/2026-07-04-Lev-16-teaching.pdf"]);
-        Assert.Contains("2026-07-04-Lev-16-teaching.pdf", result.TeachingPdfUri);
-
-        var md = System.Text.Encoding.UTF8.GetString(
-            store.Blobs[$"{DestContainer}/2026-07-04-Lev-16.md"]);
-        Assert.Contains("blob existing teaching", md);
-        Assert.DoesNotContain("Jude 6 teaching text", md);
-    }
-
-    [Fact]
-    public async Task RunAsync_BlobMode_FromTeaching_UploadsMarkdownOnly()
-    {
-        var store = new InMemoryBlobStore();
-        await store.EnsureContainerExistsAsync(SourceContainer);
-        await store.EnsureContainerExistsAsync(DestContainer);
-        store.Seed(
-            SourceContainer,
-            "2026-07-04-Lev-16-teaching.pdf",
-            CreateTeachingOnlyPdf("from teaching blob body"));
-
-        var pipeline = CreatePipeline(store);
-        var result = await pipeline.RunAsync(new ParseRequest(
-            SourceName: "2026-07-04-Lev-16-teaching.pdf",
-            BlobMode: true,
-            FromTeaching: true,
-            RequireStandardBlobName: true));
-
-        Assert.True(result.Success, result.Message);
-        Assert.Null(result.Anchors);
-        Assert.Null(result.TeachingPdfUri);
-        Assert.Contains("2026-07-04-Lev-16.md", result.DestinationUri);
-
-        var md = System.Text.Encoding.UTF8.GetString(
-            store.Blobs[$"{DestContainer}/2026-07-04-Lev-16.md"]);
-        Assert.Contains("source_pdf: 2026-07-04-Lev-16.pdf", md);
-        Assert.Contains("from teaching blob body", md);
-        Assert.Contains("<!-- page 1 -->", md);
+        Assert.Equal(existingTeaching, store.Blobs[$"{DestContainer}/{PdfName}"]);
+        Assert.Contains($"{DestContainer}/{PdfName}", result.TeachingPdfUri);
+        Assert.False(store.Blobs.ContainsKey($"{DestContainer}/2026-07-04-Lev-16.md"));
     }
 
     [Fact]
@@ -114,7 +73,7 @@ public class ParsePipelineBlobTests
     {
         var store = new InMemoryBlobStore();
         await store.EnsureContainerExistsAsync(SourceContainer);
-        // destination container intentionally not created
+        await store.EnsureContainerExistsAsync(DestContainer);
         store.Seed(SourceContainer, PdfName, CreateAgendaPdf());
 
         var pipeline = CreatePipeline(store);
@@ -127,36 +86,10 @@ public class ParsePipelineBlobTests
         Assert.True(result.Success, result.Message);
         Assert.Null(result.Markdown);
         Assert.Null(result.DestinationUri);
-        Assert.Contains("2026-07-04-Lev-16-teaching.pdf", result.TeachingPdfUri);
-        Assert.True(store.Blobs.ContainsKey($"{SourceContainer}/2026-07-04-Lev-16-teaching.pdf"));
+        Assert.Contains($"{DestContainer}/{PdfName}", result.TeachingPdfUri);
+        Assert.True(store.Blobs.ContainsKey($"{DestContainer}/{PdfName}"));
         Assert.False(store.Blobs.ContainsKey($"{DestContainer}/2026-07-04-Lev-16.md"));
-
-        using var teachDoc = PdfDocument.Open(
-            store.Blobs[$"{SourceContainer}/2026-07-04-Lev-16-teaching.pdf"]);
-        Assert.Equal(1, teachDoc.NumberOfPages);
-        Assert.Contains("Jude 6 teaching text", teachDoc.GetPage(1).Text);
-    }
-
-    [Fact]
-    public async Task RunAsync_BlobMode_TeachingOnly_SkipExisting_DoesNotReupload()
-    {
-        var store = new InMemoryBlobStore();
-        await store.EnsureContainerExistsAsync(SourceContainer);
-        store.Seed(SourceContainer, PdfName, CreateAgendaPdf());
-        var stubTeaching = new byte[] { 0x25, 0x50, 0x44, 0x46, 0x2D, 0x73, 0x74, 0x75, 0x62 };
-        store.Seed(SourceContainer, "2026-07-04-Lev-16-teaching.pdf", stubTeaching);
-
-        var pipeline = CreatePipeline(store);
-        var result = await pipeline.RunAsync(new ParseRequest(
-            SourceName: PdfName,
-            BlobMode: true,
-            TeachingOnly: true,
-            SkipIfDestinationExists: true,
-            RequireStandardBlobName: true));
-
-        Assert.True(result.Success, result.Message);
-        Assert.Equal(stubTeaching, store.Blobs[$"{SourceContainer}/2026-07-04-Lev-16-teaching.pdf"]);
-        Assert.False(store.Blobs.ContainsKey($"{DestContainer}/2026-07-04-Lev-16.md"));
+        Assert.False(store.Blobs.ContainsKey($"{SourceContainer}/2026-07-04-Lev-16-teaching.pdf"));
     }
 
     [Fact]
@@ -180,7 +113,6 @@ public class ParsePipelineBlobTests
     {
         var store = new InMemoryBlobStore();
         await store.EnsureContainerExistsAsync(SourceContainer);
-        // destination not created yet
         store.Seed(SourceContainer, PdfName, CreateAgendaPdf());
 
         var pipeline = CreatePipeline(store);
@@ -190,28 +122,7 @@ public class ParsePipelineBlobTests
             EnsureDestinationContainer: true));
 
         Assert.True(result.Success, result.Message);
-        Assert.True(store.Blobs.ContainsKey($"{DestContainer}/2026-07-04-Lev-16.md"));
-    }
-
-    [Fact]
-    public async Task RunAsync_BlobMode_SkipExisting_DoesNotReupload()
-    {
-        var store = new InMemoryBlobStore();
-        await store.EnsureContainerExistsAsync(SourceContainer);
-        await store.EnsureContainerExistsAsync(DestContainer);
-        store.Seed(SourceContainer, PdfName, CreateAgendaPdf());
-        store.Seed(DestContainer, "2026-07-04-Lev-16.md", System.Text.Encoding.UTF8.GetBytes("keep me"));
-
-        var pipeline = CreatePipeline(store);
-        var result = await pipeline.RunAsync(new ParseRequest(
-            SourceName: PdfName,
-            BlobMode: true,
-            SkipIfDestinationExists: true));
-
-        Assert.True(result.Success, result.Message);
-        var md = System.Text.Encoding.UTF8.GetString(
-            store.Blobs[$"{DestContainer}/2026-07-04-Lev-16.md"]);
-        Assert.Equal("keep me", md);
+        Assert.True(store.Blobs.ContainsKey($"{DestContainer}/{PdfName}"));
     }
 
     [Fact]

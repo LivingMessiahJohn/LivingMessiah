@@ -7,9 +7,8 @@ using Microsoft.Extensions.Options;
 namespace ShabbatPdf.Core.Compression;
 
 /// <summary>
-/// Downloads an oversized source PDF, compresses it with <see cref="IPdfCompressor"/>,
-/// and overwrites the same blob so Current Service mobile downloads stay under the limit.
-/// Teaching PDF + Markdown then run against the smaller file (via the normal parse pipeline).
+/// Downloads a staging agenda PDF, compresses when over the mobile size limit, and publishes
+/// to the public service container. Staging is never overwritten.
 /// </summary>
 public sealed class SourcePdfShrinker : ISourcePdfShrinker
 {
@@ -26,54 +25,77 @@ public sealed class SourcePdfShrinker : ISourcePdfShrinker
     {
         _blobStore = blobStore ?? throw new ArgumentNullException(nameof(blobStore));
         _compressor = compressor ?? throw new ArgumentNullException(nameof(compressor));
-        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+        _options = options?.Value ?? new PdfCompressOptions();
         _logger = logger ?? NullLogger<SourcePdfShrinker>.Instance;
     }
 
-    public async Task<SourcePdfShrinkResult> EnsureUnderMaxSizeAsync(
-        string container,
+    public async Task<SourcePdfShrinkResult> PublishAsync(
+        string sourceContainer,
+        string destinationContainer,
         string blobName,
         CancellationToken cancellationToken = default)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(container);
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourceContainer);
+        ArgumentException.ThrowIfNullOrWhiteSpace(destinationContainer);
         ArgumentException.ThrowIfNullOrWhiteSpace(blobName);
-
-        if (!_options.Enabled)
-        {
-            _logger.LogInformation("PdfCompress disabled; skipping shrink for {Blob}", blobName);
-            return SourcePdfShrinkResult.SkippedDisabled();
-        }
 
         var maxBytes = _options.MaxBytes > 0
             ? _options.MaxBytes
             : 65L * 1024 * 1024;
 
+        var sameContainer = string.Equals(
+            sourceContainer,
+            destinationContainer,
+            StringComparison.OrdinalIgnoreCase);
+
         long? length = await _blobStore
-            .GetContentLengthAsync(container, blobName, cancellationToken)
+            .GetContentLengthAsync(sourceContainer, blobName, cancellationToken)
             .ConfigureAwait(false);
 
         if (length is null)
         {
             return SourcePdfShrinkResult.Fail(
-                $"Blob not found: {container}/{blobName}");
+                $"Blob not found: {sourceContainer}/{blobName}");
         }
 
         var originalBytes = length.Value;
-        if (originalBytes <= maxBytes)
+        var compressNeeded = _options.Enabled && originalBytes > maxBytes;
+
+        if (!compressNeeded)
         {
-            _logger.LogInformation(
-                "Skip compress {Container}/{Blob}: {Size} <= {Max}",
-                container,
-                blobName,
-                SourcePdfShrinkResult.FormatMb(originalBytes),
-                SourcePdfShrinkResult.FormatMb(maxBytes));
-            return SourcePdfShrinkResult.AlreadyUnderLimit(originalBytes, maxBytes);
+            if (sameContainer)
+            {
+                if (!_options.Enabled)
+                {
+                    _logger.LogInformation("PdfCompress disabled; skipping shrink for {Blob}", blobName);
+                    return SourcePdfShrinkResult.SkippedDisabled();
+                }
+
+                _logger.LogInformation(
+                    "Skip compress {Container}/{Blob}: {Size} <= {Max}",
+                    sourceContainer,
+                    blobName,
+                    SourcePdfShrinkResult.FormatMb(originalBytes),
+                    SourcePdfShrinkResult.FormatMb(maxBytes));
+                return SourcePdfShrinkResult.AlreadyUnderLimit(originalBytes, maxBytes);
+            }
+
+            return await CopyToDestinationAsync(
+                    sourceContainer,
+                    destinationContainer,
+                    blobName,
+                    originalBytes,
+                    maxBytes,
+                    disabled: !_options.Enabled,
+                    cancellationToken)
+                .ConfigureAwait(false);
         }
 
         _logger.LogInformation(
-            "Compress needed {Container}/{Blob}: {Size} > {Max}",
-            container,
+            "Compress needed {Source}/{Blob} → {Dest}: {Size} > {Max}",
+            sourceContainer,
             blobName,
+            destinationContainer,
             SourcePdfShrinkResult.FormatMb(originalBytes),
             SourcePdfShrinkResult.FormatMb(maxBytes));
 
@@ -85,14 +107,27 @@ public sealed class SourcePdfShrinker : ISourcePdfShrinker
             tempOut = CreateTempPdfPath(blobName, "out");
 
             await _blobStore
-                .DownloadToFileAsync(container, blobName, tempIn, cancellationToken)
+                .DownloadToFileAsync(sourceContainer, blobName, tempIn, cancellationToken)
                 .ConfigureAwait(false);
 
-            // Prefer measured file size after download (authoritative).
             originalBytes = new FileInfo(tempIn).Length;
             if (originalBytes <= maxBytes)
             {
-                return SourcePdfShrinkResult.AlreadyUnderLimit(originalBytes, maxBytes);
+                if (sameContainer)
+                {
+                    return SourcePdfShrinkResult.AlreadyUnderLimit(originalBytes, maxBytes);
+                }
+
+                return await UploadFileAsync(
+                        destinationContainer,
+                        blobName,
+                        tempIn,
+                        originalBytes,
+                        copied: true,
+                        disabled: false,
+                        maxBytes,
+                        cancellationToken)
+                    .ConfigureAwait(false);
             }
 
             var compress = await _compressor
@@ -116,25 +151,26 @@ public sealed class SourcePdfShrinker : ISourcePdfShrinker
                     finalBytes);
             }
 
-            var bytes = await File.ReadAllBytesAsync(tempOut, cancellationToken)
-                .ConfigureAwait(false);
-
-            await _blobStore
-                .UploadBinaryAsync(
-                    container,
+            var result = await UploadFileAsync(
+                    destinationContainer,
                     blobName,
-                    bytes,
-                    contentType: "application/pdf",
-                    overwrite: true,
+                    tempOut,
+                    originalBytes,
+                    copied: false,
+                    disabled: false,
+                    maxBytes,
                     cancellationToken)
                 .ConfigureAwait(false);
 
-            var result = SourcePdfShrinkResult.CompressedOk(originalBytes, finalBytes, maxBytes);
-            _logger.LogInformation(
-                "Uploaded compressed source {Container}/{Blob}: {Message}",
-                container,
-                blobName,
-                result.Message);
+            if (result.Success)
+            {
+                _logger.LogInformation(
+                    "Published compressed PDF {Dest}/{Blob}: {Message}",
+                    destinationContainer,
+                    blobName,
+                    result.Message);
+            }
+
             return result;
         }
         catch (FileNotFoundException ex)
@@ -147,7 +183,12 @@ public sealed class SourcePdfShrinker : ISourcePdfShrinker
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
         {
-            _logger.LogError(ex, "Shrink failed for {Container}/{Blob}", container, blobName);
+            _logger.LogError(
+                ex,
+                "Publish failed for {Source}/{Blob} → {Dest}",
+                sourceContainer,
+                blobName,
+                destinationContainer);
             return SourcePdfShrinkResult.Fail(ex.Message, originalBytes);
         }
         finally
@@ -155,6 +196,96 @@ public sealed class SourcePdfShrinker : ISourcePdfShrinker
             DeleteTempQuietly(tempIn);
             DeleteTempQuietly(tempOut);
         }
+    }
+
+    private async Task<SourcePdfShrinkResult> CopyToDestinationAsync(
+        string sourceContainer,
+        string destinationContainer,
+        string blobName,
+        long originalBytes,
+        long maxBytes,
+        bool disabled,
+        CancellationToken cancellationToken)
+    {
+        string? tempIn = null;
+        try
+        {
+            tempIn = CreateTempPdfPath(blobName, "copy");
+            await _blobStore
+                .DownloadToFileAsync(sourceContainer, blobName, tempIn, cancellationToken)
+                .ConfigureAwait(false);
+
+            originalBytes = new FileInfo(tempIn).Length;
+            return await UploadFileAsync(
+                    destinationContainer,
+                    blobName,
+                    tempIn,
+                    originalBytes,
+                    copied: true,
+                    disabled,
+                    maxBytes,
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (FileNotFoundException ex)
+        {
+            return SourcePdfShrinkResult.Fail(ex.Message, originalBytes);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            _logger.LogError(
+                ex,
+                "Copy failed for {Source}/{Blob} → {Dest}",
+                sourceContainer,
+                blobName,
+                destinationContainer);
+            return SourcePdfShrinkResult.Fail(ex.Message, originalBytes);
+        }
+        finally
+        {
+            DeleteTempQuietly(tempIn);
+        }
+    }
+
+    private async Task<SourcePdfShrinkResult> UploadFileAsync(
+        string destinationContainer,
+        string blobName,
+        string localPath,
+        long originalBytes,
+        bool copied,
+        bool disabled,
+        long maxBytes,
+        CancellationToken cancellationToken)
+    {
+        var bytes = await File.ReadAllBytesAsync(localPath, cancellationToken).ConfigureAwait(false);
+        await _blobStore
+            .UploadBinaryAsync(
+                destinationContainer,
+                blobName,
+                bytes,
+                contentType: "application/pdf",
+                overwrite: true,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        if (copied)
+        {
+            var result = disabled
+                ? SourcePdfShrinkResult.CopiedDisabled(originalBytes)
+                : SourcePdfShrinkResult.CopiedAsIs(originalBytes, maxBytes);
+            _logger.LogInformation(
+                "Copied {Dest}/{Blob}: {Message}",
+                destinationContainer,
+                blobName,
+                result.Message);
+            return result;
+        }
+
+        return SourcePdfShrinkResult.CompressedOk(originalBytes, bytes.LongLength, maxBytes);
     }
 
     private static string CreateTempPdfPath(string blobName, string tag)

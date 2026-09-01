@@ -1,10 +1,7 @@
-using System.Text.Json;
-using Azure.Messaging.EventGrid;
-using Azure.Messaging.EventGrid.SystemEvents;
-using ShabbatPdf.Core.Compression;
 using ShabbatPdf.Core.Models;
 using ShabbatPdf.Core.Options;
 using ShabbatPdf.Core.Pipeline;
+using Azure.Messaging.EventGrid;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,33 +9,30 @@ using Microsoft.Extensions.Options;
 namespace ShabbatPdf.Functions;
 
 /// <summary>
-/// Thin host: Event Grid (blob created) → shrink oversized PDF → <see cref="IParsePipeline"/>.
-/// Flex Consumption does not support classic polled blob triggers; Event Grid is required.
+/// Event Grid on <c>shabbat-service</c>: slice teaching pages and upload the same file name
+/// to <c>shabbat-service-md</c>.
 /// </summary>
 public sealed class ProcessShabbatPdfFunction
 {
     private readonly IParsePipeline _pipeline;
-    private readonly ISourcePdfShrinker _sourcePdfShrinker;
     private readonly ParseOptions _parseOptions;
     private readonly BlobOptions _blobOptions;
     private readonly ILogger<ProcessShabbatPdfFunction> _logger;
 
     public ProcessShabbatPdfFunction(
         IParsePipeline pipeline,
-        ISourcePdfShrinker sourcePdfShrinker,
         IOptions<ParseOptions> parseOptions,
         IOptions<BlobOptions> blobOptions,
         ILogger<ProcessShabbatPdfFunction> logger)
     {
         _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
-        _sourcePdfShrinker = sourcePdfShrinker ?? throw new ArgumentNullException(nameof(sourcePdfShrinker));
         _parseOptions = parseOptions?.Value ?? throw new ArgumentNullException(nameof(parseOptions));
         _blobOptions = blobOptions?.Value ?? throw new ArgumentNullException(nameof(blobOptions));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     /// <summary>
-    /// Fires on Microsoft.Storage.BlobCreated for the source container (Event Grid subscription).
+    /// Fires on Microsoft.Storage.BlobCreated for the compressed service container.
     /// </summary>
     [Function(nameof(ProcessShabbatPdf))]
     public async Task ProcessShabbatPdf(
@@ -53,7 +47,7 @@ public sealed class ProcessShabbatPdfFunction
             eventGridEvent.Subject,
             eventGridEvent.Id);
 
-        if (!TryGetBlobName(eventGridEvent, out var sourceName, out var container))
+        if (!EventGridBlobParser.TryGetBlobName(eventGridEvent, out var sourceName, out var container))
         {
             _logger.LogWarning(
                 "Could not parse blob name from event. Subject={Subject} Data={Data}",
@@ -79,41 +73,8 @@ public sealed class ProcessShabbatPdfFunction
             return;
         }
 
-        _logger.LogInformation("Processing agenda blob {Name}", sourceName);
+        _logger.LogInformation("Extracting teaching PDF from {Name}", sourceName);
 
-        // Issue #50: shrink oversized Current Service PDF in place (Ghostscript) before
-        // teaching slice + Markdown. Re-entry after overwrite is a no-op when already small.
-        var shrink = await _sourcePdfShrinker
-            .EnsureUnderMaxSizeAsync(_blobOptions.SourceContainer, sourceName, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (!shrink.Success)
-        {
-            _logger.LogError(
-                "Shrink failed for {Name}: {Message} original={Original} final={Final}",
-                sourceName,
-                shrink.Message,
-                SourcePdfShrinkResult.FormatMb(shrink.OriginalBytes),
-                SourcePdfShrinkResult.FormatMb(shrink.FinalBytes));
-
-            // Misconfiguration / impossible size: do not burn Event Grid retries.
-            if (IsNonRetriableShrink(shrink.Message))
-            {
-                return;
-            }
-
-            throw new InvalidOperationException($"PdfCompress failed: {shrink.Message}");
-        }
-
-        _logger.LogInformation(
-            "Shrink {Name}: compressed={Compressed} original={Original} final={Final} — {Message}",
-            sourceName,
-            shrink.Compressed,
-            SourcePdfShrinkResult.FormatMb(shrink.OriginalBytes),
-            SourcePdfShrinkResult.FormatMb(shrink.FinalBytes),
-            shrink.Message);
-
-        // BlobMode downloads source once, writes teaching PDF + Markdown.
         var request = new ParseRequest(
             SourceName: sourceName,
             BlobMode: true,
@@ -121,21 +82,19 @@ public sealed class ProcessShabbatPdfFunction
             SkipIfDestinationExists: false,
             DryRun: false,
             RequireStandardBlobName: _parseOptions.RequireStandardBlobName,
-            EnsureDestinationContainer: false,
-            TeachingOnly: false);
+            EnsureDestinationContainer: true,
+            TeachingOnly: true);
 
         var result = await _pipeline.RunAsync(request, cancellationToken).ConfigureAwait(false);
 
         if (result.Success)
         {
             _logger.LogInformation(
-                "OK {Name} teaching={Teaching} md={Md} pages={Start}-{End} sourceBytes={SourceBytes}",
+                "OK {Name} teaching={Teaching} pages={Start}-{End}",
                 sourceName,
                 result.TeachingPdfUri ?? "(none)",
-                result.DestinationUri ?? "(none)",
                 result.Anchors?.ContentStartPage,
-                result.Anchors?.ContentEndPage,
-                SourcePdfShrinkResult.FormatMb(shrink.FinalBytes > 0 ? shrink.FinalBytes : shrink.OriginalBytes));
+                result.Anchors?.ContentEndPage);
             return;
         }
 
@@ -155,101 +114,10 @@ public sealed class ProcessShabbatPdfFunction
         throw new InvalidOperationException(result.Message);
     }
 
-    private static bool TryGetBlobName(
-        EventGridEvent eventGridEvent,
-        out string blobName,
-        out string? container)
-    {
-        blobName = string.Empty;
-        container = null;
-
-        // Preferred: typed system event
-        if (eventGridEvent.TryGetSystemEventData(out object? systemEvent)
-            && systemEvent is StorageBlobCreatedEventData created
-            && !string.IsNullOrWhiteSpace(created.Url))
-        {
-            return TryParseBlobUrl(created.Url, out blobName, out container);
-        }
-
-        // Fallback: raw JSON data.url
-        try
-        {
-            if (eventGridEvent.Data is not null)
-            {
-                using var doc = JsonDocument.Parse(eventGridEvent.Data.ToString());
-                if (doc.RootElement.TryGetProperty("url", out var urlProp)
-                    && urlProp.ValueKind == JsonValueKind.String)
-                {
-                    var url = urlProp.GetString();
-                    if (!string.IsNullOrWhiteSpace(url)
-                        && TryParseBlobUrl(url, out blobName, out container))
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        catch (JsonException)
-        {
-            // fall through to subject parse
-        }
-
-        // Subject: /blobServices/default/containers/{container}/blobs/{name}
-        var subject = eventGridEvent.Subject ?? string.Empty;
-        const string marker = "/blobs/";
-        var idx = subject.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
-        if (idx >= 0)
-        {
-            blobName = Uri.UnescapeDataString(subject[(idx + marker.Length)..]);
-            const string containers = "/containers/";
-            var cIdx = subject.IndexOf(containers, StringComparison.OrdinalIgnoreCase);
-            if (cIdx >= 0)
-            {
-                var start = cIdx + containers.Length;
-                var end = subject.IndexOf('/', start);
-                if (end > start)
-                {
-                    container = subject[start..end];
-                }
-            }
-
-            return !string.IsNullOrWhiteSpace(blobName);
-        }
-
-        return false;
-    }
-
-    private static bool TryParseBlobUrl(string url, out string blobName, out string? container)
-    {
-        blobName = string.Empty;
-        container = null;
-
-        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
-        {
-            return false;
-        }
-
-        // /shabbat-service/2026-07-18-Lev-18.pdf
-        var parts = uri.AbsolutePath.Trim('/').Split('/', 2, StringSplitOptions.RemoveEmptyEntries);
-        if (parts.Length < 2)
-        {
-            return false;
-        }
-
-        container = Uri.UnescapeDataString(parts[0]);
-        blobName = Uri.UnescapeDataString(parts[1]);
-        return !string.IsNullOrWhiteSpace(blobName);
-    }
-
     private static bool IsNonRetriable(string message) =>
         message.StartsWith(ParseErrorCodes.InvalidName, StringComparison.Ordinal)
         || message.StartsWith("AnchorNotFound", StringComparison.Ordinal)
         || message.StartsWith("EmptySlice", StringComparison.Ordinal)
         || message.StartsWith("StartAnchorNotFound", StringComparison.Ordinal)
         || message.StartsWith("EndAnchorNotFound", StringComparison.Ordinal);
-
-    private static bool IsNonRetriableShrink(string message) =>
-        message.Contains("Ghostscript executable not found", StringComparison.OrdinalIgnoreCase)
-        || message.Contains("still over limit", StringComparison.OrdinalIgnoreCase)
-        || message.Contains("Blob not found", StringComparison.OrdinalIgnoreCase);
 }

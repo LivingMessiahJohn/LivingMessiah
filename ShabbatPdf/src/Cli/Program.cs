@@ -29,7 +29,7 @@ var outputOption = new Option<FileInfo?>("--output", "-o")
 
 var blobOption = new Option<string?>("--blob", "-b")
 {
-    Description = "Blob name in the source container (e.g. 2026-07-04-Lev-16.pdf). Downloads to a temp file, uploads .md to destination."
+    Description = "Blob name in shabbat-service (compressed agenda). Uploads a same-name teaching PDF to shabbat-service-md."
 };
 
 var dryRunOption = new Option<bool>("--dry-run")
@@ -58,7 +58,7 @@ var allowNonstandardOption = new Option<bool>("--allow-nonstandard-name")
 
 var teachingOnlyOption = new Option<bool>("--teaching-only")
 {
-    Description = "Export only the teaching PDF page slice (*-teaching.pdf). Do not build or write Markdown.",
+    Description = "Export only the teaching PDF (local: *-teaching.pdf). Blob mode always does this.",
     DefaultValueFactory = _ => false
 };
 
@@ -70,7 +70,7 @@ var fromTeachingOption = new Option<bool>("--from-teaching")
 };
 
 var root = new RootCommand(
-    "Parse Living Messiah Shabbat agenda PDFs to Markdown (local file or Azure blob).")
+    "Parse Living Messiah Shabbat agenda PDFs: teaching PDF slice (and optional local Markdown).")
 {
     inputOption,
     outputOption,
@@ -175,7 +175,7 @@ root.SetAction(async (parseResult, cancellationToken) =>
             SkipIfDestinationExists: skipExisting,
             DryRun: dryRun,
             RequireStandardBlobName: !allowNonstandard && parseOptions.RequireStandardBlobName,
-            TeachingOnly: teachingOnly,
+            TeachingOnly: teachingOnly || !fromTeaching,
             FromTeaching: fromTeaching);
     }
     else

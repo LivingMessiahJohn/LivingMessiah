@@ -1,24 +1,103 @@
-# LMM Parse PDF → Markdown
+# LMM Parse PDF → Markdown (ShabbatPdf)
 
 | Field | Value |
 |-------|-------|
 | **Author** | John Marsing |
-| **Date** | 2026-07-10 |
-| **Status** | **Approved (user decisions locked; layout scope simplified)** |
-| **Repo (intended)** | https://github.com/JohnMarsing/LMM-Parse-PDF |
-| **Workspace** | `C:\Source\repos\LMM-Parse-PDF` |
+| **Original date** | 2026-07-10 |
+| **Updated** | 2026-08-31 |
+| **Status** | **Implemented** in the LivingMessiah monorepo. Blob chain: staging → compress → teaching PDF (same name). |
+| **Repo (source of truth)** | https://github.com/LivingMessiahJohn/LivingMessiah |
+| **Product folder** | `ShabbatPdf/` |
+| **Workspace** | `C:\Source\repos\LivingMessiah` |
+| **Solution** | `LivingMessiah.sln` (projects `ShabbatPdf.Core`, `ShabbatPdf.Cli`, `ShabbatPdf.Functions`, `ShabbatPdf.Tests`) |
+| **Historical repo** | https://github.com/JohnMarsing/LMM-Parse-PDF — **archived 2026-08-04**; do not deploy from it |
+
+This document is the as-built design for the Shabbat agenda parse pipeline. Extraction rules (anchors, intro skip, text-layer Markdown) are the original v1 contract. What changed after ship is **where the code lives** and **what the assemblies are named**.
+
+| Issue | What it did |
+|-------|-------------|
+| [#193](https://github.com/LivingMessiahJohn/LivingMessiah/issues/193) | Copied LMM-Parse-PDF into this monorepo (not a submodule, not into `Api/`). Deploy and local work use the LivingMessiah GitHub/Azure identity. Old repo archived. |
+| [#194](https://github.com/LivingMessiahJohn/LivingMessiah/issues/194) | Renamed `LivingMessiah.ShabbatPdf.*` projects, assemblies, and namespaces to `ShabbatPdf.*`. CLI and Function behavior unchanged. |
+
+Operator how-to (CLI flags, deploy script, Ghostscript app settings) lives in [`ShabbatPdf/README.md`](../README.md). This file is the design contract.
+
+---
+
+## Home, naming, and cutover (#193 / #194)
+
+### Why the code moved (#193)
+
+LMM-Parse-PDF was Living Messiah Shabbat pipeline code, but it lived under `JohnMarsing/LMM-Parse-PDF` (MHB-oriented GitHub/Azure login). That split auth, deploy, and day-to-day work from `LivingMessiahJohn/LivingMessiah` even though:
+
+- Storage is already `livingmessiahstorage`
+- Consumers (PWA teaching PDFs) are already Living Messiah
+- The Function app `lmm-shabbat-pdf` is in resource group `LmmWebAppGroup`
+
+**Goal:** source of truth and deploy path live in this monorepo. Same GitHub and Azure identity as the rest of LivingMessiah.
+
+**Not the goal:** merge into the PWA `Api/` Functions project, move storage accounts, redesign anchors, or add OCR / image export.
+
+### What shipped for #193
+
+- `ShabbatPdf/` copied into the monorepo (not a git submodule)
+- Projects referenced from `LivingMessiah.sln`
+- Secrets via user-secrets / Function App Settings / `local.settings.json.example` (no real `local.settings.json` committed)
+- Deploy from `ShabbatPdf/scripts/deploy-function.ps1` to the **existing** Function app `lmm-shabbat-pdf` (lowest-risk cutover; no new Function app)
+- Smoke path unchanged: upload a full agenda PDF to `shabbat-service` → `*-teaching.pdf` + `.md`
+- Old repo archived and marked read-only; banner points here
+- Aspire local Function parity **not** required for cutover and is still not wired in `LivingMessiah.AppHost`
+
+### Why names shortened (#194)
+
+After the port, project names `LivingMessiah.ShabbatPdf.Cli`, `.Core`, `.Functions`, and `.Tests` duplicated the folder already named `ShabbatPdf/`. Other monorepo projects use short names (`Api`, `Admin`). #194 made project, assembly, namespace, and script paths consistently `ShabbatPdf.*`.
+
+User-secrets stay on the CLI `UserSecretsId` (`55d9f8ea-37ff-4a29-8b16-1dc8b9fc5ed2`), which did **not** change with the project rename.
+
+### Naming map (locked)
+
+| Role | Before (#193 port, old repo) | After (#194) |
+|------|------------------------------|--------------|
+| Core library | `LivingMessiah.ShabbatPdf.Core` | `ShabbatPdf.Core` |
+| Console CLI | `LivingMessiah.ShabbatPdf.Cli` | `ShabbatPdf.Cli` |
+| Azure Function host | `LivingMessiah.ShabbatPdf.Functions` | `ShabbatPdf.Functions` |
+| Tests | `LivingMessiah.ShabbatPdf.Tests` | `ShabbatPdf.Tests` |
+| Namespaces | `LivingMessiah.ShabbatPdf.*` | `ShabbatPdf.Core.*`, `ShabbatPdf.Cli`, `ShabbatPdf.Functions`, `ShabbatPdf.Tests.*` |
+| Function published DLL | `LivingMessiah.ShabbatPdf.Functions.dll` | `ShabbatPdf.Functions.dll` |
+| CLI run (from solution root) | `dotnet run --project src/LivingMessiah.ShabbatPdf.Cli` | `dotnet run --project ShabbatPdf\src\Cli` |
+| Deploy project | `src/LivingMessiah.ShabbatPdf.Functions/...` | `src/Functions/ShabbatPdf.Functions.csproj` |
+| Markdown front matter `tool:` | `LMM-Parse-PDF` | **Unchanged** (`MarkdownBuilder.ToolName`) — product label, not an assembly name |
+
+Do **not** mix old and new namespaces. Do **not** put this code in `Api/`.
+
+### Dual-deploy rule
+
+Only `LivingMessiahJohn/LivingMessiah` deploys `lmm-shabbat-pdf`. The archived repo must not push to that app.
 
 ---
 
 ## Overview
 
-Every Saturday, Living Messiah Ministries produces a multi-page Shabbat service agenda PDF and uploads it to Azure Blob Storage (`shabbat-service`). The congregation needs a **machine-readable Markdown excerpt** of the teaching/study portion of that agenda—starting after the bilingual “Welcome / Bienvenido” slide, **skipping known intro slides** (Fair Use / “What will we talk about today?”), and stopping before “The Avinu Prayer”—written to a **private** sibling container (`shabbat-service-md`) with the same base filename and a `.md` extension.
+Every Saturday, Living Messiah Ministries produces a multi-page Shabbat service agenda PDF. Admin uploads it to Azure Blob Storage **`shabbat-service-staging`**. Two backend processes then run:
 
-This design proposes a **small, understandable .NET 8 (`net8.0` LTS) solution**: a **shared core library** (PDF text extract + Markdown build + blob I/O), a **Console CLI** as the **only** production host for v1 (**manual run after upload**), and an **optional Azure Function** later. Load is ~1 PDF per week; **simplicity beats scale**.
+1. **Compress** the PDF (Ghostscript if over 65 MB, otherwise copy) and save it to **`shabbat-service`** with the **same file name** (public Current Service download).
+2. **Extract** the teaching-only page range from that compressed PDF and save it to **`shabbat-service-md`** with the **same file name** (no `-teaching` suffix). Markdown is local-CLI optional, not part of this Azure path.
 
-**v1 extracts only the PDF text layer** (words that PdfPig can read as text). Text that exists only as pixels inside images is **not** extracted (no OCR). **Images themselves are skipped in v1**; a later version may save each image in the extract range.
+Bounds: start after the bilingual “Welcome / Bienvenido” slide, **skip known intro slides** (Fair Use / “What will we talk about today?”), stop before “The Avinu Prayer”.
 
-**Layout recovery (multi-column / two-column reordering) is out of scope.** Pages are normalized with a simple full-page line cluster (word midY → lines left-to-right, top-to-bottom). That is enough for anchors and for decks whose teaching content is real text. Prefer validating and building goldens against agendas that hold scripture/commentary as selectable text—not primarily as screenshots.
+This is a **small .NET 8 (`net8.0` LTS) product** under `ShabbatPdf/`:
+
+| Piece | Role |
+|-------|------|
+| `ShabbatPdf.Core` | PDF text extract, anchors, teaching slice, Markdown, blob I/O, optional Ghostscript shrink helpers |
+| `ShabbatPdf.Cli` | Manual / batch host (`--input` or `--blob`) |
+| `ShabbatPdf.Functions` | Production hosts: `CompressStagingPdf` (staging → service) and `ProcessShabbatPdf` (service → teaching PDF) |
+| `ShabbatPdf.Tests` | xUnit, no live Azure required |
+
+Load is ~1 PDF per week; **simplicity beats scale**.
+
+**Markdown extracts only the PDF text layer** (words PdfPig can read as text). Text that exists only as pixels inside images is **not** extracted (no OCR). **Images themselves are skipped in Markdown**; the teaching PDF **does** keep the visual pages (including images) via PdfPig page import.
+
+**Layout recovery (multi-column / two-column reordering) is out of scope.** Pages are normalized with a simple full-page line cluster (word midY → lines left-to-right, top-to-bottom). That is enough for anchors and for decks whose teaching content is real text. Prefer validating and building goldens against agendas that hold scripture/commentary as selectable text — not primarily as screenshots.
 
 ---
 
@@ -28,24 +107,28 @@ This design proposes a **small, understandable .NET 8 (`net8.0` LTS) solution**:
 
 | Item | Detail |
 |------|--------|
-| Source container | `https://livingmessiahstorage.blob.core.windows.net/shabbat-service/` |
-| Destination container | `https://livingmessiahstorage.blob.core.windows.net/shabbat-service-md/` |
-| Naming | `YYYY-MM-DD-{TorahCitation}.pdf` → `YYYY-MM-DD-{TorahCitation}.md` |
-| Examples | `2026-07-04-Lev-16.pdf`, `2026-06-06-Lev-12-1-to-13-28.pdf` |
-| Upload path today | Living Messiah Admin / RCL already uploads PDFs via `AzureBlobService` (connection-string + container name pattern in historical backups) |
-| Workspace | Greenfield (design + `Prompts/Plan.md`) |
+| Staging container | `https://livingmessiahstorage.blob.core.windows.net/shabbat-service-staging/` |
+| Service container | `https://livingmessiahstorage.blob.core.windows.net/shabbat-service/` |
+| Teaching container | `https://livingmessiahstorage.blob.core.windows.net/shabbat-service-md/` |
+| Agenda naming | `YYYY-MM-DD-{TorahCitation}.pdf` (same name in all three containers) |
+| Teaching PDF | Same file name in `shabbat-service-md` (page slice only) |
+| Markdown | Local CLI `--output` only; not written by the Azure functions |
+| Example | staging `2026-07-04-Lev-16.pdf` → service `2026-07-04-Lev-16.pdf` → teaching `shabbat-service-md/2026-07-04-Lev-16.pdf` |
+| Upload path today | Living Messiah Admin / RCL already uploads PDFs via `AzureBlobService` |
+| Function app | `lmm-shabbat-pdf` in `LmmWebAppGroup` (Flex Consumption, West US) |
+| Home | `ShabbatPdf/` in this monorepo (#193); short `ShabbatPdf.*` names (#194) |
 
 ### Pain points
 
 1. **Agenda PDFs are presentation decks**, not clean books: liturgy, songs, Torah slides, teaching notes, images, closing prayers.
-2. **Only the middle “teaching block” is wanted** for Markdown reuse.
+2. **Only the middle “teaching block” is wanted** for Markdown reuse and for a smaller teaching PDF.
 3. **Manual copy/paste from PDF is slow** and error-prone; happens weekly.
-4. **Files can be large** (observed ~7–153 MB)—workers must tolerate download + parse cost, not high QPS.
-5. **Some decks embed teaching as images** (text painted into pictures). v1 will **not** OCR those; operators should know MD will only reflect real text-layer content. Image export is a planned later feature.
+4. **Files can be large** (observed ~7–250+ MB) — workers must tolerate download + parse cost, not high QPS. Mobile download needs the **full service PDF under 65 MB**.
+5. **Some decks embed teaching as images** (text painted into pictures). Markdown will **not** OCR those; operators should know MD only reflects real text-layer content. Image export is a planned later feature.
 
 ### Sample note: `2026-07-04-Lev-16.pdf`
 
-An early design probe used this file (~153 MB, 123 pages). It is **useful for anchor research** (Welcome / Bienvenido / Avinu page numbers) but **not an ideal golden for teaching content**: many pages in the extract window are **image-heavy**, with text that lives inside images rather than as a clean text layer. **Do not** treat “messy” extract on those pages as a reason to add layout algorithms; prefer a **text-rich weekly PDF** for PR 2/3 fixtures when available.
+An early design probe used this file (~153 MB, 123 pages). It is **useful for anchor research** (Welcome / Bienvenido / Avinu page numbers) but **not an ideal golden for teaching content**: many pages in the extract window are **image-heavy**, with text that lives inside images rather than as a clean text layer. **Do not** treat “messy” extract on those pages as a reason to add layout algorithms; prefer a **text-rich weekly PDF** for fixtures when available.
 
 | Finding (probe) | Value |
 |-----------------|--------|
@@ -57,9 +140,9 @@ An early design probe used this file (~153 MB, 123 pages). It is **useful for an
 | **Extract window after intro skip** | **88–113** on this sample |
 | False “Welcome” hits | p.2 `Welcomes You`; p.66 casual “welcome” — require full-line Welcome **+** Bienvenido |
 | Pre-anchor Torah text | ~p.73–84 **before** Welcome — correctly **excluded** |
-| Images | Many in the extract window; **skipped in v1 MD**; candidate for **v2 image export** |
+| Images | Many in the extract window; **skipped in Markdown**; **kept** in `*-teaching.pdf`; candidate for **v2 image export** next to MD |
 
-**Public access note:** Individual blobs under `shabbat-service` may be anonymously readable. Container listing is not public. Destination `.md` blobs do not exist yet. CI uses **local text fixtures**, not live blob list APIs.
+**Public access note:** Individual blobs under `shabbat-service` may be anonymously readable. Container listing is not public. CI uses **local text fixtures**, not live blob list APIs.
 
 ---
 
@@ -67,15 +150,16 @@ An early design probe used this file (~153 MB, 123 pages). It is **useful for an
 
 ### Goals
 
-1. Extract the teaching block using stable text anchors: after **Welcome + Bienvenido**, before **The Avinu Prayer**, then **skip known intro pages** so Markdown starts at the first non-intro page.
-2. Emit UTF-8 Markdown to **private** `shabbat-service-md` with the same base name as the PDF.
-3. Extract **PDF text-layer lines only** via simple full-page word→line clustering. Quality is “what PdfPig can read as text,” captured in goldens from a representative text-rich PDF when possible.
-4. Provide a **Console CLI** the developer can run and understand; **v1 production use is manual CLI after PDF upload**.
-5. Keep **core logic unit-testable** without Azure (fixtures).
-6. **Idempotent re-runs** (overwrite `.md` by default; optional skip-if-exists).
-7. Fail clearly when anchors are missing or the slice is empty.
-8. Stay on the developer stack: **C#, Console, Azure Blob, optional Azure Functions**.
-9. Phase work into **small Grok Build / AI-assisted PRs**.
+1. Extract the teaching block using stable text anchors: after **Welcome + Bienvenido**, before **The Avinu Prayer**, then **skip known intro pages** so Markdown (and the teaching PDF) starts at the first non-intro page.
+2. Write a **teaching-only PDF** (`*-teaching.pdf`) locally next to the `.md` or into `shabbat-service`.
+3. Emit UTF-8 Markdown to **private** `shabbat-service-md` with the same base name as the agenda PDF. **Step 2 Markdown is built from the teaching PDF** (pages 1…N), not by re-slicing the full agenda text.
+4. Extract **PDF text-layer lines only** via simple full-page word→line clustering. Quality is “what PdfPig can read as text,” captured in goldens from a representative text-rich PDF when possible.
+5. Provide a **Console CLI** the developer can run and understand; **production weekly path is the Azure Function** on upload, with CLI for manual / batch.
+6. Keep **core logic unit-testable** without Azure (fixtures).
+7. **Idempotent re-runs** (overwrite `.md` and teaching PDF by default; optional skip-if-exists).
+8. Fail clearly when anchors are missing or the slice is empty.
+9. Stay on the developer stack: **C#, Console, Azure Blob, Azure Functions**.
+10. Never merge this pipeline into `Api/`.
 
 ### Non-Goals (v1)
 
@@ -88,6 +172,7 @@ An early design probe used this file (~153 MB, 123 pages). It is **useful for an
 - Multi-tenant or high-throughput pipeline.
 - Editing/correcting Scripture copyright text beyond extraction.
 - Book-name verse reflow, vertical-gap paragraphs, or LLM cleanup.
+- Merging into `Api/`, moving `livingmessiahstorage`, or Aspire-hosted Function (nice-to-have later; #193 explicitly deferred).
 
 ### Later (v2 sketch — not implemented now)
 
@@ -100,59 +185,59 @@ An early design probe used this file (~153 MB, 123 pages). It is **useful for an
 
 | # | Decision | Rationale |
 |---|----------|-----------|
-| 1 | **Hybrid architecture: `Core` library + `Cli` host first; `Functions` host optional later** | Matches skills; CLI is easy to debug; ~1 job/week. |
-| 2 | **PDF engine: UglyToad PdfPig** | Pure .NET, Apache-2.0, no native deps. **Word geometry → line rebuild** over raw `page.Text`. Pin the version tested on fixtures. |
+| 1 | **Hybrid architecture: `ShabbatPdf.Core` + `ShabbatPdf.Cli` + `ShabbatPdf.Functions`** | CLI is easy to debug; Function is the weekly production host. Same pipeline. |
+| 2 | **PDF engine: UglyToad PdfPig** | Pure .NET, Apache-2.0, no native deps. **Word geometry → line rebuild** over raw `page.Text`. Pin the version tested on fixtures (**0.1.15**). |
 | 3 | **Outer start: same page has full line `Welcome` and a later full line `Bienvenido` or `Bienvenidos`**; provisional content start = **next page**. Final start advanced by intro skip (Decision 14). | Avoids false positives; matches sample p.86. |
 | 4 | **End: first page ≥ provisional start matching `The Avinu Prayer`** with line + collapsed + multi-line fallbacks; content ends on previous page. | Robust to slight Y-clustering differences on the title. |
-| 5 | **v1 Markdown is text-only; images skipped** | Image export is explicit **v2**. No OCR in v1. |
-| 6 | **Auth: connection string for CLI; Managed Identity for Azure-hosted Function** | Familiar patterns; blob trigger must not re-download source when stream is provided. |
-| 7 | **Idempotency: default overwrite destination blob** | Re-export after PDF fix; `--skip-existing` for batch safety. |
-| 8 | **Do not store multi‑MB PDFs in git**; store **text fixtures** + optional local PDF path | Large agendas are 50–150 MB. |
-| 9 | **Target .NET 8 LTS** (`net8.0`) — **locked** | User decision. |
-| 10 | **v1 automation: manual CLI after upload only** — **locked** | User decision. Function later only on Flex/Premium/Dedicated if ever needed. |
+| 5 | **Markdown is text-only; images skipped** | Image export is explicit **v2**. No OCR in v1. Teaching PDF keeps visual pages. |
+| 6 | **Auth: connection string for CLI and current Function app settings; Managed Identity is the later hardening path** | Familiar patterns. Function uses Event Grid (no blob stream); pipeline **downloads** in `BlobMode`. |
+| 7 | **Idempotency: default overwrite destination blob** | Re-export after PDF fix; `--skip-existing` for batch safety (teaching blob when `--teaching-only`; MD otherwise). |
+| 8 | **Do not store multi‑MB PDFs in git**; store **text fixtures** + optional local PDF path | Large agendas are 50–250 MB. |
+| 9 | **Target .NET 8 LTS** (`net8.0`) — **locked** | User decision. (Other LivingMessiah apps may target `net10.0`; this product stays on 8 until a separate bump.) |
+| 10 | **Weekly automation: two Event Grid functions** | Admin → staging. `CompressStagingPdf` publishes to `shabbat-service`. That BlobCreated runs `ProcessShabbatPdf` (teaching extract). CLI remains for manual / batch. |
 | 11 | **Simple full-page line clustering only.** One `Lines` list per page from all text-layer words (midY greedy cluster, left-to-right, top-to-bottom). **No** multi-column / two-column / gutter logic. | Layout recovery is outside project scope; image-text is not fixed by column algorithms. |
 | 12 | **CLI stack: `Microsoft.Extensions.Hosting` + `System.CommandLine` + logging; tests: xUnit** | Familiar .NET / Azure stack. |
-| 13 | **Minimal Markdown:** front matter, H1, `<!-- page N -->`, plain lines; optional short ALL CAPS → `##`. | Deterministic goldens. |
+| 13 | **Minimal Markdown:** front matter, H1, `<!-- page N -->`, plain lines; optional short ALL CAPS → `##`. | Deterministic goldens. Teaching-relative page numbers in comments (simplest). |
 | 14 | **Intro-page skip after Welcome (locked).** Advance `contentStartPage` while pages match intro patterns (Fair Use / agenda title / notice). Sample: skip p.87 → **88–113**. | User decision. |
 | 15 | **Destination `shabbat-service-md` is private** — **locked** | User decision. |
 | 16 | **Prefer text-rich sample PDFs for goldens.** Use image-heavy decks only for anchor smoke tests if needed. | Avoids optimizing for the wrong failure mode. |
+| 17 | **Teaching PDF uses the same file name in `shabbat-service-md`** | Distinguishes teaching vs complete by container, not `-teaching` suffix. Local CLI still uses `*-teaching.pdf` so it does not overwrite the agenda file. |
+| 18 | **Functions skip non-PDF and legacy `*-teaching.pdf`** | Extract writes to a different container, so no re-entry. Skip leftover `-teaching` names in `shabbat-service`. |
+| 19 | **Ghostscript shrink is `CompressStagingPdf` only** (issue #50). Write compressed (or copy-as-is) to `shabbat-service`; never overwrite staging. CLI does not shrink. | Mobile download needs the full service PDF under 65 MB. Copy-through of small files is required so extract still fires. |
+| 20 | **Source of truth is `LivingMessiahJohn/LivingMessiah` / `ShabbatPdf/`** (#193) | Same GitHub/Azure identity as the rest of LivingMessiah. Not a submodule. Not `Api/`. Old repo archived. |
+| 21 | **Projects / assemblies / namespaces are `ShabbatPdf.*`** (#194) | Folder already provides LivingMessiah context. Do not mix with `LivingMessiah.ShabbatPdf.*`. |
 
 ---
 
-## Proposed Design
+## Current Design
 
 ### High-level architecture
 
 ```mermaid
 flowchart LR
-  subgraph source [Azure Blob - shabbat-service]
-    PDF["YYYY-MM-DD-Citation.pdf"]
+  subgraph staging [Azure Blob - shabbat-service-staging]
+    RAW["YYYY-MM-DD-Citation.pdf"]
   end
 
-  subgraph hosts [Hosts]
-    CLI["Cli: LmmParsePdf"]
-    FN["Functions: BlobTrigger optional"]
-  end
-
-  subgraph core [ShabbatPdf.Core]
-    DL[BlobDownload to temp file]
-    EX[PdfPigPageSource]
-    AN[AnchorLocator + ContentSlicer]
-    MD[MarkdownBuilder]
-    UP[BlobUpload MD only]
+  subgraph service [Azure Blob - shabbat-service]
+    PDF["YYYY-MM-DD-Citation.pdf compressed"]
   end
 
   subgraph dest [Azure Blob - shabbat-service-md]
-    MDFILE["YYYY-MM-DD-Citation.md"]
+    TEACH["YYYY-MM-DD-Citation.pdf teaching pages"]
   end
 
-  PDF --> CLI
-  PDF --> FN
-  CLI --> DL
-  DL --> EX
-  FN -->|"trigger Stream - no re-download"| EX
-  EX --> AN --> MD --> UP --> MDFILE
-  FN --> UP
+  subgraph hosts [Hosts]
+    ADMIN["Admin WeeklyDownloads"]
+    COMP["CompressStagingPdf"]
+    EXT["ProcessShabbatPdf"]
+    CLI["ShabbatPdf.Cli"]
+  end
+
+  ADMIN --> RAW
+  RAW --> COMP --> PDF
+  PDF --> EXT --> TEACH
+  PDF --> CLI --> TEACH
 ```
 
 ### Component responsibilities
@@ -163,11 +248,30 @@ flowchart LR
 | `PdfPigPageSource` | PdfPig: words → midY line cluster → `Lines`. No image OCR; no column split. |
 | `AnchorLocator` | Find outer start/end on `Lines`; apply **intro-page skip** to finalize `ContentStartPage`. |
 | `ContentSlicer` | Select pages `[contentStartPage, contentEndPage]` inclusive. |
-| `MarkdownBuilder` | Convert sliced pages to Markdown + front matter. |
-| `IBlobStore` / `AzureBlobStore` | Download PDF to temp; upload MD; exists/check; optional ensure container. |
-| `ParsePipeline` | Orchestrates resolve → extract → locate → slice → build → upload via `RunAsync(ParseRequest)`. |
-| `Cli` | `System.CommandLine` + generic host. |
-| `Functions` | Thin trigger (later): stream → pipeline; MD upload via MI. |
+| `TeachingPdfWriter` | Copy that page range into a new PDF (visual content preserved). |
+| `MarkdownBuilder` | Convert teaching-PDF pages to Markdown + front matter. |
+| `IBlobStore` / `AzureBlobStore` | Download PDF to temp; upload MD and teaching PDF; exists/check; optional ensure container; content-length for shrink skip. |
+| `ParsePipeline` | Orchestrates resolve → extract → locate → teaching slice → Markdown from teaching PDF → upload via `RunAsync(ParseRequest)`. |
+| `ShabbatPdf.Cli` | `System.CommandLine` + generic host. Manual / batch. |
+| `ShabbatPdf.Functions` | Thin Event Grid host: filter → optional Ghostscript shrink → `BlobMode` pipeline. |
+| `ShabbatBlobTriggerFilter` | Skip non-PDF and `*-teaching.pdf`. |
+| `SourcePdfShrinker` | Function-only: if blob &gt; max bytes, Ghostscript `/ebook` and overwrite source. |
+
+### Two-step pipeline (normative)
+
+1. **Step 1 — teaching PDF.** Anchors run on the **full agenda**. Slice `[ContentStartPage, ContentEndPage]` to `*-teaching.pdf`.
+2. **Step 2 — Markdown.** Extract text from that **teaching PDF** (pages 1…N) and write `.md`. Do not re-run Welcome/Avinu anchors on the teaching file.
+
+CLI flags:
+
+| Flag | Meaning |
+|------|---------|
+| (default) | Both steps |
+| `--teaching-only` | Step 1 only |
+| `--from-teaching` | Step 2 only (input is already `*-teaching.pdf`) |
+| `--teaching-only` **and** `--from-teaching` | Invalid (`InvalidName`) |
+
+`--skip-existing`: for `--teaching-only`, skip when the teaching PDF exists; otherwise skip when the Markdown destination exists.
 
 ### Extraction algorithm (normative for v1)
 
@@ -178,6 +282,7 @@ sequenceDiagram
   participant Blob as IBlobStore
   participant Pig as PdfPigPageSource
   participant Anchors as AnchorLocator
+  participant Teach as TeachingPdfWriter
   participant Md as MarkdownBuilder
 
   Host->>Pipeline: RunAsync(ParseRequest)
@@ -187,10 +292,11 @@ sequenceDiagram
     Pipeline->>Blob: DownloadToTempFile(blobName)
     Blob-->>Pipeline: tempPath
     Pipeline->>Pig: ExtractPages(tempPath)
-  else Stream e.g. Function
-    Pipeline->>Pig: ExtractPages(tempPath or stream)
+  else FromTeaching
+    Pipeline->>Pig: ExtractPages(teaching PDF)
+    Pipeline->>Md: Build all pages
   end
-  loop each page
+  loop each page of full agenda
     Pig->>Pig: GetWords text layer only
     Pig->>Pig: midY cluster → Lines
   end
@@ -198,10 +304,14 @@ sequenceDiagram
   Pipeline->>Anchors: Locate start/end on Lines
   Anchors->>Anchors: Intro skip
   Anchors-->>Pipeline: AnchorResult
-  Pipeline->>Md: Build slice from Lines
-  Md-->>Pipeline: markdown string
+  Pipeline->>Teach: Write page range
+  opt not TeachingOnly
+    Pipeline->>Pig: ExtractPages(teaching bytes)
+    Pipeline->>Md: Build from teaching pages 1..N
+    Md-->>Pipeline: markdown string
+  end
   opt not DryRun
-    Pipeline->>Blob: UploadMarkdown
+    Pipeline->>Blob: Upload teaching PDF and/or Markdown
   end
   Pipeline-->>Host: ParseResult
 ```
@@ -256,7 +366,7 @@ public sealed record PdfWordBox(
 | 114 | A line (or fallback) yields `The Avinu Prayer`; end locator succeeds with `YTolerance = 3.0`. |
 | 87 | Matches intro-skip patterns. |
 
-**Goldens for PR 2:**
+**Goldens:**
 
 - Prefer capturing lines from a **text-rich** weekly PDF when available.
 - Minimum synthetic fixtures: start page, intro page, end page (including split-line Avinu fallback).
@@ -331,26 +441,39 @@ If none → `AnchorNotFound: End`.
 
 **Tests:** happy path line; split-line fallback; `YTolerance` merge for title midYs ~1 unit apart.
 
-#### Step 4 — Build Markdown
+#### Step 4 — Teaching PDF slice
+
+Copy agenda pages `[ContentStartPage, ContentEndPage]` (1-based, inclusive) into a new PDF.
+
+- **Name (Azure):** same as the agenda (e.g. `2026-07-04-Lev-16.pdf`) in `shabbat-service-md`
+- **Name (local):** `{base}-teaching.pdf` so the full agenda file is not overwritten
+- **Azure container:** `shabbat-service-md`
+- **Content-Type:** `application/pdf`
+- **Overwrite:** default `true`; `--skip-existing` with `--teaching-only` skips if it already exists
+- `FilenameParser` strips a `-teaching` suffix so date, citation, and Markdown names stay on the agenda base
+
+#### Step 5 — Build Markdown (from teaching PDF)
 
 ```markdown
 ---
 source_pdf: 2026-07-04-Lev-16.pdf
 service_date: 2026-07-04
 citation: Lev-16
-extracted_pages: 88-113
+extracted_pages: 1-26
 generated_utc: 2026-07-10T18:00:00Z
 tool: LMM-Parse-PDF
 ---
 
 # 2026-07-04 — Lev-16
 
-<!-- page 88 -->
+<!-- page 1 -->
 ...text-layer lines...
 
-<!-- page 95 -->
+<!-- page 8 -->
 ## TOTAL SURRENDER
 ```
+
+Page comments are **teaching-relative** (page 1 of the teaching PDF), not original agenda page numbers.
 
 **Formatting rules (v1):**
 
@@ -362,6 +485,7 @@ tool: LMM-Parse-PDF
 6. One blank line between pages.
 7. Collapse 3+ blank lines to 2.
 8. **No** image placeholders in v1.
+9. `tool:` remains `LMM-Parse-PDF` (`MarkdownBuilder.ToolName`) — historical product label; #194 did not change it.
 
 **Filename parse:**
 
@@ -369,14 +493,16 @@ tool: LMM-Parse-PDF
 ^(?<date>\d{4}-\d{2}-\d{2})-(?<citation>.+)\.pdf$
 ```
 
+Teaching suffix is stripped before this match.
+
 | Mode | Non-matching name |
 |------|-------------------|
 | `--input` local | Warning; `citation: unknown` |
 | `--blob` | Error `InvalidName` by default; `--allow-nonstandard-name` override |
 
-#### Step 5 — Upload
+#### Step 6 — Upload Markdown
 
-- Destination name: `.pdf` → `.md`
+- Destination name: agenda `.pdf` → `.md`
 - Content-Type: `text/markdown; charset=utf-8`
 - Overwrite default `true`
 - Optional metadata: `sourcePdf`, `pageStart`, `pageEnd`, `toolVersion`
@@ -385,73 +511,111 @@ tool: LMM-Parse-PDF
 
 1. Blob download → `%TEMP%\lmm-parse-pdf\{guid}-{safeName}` then `PdfDocument.Open(path)`.
 2. Delete temp in `finally`.
-3. Function stream: copy to temp if needed; **do not** re-download source.
+3. Function: Event Grid gives a blob **name/URL**, not a stream. Pipeline uses `BlobMode` and downloads once. Do **not** also download in the Function host.
 4. Prefer `ExtractPages(string filePath)` for large inputs.
 
-### Suggested repository structure
+### Shrink oversized service PDF (Function only)
+
+Weekly decks can be 150–250+ MB. Mobile download needs them **under 65 MB**.
+
+| | |
+|---|---|
+| **Where** | `ProcessShabbatPdf` only — **not** the CLI |
+| **Engine** | Ghostscript `pdfwrite` with `-dPDFSETTINGS=/ebook` |
+| **License** | Ghostscript is **AGPL v3** (or Artifex commercial) |
+| **Behavior** | If blob size ≤ `PdfCompress:MaxBytes` (default 65 MiB), skip. If larger: download → compress → **overwrite the same blob** → then teaching + Markdown. Re-entry after overwrite sees a small file and skips compress. |
+| **Local Function** | `gswin64c` on PATH, or `PdfCompress__GhostscriptPath` |
+| **Azure Flex** | Linux; does not ship Ghostscript. Mount a Linux `gs` binary and set `PdfCompress__GhostscriptPath`. |
+
+Non-retriable shrink failures (Ghostscript missing, still over limit, blob not found) are logged and **not** thrown, so Event Grid does not retry forever.
+
+### Repository structure (as-built)
 
 ```text
-LMM-Parse-PDF/
-  README.md
-  LMM-Parse-PDF.sln
-  .gitignore
-  src/
-    ShabbatPdf.Core/
-      Models/
-      Extraction/
-        IPdfPageSource.cs
-        PdfPigPageSource.cs
-        LineClusterOptions.cs
-        AnchorLocator.cs
-        ContentSlicer.cs
-        MarkdownBuilder.cs
-        FilenameParser.cs
-      Storage/
-      Pipeline/
-        ParsePipeline.cs
-      Options/
-    ShabbatPdf.Cli/
-    ShabbatPdf.Functions/   # optional later
-  tests/
-    ShabbatPdf.Tests/
-      AnchorLocatorTests.cs
-      LineClusterTests.cs
-      IntroSkipTests.cs
-      MarkdownBuilderTests.cs
-      FilenameParserTests.cs
-  fixtures/
-    pages/          # synthetic line lists and word boxes
-    expected/       # MD goldens
-  docs/
-    design-lmm-parse-pdf.md
-  Prompts/
-    Plan.md
+LivingMessiah/
+  LivingMessiah.sln
+  ShabbatPdf/
+    README.md
+    AGENTS.md
+    docs/
+      design-lmm-parse-pdf.md
+    scripts/
+      batch-blob-parse.ps1
+      deploy-function.ps1
+      enable-function-logging.ps1
+      setup-function-eventgrid.ps1
+      setup-ghostscript-mount.ps1
+      package-ghostscript-linux.sh
+      publish-to-github.ps1          # leftover from the old standalone repo; do not use
+    src/
+      Core/                          # ShabbatPdf.Core.csproj
+        Models/
+        Extraction/
+        Compression/
+        Storage/
+        Pipeline/
+        Options/
+      Cli/                           # ShabbatPdf.Cli.csproj
+      Functions/                     # ShabbatPdf.Functions.csproj
+        ProcessShabbatPdfFunction.cs
+        ShabbatBlobTriggerFilter.cs
+        local.settings.json.example
+    tests/
+      ShabbatPdf.Tests/              # ShabbatPdf.Tests.csproj
 ```
 
-### CLI UX (v1)
+Build and test from the **solution root**:
 
-```bash
-# Local PDF → local MD
-dotnet run --project src/ShabbatPdf.Cli -- \
-  --input "C:\Users\JohnM\Downloads\some-text-rich-agenda.pdf" \
+```powershell
+cd C:\Source\repos\LivingMessiah
+dotnet build LivingMessiah.sln
+dotnet test LivingMessiah.sln
+```
+
+ShabbatPdf-only:
+
+```powershell
+dotnet test ShabbatPdf\tests\ShabbatPdf.Tests\ShabbatPdf.Tests.csproj
+```
+
+### CLI UX
+
+From the LivingMessiah solution root:
+
+```powershell
+# Local PDF → local MD (+ teaching PDF next to the .md)
+dotnet run --project ShabbatPdf\src\Cli -- `
+  --input "C:\Users\JohnM\Downloads\some-text-rich-agenda.pdf" `
   --output ".\out\agenda.md"
 
-# Azure blob → private MD
-dotnet run --project src/ShabbatPdf.Cli -- \
+# Azure blob → teaching PDF in shabbat-service + private MD
+dotnet run --project ShabbatPdf\src\Cli -- `
   --blob "2026-07-04-Lev-16.pdf"
 
-# Flags
-  --skip-existing
-  --dry-run
-  --ensure-container
-  --allow-nonstandard-name
+# Teaching PDF only (batch backfill)
+dotnet run --project ShabbatPdf\src\Cli -- `
+  --blob "2026-07-04-Lev-16.pdf" --teaching-only
+
+# Markdown from an existing teaching PDF
+dotnet run --project ShabbatPdf\src\Cli -- `
+  --blob "2026-07-04-Lev-16-teaching.pdf" --from-teaching
 ```
+
+User secrets (CLI project):
+
+```powershell
+dotnet user-secrets set "Blob:ConnectionString" "<your-storage-connection-string>" `
+  --project ShabbatPdf\src\Cli
+```
+
+`UserSecretsId` is unchanged by #194.
 
 ```json
 {
   "Blob": {
     "ConnectionString": "",
     "ServiceUri": "",
+    "StagingContainer": "shabbat-service-staging",
     "SourceContainer": "shabbat-service",
     "DestinationContainer": "shabbat-service-md",
     "UseDefaultAzureCredential": false
@@ -478,19 +642,65 @@ dotnet run --project src/ShabbatPdf.Cli -- \
 
 Secrets: User Secrets or `Blob__ConnectionString` — never commit.
 
+Batch teaching-PDF backfill (from `ShabbatPdf/`):
+
+```powershell
+cd C:\Source\repos\LivingMessiah\ShabbatPdf
+.\scripts\batch-blob-parse.ps1 -WhatIf
+.\scripts\batch-blob-parse.ps1 -MaxCount 5
+.\scripts\batch-blob-parse.ps1
+```
+
+The script lists `shabbat-service`, skips `*-teaching.pdf`, and runs `--teaching-only --skip-existing`. It does **not** write Markdown.
+
+### Azure Function host
+
+| | |
+|---|---|
+| Project | `ShabbatPdf/src/Functions` (`ShabbatPdf.Functions`) |
+| Triggers | Event Grid `BlobCreated` on `shabbat-service-staging` → `CompressStagingPdf`; on `shabbat-service` → `ProcessShabbatPdf` |
+| Why Event Grid | Flex Consumption does not support classic polled blob triggers |
+| Skips | Non-PDF and leftover `*-teaching.pdf` |
+| Work | Staging → compress/copy to service → extract teaching pages to `shabbat-service-md` (same name) |
+| Outputs | Same-name PDF in `shabbat-service`; same-name teaching PDF in `shabbat-service-md` |
+| Errors | Anchor/name/empty-slice: log only (no endless retry). I/O: throw (retry) |
+
+Deploy (from `ShabbatPdf/`):
+
+```powershell
+cd C:\Source\repos\LivingMessiah\ShabbatPdf
+.\scripts\deploy-function.ps1
+```
+
+| | |
+|---|---|
+| **Name** | `lmm-shabbat-pdf` |
+| **Resource group** | `LmmWebAppGroup` |
+| **Plan** | Flex Consumption (West US) |
+| **URL** | https://lmm-shabbat-pdf.azurewebsites.net |
+| **Function** | `ProcessShabbatPdf` |
+| **Storage** | `livingmessiahstorage` |
+
+App settings (current, connection-string style):
+
+- `Blob` / `Blob__ConnectionString`
+- `Blob__StagingContainer` = `shabbat-service-staging`
+- `Blob__SourceContainer` = `shabbat-service`
+- `Blob__DestinationContainer` = `shabbat-service-md`
+
+Later hardening: Managed Identity (`Blob__UseDefaultAzureCredential=true` + RBAC) and remove keys from app settings.
+
 ### Azure storage construction
 
 ```csharp
-// CLI
+// CLI and current Function app settings
 var client = new BlobServiceClient(connectionString);
 
-// Function later
+// Later: Function with Managed Identity
 var client = new BlobServiceClient(
     new Uri("https://livingmessiahstorage.blob.core.windows.net"),
     new DefaultAzureCredential());
 ```
-
-Blob trigger: pass `PdfStream` into `ParseRequest`; upload **only** `.md`.
 
 ### Error handling
 
@@ -503,23 +713,25 @@ Blob trigger: pass `PdfStream` into `ParseRequest`; upload **only** `.md`.
 | Empty slice (incl. only intro) | `EmptySlice` |
 | Multiple Welcome+Bienvenido | First; warning |
 | Multiple Avinu after start | First; warning |
-| PdfPig failure | `PdfReadError` |
+| PdfPig failure | `PdfReadError` / extract exception |
 | Upload failure | `UploadFailed` |
 | Container missing | `ContainerNotFound` |
+| TeachingOnly + FromTeaching | `InvalidName` |
+| I/O | `IoError` |
 
 Exit codes: `0` success, `1` validation/anchor, `2` I/O/Azure, `3` unexpected.
 
 **Success log example:**
 
 ```text
-OK 2026-07-04-Lev-16.pdf pages=88-113 anchors=86/114 introSkip=87 end=Line chars=… -> …/shabbat-service-md/2026-07-04-Lev-16.md (3.2s)
+OK 2026-07-04-Lev-16.pdf teaching=… md=… pages=88-113 sourceBytes=29.4 MB
 ```
 
 ---
 
 ## API / Interface Changes
 
-Greenfield; internal contracts:
+Internal contracts (namespaces `ShabbatPdf.Core.*` after #194):
 
 ```csharp
 namespace ShabbatPdf.Core.Models;
@@ -550,14 +762,19 @@ public sealed record ParseRequest(
     bool Overwrite = true,
     bool SkipIfDestinationExists = false,
     bool DryRun = false,
-    bool RequireStandardBlobName = true);
+    bool RequireStandardBlobName = true,
+    bool BlobMode = false,
+    bool EnsureDestinationContainer = false,
+    bool TeachingOnly = false,
+    bool FromTeaching = false);
 
 public sealed record ParseResult(
     bool Success,
     string Message,
     string? Markdown = null,
     AnchorResult? Anchors = null,
-    string? DestinationUri = null);
+    string? DestinationUri = null,
+    string? TeachingPdfUri = null);
 ```
 
 ```csharp
@@ -571,14 +788,16 @@ public interface IBlobStore
 {
     Task DownloadToFileAsync(string container, string blobName, string localPath, CancellationToken ct);
     Task UploadTextAsync(string container, string blobName, string content, bool overwrite, CancellationToken ct);
+    Task UploadBinaryAsync(string container, string blobName, byte[] content, string contentType, bool overwrite, CancellationToken ct);
     Task<bool> ExistsAsync(string container, string blobName, CancellationToken ct);
+    Task<long?> GetContentLengthAsync(string container, string blobName, CancellationToken ct);
     Task EnsureContainerExistsAsync(string container, CancellationToken ct);
     string GetBlobUri(string container, string blobName);
 }
 
-public sealed class ParsePipeline
+public interface IParsePipeline
 {
-    public Task<ParseResult> RunAsync(ParseRequest request, CancellationToken ct = default);
+    Task<ParseResult> RunAsync(ParseRequest request, CancellationToken ct = default);
 }
 ```
 
@@ -586,21 +805,22 @@ public sealed class ParsePipeline
 
 ## Data Model Changes
 
-No SQL in v1.
+No SQL.
 
 | Container | Object | Content-Type |
 |-----------|--------|--------------|
-| `shabbat-service` | `*.pdf` (existing) | `application/pdf` |
-| `shabbat-service-md` | `*.md` (new) | `text/markdown; charset=utf-8` |
+| `shabbat-service-staging` | `*.pdf` (Admin upload; uncompressed original) | `application/pdf` |
+| `shabbat-service` | `*.pdf` (compressed full agenda, same name) | `application/pdf` |
+| `shabbat-service-md` | `*.pdf` (teaching-only pages, same name) | `application/pdf` |
 
 **v2 (later):** optional image blobs under a prefix such as `shabbat-service-md/images/{date-citation}/page-NNN-img-MM.png` — design then; not in v1.
 
 **Operator first-success checklist:**
 
 1. Create **private** `shabbat-service-md`.
-2. Verify read source + write destination.
-3. Run CLI on a chosen PDF (local first recommended).
-4. Confirm MD + Content-Type + page range (intro skipped).
+2. Verify read source + write destination (and write `*-teaching.pdf` on source).
+3. Run CLI on a chosen PDF (local first recommended), or upload a full agenda to `shabbat-service` and let the Function run.
+4. Confirm teaching PDF + MD + Content-Type + page range (intro skipped).
 
 ---
 
@@ -608,11 +828,11 @@ No SQL in v1.
 
 ### A. Azure Function only (no CLI)
 
-**Rejected as v1 primary** — harder to debug large PDFs; CLI-first.
+**Rejected as the only host** — harder to debug large PDFs; CLI remains for manual / batch.
 
 ### B. Console only, no Core library
 
-**Rejected** — hurts testing and a future Function host.
+**Rejected** — hurts testing and the Function host.
 
 ### C. Commercial PDF SDK
 
@@ -634,50 +854,72 @@ No SQL in v1.
 
 **Rejected / out of scope.** Adds complexity without fixing image-borne text; not needed for the product goals. Simple full-page line clustering is the only layout step.
 
+### H. Keep a separate `JohnMarsing/LMM-Parse-PDF` repo (or git submodule)
+
+**Rejected (#193).** Split GitHub/Azure identity was the original pain. Copy into the monorepo, then archive the old repo. History rewrite (`git filter-repo`) was optional and not worth it.
+
+### I. Merge into `Api/`
+
+**Rejected (#193).** Different Functions app, trigger, and runtime concerns. Keep `ShabbatPdf/` as its own product folder.
+
+### J. Keep `LivingMessiah.ShabbatPdf.*` prefixes after the port
+
+**Rejected (#194).** The `ShabbatPdf/` folder already supplies product context; long prefixes complicated scripts, solution entries, and Function publish output.
+
 ---
 
 ## Security & Privacy Considerations
 
 | Topic | Approach |
 |-------|----------|
-| **Secrets** | User Secrets / env / App Settings; never commit connection strings |
-| **Auth** | CLI: connection string. Function: Managed Identity |
-| **Public read** | Destination MD **private** (locked). Source may stay public |
+| **Secrets** | User Secrets / env / App Settings; never commit connection strings. `local.settings.json` is gitignored; commit only `.example`. |
+| **Auth** | CLI: connection string. Function today: connection string in app settings. Later: Managed Identity. |
+| **Public read** | Destination MD **private** (locked). Source may stay public. |
 | **Threat model** | Trusted operator; validate blob names (no `..`) |
 | **Supply chain** | Pin NuGet versions tested on fixtures |
 | **PII** | Teaching content only; no SQL PII store |
+| **Ghostscript** | AGPL v3 — confirm license for production Flex mount |
 
 ---
 
 ## Observability
 
-- **Info:** blob names, anchor pages, intro-skipped pages, end-match method, page range, char count, duration.
-- **Warning:** multiple anchors, weak local filename, empty pages in slice.
-- **Error:** anchors, PDF open, upload, container missing.
+- **Info:** blob names, shrink compressed/original/final, anchor pages, intro-skipped pages, end-match method, page range, char count, teaching URI, MD URI, duration.
+- **Warning:** multiple anchors, weak local filename, empty pages in slice, Event Grid events that cannot be parsed.
+- **Error:** anchors, PDF open, upload, container missing, shrink failure.
 
-**Metrics (Function later):** success/failure counts, duration, extracted page count.
+**Metrics (Function):** success/failure counts, duration, extracted page count, shrink original vs final size.
+
+Smoke-test log lines:
+
+```text
+Shrink {Name}: compressed=True original=261.9 MB final=29.4 MB
+OK {Name} teaching=… md=… sourceBytes=29.4 MB
+```
 
 ---
 
 ## Rollout Plan
 
+Original greenfield PRs 1–7 shipped in `JohnMarsing/LMM-Parse-PDF` (now archived). LivingMessiah cutover:
+
 ```mermaid
 flowchart TD
-  P1[PR1 Solution skeleton + models]
-  P2[PR2 PdfPig extract + anchors + intro skip]
-  P3[PR3 Markdown builder]
-  P4[PR4 Pipeline + CLI local]
-  P5[PR5 Azure temp download + MD upload]
-  P6[PR6 README + dry-run]
-  P7[PR7 Optional Function]
-  P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7
+  P193[Issue 193: copy into LivingMessiah.sln]
+  PSmoke[Smoke one real agenda PDF]
+  PArch[Archive JohnMarsing/LMM-Parse-PDF]
+  P194[Issue 194: rename to ShabbatPdf.*]
+  PRedeploy[Redeploy Function from this repo]
+  P193 --> PSmoke --> PArch --> P194 --> PRedeploy
 ```
 
 | Stage | What ships | Rollback |
 |-------|------------|----------|
 | Local | CLI file→file | N/A |
-| Azure write | CLI blob→private MD (manual) | Delete/overwrite bad `.md` |
-| Post-v1 | Optional schedule / Function | Disable; keep manual CLI |
+| Azure write | CLI blob→teaching + private MD (manual) | Delete/overwrite bad blobs |
+| Production | Function Event Grid on Flex | Disable Function; keep manual CLI |
+| Cutover (#193) | Deploy script in this repo only | Do not re-enable old-repo deploy |
+| Rename (#194) | Short names; full Function redeploy | Half-rename is not supported |
 
 | Metric | Target |
 |--------|--------|
@@ -694,11 +936,15 @@ flowchart TD
 | Image-embedded teaching text missing from MD | **High** (content gap) | Document as v1 limit; use text-rich PDFs when possible; **v2 images** + optional later OCR if needed |
 | End anchor split by Y clustering | High | Line + collapsed + multi-line fallbacks; `YTolerance=3.0` |
 | Anchor wording changes | Medium | Configurable strings; log nearby titles on failure |
-| File size OOM / slow cloud host | High if Function on wrong plan | Temp file; CLI default; Function Flex/Premium only if ever used |
-| PdfPig version drift | Low–Med | Pin tested version |
+| File size OOM / slow cloud host | High if Function on wrong plan | Temp file; Flex/Premium; Ghostscript shrink before parse |
+| PdfPig version drift | Low–Med | Pin tested version (0.1.15) |
 | Public MD / copyright | Medium | Private destination locked |
 | Intro skip miss / false positive | Low–Med | Configurable list; log skips |
-| Destination RBAC missing | Medium | PR 5 checklist |
+| Destination RBAC missing | Medium | Operator checklist |
+| Dual deploys from old + new repo | High | Old repo archived; deploy only from LivingMessiah (#193) |
+| Missed rename after #194 | High | Solution + scripts + namespaces all `ShabbatPdf.*`; full Function redeploy |
+| Ghostscript mount on Flex | Medium | Dedicated setup scripts; non-retriable if `gs` missing |
+| Blob trigger loops | High | Keep skip of `*-teaching.pdf` |
 
 ---
 
@@ -708,22 +954,30 @@ flowchart TD
 |---|----------|------------|----------------|
 | 1 | Destination public-read vs private? | **Resolved** | **Private** until policy review |
 | 2 | Exclude Fair Use / agenda intro? | **Resolved** | **Skip intro pages** (Step 2b) |
-| 3 | Preferred automation? | **Resolved** | **Manual CLI** for v1 |
+| 3 | Preferred automation? | **Resolved** | Function Event Grid for weekly upload; CLI for manual / batch (supersedes original “CLI-only v1”) |
 | 4 | .NET version? | **Resolved** | **`net8.0` LTS** |
 | 5 | Blazor app integration? | **Deferred** | Out of scope v1 |
-| 6 | Batch historical PDFs? | **Deferred** | After weekly path works |
+| 6 | Batch historical PDFs? | **Resolved** | `ShabbatPdf/scripts/batch-blob-parse.ps1` (`--teaching-only --skip-existing`) |
 | 7 | Which PDF for goldens? | **Open (ops)** | Prefer a text-rich Saturday agenda; image-heavy decks only for anchor smoke tests |
+| 8 | Where does the code live? | **Resolved (#193)** | `LivingMessiahJohn/LivingMessiah` / `ShabbatPdf/`; old repo archived |
+| 9 | Project / namespace prefix? | **Resolved (#194)** | `ShabbatPdf.*` only |
+| 10 | Aspire-host the Function? | **Deferred** | Nice-to-have; not required for cutover |
+| 11 | Rename Markdown `tool:` from `LMM-Parse-PDF`? | **Open (ops)** | Left as historical product label; not part of #194 |
 
 ---
 
 ## References
 
-- Product notes: `Prompts/Plan.md`
+- Operator README: `ShabbatPdf/README.md`
+- Agent notes: `ShabbatPdf/AGENTS.md`
 - Source: `https://livingmessiahstorage.blob.core.windows.net/shabbat-service/`
 - Probe sample: `https://livingmessiahstorage.blob.core.windows.net/shabbat-service/2026-07-04-Lev-16.pdf`
 - PdfPig: https://github.com/UglyToad/PdfPig
 - Azure.Storage.Blobs / Azure.Identity NuGet packages
-- GitHub: https://github.com/JohnMarsing
+- Monorepo: https://github.com/LivingMessiahJohn/LivingMessiah
+- Port: https://github.com/LivingMessiahJohn/LivingMessiah/issues/193
+- Rename: https://github.com/LivingMessiahJohn/LivingMessiah/issues/194
+- Archived origin: https://github.com/JohnMarsing/LMM-Parse-PDF
 
 ### Probe summary (anchors only; sample is image-heavy)
 
@@ -733,80 +987,68 @@ flowchart TD
 | End | p.114 The Avinu Prayer (line cluster) |
 | Intro skip | p.87 |
 | Final window | **88–113** |
-| Images | Many in window — **not** OCR’d; **not** exported in v1 |
+| Images | Many in window — **not** OCR’d; **not** exported in Markdown; **kept** in teaching PDF |
 
 ---
 
 ## Implementation Phases
 
-| Phase | Outcome |
-|-------|---------|
-| 1 | Solution + Core models |
-| 2 | PdfPig lines + anchors + intro skip + fixtures |
-| 3 | Markdown builder |
-| 4 | Pipeline + CLI local |
-| 5 | Azure temp download + MD upload |
-| 6 | Docs / dry-run |
-| 7 | Optional Function |
+| Phase | Outcome | Status |
+|-------|---------|--------|
+| 1 | Solution + Core models | Done (old repo) |
+| 2 | PdfPig lines + anchors + intro skip + fixtures | Done |
+| 3 | Markdown builder | Done |
+| 4 | Pipeline + CLI local | Done |
+| 5 | Azure temp download + MD upload | Done |
+| 6 | Docs / dry-run | Done |
+| 7 | Azure Function Event Grid | Done |
+| 8 | Teaching PDF slice + Markdown from teaching PDF | Done |
+| 9 | Ghostscript shrink on Function (issue #50) | Done |
+| 10 | Copy into LivingMessiah monorepo (#193) | Done |
+| 11 | Rename to `ShabbatPdf.*` (#194) | Done |
 
 ---
 
 ## PR Plan
 
-### PR 1 — Solution skeleton and core models
-- **PR title:** `chore: create solution skeleton and core models`
-- **Files:** solution, Core, Tests (xUnit smoke), `.gitignore`, minimal README
-- **Dependencies:** none
-- **Description:** `net8.0` library + tests. Models: `PdfPageText` (single `Lines` list), `PdfWordBox`, `ParseRequest`/`Result`, `AnchorResult`, options. No PDF logic yet.
+Original PRs 1–7 were the greenfield plan in `LMM-Parse-PDF` and are **shipped**. The LivingMessiah follow-ons:
 
-### PR 2 — PdfPig extraction, anchors, intro skip
-- **PR title:** `feat: extract PDF text lines with anchors and intro skip`
-- **Files:** `PdfPigPageSource`, `LineClusterOptions`, `AnchorLocator`, `ContentSlicer`, fixtures, tests
-- **Dependencies:** PR 1
-- **Description:** midY line clustering only; start/end anchors; intro skip; pin PdfPig. Prefer text-rich PDF for content goldens; synthetic fixtures for Avinu fallbacks. **No** multi-column code. No multi‑MB PDFs in git.
+### PR — Port LMM-Parse-PDF into LivingMessiah (#193)
 
-### PR 3 — Markdown builder and filename metadata
-- **PR title:** `feat: build minimal Markdown from sliced pages`
-- **Files:** `MarkdownBuilder`, `FilenameParser`, expected fixtures, tests
-- **Dependencies:** PR 2
-- **Description:** Front matter, H1, page comments, plain lines, optional ALL CAPS headings. No image placeholders.
+- **PR title:** `feat: add ShabbatPdf pipeline from LMM-Parse-PDF`
+- **Files:** `ShabbatPdf/**`, `LivingMessiah.sln`
+- **Dependencies:** none in this repo
+- **Description:** Copy Core + Cli + Functions + Tests (not a submodule). Do not merge into `Api/`. Point `deploy-function.ps1` at existing `lmm-shabbat-pdf`. Secrets by example only. Archive `JohnMarsing/LMM-Parse-PDF` after smoke.
 
-### PR 4 — Parse pipeline + Console CLI (local files)
-- **PR title:** `feat: CLI local mode to parse PDF file to Markdown file`
-- **Files:** `ParsePipeline`, Cli project (Hosting + System.CommandLine)
-- **Dependencies:** PR 3
-- **Description:** `--input` / `--output` only. Developer verifies on a local agenda PDF.
+### PR — Shorten project names to ShabbatPdf.* (#194)
 
-### PR 5 — Azure Blob download (temp file) and Markdown upload
-- **PR title:** `feat: Azure blob download to temp file and Markdown upload`
-- **Files:** `AzureBlobStore`, CLI `--blob` flags, User Secrets docs
-- **Dependencies:** PR 4
-- **Description:** Temp-file download; upload private MD. Operator checklist: create container, write permission, process one blob, confirm Content-Type + page range.
+- **PR title:** `refactor: rename LivingMessiah.ShabbatPdf.* to ShabbatPdf.*`
+- **Files:** `.csproj`, solution entries, namespaces, `ProjectReference`s, `scripts/*.ps1`, README, AGENTS.md, this design doc
+- **Dependencies:** #193
+- **Description:** Align `RootNamespace` / `AssemblyName` / default namespaces. Keep CLI `UserSecretsId`. Redeploy Function once so `ShabbatPdf.Functions.dll` is what Azure runs. Behavior unchanged.
 
-### PR 6 — UX polish and documentation
-- **PR title:** `docs: README usage, error catalog, and dry-run polish`
-- **Dependencies:** PR 5
-- **Description:** Operator path, anchors, intro skip, **text-layer only / no OCR / no images**, secrets, troubleshooting. Note v2 image export as future work.
+### Later (optional; not required by #193 / #194)
 
-### PR 7 — Optional Azure Functions host
-- **PR title:** `feat: Azure Function blob trigger host on Flex/Premium`
-- **Dependencies:** PR 5 (PR 6 recommended)
-- **Description:** Thin host; no source re-download. Defer indefinitely if CLI is enough.
+- Aspire: add CLI and/or Functions to `LivingMessiah.AppHost` for local dev.
+- Managed Identity for the Function; remove connection string from app settings.
+- Retire leftover `ShabbatPdf/scripts/publish-to-github.ps1` (it still targets the archived standalone repo).
+- Decide whether Markdown `tool:` should stay `LMM-Parse-PDF`.
 
 ---
 
-## Appendix A — Example operator flow (v1)
+## Appendix A — Example operator flow
 
-1. Saturday: upload PDF to `shabbat-service`.
-2. Run:
+1. Saturday: upload PDF in Admin (Weekly Downloads) to `shabbat-service-staging`. Functions compress then extract.
+
+2. Or run CLI against an already-compressed service blob:
 
    ```powershell
-   cd C:\Source\repos\LMM-Parse-PDF
-   dotnet run --project src/ShabbatPdf.Cli -- --blob "YYYY-MM-DD-Citation.pdf"
+   cd C:\Source\repos\LivingMessiah
+   dotnet run --project ShabbatPdf\src\Cli -- --blob "YYYY-MM-DD-Citation.pdf"
    ```
 
-3. Confirm private MD; page range excludes intro; body is text-layer only.
-4. Re-run after PDF corrections to overwrite MD.
+3. Confirm the same file name in `shabbat-service` (full compressed agenda) and `shabbat-service-md` (teaching pages only).
+4. Re-upload staging after PDF corrections to overwrite both outputs.
 
 ## Appendix B — Minimal Az CLI (one-time)
 
@@ -827,199 +1069,16 @@ When ready:
 3. Optionally insert `![…](…)` into MD or keep a sidecar index.
 4. Still **no OCR** unless a separate decision adds it.
 
-      "commandLineArgs": "--input \"C:\\Users\\JohnM\\Downloads\\2026-07-04-Lev-16.pdf\" --blob 2026-07-04-Lev-16.pdf"
-
-## Command Lines
-Flags in place: 
-- `--input`, `--output`, 
-- `--blob`, 
-- `--dry-run`, 
-- `--skip-existing`, 
-- `--ensure-container`, 
-- `--allow-nonstandard-name`
-
-What I want to next make a smaller version of the PDF but only with containing teaching/study portion.
-I want to name these pdfs the same as the original but append -teaching to it
-
-
-
-Decisions to lock before coding
-
-1. When does it run? => I want this to be the first step in my workflow. Then the markdown extraction will use the *-teaching.pdf files as it's source thereby eliminating the need to parse the teaching pages. 
-
-2. Where does the file go?
-   • Local: next to .md => YES
-   • Azure: same container as source (shabbat-service) => YES
-
-3. Skip / overwrite
-   • Reuse --skip-existing for the teaching blob/file as well => YES
-   • Default overwrite (same as MD)? => Yes
- A — Use teaching-relative pages in comments (simplest).
-
- dotnet run --project src/ShabbatPdf.Cli -- `
-  --input "C:\Users\JohnM\Downloads\2026-06-27-Lev-15.pdf" `
-  --output ".\out\2026-06-27-Lev-15.pdf"
-
-dotnet run --project src/ShabbatPdf.Cli -- --blob "2026-07-04-Lev-16.pdf" --dry-run  
-
-dotnet run --project src/ShabbatPdf.Cli -- --blob "2026-07-04-Lev-16.pdf"
-
-## Batch 100
-
-```
-cd C:\Source\repos\LMM-Parse-PDF
-
-# List only full agendas (exclude already-sliced teaching PDFs)
-$blobs = az storage blob list `
-  --account-name livingmessiahstorage `
-  --container-name shabbat-service `
-  --auth-mode login `
-  --query "[?ends_with(name, '.pdf') && !ends_with(name, '-teaching.pdf')].name" `
-  -o tsv
-
-$failed = @()
-foreach ($name in $blobs) {
-  Write-Host "=== $name ===" -ForegroundColor Cyan
-  dotnet run --project src/ShabbatPdf.Cli --no-build -- `
-    --blob $name `
-    --skip-existing
-
-  if ($LASTEXITCODE -ne 0) {
-    Write-Host "FAILED: $name (exit $LASTEXITCODE)" -ForegroundColor Red
-    $failed += $name
-  }
-}
-
-Write-Host "Done. Failures: $($failed.Count)"
-$failed
-```
-
-How to run
-
-# Smoke (5 files)
-.\scripts\batch-blob-parse.ps1 -MaxCount 5
-
-# Full container
-.\scripts\batch-blob-parse.ps1
-
-Single blob:
-
-dotnet run --project src/ShabbatPdf.Cli -- `
-  --blob "2026-07-04-Lev-16.pdf" --teaching-only
-
-
-
-LMM-Parse-PDF  .\scripts\batch-blob-parse.ps1 -MaxCount 5
-2026-07-12 12:42:00  Log file: C:\Source\repos\LMM-Parse-PDF\out\batch-blob-parse-20260712-124200.log
-2026-07-12 12:42:00  Repo: C:\Source\repos\LMM-Parse-PDF
-2026-07-12 12:42:00  Listing pdf blobs in livingmessiahstorage / shabbat-service ...
-az : ERROR:
-At C:\Source\repos\LMM-Parse-PDF\scripts\batch-blob-parse.ps1:66 char:13
-+ $listJson = az storage blob list `
-+             ~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (ERROR: :String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
-
-
-cd C:\Source\repos\LMM-Parse-PDF
-
-# Preview
-.\scripts\batch-blob-parse.ps1 -WhatIf -MaxCount 5
-
-# Smoke
-.\scripts\batch-blob-parse.ps1 -MaxCount 5
-
-# Full batch
-.\scripts\batch-blob-parse.ps1
-
-
-2026-07-12 13:36:04  Log:       C:\Source\repos\LMM-Parse-PDF\out\batch-blob-parse-20260712-132416.log
-2026-07-12 13:36:04  Failed blob names:
-2026-07-12 13:36:04    2025-05-31-Gen-32-04-to-33-17.pdf - Redo
-2026-07-12 13:36:04    2025-08-02-Gen-42-18-to-43-23.pdf - Redo
-2026-07-12 13:36:04    2025-11-22-Exo-13-21-to-15-21.pdf - BAD NAME: 2025-11-29-2025-11-29-Exo-15-22-to-16-24-teaching.pdf, no need to redo, just rename them
-2026-07-12 13:36:04    2026-04-18-Lev-3.pdf              - NO TEACHING
-
-
-### Batch upload of two 
-You don’t need a full container pass. Best options, simplest first:
-
-1. Two direct CLI runs 
+## Appendix D — Verify after #194
 
 ```powershell
-cd C:\Source\repos\LMM-Parse-PDF
+cd C:\Source\repos\LivingMessiah
+dotnet build LivingMessiah.sln
+dotnet test ShabbatPdf\tests\ShabbatPdf.Tests\ShabbatPdf.Tests.csproj
+dotnet run --project ShabbatPdf\src\Cli -- --input "..." --output ".\out\smoke.md"
 
-dotnet run --project src/ShabbatPdf.Cli -- `
-  --blob "2025-05-31-Gen-32-04-to-33-17.pdf" --teaching-only
-
-dotnet run --project src/ShabbatPdf.Cli -- `
-  --blob "2025-08-02-Gen-42-18-to-43-23.pdf" --teaching-only
-```  
-
-# Azure Function
-All 59 tests pass; solution builds cleanly.
-
-What you got
-
-New project: src/ShabbatPdf.Functions
-
-┌──────────┬────────────────────────────────────────────────────────────────────────────────┐
-│ Piece    │ Behavior                                                                       │
-├──────────┼────────────────────────────────────────────────────────────────────────────────┤
-│ Trigger  │ Blob on shabbat-service (%Blob__SourceContainer%/{name})                       │
-├──────────┼────────────────────────────────────────────────────────────────────────────────┤
-│ Skips    │ Non-PDF and *-teaching.pdf (no loop when teaching is written back)             │
-├──────────┼────────────────────────────────────────────────────────────────────────────────┤
-│ Input    │ Trigger stream → temp file (no re-download of the source blob)                 │
-├──────────┼────────────────────────────────────────────────────────────────────────────────┤
-│ Pipeline │ Same ParsePipeline as the CLI                                                  │
-├──────────┼────────────────────────────────────────────────────────────────────────────────┤
-│ Outputs  │ *-teaching.pdf → source container + .md → shabbat-service-md                   │
-├──────────┼────────────────────────────────────────────────────────────────────────────────┤
-│ Errors   │ Anchor/name failures: log only (no endless retry). I/O failures: throw (retry) │
-└──────────┴────────────────────────────────────────────────────────────────────────────────┘
-
-Key files
-
-• ProcessShabbatPdfFunction.cs — trigger handler
-• ShabbatBlobTriggerFilter.cs — skip rules
-• Program.cs — DI (Core services + MI/connection string via BlobOptions)
-• local.settings.json.example — copy to local.settings.json for local runs
-• host.json — 10 min timeout, blob parallelism = 1
-
-Try it locally
-
-copy src\ShabbatPdf.Functions\local.settings.json.example `
-     src\ShabbatPdf.Functions\local.settings.json
-
-Set both Blob and Blob__ConnectionString to your storage connection string, then:
-
-### Azure Function Plans
-Azure Functions offers five primary hosting plans, each tailored to different performance, scalability, and cost requirements. The **Flex Consumption plan** is the **recommended default for Linux-based serverless apps**, offering fast horizontal scaling up to 1,000 instances, virtual network integration, and configurable "Always Ready" instances to reduce cold starts.  It supports memory sizes of 512 MB, 2 GB, or 4 GB and allows unbounded execution timeouts.
-
-# Deployed
-
-App	lmm-shabbat-pdf
-Resource group	LmmWebAppGroup
-Plan	Flex Consumption (West US) — good for large PDFs
-URL	https://lmm-shabbat-pdf.azurewebsites.net
-Function	ProcessShabbatPdf (dotnet-isolated 8)
-Storage	livingmessiahstorage
-
-Configured settings
-• Blob trigger + pipeline use the storage connection string
-• Source: shabbat-service
-• Destination: shabbat-service-md (container ensured)
-• *-teaching.pdf is skipped so writing teaching PDFs does not re-trigger forever
-
-Redeploy later
-
+cd ShabbatPdf
 .\scripts\deploy-function.ps1
+```
 
-### Smoke-test
-1. Upload a full agenda PDF to shabbat-service (or re-upload an existing one).
-2. Wait a bit (cold start on Flex is normal).
-3. Check for:
-   • shabbat-service/...-teaching.pdf
-   • shabbat-service-md/....md
-4. Logs: Azure Portal → lmm-shabbat-pdf → Log stream / Monitor
+Then re-upload one full agenda PDF (not `*-teaching.pdf`) and confirm `*-teaching.pdf` + `.md`.

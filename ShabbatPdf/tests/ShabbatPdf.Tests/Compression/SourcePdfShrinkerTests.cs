@@ -7,36 +7,43 @@ namespace ShabbatPdf.Tests.Compression;
 
 public class SourcePdfShrinkerTests
 {
-    private const string Container = "shabbat-service";
+    private const string Staging = "shabbat-service-staging";
+    private const string Service = "shabbat-service";
     private const string BlobName = "2026-07-18-Lev-18.pdf";
 
     [Fact]
-    public async Task EnsureUnderMaxSize_Disabled_Skips()
+    public async Task Publish_Disabled_CopiesUncompressed()
     {
         var store = new InMemoryBlobStore();
-        await store.EnsureContainerExistsAsync(Container);
-        store.Seed(Container, BlobName, new byte[100]);
+        await store.EnsureContainerExistsAsync(Staging);
+        await store.EnsureContainerExistsAsync(Service);
+        var payload = new byte[100];
+        Array.Fill(payload, (byte)0xAA);
+        store.Seed(Staging, BlobName, payload);
 
         var shrinker = CreateShrinker(
             store,
             new FakeCompressor(),
             new PdfCompressOptions { Enabled = false, MaxBytes = 50 });
 
-        var result = await shrinker.EnsureUnderMaxSizeAsync(Container, BlobName);
+        var result = await shrinker.PublishAsync(Staging, Service, BlobName);
 
-        Assert.True(result.Success);
+        Assert.True(result.Success, result.Message);
         Assert.False(result.Compressed);
+        Assert.True(result.Copied);
         Assert.Contains("disabled", result.Message, StringComparison.OrdinalIgnoreCase);
-        Assert.Equal(100, store.Blobs[$"{Container}/{BlobName}"].Length);
+        Assert.Equal(payload, store.Blobs[$"{Staging}/{BlobName}"]);
+        Assert.Equal(payload, store.Blobs[$"{Service}/{BlobName}"]);
     }
 
     [Fact]
-    public async Task EnsureUnderMaxSize_AlreadySmall_DoesNotCompress()
+    public async Task Publish_AlreadySmall_CopiesAsIs()
     {
         var store = new InMemoryBlobStore();
-        await store.EnsureContainerExistsAsync(Container);
+        await store.EnsureContainerExistsAsync(Staging);
+        await store.EnsureContainerExistsAsync(Service);
         var payload = new byte[1_000];
-        store.Seed(Container, BlobName, payload);
+        store.Seed(Staging, BlobName, payload);
 
         var fake = new FakeCompressor();
         var shrinker = CreateShrinker(
@@ -44,22 +51,26 @@ public class SourcePdfShrinkerTests
             fake,
             new PdfCompressOptions { Enabled = true, MaxBytes = 10_000 });
 
-        var result = await shrinker.EnsureUnderMaxSizeAsync(Container, BlobName);
+        var result = await shrinker.PublishAsync(Staging, Service, BlobName);
 
-        Assert.True(result.Success);
+        Assert.True(result.Success, result.Message);
         Assert.False(result.Compressed);
+        Assert.True(result.Copied);
         Assert.Equal(0, fake.CallCount);
         Assert.Equal(payload.Length, result.FinalBytes);
+        Assert.Equal(payload, store.Blobs[$"{Service}/{BlobName}"]);
+        Assert.Equal(payload, store.Blobs[$"{Staging}/{BlobName}"]);
     }
 
     [Fact]
-    public async Task EnsureUnderMaxSize_Oversized_CompressesAndOverwrites()
+    public async Task Publish_Oversized_CompressesToService_LeavesStaging()
     {
         var store = new InMemoryBlobStore();
-        await store.EnsureContainerExistsAsync(Container);
+        await store.EnsureContainerExistsAsync(Staging);
+        await store.EnsureContainerExistsAsync(Service);
         var large = new byte[20_000];
         Array.Fill(large, (byte)0xAB);
-        store.Seed(Container, BlobName, large);
+        store.Seed(Staging, BlobName, large);
 
         var compressed = new byte[500];
         Array.Fill(compressed, (byte)0xCD);
@@ -70,22 +81,25 @@ public class SourcePdfShrinkerTests
             fake,
             new PdfCompressOptions { Enabled = true, MaxBytes = 5_000 });
 
-        var result = await shrinker.EnsureUnderMaxSizeAsync(Container, BlobName);
+        var result = await shrinker.PublishAsync(Staging, Service, BlobName);
 
         Assert.True(result.Success, result.Message);
         Assert.True(result.Compressed);
+        Assert.False(result.Copied);
         Assert.Equal(1, fake.CallCount);
         Assert.Equal(large.Length, result.OriginalBytes);
         Assert.Equal(compressed.Length, result.FinalBytes);
-        Assert.Equal(compressed, store.Blobs[$"{Container}/{BlobName}"]);
+        Assert.Equal(compressed, store.Blobs[$"{Service}/{BlobName}"]);
+        Assert.Equal(large, store.Blobs[$"{Staging}/{BlobName}"]);
     }
 
     [Fact]
-    public async Task EnsureUnderMaxSize_StillOverLimitAfterCompress_Fails()
+    public async Task Publish_StillOverLimitAfterCompress_Fails_DoesNotWriteService()
     {
         var store = new InMemoryBlobStore();
-        await store.EnsureContainerExistsAsync(Container);
-        store.Seed(Container, BlobName, new byte[20_000]);
+        await store.EnsureContainerExistsAsync(Staging);
+        await store.EnsureContainerExistsAsync(Service);
+        store.Seed(Staging, BlobName, new byte[20_000]);
 
         var fake = new FakeCompressor { OutputBytes = new byte[15_000] };
         var shrinker = CreateShrinker(
@@ -93,37 +107,39 @@ public class SourcePdfShrinkerTests
             fake,
             new PdfCompressOptions { Enabled = true, MaxBytes = 5_000 });
 
-        var result = await shrinker.EnsureUnderMaxSizeAsync(Container, BlobName);
+        var result = await shrinker.PublishAsync(Staging, Service, BlobName);
 
         Assert.False(result.Success);
         Assert.Contains("still over limit", result.Message, StringComparison.OrdinalIgnoreCase);
-        // Original blob left in place
-        Assert.Equal(20_000, store.Blobs[$"{Container}/{BlobName}"].Length);
+        Assert.Equal(20_000, store.Blobs[$"{Staging}/{BlobName}"].Length);
+        Assert.False(store.Blobs.ContainsKey($"{Service}/{BlobName}"));
     }
 
     [Fact]
-    public async Task EnsureUnderMaxSize_MissingBlob_Fails()
+    public async Task Publish_MissingBlob_Fails()
     {
         var store = new InMemoryBlobStore();
-        await store.EnsureContainerExistsAsync(Container);
+        await store.EnsureContainerExistsAsync(Staging);
+        await store.EnsureContainerExistsAsync(Service);
 
         var shrinker = CreateShrinker(
             store,
             new FakeCompressor(),
             new PdfCompressOptions { Enabled = true, MaxBytes = 100 });
 
-        var result = await shrinker.EnsureUnderMaxSizeAsync(Container, BlobName);
+        var result = await shrinker.PublishAsync(Staging, Service, BlobName);
 
         Assert.False(result.Success);
         Assert.Contains("not found", result.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
-    public async Task EnsureUnderMaxSize_CompressorFails_Propagates()
+    public async Task Publish_CompressorFails_LeavesStaging()
     {
         var store = new InMemoryBlobStore();
-        await store.EnsureContainerExistsAsync(Container);
-        store.Seed(Container, BlobName, new byte[20_000]);
+        await store.EnsureContainerExistsAsync(Staging);
+        await store.EnsureContainerExistsAsync(Service);
+        store.Seed(Staging, BlobName, new byte[20_000]);
 
         var fake = new FakeCompressor { FailMessage = "Ghostscript exploded" };
         var shrinker = CreateShrinker(
@@ -131,10 +147,35 @@ public class SourcePdfShrinkerTests
             fake,
             new PdfCompressOptions { Enabled = true, MaxBytes = 5_000 });
 
-        var result = await shrinker.EnsureUnderMaxSizeAsync(Container, BlobName);
+        var result = await shrinker.PublishAsync(Staging, Service, BlobName);
 
         Assert.False(result.Success);
         Assert.Contains("exploded", result.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(20_000, store.Blobs[$"{Staging}/{BlobName}"].Length);
+        Assert.False(store.Blobs.ContainsKey($"{Service}/{BlobName}"));
+    }
+
+    [Fact]
+    public async Task Publish_SameContainerAlreadySmall_DoesNotReupload()
+    {
+        var store = new InMemoryBlobStore();
+        await store.EnsureContainerExistsAsync(Service);
+        var payload = new byte[100];
+        store.Seed(Service, BlobName, payload);
+
+        var fake = new FakeCompressor();
+        var shrinker = CreateShrinker(
+            store,
+            fake,
+            new PdfCompressOptions { Enabled = true, MaxBytes = 1_000 });
+
+        var result = await shrinker.PublishAsync(Service, Service, BlobName);
+
+        Assert.True(result.Success, result.Message);
+        Assert.False(result.Copied);
+        Assert.False(result.Compressed);
+        Assert.Equal(0, fake.CallCount);
+        Assert.Equal(payload, store.Blobs[$"{Service}/{BlobName}"]);
     }
 
     private static SourcePdfShrinker CreateShrinker(

@@ -7,8 +7,11 @@ public sealed class SourcePdfShrinkResult
 {
     public bool Success { get; init; }
 
-    /// <summary>True when Ghostscript ran and the blob was overwritten.</summary>
+    /// <summary>True when Ghostscript ran and a smaller PDF was published.</summary>
     public bool Compressed { get; init; }
+
+    /// <summary>True when the blob was copied to the destination without Ghostscript.</summary>
+    public bool Copied { get; init; }
 
     public long OriginalBytes { get; init; }
 
@@ -21,7 +24,19 @@ public sealed class SourcePdfShrinkResult
         {
             Success = true,
             Compressed = false,
+            Copied = false,
             Message = "PdfCompress disabled; left source unchanged."
+        };
+
+    public static SourcePdfShrinkResult CopiedDisabled(long bytes) =>
+        new()
+        {
+            Success = true,
+            Compressed = false,
+            Copied = true,
+            OriginalBytes = bytes,
+            FinalBytes = bytes,
+            Message = "PdfCompress disabled; copied uncompressed."
         };
 
     public static SourcePdfShrinkResult AlreadyUnderLimit(long bytes, long maxBytes) =>
@@ -29,10 +44,23 @@ public sealed class SourcePdfShrinkResult
         {
             Success = true,
             Compressed = false,
+            Copied = false,
             OriginalBytes = bytes,
             FinalBytes = bytes,
             Message =
                 $"Already under limit ({FormatMb(bytes)} <= {FormatMb(maxBytes)}); no compress."
+        };
+
+    public static SourcePdfShrinkResult CopiedAsIs(long bytes, long maxBytes) =>
+        new()
+        {
+            Success = true,
+            Compressed = false,
+            Copied = true,
+            OriginalBytes = bytes,
+            FinalBytes = bytes,
+            Message =
+                $"Copied as-is ({FormatMb(bytes)} <= {FormatMb(maxBytes)}); no compress."
         };
 
     public static SourcePdfShrinkResult CompressedOk(
@@ -43,6 +71,7 @@ public sealed class SourcePdfShrinkResult
         {
             Success = true,
             Compressed = true,
+            Copied = false,
             OriginalBytes = originalBytes,
             FinalBytes = finalBytes,
             Message =
@@ -57,6 +86,7 @@ public sealed class SourcePdfShrinkResult
         {
             Success = false,
             Compressed = false,
+            Copied = false,
             OriginalBytes = originalBytes,
             FinalBytes = finalBytes,
             Message = message

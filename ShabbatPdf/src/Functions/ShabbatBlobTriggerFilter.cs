@@ -2,7 +2,8 @@ namespace ShabbatPdf.Functions;
 
 /// <summary>
 /// Decides which blobs the Azure Function should process.
-/// Skips teaching-only outputs written back to the source container (avoids re-entry loops).
+/// Skips leftover <c>*-teaching.pdf</c> blobs in <c>shabbat-service</c> (legacy naming).
+/// New teaching PDFs live in <c>shabbat-service-md</c> with the agenda file name.
 /// </summary>
 public static class ShabbatBlobTriggerFilter
 {
@@ -28,7 +29,7 @@ public static class ShabbatBlobTriggerFilter
             return false;
         }
 
-        // Our pipeline uploads *-teaching.pdf to the same source container.
+        // Legacy pipeline wrote *-teaching.pdf into shabbat-service; skip those.
         if (name.EndsWith("-teaching.pdf", StringComparison.OrdinalIgnoreCase))
         {
             return false;

@@ -3,7 +3,7 @@
 # Lists blobs in shabbat-service, skips *-teaching.pdf, and runs:
 #   dotnet run ... --blob <name> --teaching-only --skip-existing
 #
-# Does NOT create Markdown (.md). Only uploads *-teaching.pdf to shabbat-service.
+# Does NOT create Markdown (.md). Uploads same-name teaching PDFs to shabbat-service-md.
 #
 # Prerequisites:
 #   - Blob:ConnectionString in user secrets (or Blob__ConnectionString env)
