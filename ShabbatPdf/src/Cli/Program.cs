@@ -29,7 +29,7 @@ var outputOption = new Option<FileInfo?>("--output", "-o")
 
 var blobOption = new Option<string?>("--blob", "-b")
 {
-    Description = "Blob name in shabbat-service (compressed agenda). Uploads a same-name teaching PDF to shabbat-service-md."
+    Description = "Blob name in shabbat-service (compressed agenda). Uploads a same-name teaching PDF to shabbat-service-teaching."
 };
 
 var dryRunOption = new Option<bool>("--dry-run")

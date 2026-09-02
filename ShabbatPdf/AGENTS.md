@@ -1,5 +1,5 @@
 - Role: parse Shabbat agenda PDFs → compressed full PDF + teaching-only PDF
-- Flow: Admin → `shabbat-service-staging` → compress to `shabbat-service` → teaching slice to `shabbat-service-md` (same file name)
+- Flow: Admin → `shabbat-service-staging` → compress to `shabbat-service` → teaching slice to `shabbat-service-teaching` (same file name)
 - Hosts: Cli (manual/batch), Functions (`CompressStagingPdf`, `ProcessShabbatPdf`)
 - Never merge into Api/
 - Skip `*-teaching.pdf` on service-container triggers (legacy names)

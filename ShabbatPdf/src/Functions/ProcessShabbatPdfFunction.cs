@@ -10,7 +10,7 @@ namespace ShabbatPdf.Functions;
 
 /// <summary>
 /// Event Grid on <c>shabbat-service</c>: slice teaching pages and upload the same file name
-/// to <c>shabbat-service-md</c>.
+/// to <c>shabbat-service-teaching</c>.
 /// </summary>
 public sealed class ProcessShabbatPdfFunction
 {

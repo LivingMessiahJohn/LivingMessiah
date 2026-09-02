@@ -1,11 +1,16 @@
 # Wire Event Grid blob events -> Function EventGridTriggers.
 # Flex Consumption does not poll containers; without these subscriptions the functions never run.
 #
-# Two subscriptions:
-#   shabbat-service-staging → CompressStagingPdf
-#   shabbat-service         → ProcessShabbatPdf (teaching extract)
+# Two subscriptions (Azure Function destination — not webhook):
+#   shabbat-service-staging -> CompressStagingPdf
+#   shabbat-service         -> ProcessShabbatPdf (teaching extract)
 #
-# Prerequisites: az login, function already deployed.
+# Webhook endpoint-type fails Flex handshake validation
+# (Http POST response code Unknown). The working production
+# subscription used --endpoint-type azurefunction.
+#
+# Prerequisites: az login, function already deployed (both CompressStagingPdf
+# and ProcessShabbatPdf must exist on the app).
 #
 # From ShabbatPdf product root:
 #   .\scripts\setup-function-eventgrid.ps1
@@ -21,29 +26,26 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+if (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction SilentlyContinue) {
+    $PSNativeCommandUseErrorActionPreference = $false
+}
 
 Write-Host "Ensuring Microsoft.EventGrid provider is registered ..." -ForegroundColor Cyan
 az provider register --namespace Microsoft.EventGrid --wait 2>$null
 
-Write-Host "Getting eventgrid_extension system key ..." -ForegroundColor Cyan
-$keysJson = az functionapp keys list -g $ResourceGroup -n $AppName -o json | ConvertFrom-Json
-$egKey = $keysJson.systemKeys.eventgrid_extension
-if ([string]::IsNullOrWhiteSpace($egKey)) {
-    $egKey = $keysJson.systemKeys.PSObject.Properties |
-        Where-Object { $_.Name -match 'eventgrid' } |
-        Select-Object -First 1 -ExpandProperty Value
-}
-if ([string]::IsNullOrWhiteSpace($egKey)) {
-    throw "Could not find system key 'eventgrid_extension'. Redeploy the Function app and retry."
-}
-
 $storageId = az storage account show -n $StorageAccount -g $ResourceGroup --query id -o tsv
+if ([string]::IsNullOrWhiteSpace($storageId)) {
+    throw "Storage account '$StorageAccount' not found in resource group '$ResourceGroup'."
+}
 
-Write-Host "Warming function app ..." -ForegroundColor Cyan
-try {
-    Invoke-WebRequest -Uri "https://$AppName.azurewebsites.net" -UseBasicParsing -TimeoutSec 120 | Out-Null
-} catch {
-    Write-Host "Warm request: $($_.Exception.Message)" -ForegroundColor Yellow
+function Invoke-AzJson {
+    param([Parameter(ValueFromRemainingArguments = $true)][string[]] $AzArgs)
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    $out = & az @AzArgs 2>$null
+    $code = $LASTEXITCODE
+    $ErrorActionPreference = $prev
+    return @{ ExitCode = $code; Text = ($out | Out-String) }
 }
 
 function New-BlobCreatedSubscription {
@@ -53,28 +55,41 @@ function New-BlobCreatedSubscription {
         [string] $SubscriptionName
     )
 
-    $endpoint = "https://$AppName.azurewebsites.net/runtime/webhooks/eventgrid?functionName=$FunctionName&code=$egKey"
-    $subjectBegins = "/blobServices/default/containers/$ContainerName/blobs/"
-
-    Write-Host "Creating/updating Event Grid subscription '$SubscriptionName' ($ContainerName → $FunctionName) ..." -ForegroundColor Cyan
-
-    $existing = az eventgrid event-subscription show `
-        --source-resource-id $storageId `
-        --name $SubscriptionName `
-        -o json 2>$null
-    if ($LASTEXITCODE -eq 0 -and $existing) {
-        Write-Host "Removing existing subscription ..." -ForegroundColor Yellow
-        az eventgrid event-subscription delete `
-            --source-resource-id $storageId `
-            --name $SubscriptionName `
-            2>$null
+    $functionId = az functionapp function show `
+        -g $ResourceGroup `
+        -n $AppName `
+        --function-name $FunctionName `
+        --query id -o tsv
+    if ([string]::IsNullOrWhiteSpace($functionId)) {
+        throw "Function '$FunctionName' not found on $AppName. Deploy the Functions project first."
     }
 
-    az eventgrid event-subscription create `
+    $subjectBegins = "/blobServices/default/containers/$ContainerName/blobs/"
+
+    Write-Host "Creating/updating Event Grid subscription '$SubscriptionName' ($ContainerName -> $FunctionName) ..." -ForegroundColor Cyan
+    Write-Host "  Function id: $functionId" -ForegroundColor DarkGray
+
+    $show = Invoke-AzJson eventgrid event-subscription show `
+        --source-resource-id $storageId `
+        --name $SubscriptionName `
+        -o json
+    if ($show.ExitCode -eq 0 -and -not [string]::IsNullOrWhiteSpace($show.Text)) {
+        Write-Host "Removing existing subscription ..." -ForegroundColor Yellow
+        $del = Invoke-AzJson eventgrid event-subscription delete `
+            --source-resource-id $storageId `
+            --name $SubscriptionName
+        if ($del.ExitCode -ne 0) {
+            throw "Failed to delete existing Event Grid subscription '$SubscriptionName'."
+        }
+    } else {
+        Write-Host "No existing subscription '$SubscriptionName' (will create)." -ForegroundColor DarkGray
+    }
+
+    $create = Invoke-AzJson eventgrid event-subscription create `
         --name $SubscriptionName `
         --source-resource-id $storageId `
-        --endpoint $endpoint `
-        --endpoint-type webhook `
+        --endpoint $functionId `
+        --endpoint-type azurefunction `
         --included-event-types Microsoft.Storage.BlobCreated `
         --subject-begins-with $subjectBegins `
         --subject-ends-with ".pdf" `
@@ -82,16 +97,26 @@ function New-BlobCreatedSubscription {
         --event-delivery-schema EventGridSchema `
         -o table
 
-    if ($LASTEXITCODE -ne 0) {
+    $text = $create.Text
+    $failed = ($create.ExitCode -ne 0) -or
+        ($text -match 'handshake failed') -or
+        ($text -match 'URL validation') -or
+        ($text -match '(?i)\bERROR:')
+
+    if ($failed) {
+        Write-Host $text
         Write-Host ""
         Write-Host "CLI create failed. Create the subscription in Portal instead:" -ForegroundColor Yellow
         Write-Host "  1. Portal -> storage account livingmessiahstorage -> Events -> + Event Subscription"
-        Write-Host "  2. Event Types: Blob Created"
-        Write-Host "  3. Endpoint Type: Web Hook"
-        Write-Host "  4. Function: $FunctionName"
-        Write-Host "  5. Filters: Subject begins with $subjectBegins , ends with .pdf"
+        Write-Host "  2. Name: $SubscriptionName"
+        Write-Host "  3. Event Types: Blob Created"
+        Write-Host "  4. Endpoint Type: Azure Function (not Web Hook)"
+        Write-Host "  5. Function app: $AppName  Function: $FunctionName"
+        Write-Host "  6. Filters: Subject begins with $subjectBegins , ends with .pdf"
         throw "Event Grid subscription create failed for $SubscriptionName."
     }
+
+    Write-Host $text
 }
 
 New-BlobCreatedSubscription `
@@ -104,5 +129,5 @@ New-BlobCreatedSubscription `
     -FunctionName $ExtractFunction `
     -SubscriptionName "lmm-shabbat-pdf-blob-created"
 
-Write-Host "Done. Uploads to $StagingContainer → $CompressFunction → $ServiceContainer → $ExtractFunction." -ForegroundColor Green
+Write-Host "Done. Uploads to $StagingContainer -> $CompressFunction -> $ServiceContainer -> $ExtractFunction." -ForegroundColor Green
 Write-Host "Tip: upload a test PDF to $StagingContainer to fire the chain." -ForegroundColor Yellow

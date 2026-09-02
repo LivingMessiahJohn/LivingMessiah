@@ -14,7 +14,7 @@ namespace ShabbatPdf.Tests.Pipeline;
 public class ParsePipelineBlobTests
 {
     private const string SourceContainer = "shabbat-service";
-    private const string DestContainer = "shabbat-service-md";
+    private const string DestContainer = "shabbat-service-teaching";
     private const string PdfName = "2026-07-04-Lev-16.pdf";
 
     [Fact]

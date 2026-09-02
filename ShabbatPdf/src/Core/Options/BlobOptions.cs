@@ -27,7 +27,7 @@ public sealed class BlobOptions
     /// <summary>
     /// Teaching-only PDF, same file name as the agenda (no <c>-teaching</c> suffix).
     /// </summary>
-    public string DestinationContainer { get; set; } = "shabbat-service-md";
+    public string DestinationContainer { get; set; } = "shabbat-service-teaching";
 
     public bool UseDefaultAzureCredential { get; set; }
 }

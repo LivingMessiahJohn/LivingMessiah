@@ -3,7 +3,7 @@ namespace ShabbatPdf.Functions;
 /// <summary>
 /// Decides which blobs the Azure Function should process.
 /// Skips leftover <c>*-teaching.pdf</c> blobs in <c>shabbat-service</c> (legacy naming).
-/// New teaching PDFs live in <c>shabbat-service-md</c> with the agenda file name.
+/// New teaching PDFs live in <c>shabbat-service-teaching</c> with the agenda file name.
 /// </summary>
 public static class ShabbatBlobTriggerFilter
 {

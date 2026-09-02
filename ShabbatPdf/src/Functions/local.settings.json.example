@@ -9,7 +9,7 @@
     "Blob__ServiceUri": "https://livingmessiahstorage.blob.core.windows.net",
     "Blob__StagingContainer": "shabbat-service-staging",
     "Blob__SourceContainer": "shabbat-service",
-    "Blob__DestinationContainer": "shabbat-service-md",
+    "Blob__DestinationContainer": "shabbat-service-teaching",
     "Blob__UseDefaultAzureCredential": "false",
 
     "Parse__Overwrite": "true",

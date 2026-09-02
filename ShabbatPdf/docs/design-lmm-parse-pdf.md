@@ -80,7 +80,7 @@ Only `LivingMessiahJohn/LivingMessiah` deploys `lmm-shabbat-pdf`. The archived r
 Every Saturday, Living Messiah Ministries produces a multi-page Shabbat service agenda PDF. Admin uploads it to Azure Blob Storage **`shabbat-service-staging`**. Two backend processes then run:
 
 1. **Compress** the PDF (Ghostscript if over 65 MB, otherwise copy) and save it to **`shabbat-service`** with the **same file name** (public Current Service download).
-2. **Extract** the teaching-only page range from that compressed PDF and save it to **`shabbat-service-md`** with the **same file name** (no `-teaching` suffix). Markdown is local-CLI optional, not part of this Azure path.
+2. **Extract** the teaching-only page range from that compressed PDF and save it to **`shabbat-service-teaching`** with the **same file name** (no `-teaching` suffix). Markdown is local-CLI optional, not part of this Azure path.
 
 Bounds: start after the bilingual “Welcome / Bienvenido” slide, **skip known intro slides** (Fair Use / “What will we talk about today?”), stop before “The Avinu Prayer”.
 
@@ -109,11 +109,11 @@ Load is ~1 PDF per week; **simplicity beats scale**.
 |------|--------|
 | Staging container | `https://livingmessiahstorage.blob.core.windows.net/shabbat-service-staging/` |
 | Service container | `https://livingmessiahstorage.blob.core.windows.net/shabbat-service/` |
-| Teaching container | `https://livingmessiahstorage.blob.core.windows.net/shabbat-service-md/` |
+| Teaching container | `https://livingmessiahstorage.blob.core.windows.net/shabbat-service-teaching/` |
 | Agenda naming | `YYYY-MM-DD-{TorahCitation}.pdf` (same name in all three containers) |
-| Teaching PDF | Same file name in `shabbat-service-md` (page slice only) |
+| Teaching PDF | Same file name in `shabbat-service-teaching` (page slice only) |
 | Markdown | Local CLI `--output` only; not written by the Azure functions |
-| Example | staging `2026-07-04-Lev-16.pdf` → service `2026-07-04-Lev-16.pdf` → teaching `shabbat-service-md/2026-07-04-Lev-16.pdf` |
+| Example | staging `2026-07-04-Lev-16.pdf` → service `2026-07-04-Lev-16.pdf` → teaching `shabbat-service-teaching/2026-07-04-Lev-16.pdf` |
 | Upload path today | Living Messiah Admin / RCL already uploads PDFs via `AzureBlobService` |
 | Function app | `lmm-shabbat-pdf` in `LmmWebAppGroup` (Flex Consumption, West US) |
 | Home | `ShabbatPdf/` in this monorepo (#193); short `ShabbatPdf.*` names (#194) |
@@ -152,7 +152,7 @@ An early design probe used this file (~153 MB, 123 pages). It is **useful for an
 
 1. Extract the teaching block using stable text anchors: after **Welcome + Bienvenido**, before **The Avinu Prayer**, then **skip known intro pages** so Markdown (and the teaching PDF) starts at the first non-intro page.
 2. Write a **teaching-only PDF** (`*-teaching.pdf`) locally next to the `.md` or into `shabbat-service`.
-3. Emit UTF-8 Markdown to **private** `shabbat-service-md` with the same base name as the agenda PDF. **Step 2 Markdown is built from the teaching PDF** (pages 1…N), not by re-slicing the full agenda text.
+3. Emit UTF-8 Markdown to **private** `shabbat-service-teaching` with the same base name as the agenda PDF. **Step 2 Markdown is built from the teaching PDF** (pages 1…N), not by re-slicing the full agenda text.
 4. Extract **PDF text-layer lines only** via simple full-page word→line clustering. Quality is “what PdfPig can read as text,” captured in goldens from a representative text-rich PDF when possible.
 5. Provide a **Console CLI** the developer can run and understand; **production weekly path is the Azure Function** on upload, with CLI for manual / batch.
 6. Keep **core logic unit-testable** without Azure (fixtures).
@@ -199,9 +199,9 @@ An early design probe used this file (~153 MB, 123 pages). It is **useful for an
 | 12 | **CLI stack: `Microsoft.Extensions.Hosting` + `System.CommandLine` + logging; tests: xUnit** | Familiar .NET / Azure stack. |
 | 13 | **Minimal Markdown:** front matter, H1, `<!-- page N -->`, plain lines; optional short ALL CAPS → `##`. | Deterministic goldens. Teaching-relative page numbers in comments (simplest). |
 | 14 | **Intro-page skip after Welcome (locked).** Advance `contentStartPage` while pages match intro patterns (Fair Use / agenda title / notice). Sample: skip p.87 → **88–113**. | User decision. |
-| 15 | **Destination `shabbat-service-md` is private** — **locked** | User decision. |
+| 15 | **Destination `shabbat-service-teaching` is private** — **locked** | User decision. |
 | 16 | **Prefer text-rich sample PDFs for goldens.** Use image-heavy decks only for anchor smoke tests if needed. | Avoids optimizing for the wrong failure mode. |
-| 17 | **Teaching PDF uses the same file name in `shabbat-service-md`** | Distinguishes teaching vs complete by container, not `-teaching` suffix. Local CLI still uses `*-teaching.pdf` so it does not overwrite the agenda file. |
+| 17 | **Teaching PDF uses the same file name in `shabbat-service-teaching`** | Distinguishes teaching vs complete by container, not `-teaching` suffix. Local CLI still uses `*-teaching.pdf` so it does not overwrite the agenda file. |
 | 18 | **Functions skip non-PDF and legacy `*-teaching.pdf`** | Extract writes to a different container, so no re-entry. Skip leftover `-teaching` names in `shabbat-service`. |
 | 19 | **Ghostscript shrink is `CompressStagingPdf` only** (issue #50). Write compressed (or copy-as-is) to `shabbat-service`; never overwrite staging. CLI does not shrink. | Mobile download needs the full service PDF under 65 MB. Copy-through of small files is required so extract still fires. |
 | 20 | **Source of truth is `LivingMessiahJohn/LivingMessiah` / `ShabbatPdf/`** (#193) | Same GitHub/Azure identity as the rest of LivingMessiah. Not a submodule. Not `Api/`. Old repo archived. |
@@ -223,7 +223,7 @@ flowchart LR
     PDF["YYYY-MM-DD-Citation.pdf compressed"]
   end
 
-  subgraph dest [Azure Blob - shabbat-service-md]
+  subgraph dest [Azure Blob - shabbat-service-teaching]
     TEACH["YYYY-MM-DD-Citation.pdf teaching pages"]
   end
 
@@ -445,9 +445,9 @@ If none → `AnchorNotFound: End`.
 
 Copy agenda pages `[ContentStartPage, ContentEndPage]` (1-based, inclusive) into a new PDF.
 
-- **Name (Azure):** same as the agenda (e.g. `2026-07-04-Lev-16.pdf`) in `shabbat-service-md`
+- **Name (Azure):** same as the agenda (e.g. `2026-07-04-Lev-16.pdf`) in `shabbat-service-teaching`
 - **Name (local):** `{base}-teaching.pdf` so the full agenda file is not overwritten
-- **Azure container:** `shabbat-service-md`
+- **Azure container:** `shabbat-service-teaching`
 - **Content-Type:** `application/pdf`
 - **Overwrite:** default `true`; `--skip-existing` with `--teaching-only` skips if it already exists
 - `FilenameParser` strips a `-teaching` suffix so date, citation, and Markdown names stay on the agenda base
@@ -617,7 +617,7 @@ dotnet user-secrets set "Blob:ConnectionString" "<your-storage-connection-string
     "ServiceUri": "",
     "StagingContainer": "shabbat-service-staging",
     "SourceContainer": "shabbat-service",
-    "DestinationContainer": "shabbat-service-md",
+    "DestinationContainer": "shabbat-service-teaching",
     "UseDefaultAzureCredential": false
   },
   "Parse": {
@@ -661,8 +661,8 @@ The script lists `shabbat-service`, skips `*-teaching.pdf`, and runs `--teaching
 | Triggers | Event Grid `BlobCreated` on `shabbat-service-staging` → `CompressStagingPdf`; on `shabbat-service` → `ProcessShabbatPdf` |
 | Why Event Grid | Flex Consumption does not support classic polled blob triggers |
 | Skips | Non-PDF and leftover `*-teaching.pdf` |
-| Work | Staging → compress/copy to service → extract teaching pages to `shabbat-service-md` (same name) |
-| Outputs | Same-name PDF in `shabbat-service`; same-name teaching PDF in `shabbat-service-md` |
+| Work | Staging → compress/copy to service → extract teaching pages to `shabbat-service-teaching` (same name) |
+| Outputs | Same-name PDF in `shabbat-service`; same-name teaching PDF in `shabbat-service-teaching` |
 | Errors | Anchor/name/empty-slice: log only (no endless retry). I/O: throw (retry) |
 
 Deploy (from `ShabbatPdf/`):
@@ -686,7 +686,7 @@ App settings (current, connection-string style):
 - `Blob` / `Blob__ConnectionString`
 - `Blob__StagingContainer` = `shabbat-service-staging`
 - `Blob__SourceContainer` = `shabbat-service`
-- `Blob__DestinationContainer` = `shabbat-service-md`
+- `Blob__DestinationContainer` = `shabbat-service-teaching`
 
 Later hardening: Managed Identity (`Blob__UseDefaultAzureCredential=true` + RBAC) and remove keys from app settings.
 
@@ -811,13 +811,13 @@ No SQL.
 |-----------|--------|--------------|
 | `shabbat-service-staging` | `*.pdf` (Admin upload; uncompressed original) | `application/pdf` |
 | `shabbat-service` | `*.pdf` (compressed full agenda, same name) | `application/pdf` |
-| `shabbat-service-md` | `*.pdf` (teaching-only pages, same name) | `application/pdf` |
+| `shabbat-service-teaching` | `*.pdf` (teaching-only pages, same name) | `application/pdf` |
 
-**v2 (later):** optional image blobs under a prefix such as `shabbat-service-md/images/{date-citation}/page-NNN-img-MM.png` — design then; not in v1.
+**v2 (later):** optional image blobs under a prefix such as `shabbat-service-teaching/images/{date-citation}/page-NNN-img-MM.png` — design then; not in v1.
 
 **Operator first-success checklist:**
 
-1. Create **private** `shabbat-service-md`.
+1. Create **private** `shabbat-service-teaching`.
 2. Verify read source + write destination (and write `*-teaching.pdf` on source).
 3. Run CLI on a chosen PDF (local first recommended), or upload a full agenda to `shabbat-service` and let the Function run.
 4. Confirm teaching PDF + MD + Content-Type + page range (intro skipped).
@@ -1047,14 +1047,14 @@ Original PRs 1–7 were the greenfield plan in `LMM-Parse-PDF` and are **shipped
    dotnet run --project ShabbatPdf\src\Cli -- --blob "YYYY-MM-DD-Citation.pdf"
    ```
 
-3. Confirm the same file name in `shabbat-service` (full compressed agenda) and `shabbat-service-md` (teaching pages only).
+3. Confirm the same file name in `shabbat-service` (full compressed agenda) and `shabbat-service-teaching` (teaching pages only).
 4. Re-upload staging after PDF corrections to overwrite both outputs.
 
 ## Appendix B — Minimal Az CLI (one-time)
 
 ```bash
 az storage container create \
-  --name shabbat-service-md \
+  --name shabbat-service-teaching \
   --account-name livingmessiahstorage \
   --auth-mode login \
   --public-access off

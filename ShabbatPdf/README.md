@@ -6,7 +6,7 @@ Parses Living Messiah Shabbat service agenda PDFs: compress the full service PDF
 |---|---|
 | **Staging** | Admin uploads to Azure `shabbat-service-staging` (`YYYY-MM-DD-Citation.pdf`) |
 | **Service** | Compressed full agenda in `shabbat-service` (same name) |
-| **Teaching** | Teaching-only PDF in `shabbat-service-md` (same name) |
+| **Teaching** | Teaching-only PDF in `shabbat-service-teaching` (same name) |
 | **Stack** | .NET 8, Core + Console CLI + Azure Functions |
 
 ## Status
@@ -19,7 +19,7 @@ Parses Living Messiah Shabbat service agenda PDFs: compress the full service PDF
 | Markdown builder | Done |
 | CLI local mode | Done |
 | **Azure blob I/O** | **Done** (`--blob` extracts teaching PDF) |
-| **Teaching PDF slice** | **Done** (local `*-teaching.pdf`; Azure same name in `shabbat-service-md`) |
+| **Teaching PDF slice** | **Done** (local `*-teaching.pdf`; Azure same name in `shabbat-service-teaching`) |
 | **Azure Function Event Grid** | **Done** (`CompressStagingPdf` + `ProcessShabbatPdf`) |
 | **Markdown from teaching PDF** | Local CLI `--output` only (not the Azure path) |
 | **Shrink oversized service PDF** | **Done** (`CompressStagingPdf`; Ghostscript `/ebook`; target &lt; 65 MB) |
@@ -45,7 +45,7 @@ az storage container create \
   --public-access off
 
 az storage container create \
-  --name shabbat-service-md \
+  --name shabbat-service-teaching \
   --account-name livingmessiahstorage \
   --auth-mode login \
   --public-access off
@@ -76,14 +76,14 @@ Or set environment variable: `Blob__ConnectionString`
   --output ".\out\2026-08-08-Lev-22-and-23.md"
 ```
 
-### Azure compressed agenda → teaching PDF in `shabbat-service-md`
+### Azure compressed agenda → teaching PDF in `shabbat-service-teaching`
 
 ```powershell
 dotnet run --project ShabbatPdf\src\Cli -- `
   --blob "2026-08-08-Lev-22-and-23.pdf"
 ```
 
-Reads `shabbat-service/2026-08-08-Lev-22-and-23.pdf` and writes the teaching-only PDF to `shabbat-service-md/2026-08-08-Lev-22-and-23.pdf` (same name).
+Reads `shabbat-service/2026-08-08-Lev-22-and-23.pdf` and writes the teaching-only PDF to `shabbat-service-teaching/2026-08-08-Lev-22-and-23.pdf` (same name).
 
 ### Batch teaching PDFs for all agendas
 
@@ -96,7 +96,7 @@ One-time (or rare) backfill of `*-teaching.pdf` only — **no Markdown**. Uses t
 # First 5 (smoke)
 .\scripts\batch-blob-parse.ps1 -MaxCount 5
 
-# Full container → uploads same-name teaching PDFs to shabbat-service-md only
+# Full container → uploads same-name teaching PDFs to shabbat-service-teaching only
 .\scripts\batch-blob-parse.ps1
 ```
 
@@ -113,7 +113,7 @@ Production chain (Azure Functions):
 
 1. Admin uploads the full agenda to **`shabbat-service-staging`**.
 2. **`CompressStagingPdf`:** if over 65 MB, Ghostscript `/ebook`; always publish the (possibly compressed) file to **`shabbat-service`** with the **same name**. Staging is not overwritten.
-3. **`ProcessShabbatPdf`:** slice teaching pages → **`shabbat-service-md/{same-name}.pdf`**.
+3. **`ProcessShabbatPdf`:** slice teaching pages → **`shabbat-service-teaching/{same-name}.pdf`**.
 
 Local CLI still writes `*-teaching.pdf` next to the input (so it does not overwrite the agenda file). Azure uses the same name in a different container.
 
@@ -128,7 +128,7 @@ PWA Teaching Only buttons still look for `shabbat-service/*-teaching.pdf` until 
 | `--blob` / `-b` | Compressed agenda name in `shabbat-service` |
 | `--dry-run` | Parse only; no write/upload |
 | `--skip-existing` | Skip if destination already exists |
-| `--ensure-container` | Create `shabbat-service-md` if missing |
+| `--ensure-container` | Create `shabbat-service-teaching` if missing |
 | `--allow-nonstandard-name` | Allow non `YYYY-MM-DD-…` names in blob mode |
 | `--teaching-only` | Local: write `*-teaching.pdf` only. Blob mode already does this. |
 | `--from-teaching` | Local: input is already a teaching PDF; Markdown only (no anchors/slice) |
@@ -169,7 +169,7 @@ Two isolated-worker functions on Flex. Event Grid is required (classic blob trig
 | Trigger | Event Grid `BlobCreated` on `shabbat-service-staging` | Event Grid `BlobCreated` on `shabbat-service` |
 | Skips | Non-PDF and `*-teaching.pdf` | Non-PDF and `*-teaching.pdf` (legacy names in the service container) |
 | Work | If &gt; 65 MB, Ghostscript `/ebook`; always publish to `shabbat-service` (copy if already small) | Anchors + teaching page slice |
-| Outputs | Same name in `shabbat-service` | Same name teaching PDF in `shabbat-service-md` |
+| Outputs | Same name in `shabbat-service` | Same name teaching PDF in `shabbat-service-teaching` |
 
 ### PDF size limit (issue #50)
 
@@ -244,19 +244,19 @@ Redeploy after code changes:
    - `Blob` / `Blob__ConnectionString` → storage connection string  
    - `Blob__StagingContainer` = `shabbat-service-staging`  
    - `Blob__SourceContainer` = `shabbat-service`  
-   - `Blob__DestinationContainer` = `shabbat-service-md`  
+   - `Blob__DestinationContainer` = `shabbat-service-teaching`  
 3. Later hardening: switch to Managed Identity (`Blob__UseDefaultAzureCredential=true` + RBAC) and remove keys from app settings.  
 4. CLI remains fully supported for manual / batch runs.  
-5. Smoke-test: upload a full agenda PDF to `shabbat-service-staging`, then confirm the same name in `shabbat-service` (compressed if it was large) and a teaching-only PDF of the same name in `shabbat-service-md`.
+5. Smoke-test: upload a full agenda PDF to `shabbat-service-staging`, then confirm the same name in `shabbat-service` (compressed if it was large) and a teaching-only PDF of the same name in `shabbat-service-teaching`.
 6. After deploying the new `CompressStagingPdf` function, run `.\scripts\setup-function-eventgrid.ps1` so staging has an Event Grid subscription.
 
 ## Operator checklist (first Azure success)
 
-1. Create **private** `shabbat-service-staging` (and `shabbat-service-md` if missing)  
+1. Create **private** `shabbat-service-staging` (and `shabbat-service-teaching` if missing)  
 2. Set Admin `AzureBlob:WeeklyDownloadContainer` = `shabbat-service-staging`  
 3. Set Function `Blob:ConnectionString` (read staging + write service + teaching)  
 4. Upload a weekly PDF in Admin, or `--blob` against an existing `shabbat-service` file  
-5. Confirm same-name blobs in `shabbat-service` and `shabbat-service-md`  
+5. Confirm same-name blobs in `shabbat-service` and `shabbat-service-teaching`  
 
 ## Extract rules
 

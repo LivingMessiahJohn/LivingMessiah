@@ -94,7 +94,7 @@ public class ModelSmokeTests
 
         Assert.Equal("shabbat-service-staging", options.StagingContainer);
         Assert.Equal("shabbat-service", options.SourceContainer);
-        Assert.Equal("shabbat-service-md", options.DestinationContainer);
+        Assert.Equal("shabbat-service-teaching", options.DestinationContainer);
         Assert.False(options.UseDefaultAzureCredential);
         Assert.Equal(string.Empty, options.ConnectionString);
     }
