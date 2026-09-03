@@ -53,13 +53,12 @@ public class BlobInfoFunction
 			}
 
 			string blobName = request.BlobName.Trim();
-			_logger.LogInformation("Checking blob: {BlobName}", blobName);
 
 			// Get configuration from environment variables
 			string? connectionString = Environment.GetEnvironmentVariable("AzureStorageConnectionString");
-			string? containerName = Environment.GetEnvironmentVariable("BlobContainerName");
+			string? defaultContainerName = Environment.GetEnvironmentVariable("BlobContainerName");
 
-			if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(containerName))
+			if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(defaultContainerName))
 			{
 				_logger.LogError("Azure Storage configuration is missing");
 				var errorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
@@ -71,6 +70,20 @@ public class BlobInfoFunction
 				return errorResponse;
 			}
 
+			if (!TryResolveContainerName(request.ContainerName, defaultContainerName, out string containerName, out string? containerError))
+			{
+				_logger.LogWarning("Rejected container name: {ContainerName}", request.ContainerName);
+				var badContainerResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+				AddCorsHeaders(badContainerResponse);
+				await badContainerResponse.WriteAsJsonAsync(new BlobInfoResponse(
+						Exists: false,
+						BlobInfo: null,
+						Message: containerError ?? "ContainerName is not allowed"));
+				return badContainerResponse;
+			}
+
+			_logger.LogInformation("Checking blob: {BlobName} in container {ContainerName}", blobName, containerName);
+
 			var containerClient = new BlobContainerClient(connectionString, containerName);
 			var blobClient = containerClient.GetBlobClient(blobName);
 
@@ -79,7 +92,7 @@ public class BlobInfoFunction
 
 			if (!existsResponse.Value)
 			{
-				_logger.LogInformation("Blob does not exist: {BlobName}", blobName);
+				_logger.LogInformation("Blob does not exist: {BlobName} in container {ContainerName}", blobName, containerName);
 				var notFoundResponse = req.CreateResponse(HttpStatusCode.OK);
 				AddCorsHeaders(notFoundResponse);
 				await notFoundResponse.WriteAsJsonAsync(new BlobInfoResponse(
@@ -131,6 +144,39 @@ public class BlobInfoFunction
 		}
 	}
 	
+	private static readonly HashSet<string> AllowedContainerNames = new(StringComparer.OrdinalIgnoreCase)
+	{
+		"shabbat-service",
+		"shabbat-service-teaching"
+	};
+
+	private static bool TryResolveContainerName(
+		string? requestedContainerName,
+		string defaultContainerName,
+		out string containerName,
+		out string? errorMessage)
+	{
+		if (string.IsNullOrWhiteSpace(requestedContainerName))
+		{
+			containerName = defaultContainerName;
+			errorMessage = null;
+			return true;
+		}
+
+		string requested = requestedContainerName.Trim();
+		if (AllowedContainerNames.Contains(requested)
+			|| string.Equals(requested, defaultContainerName, StringComparison.OrdinalIgnoreCase))
+		{
+			containerName = requested;
+			errorMessage = null;
+			return true;
+		}
+
+		containerName = defaultContainerName;
+		errorMessage = "ContainerName is not allowed";
+		return false;
+	}
+
 	private static void AddCorsHeaders(HttpResponseData response)
 	{
 		response.Headers.Add("Access-Control-Allow-Origin", "https://localhost:7211");

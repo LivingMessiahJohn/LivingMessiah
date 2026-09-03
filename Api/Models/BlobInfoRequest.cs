@@ -1,6 +1,6 @@
 namespace Api.Models;
 
-public record BlobInfoRequest(string BlobName);
+public record BlobInfoRequest(string BlobName, string? ContainerName = null);
 
 public record BlobInfoResponse(
                 bool Exists,

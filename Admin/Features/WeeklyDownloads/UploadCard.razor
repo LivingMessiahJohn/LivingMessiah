@@ -113,7 +113,7 @@
 	{
 		return TriennialEnum.List
 			.OrderBy(o => o.Date)
-			.Select(triennial => Helpers.GetPdfFile(triennial, ParashaEnums.PdfType.CompleteService));
+			.Select(triennial => Helpers.GetPdfFile(triennial));
 	}
 
 	protected BlobOperationResult? result;
@@ -129,7 +129,7 @@
 		TriennialEnum? currentReading = Helpers.GetCurrentReading();
 		fileName = currentReading is null
 			? ""
-			: Helpers.GetPdfFile(currentReading, ParashaEnums.PdfType.CompleteService);
+			: Helpers.GetPdfFile(currentReading);
 	}
 
 	void ReturnedFilename(string returnFile)

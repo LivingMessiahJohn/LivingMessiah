@@ -1,5 +1,4 @@
 using System.Net.Http.Json;
-using Microsoft.Extensions.Logging;
 using RCL.Features.Parasha.Enums;
 using PWA.Features.Home.Shabbat.Teaching.Constants;
 using ParashaEnums = RCL.Features.Parasha.Enums;
@@ -39,13 +38,15 @@ public class BlobApiService : IBlobApiService
 		try
 		{
 
-			(dto, blobName) = GetCurrentParasha(triennial, pdfType);
+			string containerName;
+			(dto, blobName, containerName) = GetCurrentParasha(triennial, pdfType);
 
-			if (dto.ExceptionOccurred) { return dto; }
+			if (dto.ExceptionOccurred || string.IsNullOrEmpty(blobName)) { return dto; }
 
-			_logger!.LogDebug("{Method}, {Message}", nameof(GetParasha), $"blobName: {blobName}");
+			_logger!.LogDebug("{Method}, {Message}", nameof(GetParasha),
+				$"blobName: {blobName}, containerName: {containerName}");
 
-			var request = new BlobInfoRequest(blobName);
+			var request = new BlobInfoRequest(blobName, containerName);
 			var response = await _httpClient.PostAsJsonAsync(AzureFunctionAPI.HttpClientUri, request, ct);
 
 			if (!response.IsSuccessStatusCode)
@@ -71,11 +72,15 @@ public class BlobApiService : IBlobApiService
 				return dto;
 			}
 
-			string? blobUrl = result.BlobInfo?.Url;
-			if(!string.IsNullOrEmpty(blobUrl))
+			if (result.Exists)
 			{
+				string blobUrl = !string.IsNullOrEmpty(result.BlobInfo?.Url)
+					? result.BlobInfo.Url
+					: Blob.PublicUrl(blobName, pdfType);
+
 				dto = dto with { Exists = true, Url = blobUrl };
-				_logger!.LogInformation("{Method}, {Message}", nameof(GetParasha), $"blobUrl: {blobUrl}");
+				_logger!.LogInformation("{Method}, {Message}", nameof(GetParasha),
+					$"containerName: {containerName}, blobUrl: {blobUrl}");
 			}
 			return dto;
 		}
@@ -95,8 +100,9 @@ public class BlobApiService : IBlobApiService
 		}
 	}
 
-	private (BlobDTO, string blobName) GetCurrentParasha(Triennial? triennial, ParashaEnums.PdfType pdfType)
+	private (BlobDTO dto, string blobName, string containerName) GetCurrentParasha(Triennial? triennial, ParashaEnums.PdfType pdfType)
 	{
+		string containerName = Blob.ContainerName(pdfType);
 		Triennial? resolved = triennial ?? RCL.Features.Parasha.Helpers.GetCurrentReading();
 		if (resolved is null)
 		{
@@ -107,10 +113,10 @@ public class BlobApiService : IBlobApiService
 				PdfType: pdfType,
 				Exists: false,
 				ExceptionOccurred: false
-			), string.Empty);
+			), string.Empty, containerName);
 		}
 
-		string file = RCL.Features.Parasha.Helpers.GetPdfFile(resolved, pdfType);
+		string file = RCL.Features.Parasha.Helpers.GetPdfFile(resolved);
 
 		return (new BlobDTO(
 			Url: string.Empty,
@@ -118,6 +124,6 @@ public class BlobApiService : IBlobApiService
 			PdfType: pdfType,
 			Exists: false,
 			ExceptionOccurred: false
-		), file);
+		), file, containerName);
 	}
 }

@@ -51,7 +51,7 @@ else
 			return;
 		}
 
-		fileName = Helpers.GetPdfFile(Triennial, PdfType);
+		fileName = Helpers.GetPdfFile(Triennial);
 
 		Logger.LogInformation("{Method}, Start, PdfType:{PdfType}",
 			$"{nameof(ButtonWrapper)}!{nameof(OnInitializedAsync)}", PdfType);

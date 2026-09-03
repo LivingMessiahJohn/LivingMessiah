@@ -2,9 +2,8 @@
 
 public record Projection(
 	string TorahAbrv,
+	string PdfFile,
 	string TeachingHref,
-	string TeachingPdfFile,
-	string CompleteServiceHref,
-	string CompleteServicePdfFile);
+	string CompleteServiceHref); 
 
 // href = $"{Blob.BaseUrl}{pdfFile}"

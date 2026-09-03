@@ -1,6 +1,6 @@
 namespace PWA.Features.Home.Shabbat.Teaching.Data;
 
-public record BlobInfoRequest(string BlobName);
+public record BlobInfoRequest(string BlobName, string? ContainerName = null);
 
 // Must stay aligned with Api.Models.BlobInfoResponse (no CurrentReading on the function).
 public record BlobInfoResponse(

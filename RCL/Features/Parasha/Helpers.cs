@@ -20,18 +20,16 @@ public class Helpers
 
   // Input e.g.:  "1:1-2:3" or "38:11-40:2" or "1:1-5" (Triennial.ChapterVerse)
   // returns e.g. : 2026-07-25-Lev-19-and-20.pdf
-  public static string GetPdfFile(Triennial triennial, PdfType pdfType)
+  public static string GetPdfFile(Triennial triennial)
   {
     var versePart = triennial.TorahVerse.ChapterVerse
         .Replace("-", "-to-")
         .Replace(":", "-")
         .Replace(" & ", "-and-");
 
-    var suffix = pdfType == PdfType.TeachingOnly ? "-teaching.pdf" : ".pdf";
-
     return $"{triennial.Date:yyyy-MM-dd}-" +
            $"{BibleBook.FromValue(triennial.TorahVerse.BibleBook).Abrv}-" +
-           $"{versePart}{suffix}";
+           $"{versePart}.pdf";
   }
 
 
