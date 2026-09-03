@@ -35,7 +35,7 @@
 				<ChildContent>
 					<GridAnchor Href="@context.TeachingHref"
 											Text="@context.TorahAbrv"
-											Title="@context.TeachingPdfFile"
+											Title="@context.PdfFile"
 											Bold="true" />
 				</ChildContent>
 			</TemplateColumn>
@@ -48,8 +48,8 @@
 				</HeaderTemplate>
 				<ChildContent>
 					<GridAnchor Href="@context.CompleteServiceHref"
-											Text="@context.CompleteServicePdfFile"
-											Title="@context.CompleteServicePdfFile" />
+											Text="@context.PdfFile"
+											Title="@context.PdfFile" />
 				</ChildContent>
 			</TemplateColumn>
 
@@ -126,7 +126,7 @@
 		string.IsNullOrEmpty(fileFilter)
 			? allItems
 			: allItems.Where(w =>
-					w.CompleteServicePdfFile.Contains(fileFilter!, StringComparison.OrdinalIgnoreCase));
+					w.PdfFile.Contains(fileFilter!, StringComparison.OrdinalIgnoreCase));
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -168,15 +168,13 @@
 
 	private static Projection ToProjection(ParashaEnums.Triennial t)
 	{
-		var teachingPdfFile = Helpers.GetPdfFile(t, ParashaEnums.PdfType.TeachingOnly);
-		var completeServicePdfFile = Helpers.GetPdfFile(t, ParashaEnums.PdfType.CompleteService);
+		var sanitizedPdfFile = Helpers.GetPdfFile(t);
 
 		return new Projection(
 			TorahAbrv: t.TorahAbrv,
-			TeachingHref: $"{Blob.BaseUrl}{teachingPdfFile}",
-			TeachingPdfFile: teachingPdfFile,
-			CompleteServiceHref: $"{Blob.BaseUrl}{completeServicePdfFile}",
-			CompleteServicePdfFile: completeServicePdfFile);
+			PdfFile: sanitizedPdfFile,
+			TeachingHref: Blob.PublicUrl(sanitizedPdfFile, ParashaEnums.PdfType.TeachingOnly),
+			CompleteServiceHref: Blob.PublicUrl(sanitizedPdfFile, ParashaEnums.PdfType.CompleteService));
 	}
 
 	/// <summary>

@@ -6,4 +6,5 @@ public record BlobDTO(string Url, string Parasha, ParashaEnums.PdfType PdfType, 
 /*
 - Add LastTriennialEnum to BlobDTO
 - Review Parasha
+- PdfType selects container (teaching vs complete service) and button text
 */
