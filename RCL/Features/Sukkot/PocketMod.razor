@@ -1,0 +1,62 @@
+﻿<h3>PocketMod</h3>
+
+@using Microsoft.Extensions.Logging
+@using RCL.Components
+
+@inject ILogger<PocketMod> Logger
+@inject IScheduleQueryLoader Loader
+
+<LoadingComponentLIBRARY IsLoading="_isLoading" TurnSpinnerOff="TurnSpinnerOff">
+
+	@if (string.IsNullOrEmpty(msg))
+	{
+		@foreach (var item in DailyEvents.Where(w => w.FileName != "00.md").ToList())
+		{
+			<div class="card border border-secondary border-2 mt-1">
+				<div class="card-body markdown-body">
+					@MarkdownHelper.ToMarkup(item.Markdown)
+				</div>
+			</div>
+		}
+	}
+	else
+	{
+		<Alert AlertType="@alertType">@msg</Alert>
+	}
+
+</LoadingComponentLIBRARY>
+
+@code {
+	private DailyEventMarkdown[] DailyEvents = [];
+	private bool _isLoading = true;
+
+	string msg = "";
+	string alertType = "alert-warning";
+
+	bool TurnSpinnerOff = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			DailyEvents = await Loader.GetAsyncList();
+			if (DailyEvents.Length == 0)
+			{
+				msg = "Unable to load the schedule. Please try again later.";
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+			alertType = "alert-danger";
+			msg = "Error; Unable to load the schedule. Please try again later.";
+		}
+		finally
+		{
+			_isLoading = false;
+			TurnSpinnerOff = true;
+		}
+
+		Logger.LogDebug("{Method} {Msg}", nameof(OnInitializedAsync), msg);
+	}
+}

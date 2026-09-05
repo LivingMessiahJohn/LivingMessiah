@@ -34,4 +34,12 @@ public interface IAzureBlobService
 	Task<BlobOperationResult<BlobTextContent>> DownloadTextAsync(
 		string blobName,
 		CancellationToken ct = default);
+
+	/// <summary>
+	/// Lists blob names in the container whose path starts with <paramref name="prefix"/>.
+	/// Folder placeholders (names ending in <c>/</c>) are omitted.
+	/// </summary>
+	Task<BlobOperationResult<IReadOnlyList<string>>> ListBlobNamesAsync(
+		string prefix,
+		CancellationToken ct = default);
 }

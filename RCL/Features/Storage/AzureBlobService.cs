@@ -254,6 +254,48 @@ public class AzureBlobService : IAzureBlobService
     }
   }
 
+  public async Task<BlobOperationResult<IReadOnlyList<string>>> ListBlobNamesAsync(
+      string prefix,
+      CancellationToken ct = default)
+  {
+    prefix = prefix?.Trim() ?? string.Empty;
+
+    try
+    {
+      var names = new List<string>();
+      await foreach (BlobItem blob in _container.GetBlobsAsync(
+          BlobTraits.None,
+          BlobStates.None,
+          prefix,
+          ct))
+      {
+        if (string.IsNullOrEmpty(blob.Name) || blob.Name.EndsWith('/'))
+          continue;
+
+        names.Add(blob.Name);
+      }
+
+      Logger.LogDebug("Listed {Count} blob(s) with prefix {Prefix}", names.Count, prefix);
+      return BlobOperationResult<IReadOnlyList<string>>.Success(
+          names,
+          $"Listed {names.Count} blob(s).");
+    }
+    catch (RequestFailedException ex) when (IsTransientError(ex))
+    {
+      return BlobOperationResult<IReadOnlyList<string>>.Failure(
+          $"Transient error listing blobs with prefix '{prefix}'",
+          ex,
+          isTransient: true);
+    }
+    catch (Exception ex)
+    {
+      Logger.LogWarning(ex, "Failed to list blobs with prefix: {Prefix}", prefix);
+      return BlobOperationResult<IReadOnlyList<string>>.Failure(
+          $"Failed to list blobs with prefix '{prefix}'",
+          ex);
+    }
+  }
+
   /// <summary>
   /// Prefer user metadata <c>lastrevised</c>; otherwise use blob LastModified (UTC → local).
   /// </summary>
