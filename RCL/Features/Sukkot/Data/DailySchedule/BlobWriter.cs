@@ -3,18 +3,24 @@ using Microsoft.Extensions.Logging;
 using RCL.Features.Storage;
 using RCL.Features.Sukkot.Constants;
 
-namespace RCL.Features.Sukkot;
+namespace RCL.Features.Sukkot.Data.DailySchedule;
+
+public interface IBlobWriter
+{
+  Task SaveAsync(string markdownBody, DateTime lastRevised, CancellationToken ct = default);
+}
+
 
 /// <summary>
 /// Saves daily schedule markdown to the private Sukkot schedule blob (#215).
 /// Sets optional <c>lastrevised</c> metadata; loaders also accept blob LastModified.
 /// </summary>
-public sealed class ScheduleBlobQueryWriter : IScheduleQueryWriter
+public sealed class BlobWriter : IBlobWriter
 {
 	private readonly IAzureBlobService _blobs;
-	private readonly ILogger<ScheduleBlobQueryWriter> _logger;
+	private readonly ILogger<BlobWriter> _logger;
 
-	public ScheduleBlobQueryWriter(IAzureBlobService blobs, ILogger<ScheduleBlobQueryWriter> logger)
+	public BlobWriter(IAzureBlobService blobs, ILogger<BlobWriter> logger)
 	{
 		_blobs = blobs;
 		_logger = logger;

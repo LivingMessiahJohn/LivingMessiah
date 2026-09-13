@@ -93,7 +93,9 @@ try
 	//Services
 	builder.Services.AddDatabase();
 	builder.Services.AddSukkotData(); // CrUD
-	builder.Services.AddSukkotDailyScheduleData();
+
+	builder.Services.AddSukkotBlob();
+	
 	builder.Services.AddSukkotGridData();
 	builder.Services.AddSukkotDonationsData();
 	builder.Services.AddManageNotes();

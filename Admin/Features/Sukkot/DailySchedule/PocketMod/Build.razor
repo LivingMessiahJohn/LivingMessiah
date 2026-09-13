@@ -1,0 +1,51 @@
+@page "/SukkotSchedule/PocketMod/Build"
+
+@using NavEnums = Admin.Features.Sukkot.DailySchedule.Enums.Nav;
+@using RoleGroup = Admin.Security.Enums.RoleGroup;
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Extensions.Logging
+@using Admin.Features.Sukkot.DailySchedule
+
+@inject ILogger<Build> Logger
+
+<AuthorizeView Policy=@RoleGroup.Sukkot>
+	<Authorized>
+
+		<PageTitle>@NavEnums.PocketModBuild.Title</PageTitle>
+		<DashboardHeader MenuBar="@NavEnums.PocketModBuild" />
+
+		<Alert>
+			<b>ToDo: </b> Run a "roll your own" Batch PocketMod backend service <br />
+			this page will launch that process <br />
+			<a href="https://grok.com/project/f324c609-ed69-4662-ba20-b50c19fd71b2?tab=conversations">Grok Reference</a>
+		</Alert>
+
+		<h5>Steps</h5>
+		<ol>
+			<li>Get the very large print, multi-page PDF of the Daily Schedule content</li>
+			<li>Run the Batch PocketMod</li>
+			<li>Return with the one page shrunk PocketMod that get is to be printed </li>
+		</ol>
+
+		<h5>Components</h5>
+		<ol>
+			<li>Input PDF</li>
+			<li>Process bar</li>
+			<li>
+				To see the link to the PocketMod PDF, go to Document Packet at the bottom of Admin.Sukkot
+			</li>
+		</ol>
+
+			
+	</Authorized>
+	<NotAuthorized>
+		<LoginRedirectCard ReturnTitle="@Nav.SukkotSchedule.Title" ReturnUrl=@Nav.SukkotSchedule.Index />
+		<div class="alert alert-warning text-end" role="alert">
+			<small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small>
+		</div>
+	</NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}

@@ -1,0 +1,32 @@
+@using NavEnums = Admin.Features.Sukkot.DailySchedule.Enums.Nav;
+
+@inject NavigationManager NavigationManager
+
+<div class="d-print-none d-flex align-items-center gap-2">
+  <div class="dropdown">
+    <button class="btn btn-outline-secondary dropdown-toggle btn-sm" type="button" id="dailyScheduleMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="fas fa-bars"></i> Nav
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dailyScheduleMenuDropdown">
+      @foreach (var item in NavEnums.List.ToList().OrderBy(o => o.Value))
+      {
+        <li>
+          <a class="dropdown-item"
+             @onclick="@(e => ButtonClicked(item))"
+             title="@item.Title">
+            <span class="me-2"><i class="@item.Icon"></i></span>
+            @item.Title
+          </a>
+        </li>
+      }
+    </ul>
+  </div>
+</div>
+
+@code {
+
+  private void ButtonClicked(NavEnums nav)
+  {
+    NavigationManager!.NavigateTo(nav.Index);
+  }
+}

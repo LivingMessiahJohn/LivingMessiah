@@ -75,7 +75,7 @@ public abstract class MenuBar : SmartEnum<MenuBar>
 	{
 		public DailyScheduleSE() : base($"{nameof(Id.DailySchedule)}", Id.DailySchedule) { }
 		public override string Index => TabEnum.DailySchedule.Index;
-		public override string Title => "Sukkot Daily Schedule";
+		public override string Title => "Daily Schedule";
 		public override string Icon => "fas fa-tasks";
 		public override string Css => "badge bg-warning text-black";
 		//public override int RequiredRoles => RoleEnum.Sukkot.Value | RoleEnum.SukkotHost.Value | RoleEnum.Admin.Value;

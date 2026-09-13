@@ -1,7 +1,5 @@
 ﻿@page "/"
 
-@using RCL.Components
-@using Sukkot.Features.Components
 @using Sukkot.Features.Components.LifeCycleAuthority
 @using Sukkot.Security
 @using Sukkot.Security.Constants
@@ -38,7 +36,8 @@
 		<CalendarWeek />
 		<Location />
 
-		<ScheduleWrapper />
+		@* ToD: change to <ScheduleWrapper /> *@
+		<ScheduleWrapperDeprecated />
 
 		<Documents />
 		@* <SukkotTShirt /> *@

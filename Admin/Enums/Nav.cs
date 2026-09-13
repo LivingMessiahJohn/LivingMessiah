@@ -15,7 +15,7 @@ public abstract class Nav : SmartEnum<Nav>
 	private static class Id
 	{
 		internal const int Home = 1;
-		internal const int Sukkot = 2;
+		internal const int SukkotFolder = 2;
 		internal const int SukkotDashboard = 3;
 		internal const int SukkotCRUD = 4;
 		internal const int SukkotSchedule = 5;
@@ -34,7 +34,7 @@ public abstract class Nav : SmartEnum<Nav>
 
 	#region Declared Public Instances
 	public static readonly Nav Home = new HomeSE();
-	public static readonly Nav Sukkot = new SukkotSE();
+	public static readonly Nav SukkotFolder = new SukkotFolderSE();
 	public static readonly Nav SukkotDashboard = new SukkotDashboardSE();
 	public static readonly Nav SukkotCRUD = new SukkotCRUDSE();
 	public static readonly Nav SukkotSchedule = new SukkotScheduleSE();
@@ -81,10 +81,10 @@ public abstract class Nav : SmartEnum<Nav>
 		public override bool ExpandByDefault => true;
 	}
 
-	private sealed class SukkotSE : Nav
+	private sealed class SukkotFolderSE : Nav
 	{
-		public SukkotSE() : base($"{nameof(Id.Sukkot)}", Id.Sukkot) { }
-		public override string Index => "";
+		public SukkotFolderSE() : base($"{nameof(Id.SukkotFolder)}", Id.SukkotFolder) { }
+		public override string Index => ""; // Not Applicable as it is a subfolder
 		public override string Title => "Sukkot";
 		public override string Icon => "fas fa-campground";
 		public override int Parent => Home.Value;
@@ -99,7 +99,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Index => SukkotHomeTab.Dashboard.Index;
 		public override string Title => SukkotHomeTab.Dashboard.Title;
 		public override string Icon => SukkotHomeTab.Dashboard.Icon;
-		public override int Parent => Sukkot.Value;
+		public override int Parent => SukkotFolder.Value;
 		public override int Sort => 1;
 		public override int RequiredRoles => RoleEnum.Sukkot.Value | RoleEnum.SukkotHost.Value | RoleEnum.Admin.Value;
 	}
@@ -110,7 +110,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Index => SukkotHomeTab.CRUD.Index;
 		public override string Title => SukkotHomeTab.CRUD.Title;
 		public override string Icon => SukkotHomeTab.CRUD.Icon;
-		public override int Parent => Sukkot.Value;
+		public override int Parent => SukkotFolder.Value;
 		public override int Sort => 2;
 		public override int RequiredRoles => RoleEnum.Sukkot.Value | RoleEnum.SukkotHost.Value | RoleEnum.Admin.Value;
 	}
@@ -121,7 +121,7 @@ public abstract class Nav : SmartEnum<Nav>
 		public override string Index => SukkotHomeTab.DailySchedule.Index;
 		public override string Title => SukkotHomeTab.DailySchedule.Title;
 		public override string Icon => SukkotHomeTab.DailySchedule.Icon;
-		public override int Parent => Sukkot.Value;
+		public override int Parent => SukkotFolder.Value;
 		public override int Sort => 3;
 		public override int RequiredRoles => RoleEnum.Sukkot.Value | RoleEnum.SukkotHost.Value | RoleEnum.Admin.Value;
 	}

@@ -1,0 +1,50 @@
+﻿@page "/SukkotSchedule/PocketMod/PrintPreview8PagePDF"
+
+@using NavEnums = Admin.Features.Sukkot.DailySchedule.Enums.Nav;
+@using RoleGroup = Admin.Security.Enums.RoleGroup;
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Extensions.Logging
+@using Admin.Features.Sukkot.DailySchedule
+@using RCL.Features.Sukkot
+
+@inject ILogger<PrintPreview8PagePDF> Logger
+
+<AuthorizeView Policy=@RoleGroup.Sukkot>
+	<Authorized>
+
+		<PageTitle>@NavEnums.PocketModPrintPreview8PagePDF.Title</PageTitle>
+		<DashboardHeader MenuBar="@NavEnums.PocketModPrintPreview8PagePDF" />
+
+		<div class="d-print-none text-end mb-3">
+			<a class="btn btn-outline-secondary" title="Print" href="javascript:window.print()">
+				<span class="fas fa-print"></span> Print
+			</a>
+		</div>
+
+		<Alert AlertType="alert-danger"><b>ToDo:</b> Custom 8 Page PDF Layout</Alert>
+		
+		<h5>Items not done</h5>
+		<ol>
+			<li>Create a CSS for <code>RCL.Schedule</code> (something like VeryLargeCSS) that will explode the schedule such that it requires 8 pages to print</li>
+			<li>The 10 individual Daily sections need to fit on 8 pages, therefore create a CSS that forces a page break</li>
+			<li><b>Nice to have:</b> Automate where the 8 page PDF is saved in Blob Storage and the Print Preview Dimensions (Legal, Landscape)</li>
+		</ol>
+
+		<hr />
+
+		<ScheduleWrapper />
+
+
+	</Authorized>
+	<NotAuthorized>
+		<LoginRedirectCard ReturnTitle="@Nav.SukkotSchedule.Title" ReturnUrl=@Nav.SukkotSchedule.Index />
+		<div class="alert alert-warning text-end" role="alert">
+			<small>Not Authorized; Role Group Policy: @RoleGroup.Sukkot</small>
+		</div>
+	</NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+}

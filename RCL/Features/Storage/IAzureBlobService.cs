@@ -42,4 +42,14 @@ public interface IAzureBlobService
 	Task<BlobOperationResult<IReadOnlyList<string>>> ListBlobNamesAsync(
 		string prefix,
 		CancellationToken ct = default);
+
+	/// <summary>
+	/// Read-only blob SAS URI. Requires an account-key connection string
+	/// (<see cref="Azure.Storage.Blobs.BlobClient.CanGenerateSasUri"/>).
+	/// Fails if the blob is missing.
+	/// </summary>
+	Task<BlobOperationResult<string>> GetReadSasUriAsync(
+		string blobName,
+		TimeSpan lifetime,
+		CancellationToken ct = default);
 }
