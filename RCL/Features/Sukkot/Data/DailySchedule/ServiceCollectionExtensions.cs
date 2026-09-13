@@ -6,18 +6,18 @@ using Microsoft.Extensions.Logging.Abstractions;
 using RCL.Features.Storage;
 using RCL.Features.Sukkot.Constants;
 
-namespace RCL.Features.Sukkot;
+namespace RCL.Features.Sukkot.Data.DailySchedule;
 
-public static class ScheduleBlobServiceCollectionExtensions
+public static class ServiceCollectionExtensions
 {
 	public const string BlobServiceKey = "SukkotSchedule";
 
 	/// <summary>
 	/// Registers private-container blob access for the Sukkot schedule and
-	/// <see cref="IScheduleQueryLoader"/> / <see cref="IScheduleQueryWriter"/>.
+	/// <see cref="IBlobLoader"/> / <see cref="IBlobWriter"/>.
 	/// Requires config key <c>AzureBlob:ConnectionString</c>. Container/blob names are constants.
 	/// </summary>
-	public static IServiceCollection AddSukkotScheduleFromBlob(this IServiceCollection services)
+	public static IServiceCollection AddBlob(this IServiceCollection services)
 	{
 		services.TryAddKeyedSingleton<IAzureBlobService>(BlobServiceKey, (sp, _) =>
 		{
@@ -34,18 +34,18 @@ public static class ScheduleBlobServiceCollectionExtensions
 			return new AzureBlobService(connectionString, ScheduleBlob.ContainerName, logger);
 		});
 
-		services.AddTransient<IScheduleQueryLoader>(sp =>
+		services.AddTransient<IBlobLoader>(sp =>
 		{
 			var blobs = sp.GetRequiredKeyedService<IAzureBlobService>(BlobServiceKey);
-			var logger = sp.GetRequiredService<ILogger<ScheduleBlobQueryLoader>>();
-			return new ScheduleBlobQueryLoader(blobs, logger);
+			var logger = sp.GetRequiredService<ILogger<BlobLoader>>();
+			return new BlobLoader(blobs, logger);
 		});
 
-		services.AddTransient<IScheduleQueryWriter>(sp =>
+		services.AddTransient<IBlobWriter>(sp =>
 		{
 			var blobs = sp.GetRequiredKeyedService<IAzureBlobService>(BlobServiceKey);
-			var logger = sp.GetRequiredService<ILogger<ScheduleBlobQueryWriter>>();
-			return new ScheduleBlobQueryWriter(blobs, logger);
+			var logger = sp.GetRequiredService<ILogger<BlobWriter>>();
+			return new BlobWriter(blobs, logger);
 		});
 
 		return services;

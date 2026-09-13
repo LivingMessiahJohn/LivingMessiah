@@ -1,23 +1,16 @@
-﻿<h3>PocketMod</h3>
-
-@using Microsoft.Extensions.Logging
+﻿@using Microsoft.Extensions.Logging
 @using RCL.Components
+@using RCL.Features.Sukkot.Data.DailySchedule
 
-@inject ILogger<PocketMod> Logger
-@inject IScheduleQueryLoader Loader
+@inject ILogger<ScheduleWrapperDeprecated> Logger
+@inject IBlobLoader Loader
+
 
 <LoadingComponentLIBRARY IsLoading="_isLoading" TurnSpinnerOff="TurnSpinnerOff">
 
 	@if (string.IsNullOrEmpty(msg))
 	{
-		@foreach (var item in DailyEvents.Where(w => w.FileName != "00.md").ToList())
-		{
-			<div class="card border border-secondary border-2 mt-1">
-				<div class="card-body markdown-body">
-					@MarkdownHelper.ToMarkup(item.Markdown)
-				</div>
-			</div>
-		}
+		<Schedule ScheduleQuery="ScheduleQuery" />
 	}
 	else
 	{
@@ -27,7 +20,7 @@
 </LoadingComponentLIBRARY>
 
 @code {
-	private DailyEventMarkdown[] DailyEvents = [];
+	private ScheduleQuery? ScheduleQuery;
 	private bool _isLoading = true;
 
 	string msg = "";
@@ -39,8 +32,15 @@
 	{
 		try
 		{
-			DailyEvents = await Loader.GetAsyncList();
-			if (DailyEvents.Length == 0)
+			/*
+			ToDo: `GetAsync` is deprecated, use GetAsyncList instead
+			used by:
+			- Admin\Features\Sukkot\DailySchedule\MarkdownEdit.razor(113):var query = await Loader.GetAsync();
+			- RCL\Features\Sukkot\ScheduleWrapper.razor(33):ScheduleQuery = await Loader.GetAsync();
+		 */
+
+			ScheduleQuery = await Loader.GetAsync();
+			if (ScheduleQuery is null)
 			{
 				msg = "Unable to load the schedule. Please try again later.";
 			}

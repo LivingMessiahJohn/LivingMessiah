@@ -1,8 +1,9 @@
 @using Microsoft.Extensions.Logging
 @using RCL.Components
+@using RCL.Features.Sukkot.Data.DailySchedule
 
 @inject ILogger<ScheduleWrapper> Logger
-@inject IScheduleQueryLoader Loader
+@inject IBlobLoader Loader
 
 <LoadingComponentLIBRARY IsLoading="_isLoading" TurnSpinnerOff="TurnSpinnerOff">
 
@@ -30,6 +31,7 @@
 	{
 		try
 		{
+
 			ScheduleQuery = await Loader.GetAsync();
 			if (ScheduleQuery is null)
 			{

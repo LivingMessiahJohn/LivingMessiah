@@ -1,6 +1,7 @@
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Sas;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -293,6 +294,63 @@ public class AzureBlobService : IAzureBlobService
       return BlobOperationResult<IReadOnlyList<string>>.Failure(
           $"Failed to list blobs with prefix '{prefix}'",
           ex);
+    }
+  }
+
+  public async Task<BlobOperationResult<string>> GetReadSasUriAsync(
+      string blobName,
+      TimeSpan lifetime,
+      CancellationToken ct = default)
+  {
+    blobName = blobName?.Trim() ?? string.Empty;
+
+    if (string.IsNullOrEmpty(blobName))
+      return BlobOperationResult<string>.Failure("blobName cannot be null or empty");
+
+    if (lifetime <= TimeSpan.Zero)
+      return BlobOperationResult<string>.Failure("lifetime must be greater than zero");
+
+    try
+    {
+      var existsResult = await ExistsAsync(blobName, ct);
+      if (!existsResult.IsSuccess)
+        return BlobOperationResult<string>.Failure(
+            existsResult.Message,
+            existsResult.Exception,
+            isTransient: existsResult.IsTransient);
+
+      if (!existsResult.Data)
+        return BlobOperationResult<string>.Failure($"Blob '{blobName}' does not exist.");
+
+      BlobClient blob = _container.GetBlobClient(blobName);
+      if (!blob.CanGenerateSasUri)
+        return BlobOperationResult<string>.Failure(
+            "Cannot generate a SAS URI (account key required on the connection string).");
+
+      var sasBuilder = new BlobSasBuilder
+      {
+        BlobContainerName = _container.Name,
+        BlobName = blobName,
+        Resource = "b",
+        ExpiresOn = DateTimeOffset.UtcNow.Add(lifetime)
+      };
+      sasBuilder.SetPermissions(BlobSasPermissions.Read);
+
+      string uri = blob.GenerateSasUri(sasBuilder).ToString();
+      Logger.LogDebug("Generated read SAS for blob {BlobName}", blobName);
+      return BlobOperationResult<string>.Success(uri, "SAS URI generated.");
+    }
+    catch (RequestFailedException ex) when (IsTransientError(ex))
+    {
+      return BlobOperationResult<string>.Failure(
+          $"Transient error generating SAS for '{blobName}'",
+          ex,
+          isTransient: true);
+    }
+    catch (Exception ex)
+    {
+      Logger.LogWarning(ex, "Failed to generate read SAS for blob: {BlobName}", blobName);
+      return BlobOperationResult<string>.Failure($"Failed to generate SAS for '{blobName}'", ex);
     }
   }
 

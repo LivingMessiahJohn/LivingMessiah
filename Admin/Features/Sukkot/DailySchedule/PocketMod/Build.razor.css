@@ -24,7 +24,6 @@
 	background-color: rgba(0, 0, 0, 0.03);
 }
 
-/* Keep long link text from blowing column layout on small screens */
 .markdown-body ::deep td {
 	word-break: break-word;
 	overflow-wrap: anywhere;

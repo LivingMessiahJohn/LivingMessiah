@@ -55,7 +55,7 @@ public abstract class Tab : SmartEnum<Tab>
 	{
 		public DailyScheduleSE() : base($"{nameof(Id.DailySchedule)}", Id.DailySchedule) { }
 		public override string Index => $"/SukkotHome/{Name}";
-		public override string Title => "Sukkot Daily Schedule";
+		public override string Title => "Daily Schedule";
 		public override string Icon => "fas fa-tasks";
 		public override string Css => "badge bg-warning text-black";
 	}

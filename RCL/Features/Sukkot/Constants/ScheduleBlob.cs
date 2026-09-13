@@ -10,6 +10,7 @@ public static class ScheduleBlob
 	public const string ContainerName = "sukkot-content";
 	public const string BlobName = "sukkot/scheduled-events.md";
 	public const string DailyEventsFolder = "sukkot/daily-events-folder/";
+	public const string PocketModPdfBlobName = "sukkot/pocketmod-scheduled-events.pdf";
 	public const string ContentType = "text/markdown; charset=utf-8";
 
 	/// <summary>Azure blob metadata key (stored lowercase). Value: ISO-8601 datetime.</summary>

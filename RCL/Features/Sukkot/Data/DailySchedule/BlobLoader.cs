@@ -2,23 +2,40 @@ using Microsoft.Extensions.Logging;
 using RCL.Features.Storage;
 using RCL.Features.Sukkot.Constants;
 
-namespace RCL.Features.Sukkot;
+namespace RCL.Features.Sukkot.Data.DailySchedule;
+
+public interface IBlobLoader
+{
+  /*
+   ToDo: `GetAsync` is deprecated, use GetAsyncList instead
+   This means that the edit capabilities must be done for each day not as one big .md file
+  */
+  Task<ScheduleQuery?> GetAsync();
+  Task<MarkdownRecord[]> GetAsyncList();
+}
+
 
 /// <summary>
 /// Loads the daily schedule markdown from the private Sukkot schedule blob (#215).
 /// </summary>
-public sealed class ScheduleBlobQueryLoader : IScheduleQueryLoader
+public sealed class BlobLoader : IBlobLoader
 {
 	private readonly IAzureBlobService _blobs;
-	private readonly ILogger<ScheduleBlobQueryLoader> _logger;
+	private readonly ILogger<BlobLoader> _logger;
 
-	public ScheduleBlobQueryLoader(IAzureBlobService blobs, ILogger<ScheduleBlobQueryLoader> logger)
+	public BlobLoader(IAzureBlobService blobs, ILogger<BlobLoader> logger)
 	{
 		_blobs = blobs;
 		_logger = logger;
 	}
 
-	public async Task<ScheduleQuery?> GetAsync()
+  /* 
+  ToDo: `GetAsync` is deprecated, use GetAsyncList instead
+  used by: 
+  - Admin\Features\Sukkot\DailySchedule\MarkdownEdit.razor(113):var query = await Loader.GetAsync();
+  - RCL\Features\Sukkot\ScheduleWrapper.razor(33):ScheduleQuery = await Loader.GetAsync();
+  */
+  public async Task<ScheduleQuery?> GetAsync()
 	{
 		var result = await _blobs.DownloadTextAsync(ScheduleBlob.BlobName);
 		if (!result.IsSuccess || result.Data is null)
@@ -37,7 +54,7 @@ public sealed class ScheduleBlobQueryLoader : IScheduleQueryLoader
 		};
 	}
 
-	public async Task<DailyEventMarkdown[]> GetAsyncList()
+	public async Task<MarkdownRecord[]> GetAsyncList()
 	{
 		var listResult = await _blobs.ListBlobNamesAsync(ScheduleBlob.DailyEventsFolder);
 		if (!listResult.IsSuccess || listResult.Data is null)
@@ -60,7 +77,7 @@ public sealed class ScheduleBlobQueryLoader : IScheduleQueryLoader
 			return [];
 		}
 
-		var items = new List<DailyEventMarkdown>(mdNames.Length);
+		var items = new List<MarkdownRecord>(mdNames.Length);
 		foreach (var blobName in mdNames)
 		{
 			var result = await _blobs.DownloadTextAsync(blobName);
@@ -77,7 +94,7 @@ public sealed class ScheduleBlobQueryLoader : IScheduleQueryLoader
 			if (string.IsNullOrEmpty(fileName))
 				fileName = blobName;
 
-			items.Add(new DailyEventMarkdown(fileName, result.Data.Text ?? string.Empty));
+			items.Add(new MarkdownRecord(fileName, result.Data.Text ?? string.Empty));
 		}
 
 		return items.ToArray();
