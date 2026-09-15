@@ -15,9 +15,8 @@
       @foreach (var document in DocumentList)
       {
         <li class="list-group-item bg-warning-subtle">
-          @* <a href="@Constants.Documents.Url(document.FileName)" target="_blank" *@
-          <a 
-             class="@disabled text-black-50">
+          <a href="@Constants.Documents.Url(document.FileName)" target="_blank"
+             class="@disabled">
             @document.Name
           </a>
         </li>
@@ -25,13 +24,13 @@
       <li class="list-group-item bg-warning-subtle">
         @if (!string.IsNullOrEmpty(_pocketModUrl))
         {
-          <a href="@_pocketModUrl" target="_blank" rel="noopener noreferrer" class="text-black">
+          <a href="@_pocketModUrl" target="_blank">
             PocketMod Scheduled Events
           </a>
         }
         else
         {
-          <a class="@disabled text-black-50">
+          <a class="disabled text-black-50">
             PocketMod Scheduled Events
           </a>
         }
@@ -46,13 +45,13 @@
   private List<DocumentLink> DocumentList = new()
     {
       new("Liability Waiver", Constants.Documents.PDFs.LiabilityWaiver),
-      new($"Sukkot {Year.String} House Rules", Constants.Documents.PDFs.HouseRules),
-      new("Schedule", Constants.Documents.PDFs.Schedule)
+      new($"Sukkot {Year.String} House Rules", Constants.Documents.PDFs.HouseRules)
+      //, new("Schedule", Constants.Documents.PDFs.Schedule)
     };
 
   private record DocumentLink(string Name, string FileName);
 
-	const string disabled = " disabled";
+  const string disabled = ""; // " disabled";
 
 	private string? _pocketModUrl;
 
