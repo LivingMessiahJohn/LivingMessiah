@@ -7,9 +7,9 @@ public static class Documents
 	
 	public static class PDFs
 	{
-		public const string Schedule = "sukkot-2025-schedule.pdf";
+		//public const string Schedule = "sukkot-2025-schedule.pdf"; This is online and is dynamically updated
 		public const string LiabilityWaiver = "sukkot-2022-liability-waiver.pdf"; // NOT DONE YET
-		public const string HouseRules = "sukkot-2025-house-rules.pdf";
+		public const string HouseRules = "sukkot-2026-house-rules.pdf";
 		public const string PocketModScheduledEvents = "pocketmod-scheduled-events.pdf";
 	}
 
