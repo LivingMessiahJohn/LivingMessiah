@@ -9,7 +9,7 @@
 
 	@if (string.IsNullOrEmpty(msg))
 	{
-		<Schedule ScheduleQuery="ScheduleQuery" />
+		<Schedule Days="Days" />
 	}
 	else
 	{
@@ -19,7 +19,7 @@
 </LoadingComponentLIBRARY>
 
 @code {
-	private ScheduleQuery? ScheduleQuery;
+	private MarkdownRecord[] Days = [];
 	private bool _isLoading = true;
 
 	string msg = "";
@@ -31,9 +31,8 @@
 	{
 		try
 		{
-
-			ScheduleQuery = await Loader.GetAsync();
-			if (ScheduleQuery is null)
+			Days = await Loader.GetAsyncList();
+			if (Days.Length == 0)
 			{
 				msg = "Unable to load the schedule. Please try again later.";
 			}

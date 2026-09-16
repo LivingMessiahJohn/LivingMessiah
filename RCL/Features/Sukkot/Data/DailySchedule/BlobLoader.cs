@@ -6,17 +6,12 @@ namespace RCL.Features.Sukkot.Data.DailySchedule;
 
 public interface IBlobLoader
 {
-  /*
-   ToDo: `GetAsync` is deprecated, use GetAsyncList instead
-   This means that the edit capabilities must be done for each day not as one big .md file
-  */
-  Task<ScheduleQuery?> GetAsync();
-  Task<MarkdownRecord[]> GetAsyncList();
+	Task<MarkdownRecord[]> GetAsyncList();
 }
 
 
 /// <summary>
-/// Loads the daily schedule markdown from the private Sukkot schedule blob (#215).
+/// Loads daily schedule markdown from <c>10.md</c>–<c>19.md</c> in the private Sukkot content container.
 /// </summary>
 public sealed class BlobLoader : IBlobLoader
 {
@@ -27,31 +22,6 @@ public sealed class BlobLoader : IBlobLoader
 	{
 		_blobs = blobs;
 		_logger = logger;
-	}
-
-  /* 
-  ToDo: `GetAsync` is deprecated, use GetAsyncList instead
-  used by: 
-  - Admin\Features\Sukkot\DailySchedule\MarkdownEdit.razor(113):var query = await Loader.GetAsync();
-  - RCL\Features\Sukkot\ScheduleWrapper.razor(33):ScheduleQuery = await Loader.GetAsync();
-  */
-  public async Task<ScheduleQuery?> GetAsync()
-	{
-		var result = await _blobs.DownloadTextAsync(ScheduleBlob.BlobName);
-		if (!result.IsSuccess || result.Data is null)
-		{
-			_logger.LogWarning(
-				"Schedule blob load failed for {BlobName}: {Message}",
-				ScheduleBlob.BlobName,
-				result.Message);
-			return null;
-		}
-
-		return new ScheduleQuery
-		{
-			Markdown = result.Data.Text ?? string.Empty,
-			LastRevised = result.Data.LastRevised
-		};
 	}
 
 	public async Task<MarkdownRecord[]> GetAsyncList()
@@ -67,13 +37,17 @@ public sealed class BlobLoader : IBlobLoader
 		}
 
 		var mdNames = listResult.Data
-			.Where(name => name.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
-			.OrderBy(name => name, StringComparer.OrdinalIgnoreCase)
+			.Where(DailyEventFiles.IsScheduledFile)
+			.OrderBy(name => Path.GetFileName(name), StringComparer.OrdinalIgnoreCase)
 			.ToArray();
 
 		if (mdNames.Length == 0)
 		{
-			_logger.LogDebug("No .md blobs under {Prefix}", ScheduleBlob.DailyEventsFolder);
+			_logger.LogDebug(
+				"No {Min}.md–{Max}.md blobs under {Prefix}",
+				ScheduleBlob.DailyEventFileNumberMin,
+				ScheduleBlob.DailyEventFileNumberMax,
+				ScheduleBlob.DailyEventsFolder);
 			return [];
 		}
 
