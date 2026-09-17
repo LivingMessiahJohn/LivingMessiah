@@ -11,6 +11,7 @@
 @using Blazored.Toast.Services
 
 @inject IBlobLoader Loader
+@inject IBlobWriter Writer
 @inject IToastService Toast
 @inject ILogger<MarkdownEdit> Logger
 
@@ -21,11 +22,6 @@
 			<PageTitle>@NavEnums.MarkdownEdit.Title</PageTitle>
 			<DashboardHeader MenuBar="@NavEnums.MarkdownEdit" />
 		}
-
-		<Alert>
-			Per-day markdown editing (<code>@ScheduleBlob.DailyEventsFolder</code><code>10.md</code>–<code>19.md</code>)
-			is not implemented yet. The public schedule reads those files; this page only lists them.
-		</Alert>
 
 		@if (_isLoading)
 		{
@@ -44,19 +40,57 @@
 		else
 		{
 			<div class="card border-primary mb-4">
-				<div class="card-header">
-					<strong>Daily schedule files</strong>
-					<small class="text-muted ms-2">@ScheduleBlob.DailyEventsFolder</small>
+				<div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+					<div class="d-flex flex-wrap align-items-center gap-2">
+						<label class="form-label mb-0" for="dailyEventFile">Day</label>
+						<select id="dailyEventFile"
+										class="form-select"
+										style="max-width: 22rem;"
+										@key="_pickerEpoch"
+										value="@_selectedFileName"
+										@onchange="OnDayChanged"
+										disabled="@(_isSaving)">
+							@foreach (var day in _days)
+							{
+								<option value="@day.FileName">@day.FileName — @DailyEventFiles.TitleFor(day)</option>
+							}
+						</select>
+						<small class="text-muted">@SelectedBlobName</small>
+					</div>
+					<div class="d-flex gap-2">
+						<button type="button" class="btn btn-outline-secondary btn-sm" disabled="@_isSaving" @onclick="ReloadAsync">
+							<i class="fas fa-sync-alt"></i> Reload
+						</button>
+						<button type="button" class="btn btn-primary btn-sm" disabled="@(_isSaving || !_dirty)" @onclick="SaveAsync">
+							@if (_isSaving)
+							{
+								<span class="spinner-border spinner-border-sm me-1" role="status"></span>
+							}
+							else
+							{
+								<i class="fas fa-save me-1"></i>
+							}
+							Save
+						</button>
+					</div>
 				</div>
-				<ul class="list-group list-group-flush">
-					@foreach (var day in _days)
-					{
-						<li class="list-group-item d-flex justify-content-between align-items-center">
-							<span>@day.FileName</span>
-							<span class="text-muted">@DailyEventFiles.TitleFor(day)</span>
-						</li>
-					}
-				</ul>
+				<div class="card-body">
+					<label class="form-label" for="scheduleMarkdown">Markdown</label>
+					<textarea id="scheduleMarkdown"
+										class="form-control font-monospace"
+										style="min-height: 22rem; white-space: pre;"
+										@bind="_markdown"
+										@bind:event="oninput"
+										@bind:after="OnMarkdownChanged"
+										disabled="@_isSaving"></textarea>
+					<div class="form-text">
+						Saves overwrite that day's blob. The public Sukkot schedule reads these files.
+						@if (_dirty)
+						{
+							<span class="text-warning"> Unsaved changes.</span>
+						}
+					</div>
+				</div>
 			</div>
 		}
 	</Authorized>
@@ -72,26 +106,127 @@
 	[Parameter] public bool ShowHeader { get; set; } = true;
 
 	private MarkdownRecord[] _days = [];
+	private string _selectedFileName = string.Empty;
+	private string _markdown = string.Empty;
+	private string _originalMarkdown = string.Empty;
 	private string? _loadError;
 	private bool _isLoading = true;
+	private bool _isSaving;
+	private bool _dirty;
+	private int _pickerEpoch;
+
+	private string SelectedBlobName =>
+		DailyEventFiles.TryGetBlobName(_selectedFileName, out string blobName)
+			? blobName
+			: _selectedFileName;
 
 	protected override async Task OnInitializedAsync()
+	{
+		await ReloadAsync();
+	}
+
+	private void OnMarkdownChanged()
+	{
+		_dirty = !string.Equals(_markdown, _originalMarkdown, StringComparison.Ordinal);
+	}
+
+	private void OnDayChanged(ChangeEventArgs e)
+	{
+		string next = e.Value?.ToString() ?? string.Empty;
+		if (string.Equals(next, _selectedFileName, StringComparison.OrdinalIgnoreCase))
+			return;
+
+		if (_dirty)
+		{
+			Toast.ShowWarning("Save or Reload before switching days.");
+			_pickerEpoch++;
+			return;
+		}
+
+		ApplyDay(next);
+	}
+
+	private void ApplyDay(string? fileName)
+	{
+		if (_days.Length == 0)
+		{
+			_selectedFileName = string.Empty;
+			_markdown = string.Empty;
+			_originalMarkdown = string.Empty;
+			_dirty = false;
+			return;
+		}
+
+		MarkdownRecord day = _days.FirstOrDefault(d =>
+			string.Equals(d.FileName, fileName, StringComparison.OrdinalIgnoreCase))
+			?? _days[0];
+
+		_selectedFileName = day.FileName;
+		_markdown = day.Markdown ?? string.Empty;
+		_originalMarkdown = _markdown;
+		_dirty = false;
+	}
+
+	private async Task ReloadAsync()
 	{
 		_isLoading = true;
 		_loadError = null;
 		try
 		{
 			_days = await Loader.GetAsyncList();
+			if (_days.Length == 0)
+			{
+				ApplyDay(null);
+			}
+			else
+			{
+				int index = DailyEventFiles.IndexForToday(_days);
+				string keep = _selectedFileName;
+				string fallback = _days[index].FileName;
+				bool keepExists = _days.Any(d =>
+					string.Equals(d.FileName, keep, StringComparison.OrdinalIgnoreCase));
+				ApplyDay(keepExists ? keep : fallback);
+			}
 		}
 		catch (Exception ex)
 		{
-			Logger.LogError(ex, "Failed to list daily schedule files");
+			Logger.LogError(ex, "Failed to load daily schedule files");
 			_loadError = "Error loading schedule files. See logs.";
 			Toast.ShowError("Failed to load schedule files.");
 		}
 		finally
 		{
 			_isLoading = false;
+		}
+	}
+
+	private async Task SaveAsync()
+	{
+		if (_isSaving || string.IsNullOrEmpty(_selectedFileName))
+			return;
+
+		_isSaving = true;
+		try
+		{
+			var lastRevised = DateTime.Now;
+			await Writer.SaveAsync(_selectedFileName, _markdown, lastRevised);
+			_days = _days
+				.Select(d => string.Equals(d.FileName, _selectedFileName, StringComparison.OrdinalIgnoreCase)
+					? d with { Markdown = _markdown }
+					: d)
+				.ToArray();
+			_originalMarkdown = _markdown;
+			_dirty = false;
+			Toast.ShowSuccess($"Saved {_selectedFileName}.");
+		}
+		catch (Exception ex)
+		{
+			Logger.LogError(ex, "Failed to save {FileName}", _selectedFileName);
+			Toast.ShowError($"Save failed: {ex.Message}");
+		}
+		finally
+		{
+			_isSaving = false;
 		}
 	}
 }

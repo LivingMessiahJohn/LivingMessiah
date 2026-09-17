@@ -7,12 +7,12 @@ namespace RCL.Features.Sukkot.Data.DailySchedule;
 
 public interface IBlobWriter
 {
-  Task SaveAsync(string markdownBody, DateTime lastRevised, CancellationToken ct = default);
+	Task SaveAsync(string fileName, string markdownBody, DateTime lastRevised, CancellationToken ct = default);
 }
 
 
 /// <summary>
-/// Saves daily schedule markdown to the private Sukkot schedule blob (#215).
+/// Saves one daily-event markdown blob (<c>10.md</c>–<c>19.md</c>) in the private Sukkot content container.
 /// Sets optional <c>lastrevised</c> metadata; loaders also accept blob LastModified.
 /// </summary>
 public sealed class BlobWriter : IBlobWriter
@@ -26,12 +26,18 @@ public sealed class BlobWriter : IBlobWriter
 		_logger = logger;
 	}
 
-	public async Task SaveAsync(string markdownBody, DateTime lastRevised, CancellationToken ct = default)
+	public async Task SaveAsync(string fileName, string markdownBody, DateTime lastRevised, CancellationToken ct = default)
 	{
+		if (!DailyEventFiles.TryGetBlobName(fileName, out string blobName))
+		{
+			throw new ArgumentException(
+				$"File '{fileName}' is not a daily schedule markdown file ({ScheduleBlob.DailyEventFileNumberMin}.md–{ScheduleBlob.DailyEventFileNumberMax}.md).",
+				nameof(fileName));
+		}
+
 		byte[] bytes = Encoding.UTF8.GetBytes(markdownBody ?? string.Empty);
 		await using var stream = new MemoryStream(bytes);
 
-		// Metadata is optional for display (LastModified works), but cheap and useful for Admin saves.
 		var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 		{
 			[ScheduleBlob.LastRevisedMetadataKey] = lastRevised.ToString("o")
@@ -39,7 +45,7 @@ public sealed class BlobWriter : IBlobWriter
 
 		var result = await _blobs.UploadStreamAsync(
 			stream,
-			ScheduleBlob.BlobName,
+			blobName,
 			ScheduleBlob.ContentType,
 			metadata,
 			ct);
@@ -48,17 +54,17 @@ public sealed class BlobWriter : IBlobWriter
 		{
 			_logger.LogError(
 				result.Exception,
-				"Schedule blob save failed for {BlobName}: {Message}",
-				ScheduleBlob.BlobName,
+				"Daily-event blob save failed for {BlobName}: {Message}",
+				blobName,
 				result.Message);
 			throw new InvalidOperationException(
-				result.Message ?? "Failed to save schedule blob.",
+				result.Message ?? "Failed to save daily schedule blob.",
 				result.Exception);
 		}
 
 		_logger.LogInformation(
-			"Schedule blob saved: {BlobName}, LastRevised {LastRevised}",
-			ScheduleBlob.BlobName,
+			"Daily-event blob saved: {BlobName}, LastRevised {LastRevised}",
+			blobName,
 			lastRevised);
 	}
 }

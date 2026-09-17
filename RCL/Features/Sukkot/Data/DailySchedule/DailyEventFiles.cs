@@ -13,6 +13,30 @@ public static class DailyEventFiles
 	public static bool IsScheduledFile(string blobName) =>
 		TryGetFileNumber(blobName, out _);
 
+	public static bool TryGetBlobName(string fileName, out string blobName)
+	{
+		blobName = string.Empty;
+		if (string.IsNullOrWhiteSpace(fileName))
+			return false;
+
+		string leaf = Path.GetFileName(fileName);
+		if (string.IsNullOrEmpty(leaf) || !TryGetFileNumber(leaf, out _))
+			return false;
+
+		blobName = ScheduleBlob.DailyEventsFolder + leaf;
+		return true;
+	}
+
+	public static string BlobNameFor(string fileName)
+	{
+		if (TryGetBlobName(fileName, out string blobName))
+			return blobName;
+
+		throw new ArgumentException(
+			$"File '{fileName}' is not a daily schedule markdown file ({ScheduleBlob.DailyEventFileNumberMin}.md–{ScheduleBlob.DailyEventFileNumberMax}.md).",
+			nameof(fileName));
+	}
+
 	public static bool TryGetFileNumber(string blobName, out int fileNumber)
 	{
 		fileNumber = 0;
