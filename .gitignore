@@ -409,5 +409,12 @@ local.settings.json
 *.msm
 *.msp
 
+# Playwright
+**/playwright-report/
+**/test-results/
+**/playwright/.cache/
+.playwright-mcp/
+playwright-sukkot-*.png
+
 # JetBrains Rider
 *.sln.iml
