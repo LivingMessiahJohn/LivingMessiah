@@ -1,74 +1,19 @@
-@using Sukkot.Features.Constants
-@using Microsoft.Extensions.DependencyInjection
-@using RCL.Features.Storage
-@using RCL.Features.Sukkot.Constants
-@using BlobService = RCL.Features.Sukkot.Data.DailySchedule.ServiceCollectionExtensions
-
-@inject IServiceProvider Services
-
 <div class="card border border-warning border-4 bg-warning-subtle mt-4 ">
   <h2 class=" py-2 text-center text-black"><b>Document Packet</b> <i class="fas fa-file-pdf"></i> </h2>
 
   <div class="card-body text-center">
 
     <ul class="list-group h3">
-      @foreach (var document in DocumentList)
+      @foreach (var item in Constants.Documents.Links)
       {
         <li class="list-group-item bg-warning-subtle">
-          <a href="@Constants.Documents.Url(document.FileName)" target="_blank"
-             class="@disabled">
-            @document.Name
+          <a href="@item.Value" target="_blank">
+            @item.Key
           </a>
         </li>
       }
-      <li class="list-group-item bg-warning-subtle">
-        @if (!string.IsNullOrEmpty(_pocketModUrl))
-        {
-          <a href="@_pocketModUrl" target="_blank">
-            PocketMod Scheduled Events
-          </a>
-        }
-        else
-        {
-          <a class="disabled text-black-50">
-            PocketMod Scheduled Events
-          </a>
-        }
-      </li>
     </ul>
 
   </div>
 
 </div>
-
-@code {
-  private List<DocumentLink> DocumentList = new()
-    {
-      new("Liability Waiver", Constants.Documents.PDFs.LiabilityWaiver),
-      new($"Sukkot {Year.String} House Rules", Constants.Documents.PDFs.HouseRules)
-      //, new("Schedule", Constants.Documents.PDFs.Schedule)
-    };
-
-  private record DocumentLink(string Name, string FileName);
-
-  const string disabled = ""; // " disabled";
-
-	private string? _pocketModUrl;
-
-	protected override async Task OnInitializedAsync()
-	{
-		try
-		{
-      var blobs = Services.GetRequiredKeyedService<IAzureBlobService>(BlobService.BlobServiceKey);
-			var result = await blobs.GetReadSasUriAsync(
-				ScheduleBlob.PocketModPdfBlobName,
-				TimeSpan.FromHours(24));
-			if (result.IsSuccess)
-				_pocketModUrl = result.Data;
-		}
-		catch (Exception)
-		{
-			_pocketModUrl = null;
-		}
-	}
-}
