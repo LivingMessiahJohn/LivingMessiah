@@ -51,7 +51,7 @@ public class LandingPageTests : SukkotPageTest
 			"https://livingmessiahstorage.blob.core.windows.net/sukkot-content/sukkot-2026-house-rules.pdf");
 		await Expect(pocketMod).ToHaveAttributeAsync(
 			"href",
-			"https://livingmessiahstorage.blob.core.windows.net/sukkot-content/pocketmod-scheduled-events.pdf");
+			"https://livingmessiahstorage.blob.core.windows.net/sukkot-content/scheduled-events-pocketmod.pdf");
 	}
 
 	[Test]

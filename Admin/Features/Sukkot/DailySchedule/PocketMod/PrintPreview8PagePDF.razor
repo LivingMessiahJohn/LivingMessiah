@@ -1,4 +1,4 @@
-﻿@page "/SukkotSchedule/PocketMod/PrintPreview8PagePDF"
+@page "/SukkotSchedule/PocketMod/PrintPreview8PagePDF"
 
 @using NavEnums = Admin.Features.Sukkot.DailySchedule.Enums.Nav;
 @using RoleGroup = Admin.Security.Enums.RoleGroup;
@@ -15,25 +15,37 @@
 		<PageTitle>@NavEnums.PocketModPrintPreview8PagePDF.Title</PageTitle>
 		<DashboardHeader MenuBar="@NavEnums.PocketModPrintPreview8PagePDF" />
 
-		<div class="d-print-none text-end mb-3">
+		<HeadContent>
+			<style>
+				@@page {
+					size: legal portrait;
+					margin: 0.4in;
+				}
+
+				@@media print {
+					.footer,
+					#blazor-error-ui {
+						display: none !important;
+					}
+
+					.container-fluid {
+						padding: 0 !important;
+						margin: 0 !important;
+					}
+				}
+			</style>
+		</HeadContent>
+
+		<div class="d-print-none d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+			<p class="text-muted mb-0">
+				Print on <strong>Legal</strong> paper (8.5&nbsp;&times;&nbsp;14&nbsp;in). Eight pages: first is 10.md+11.md, last is 18.md+19.md.
+			</p>
 			<a class="btn btn-outline-secondary" title="Print" href="javascript:window.print()">
 				<span class="fas fa-print"></span> Print
 			</a>
 		</div>
 
-		<Alert AlertType="alert-danger"><b>ToDo:</b> Custom 8 Page PDF Layout</Alert>
-		
-		<h5>Items not done</h5>
-		<ol>
-			<li>Create a CSS for <code>RCL.Schedule</code> (something like VeryLargeCSS) that will explode the schedule such that it requires 8 pages to print</li>
-			<li>The 10 individual Daily sections need to fit on 8 pages, therefore create a CSS that forces a page break</li>
-			<li><b>Nice to have:</b> Automate where the 8 page PDF is saved in Blob Storage and the Print Preview Dimensions (Legal, Landscape)</li>
-		</ol>
-
-		<hr />
-
-		<ScheduleWrapper />
-
+		<ScheduleWrapper8Pages />
 
 	</Authorized>
 	<NotAuthorized>
