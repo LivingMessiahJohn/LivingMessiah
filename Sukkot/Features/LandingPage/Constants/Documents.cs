@@ -8,7 +8,7 @@ public static class Documents
 
 	private static string LiabilityWaiverPDF => SukkotContentBaseFolder + "liability-waiver.pdf";
 	private static string HouseRulesPDF => SukkotContentBaseFolder + "sukkot-2026-house-rules.pdf";
-	private static string PocketModPDF => SukkotContentBaseFolder + "pocketmod-scheduled-events.pdf";
+	private static string PocketModPDF => SukkotContentBaseFolder + "scheduled-events-pocketmod.pdf";
 
 	public static readonly Dictionary<string, string> Links = new()
 	{

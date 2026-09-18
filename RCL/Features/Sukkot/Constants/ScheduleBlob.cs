@@ -9,8 +9,9 @@ public static class ScheduleBlob
 {
 	public const string ContainerName = "sukkot-content";
 	public const string BlobName = "sukkot/scheduled-events.md";
-	public const string DailyEventsFolder = "sukkot/daily-events-folder/";
-	public const string PocketModPdfBlobName = "sukkot/pocketmod-scheduled-events.pdf";
+	public const string DailyEventsFolder = "daily-event/";
+	public const string PocketModInputPdfBlobName = "scheduled-events-pocketmod-input.pdf";
+	public const string PocketModPdfBlobName = "scheduled-events-pocketmod.pdf";
 	public const string ContentType = "text/markdown; charset=utf-8";
 
 	/// <summary>Inclusive leaf-name range shown on the public schedule (<c>10.md</c> … <c>19.md</c>).</summary>

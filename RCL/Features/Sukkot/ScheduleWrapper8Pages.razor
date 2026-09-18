@@ -1,0 +1,72 @@
+@using Microsoft.Extensions.Logging
+@using RCL.Components
+@using RCL.Features.Sukkot.Data.DailySchedule
+@using RCL.Helpers
+
+@inject ILogger<ScheduleWrapper8Pages> Logger
+@inject IBlobLoader Loader
+
+<LoadingComponentLIBRARY IsLoading="_isLoading" TurnSpinnerOff="TurnSpinnerOff">
+
+	@if (string.IsNullOrEmpty(msg))
+	{
+		<div class="schedule-8pages">
+			@foreach (var page in Pages)
+			{
+				<section class="print-page @(page.Length > 1 ? "print-page-paired" : "print-page-single")">
+					@foreach (var day in page)
+					{
+						<article class="print-day">
+							<h2 class="print-day-title">@DailyEventFiles.TitleFor(day)</h2>
+							<div class="markdown-body">
+								@MarkdownHelper.ToMarkup(day.Markdown)
+							</div>
+						</article>
+					}
+				</section>
+			}
+		</div>
+	}
+	else
+	{
+		<Alert AlertType="@alertType">@msg</Alert>
+	}
+
+</LoadingComponentLIBRARY>
+
+@code {
+	private MarkdownRecord[] Days = [];
+	private MarkdownRecord[][] Pages = [];
+	private bool _isLoading = true;
+
+	string msg = "";
+	string alertType = "alert-warning";
+
+	bool TurnSpinnerOff = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			Days = await Loader.GetAsyncList();
+			Pages = DailyEventFiles.GroupForEightPrintPages(Days);
+			if (Days.Length == 0 || Pages.Length == 0)
+			{
+				msg = "Unable to load the schedule. Please try again later.";
+			}
+		}
+		catch (Exception ex)
+		{
+			Logger.LogError(ex, "{Method}", nameof(OnInitializedAsync));
+			alertType = "alert-danger";
+			msg = "Error; Unable to load the schedule. Please try again later.";
+		}
+		finally
+		{
+			_isLoading = false;
+			TurnSpinnerOff = true;
+		}
+
+		Logger.LogDebug("{Method} {Msg}", nameof(OnInitializedAsync), msg);
+	}
+}

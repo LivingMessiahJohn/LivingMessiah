@@ -100,4 +100,44 @@ public static class DailyEventFiles
 
 		return attendance?.Title ?? date.ToString("ddd MM/dd");
 	}
+
+	/// <summary>
+	/// Groups daily files into eight print pages: first page concatenates
+	/// <c>10.md</c>+<c>11.md</c>, last page concatenates <c>18.md</c>+<c>19.md</c>,
+	/// and the six pages in between are one file each.
+	/// Empty slots (missing blobs) are omitted; a page is skipped if it has no files.
+	/// </summary>
+	public static MarkdownRecord[][] GroupForEightPrintPages(IReadOnlyList<MarkdownRecord> days)
+	{
+		if (days is null || days.Count == 0)
+			return [];
+
+		var byNumber = new Dictionary<int, MarkdownRecord>();
+		foreach (var day in days)
+		{
+			if (TryGetFileNumber(day.FileName, out int fileNumber))
+				byNumber[fileNumber] = day;
+		}
+
+		int min = ScheduleBlob.DailyEventFileNumberMin;
+		int max = ScheduleBlob.DailyEventFileNumberMax;
+		var pageFileNumbers = new List<int[]>(8);
+		pageFileNumbers.Add([min, min + 1]);
+		for (int n = min + 2; n <= max - 2; n++)
+			pageFileNumbers.Add([n]);
+		pageFileNumbers.Add([max - 1, max]);
+
+		var pages = new List<MarkdownRecord[]>(pageFileNumbers.Count);
+		foreach (int[] numbers in pageFileNumbers)
+		{
+			var group = numbers
+				.Where(byNumber.ContainsKey)
+				.Select(n => byNumber[n])
+				.ToArray();
+			if (group.Length > 0)
+				pages.Add(group);
+		}
+
+		return [.. pages];
+	}
 }
