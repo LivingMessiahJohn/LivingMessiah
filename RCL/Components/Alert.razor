@@ -1,10 +1,20 @@
 ﻿
-<div class="alert @AlertType @(TextCenter ? "text-center" : "")" role="alert">
+<div class="alert @AlertType @AlignmentCss" role="alert">
 	@ChildContent
 </div>
 
 @code {
+	public enum AlignmentEnum {Start,	Center,	End	}
+
 	[Parameter, EditorRequired] public RenderFragment? ChildContent { get; set; }
-	[Parameter]	public string AlertType { get; set; } = "alert-warning";
-	[Parameter]	public bool TextCenter { get; set; } = true;
+	[Parameter] public string AlertType { get; set; } = "alert-warning";
+	[Parameter] public AlignmentEnum Alignment { get; set; } = AlignmentEnum.Center;
+
+	private string AlignmentCss => Alignment switch
+	{
+		AlignmentEnum.Start => "text-start",
+		AlignmentEnum.Center => "text-center",
+		AlignmentEnum.End => "text-end",
+		_ => "text-center"
+	};
 }

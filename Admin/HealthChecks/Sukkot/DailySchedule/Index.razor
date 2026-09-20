@@ -1,5 +1,4 @@
-﻿
-@page "/HealthCheck/Calendar/Index"
+﻿@page "/HealthCheck/DailySchedule/Index"
 
 @using Admin.Security.Policies
 @using Microsoft.AspNetCore.Components.Authorization
@@ -10,15 +9,13 @@
 <AuthorizeView Policy=@Authentication.Name>
   <Authorized>
     <Alert AlertType="alert-success" Alignment="Alert.AlignmentEnum.End"><small>Authorized: Policy: @Authentication.Name</small></Alert>
-      <FeastDayEnumsTable />
-      <FeastDayDetailEnumsTable />
-      <PlannerDetailEnumsTable />
+    <EnumTable />
   </Authorized>
   <NotAuthorized>
     <div class="alert alert-warning text-end" role="alert">
       <small>Not Authorized; Policy: @Authentication.Name</small>
     </div>
-    <LoginRedirectCard ReturnTitle="@PageNav.HealthChecks.Title" ReturnUrl=@PageNav.HealthCheckCalendar.Index />
+    <LoginRedirectCard ReturnTitle="@PageNav.HealthChecks.Title" ReturnUrl=@PageNav.HealthCheckDailySchedule.Index />
   </NotAuthorized>
 </AuthorizeView>
 

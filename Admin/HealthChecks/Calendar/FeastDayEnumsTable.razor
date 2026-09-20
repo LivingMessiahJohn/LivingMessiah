@@ -1,0 +1,50 @@
+﻿@using RCL.Helpers
+@using RCL.Features.Calendar.Enums
+
+<div class="card mb-3 border-warning">
+	<div class="card-header">
+		<h4 class="card-title text-center"><code>RCL.Features.Calendar.Enums.FeastDay.List</code></h4>
+	</div>
+	<div class="card-body">
+		<TableTemplate Items="FeastDay.List.OrderBy(o => o.Value).ToList()">
+			<TableHeader>
+				<th class="text-info">Id</th>
+				<th class="text-info">Name</th>
+				<th class="text-info">Title</th>
+				<th class="text-info">Start Show</th>
+				<th class="text-info">Details</th>
+				<th class="text-info">Date</th>
+				<th class="text-info">HCD<sup>&dagger;</sup></th>
+			</TableHeader>
+			<RowTemplate>
+				<td>
+					@if (@context.HasCalendarDetails)
+					{
+						<mark><b>@context.Value</b></mark>
+					}
+					else
+					{
+						@context.Value
+					}
+				</td>
+				<td>@context.Name</td>
+				<td>@context.CalendarTitle</td>
+				<td>@context.StartShowingCard.ToShortDateString()</td>
+				<td>@context.Details.Truncate(25)</td>
+				<td>@context.Date.ToShortDateString()</td>
+				<td>@context.HasCalendarDetailsFormatted</td>
+			</RowTemplate>
+		</TableTemplate>
+	</div>
+
+	<div class="card-footer">
+		<h6 class="card-title float-end">&dagger; HCD: Has Calendar Details </h6>
+	</div>
+
+</div>
+
+
+@code {
+
+}
+

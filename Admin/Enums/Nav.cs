@@ -28,7 +28,7 @@ public abstract class Nav : SmartEnum<Nav>
 		internal const int Profile = 11;
 		internal const int Database = 12;
 		internal const int HealthCheckCalendar = 13;
-		internal const int FeastTable = 14;
+		internal const int HealthCheckDailySchedule = 14;
 	}
 	#endregion
 
@@ -47,7 +47,7 @@ public abstract class Nav : SmartEnum<Nav>
 	public static readonly Nav Profile = new ProfileSE();
 	public static readonly Nav Database = new DatabaseSE();
 	public static readonly Nav HealthCheckCalendar = new HealthCheckCalendarSE();
-	public static readonly Nav FeastTable = new FeastTableSE();
+	public static readonly Nav HealthCheckDailySchedule = new HealthCheckDailyScheduleSE();
 	#endregion
 
 	private Nav(string name, int value) : base(name, value)
@@ -217,7 +217,7 @@ public abstract class Nav : SmartEnum<Nav>
 	private sealed class HealthCheckCalendarSE : Nav
 	{
 		public HealthCheckCalendarSE() : base($"{nameof(Id.HealthCheckCalendar)}", Id.HealthCheckCalendar) { }
-		public override string Index => "/HealthCheck/Calendar";
+		public override string Index => "/HealthCheck/Calendar/Index";
 		public override string Title => "Health Check | Calendar";
 		public override string Icon => "fas fa-heartbeat";
 		public override int Parent => HealthChecks.Value;
@@ -225,16 +225,15 @@ public abstract class Nav : SmartEnum<Nav>
 		public override int RequiredRoles => RoleEnum.Admin.Value;
 	}
 
-	private sealed class FeastTableSE : Nav
+	private sealed class HealthCheckDailyScheduleSE : Nav
 	{
-		public FeastTableSE() : base($"{nameof(Id.FeastTable)}", Id.FeastTable) { }
-		public override string Index => "/FeastTable";
-		public override string Title => "Feast Table";
-		public override string Icon => "fas fa-glass-cheers";
+		public HealthCheckDailyScheduleSE() : base($"{nameof(Id.HealthCheckDailySchedule)}", Id.HealthCheckDailySchedule) { }
+		public override string Index => "/HealthCheck/DailySchedule/Index";
+		public override string Title => "Health Check | Daily Schedule";
+		public override string Icon => "fas fa-heartbeat";
 		public override int Parent => HealthChecks.Value;
 		public override int Sort => 2;
 		public override int RequiredRoles => RoleEnum.Admin.Value;
 	}
-
 	#endregion
 }
