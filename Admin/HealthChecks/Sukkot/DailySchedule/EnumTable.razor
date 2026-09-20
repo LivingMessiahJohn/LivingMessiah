@@ -1,0 +1,38 @@
+@using RCL.Features.Sukkot.Enums
+
+<div class="card mb-3 border-danger">
+	<div class="card-header">
+		<h4 class="card-title text-center"><code>RCL.Features.Sukkot.Enums.DailyEvent.List</code></h4>
+	</div>
+	<div class="card-body">
+		<TableTemplate Items="DailyEvent.List.OrderBy(o => o.Value).ToList()">
+			<TableHeader>
+				<th class="text-info"><br />Id</th>
+				<th class="text-info"><br />Name</th>
+				<th class="text-info"><br />Title</th>
+				<th class="text-info"><br />Markdown File Name</th>
+				<th class="text-info"><br />Date</th>
+				<th class="text-info"><br />Date Label</th>
+				<th class="text-info"><br />Include <sup>&Dagger;</sup></th>
+			</TableHeader>
+			<RowTemplate>
+				<td>@context.Value</td>
+				<td>@context.Name</td>
+				<td>@context.Title</td>
+				<td><code>@context.MarkdownFileName</code></td>
+				<td>@context.Date.ToShortDateString()</td>
+				<td>@context.DateLabel</td>
+				<td>@context.Include</td>
+			</RowTemplate>
+		</TableTemplate>
+	</div>
+
+	<div class="card-footer">
+		<h6 class="card-title float-end">&Dagger; Include: extra Shabbat-adjacent days are listed only when Prep Day or Camp Clean Up Day falls on Saturday</h6>
+	</div>
+
+</div>
+
+@code {
+
+}
