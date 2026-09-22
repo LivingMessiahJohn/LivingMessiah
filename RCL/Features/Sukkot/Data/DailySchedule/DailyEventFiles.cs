@@ -1,63 +1,47 @@
 using RCL.Features.Sukkot.Constants;
 using RCL.Features.Sukkot.Enums;
-using AttendanceDates = RCL.Features.Sukkot.Enums.Constants.DateRange;
 
 namespace RCL.Features.Sukkot.Data.DailySchedule;
 
 /// <summary>
-/// Maps daily-event blobs <c>10.md</c>…<c>19.md</c> onto the Sukkot attendance
-/// date range (file 10 = start date, then one day per file).
+/// Maps daily-event blobs onto <see cref="DailyEvent"/> (leaf names from
+/// <see cref="DailyEvent.MarkdownFileName"/>, dates from
+/// <see cref="RCL.Features.Calendar.Constants.FeastDayDates.Tabernacles"/>).
 /// </summary>
 public static class DailyEventFiles
 {
-	public static bool IsScheduledFile(string blobName) =>
-		TryGetFileNumber(blobName, out _);
-
 	public static bool TryGetBlobName(string fileName, out string blobName)
 	{
 		blobName = string.Empty;
-		if (string.IsNullOrWhiteSpace(fileName))
+		if (!DailyEvent.TryFromMarkdownFileName(fileName, out _))
 			return false;
 
 		string leaf = Path.GetFileName(fileName);
-		if (string.IsNullOrEmpty(leaf) || !TryGetFileNumber(leaf, out _))
+		if (string.IsNullOrEmpty(leaf))
 			return false;
 
 		blobName = ScheduleBlob.DailyEventsFolder + leaf;
 		return true;
 	}
 
-	public static string BlobNameFor(string fileName)
+	public static string InvalidFileMessage(string? fileName) =>
+		$"File '{fileName}' is not a DailyEvent markdown file.";
+
+	/// <summary>
+	/// Public schedule / print preview: only days whose <see cref="DailyEvent.Include"/> is true.
+	/// Admin edit can show every DailyEvent file that exists in the container.
+	/// </summary>
+	public static MarkdownRecord[] WhereIncluded(IReadOnlyList<MarkdownRecord> days)
 	{
-		if (TryGetBlobName(fileName, out string blobName))
-			return blobName;
+		if (days is null || days.Count == 0)
+			return [];
 
-		throw new ArgumentException(
-			$"File '{fileName}' is not a daily schedule markdown file ({ScheduleBlob.DailyEventFileNumberMin}.md–{ScheduleBlob.DailyEventFileNumberMax}.md).",
-			nameof(fileName));
+		return [.. days
+			.Select(d => (day: d, matched: DailyEvent.TryFromMarkdownFileName(d.FileName, out var evt), evt))
+			.Where(x => x.matched && x.evt.Include)
+			.OrderBy(x => x.evt.Value)
+			.Select(x => x.day)];
 	}
-
-	public static bool TryGetFileNumber(string blobName, out int fileNumber)
-	{
-		fileNumber = 0;
-		if (string.IsNullOrWhiteSpace(blobName))
-			return false;
-
-		string fileName = Path.GetFileName(blobName);
-		if (string.IsNullOrEmpty(fileName))
-			return false;
-
-		if (!fileName.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
-			return false;
-
-		string stem = Path.GetFileNameWithoutExtension(fileName);
-		return int.TryParse(stem, out fileNumber)
-			&& fileNumber >= ScheduleBlob.DailyEventFileNumberMin
-			&& fileNumber <= ScheduleBlob.DailyEventFileNumberMax;
-	}
-
-	public static DateTime DateForFileNumber(int fileNumber) =>
-		AttendanceDates.Attendance.Start.Date.AddDays(fileNumber - ScheduleBlob.DailyEventFileNumberMin);
 
 	public static DateTime ArizonaToday()
 	{
@@ -66,23 +50,18 @@ public static class DailyEventFiles
 	}
 
 	/// <summary>
-	/// Index of today's file when today falls in the attendance range; otherwise 0 (first day).
+	/// Index of today's file when today matches a loaded day's <see cref="DailyEvent.Date"/>;
+	/// otherwise 0 (first day).
 	/// </summary>
 	public static int IndexForToday(IReadOnlyList<MarkdownRecord> days, DateTime? today = null)
 	{
 		if (days is null || days.Count == 0)
 			return 0;
 
-		DateTime arizonaToday = (today ?? ArizonaToday()).Date;
-		DateTime start = AttendanceDates.Attendance.Start.Date;
-		DateTime finish = AttendanceDates.Attendance.Finish.Date;
-		if (arizonaToday < start || arizonaToday > finish)
-			return 0;
-
-		int expected = ScheduleBlob.DailyEventFileNumberMin + (arizonaToday - start).Days;
+		DateOnly arizonaToday = DateOnly.FromDateTime((today ?? ArizonaToday()).Date);
 		for (int i = 0; i < days.Count; i++)
 		{
-			if (TryGetFileNumber(days[i].FileName, out int n) && n == expected)
+			if (DailyEvent.TryFromMarkdownFileName(days[i].FileName, out var evt) && evt.Date == arizonaToday)
 				return i;
 		}
 
@@ -91,20 +70,25 @@ public static class DailyEventFiles
 
 	public static string TitleFor(MarkdownRecord day)
 	{
-		if (!TryGetFileNumber(day.FileName, out int fileNumber))
+		if (!DailyEvent.TryFromMarkdownFileName(day.FileName, out var evt))
 			return day.FileName;
 
-		DateTime date = DateForFileNumber(fileNumber);
-		AttendanceDate? attendance = AttendanceDate.List
-			.FirstOrDefault(d => d != AttendanceDate.None && d.Date.Date == date.Date);
+		return evt.DateLabel;
+	}
 
-		return attendance?.Title ?? date.ToString("ddd MM/dd");
+	public static DailyEvent? EventFor(MarkdownRecord day) =>
+		DailyEvent.TryFromMarkdownFileName(day.FileName, out var evt) ? evt : null;
+
+	public static string PrintTitleFor(MarkdownRecord day)
+	{
+		var evt = EventFor(day);
+		return evt is null ? day.FileName : $"{evt.DateLabel} — {evt.Title}";
 	}
 
 	/// <summary>
-	/// Groups daily files into eight print pages: first page concatenates
-	/// <c>10.md</c>+<c>11.md</c>, last page concatenates <c>18.md</c>+<c>19.md</c>,
-	/// and the six pages in between are one file each.
+	/// Groups included days into eight print pages using <see cref="DailyEvent.PrintPage"/>:
+	/// page 1 is Pre-Prep (when included) + Prep + Day 1, pages 2–7 are Days 2–7,
+	/// page 8 is Day 8 + Camp Clean Up + Post (when included).
 	/// Empty slots (missing blobs) are omitted; a page is skipped if it has no files.
 	/// </summary>
 	public static MarkdownRecord[][] GroupForEightPrintPages(IReadOnlyList<MarkdownRecord> days)
@@ -112,30 +96,23 @@ public static class DailyEventFiles
 		if (days is null || days.Count == 0)
 			return [];
 
-		var byNumber = new Dictionary<int, MarkdownRecord>();
+		var byFileName = new Dictionary<string, MarkdownRecord>(StringComparer.OrdinalIgnoreCase);
 		foreach (var day in days)
 		{
-			if (TryGetFileNumber(day.FileName, out int fileNumber))
-				byNumber[fileNumber] = day;
+			if (DailyEvent.TryFromMarkdownFileName(day.FileName, out var evt) && evt.Include)
+				byFileName[evt.MarkdownFileName] = day;
 		}
 
-		int min = ScheduleBlob.DailyEventFileNumberMin;
-		int max = ScheduleBlob.DailyEventFileNumberMax;
-		var pageFileNumbers = new List<int[]>(8);
-		pageFileNumbers.Add([min, min + 1]);
-		for (int n = min + 2; n <= max - 2; n++)
-			pageFileNumbers.Add([n]);
-		pageFileNumbers.Add([max - 1, max]);
-
-		var pages = new List<MarkdownRecord[]>(pageFileNumbers.Count);
-		foreach (int[] numbers in pageFileNumbers)
+		var pages = new List<MarkdownRecord[]>();
+		foreach (var group in DailyEvent.Included.GroupBy(e => e.PrintPage).OrderBy(g => g.Key))
 		{
-			var group = numbers
-				.Where(byNumber.ContainsKey)
-				.Select(n => byNumber[n])
+			var page = group
+				.OrderBy(e => e.Value)
+				.Where(e => byFileName.ContainsKey(e.MarkdownFileName))
+				.Select(e => byFileName[e.MarkdownFileName])
 				.ToArray();
-			if (group.Length > 0)
-				pages.Add(group);
+			if (page.Length > 0)
+				pages.Add(page);
 		}
 
 		return [.. pages];

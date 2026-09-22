@@ -48,14 +48,34 @@ public abstract class DailyEvent : SmartEnum<DailyEvent>
 	public abstract string MarkdownFileName { get; }
 	public abstract DateOnly Date { get; }
 	public abstract bool Include { get; }
+
+	/// <summary>
+	/// 1-based PocketMod page. Page 1 is the lead-in days, pages 2–7 are
+	/// single feast days, page 8 is the close-out days.
+	/// </summary>
+	public abstract int PrintPage { get; }
 	#endregion
 
 	#region Extra Properties
 	public string DateLabel => Date.ToString(DateFormat.ddd_mm_dd);
 
-  //ToDo: this is interesting 
 	public static IReadOnlyList<DailyEvent> Included => [.. List.Where(e => e.Include)];
 	#endregion
+
+	public static bool TryFromMarkdownFileName(string? fileName, out DailyEvent dailyEvent)
+	{
+		dailyEvent = null!;
+		if (string.IsNullOrWhiteSpace(fileName))
+			return false;
+
+		string leaf = Path.GetFileName(fileName);
+		if (string.IsNullOrEmpty(leaf))
+			return false;
+
+		dailyEvent = List.FirstOrDefault(e =>
+			string.Equals(e.MarkdownFileName, leaf, StringComparison.OrdinalIgnoreCase))!;
+		return dailyEvent is not null;
+	}
 
 	#region Private Instantiation
 	private sealed class PrePrepDaySE : DailyEvent
@@ -65,6 +85,7 @@ public abstract class DailyEvent : SmartEnum<DailyEvent>
 		public override string MarkdownFileName => "a-pre-prep-day.md";
 		public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(-2);
 		public override bool Include => PrepDay.Date.DayOfWeek == DayOfWeek.Saturday;
+		public override int PrintPage => 1;
 	}
 
 	private sealed class PrepDaySE : DailyEvent
@@ -74,6 +95,7 @@ public abstract class DailyEvent : SmartEnum<DailyEvent>
 		public override string MarkdownFileName => "b-prep-day.md";
 		public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(-1);
 		public override bool Include => true;
+		public override int PrintPage => 1;
 	}
 
 	private sealed class Day1SE : DailyEvent
@@ -83,6 +105,7 @@ public abstract class DailyEvent : SmartEnum<DailyEvent>
 		public override string MarkdownFileName => "c-day-1.md";
 		public override DateOnly Date => FeastDayDates.Tabernacles;
 		public override bool Include => true;
+		public override int PrintPage => 1;
 	}
 
 	private sealed class Day2SE : DailyEvent
@@ -92,6 +115,7 @@ public abstract class DailyEvent : SmartEnum<DailyEvent>
 		public override string MarkdownFileName => "d-day-2.md";
 		public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(1);
 		public override bool Include => true;
+		public override int PrintPage => 2;
 	}
 
 	private sealed class Day3SE : DailyEvent
@@ -101,6 +125,7 @@ public abstract class DailyEvent : SmartEnum<DailyEvent>
 		public override string MarkdownFileName => "e-day-3.md";
 		public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(2);
 		public override bool Include => true;
+		public override int PrintPage => 3;
 	}
 
 	private sealed class Day4SE : DailyEvent
@@ -110,6 +135,7 @@ public abstract class DailyEvent : SmartEnum<DailyEvent>
 		public override string MarkdownFileName => "f-day-4.md";
 		public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(3);
 		public override bool Include => true;
+		public override int PrintPage => 4;
 	}
 
 	private sealed class Day5SE : DailyEvent
@@ -119,6 +145,7 @@ public abstract class DailyEvent : SmartEnum<DailyEvent>
 		public override string MarkdownFileName => "g-day-5.md";
 		public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(4);
 		public override bool Include => true;
+		public override int PrintPage => 5;
 	}
 
 	private sealed class Day6SE : DailyEvent
@@ -128,6 +155,7 @@ public abstract class DailyEvent : SmartEnum<DailyEvent>
 		public override string MarkdownFileName => "h-day-6.md";
 		public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(5);
 		public override bool Include => true;
+		public override int PrintPage => 6;
 	}
 
 	private sealed class Day7SE : DailyEvent
@@ -137,6 +165,7 @@ public abstract class DailyEvent : SmartEnum<DailyEvent>
 		public override string MarkdownFileName => "i-day-7.md";
 		public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(6);
 		public override bool Include => true;
+		public override int PrintPage => 7;
 	}
 
 	private sealed class Day8SE : DailyEvent
@@ -146,6 +175,7 @@ public abstract class DailyEvent : SmartEnum<DailyEvent>
 		public override string MarkdownFileName => "j-day-8.md";
 		public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(7);
 		public override bool Include => true;
+		public override int PrintPage => 8;
 	}
 
 	private sealed class CampCleanUpDaySE : DailyEvent
@@ -155,15 +185,17 @@ public abstract class DailyEvent : SmartEnum<DailyEvent>
 		public override string MarkdownFileName => "k-clean-up-day.md";
 		public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(8);
 		public override bool Include => true;
+		public override int PrintPage => 8;
 	}
 
 	private sealed class PostCampCleanUpDaySE : DailyEvent
 	{
 		public PostCampCleanUpDaySE() : base($"{nameof(Id.PostCampCleanUpDay)}", Id.PostCampCleanUpDay) { }
 		public override string Title => "Post Camp Clean Up Day";
-		public override string MarkdownFileName => "l-post-clean-up-day";
+		public override string MarkdownFileName => "l-post-clean-up-day.md";
 		public override DateOnly Date => FeastDayDates.Tabernacles.AddDays(9);
 		public override bool Include => CampCleanUpDay.Date.DayOfWeek == DayOfWeek.Saturday;
+		public override int PrintPage => 8;
 	}
 	#endregion
 }

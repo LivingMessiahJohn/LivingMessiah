@@ -34,7 +34,7 @@
 		else if (_days.Length == 0)
 		{
 			<div class="alert alert-warning" role="alert">
-				No <code>10.md</code>–<code>19.md</code> files found under <code>@ScheduleBlob.DailyEventsFolder</code>.
+				No <code>DailyEvent</code> markdown files found under <code>@ScheduleBlob.DailyEventsFolder</code>.
 			</div>
 		}
 		else
@@ -52,7 +52,7 @@
 										disabled="@(_isSaving)">
 							@foreach (var day in _days)
 							{
-								<option value="@day.FileName">@day.FileName — @DailyEventFiles.TitleFor(day)</option>
+								<option value="@day.FileName">@day.FileName — @DailyEventFiles.PrintTitleFor(day)</option>
 							}
 						</select>
 						<small class="text-muted">@SelectedBlobName</small>

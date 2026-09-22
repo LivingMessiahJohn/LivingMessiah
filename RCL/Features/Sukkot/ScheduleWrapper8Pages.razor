@@ -13,11 +13,15 @@
 		<div class="schedule-8pages">
 			@foreach (var page in Pages)
 			{
-				<section class="print-page @(page.Length > 1 ? "print-page-paired" : "print-page-single")">
+				<section class="print-page @PageClass(page.Length)">
 					@foreach (var day in page)
 					{
+						var evt = DailyEventFiles.EventFor(day);
 						<article class="print-day">
-							<h2 class="print-day-title">@DailyEventFiles.TitleFor(day)</h2>
+							<h2 class="print-day-title d-flex justify-content-between">
+								<span>@(evt?.DateLabel ?? day.FileName)</span>
+								<span>@evt?.Title</span>
+							</h2>
 							<div class="markdown-body">
 								@MarkdownHelper.ToMarkup(day.Markdown)
 							</div>
@@ -48,7 +52,7 @@
 	{
 		try
 		{
-			Days = await Loader.GetAsyncList();
+			Days = DailyEventFiles.WhereIncluded(await Loader.GetAsyncList());
 			Pages = DailyEventFiles.GroupForEightPrintPages(Days);
 			if (Days.Length == 0 || Pages.Length == 0)
 			{
@@ -69,4 +73,9 @@
 
 		Logger.LogDebug("{Method} {Msg}", nameof(OnInitializedAsync), msg);
 	}
+
+	private static string PageClass(int dayCount) =>
+		dayCount > 2 ? "print-page-paired print-page-triple"
+		: dayCount > 1 ? "print-page-paired"
+		: "print-page-single";
 }

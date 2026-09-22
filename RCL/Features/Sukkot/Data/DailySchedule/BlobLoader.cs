@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using RCL.Features.Storage;
 using RCL.Features.Sukkot.Constants;
+using RCL.Features.Sukkot.Enums;
 
 namespace RCL.Features.Sukkot.Data.DailySchedule;
 
@@ -11,7 +12,8 @@ public interface IBlobLoader
 
 
 /// <summary>
-/// Loads daily schedule markdown from <c>10.md</c>–<c>19.md</c> in the private Sukkot content container.
+/// Loads daily schedule markdown for each <see cref="DailyEvent"/> whose blob exists
+/// under <see cref="ScheduleBlob.DailyEventsFolder"/>.
 /// </summary>
 public sealed class BlobLoader : IBlobLoader
 {
@@ -36,24 +38,26 @@ public sealed class BlobLoader : IBlobLoader
 			return [];
 		}
 
-		var mdNames = listResult.Data
-			.Where(DailyEventFiles.IsScheduledFile)
-			.OrderBy(name => Path.GetFileName(name), StringComparer.OrdinalIgnoreCase)
-			.ToArray();
+		var existingLeaves = listResult.Data
+			.Select(Path.GetFileName)
+			.Where(leaf => !string.IsNullOrEmpty(leaf) && DailyEvent.TryFromMarkdownFileName(leaf, out _))
+			.ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-		if (mdNames.Length == 0)
+		if (existingLeaves.Count == 0)
 		{
 			_logger.LogDebug(
-				"No {Min}.md–{Max}.md blobs under {Prefix}",
-				ScheduleBlob.DailyEventFileNumberMin,
-				ScheduleBlob.DailyEventFileNumberMax,
+				"No DailyEvent markdown blobs under {Prefix}",
 				ScheduleBlob.DailyEventsFolder);
 			return [];
 		}
 
-		var items = new List<MarkdownRecord>(mdNames.Length);
-		foreach (var blobName in mdNames)
+		var items = new List<MarkdownRecord>(existingLeaves.Count);
+		foreach (var evt in DailyEvent.List.OrderBy(e => e.Value))
 		{
+			if (!existingLeaves.Contains(evt.MarkdownFileName))
+				continue;
+
+			string blobName = ScheduleBlob.DailyEventsFolder + evt.MarkdownFileName;
 			var result = await _blobs.DownloadTextAsync(blobName);
 			if (!result.IsSuccess || result.Data is null)
 			{
@@ -64,11 +68,7 @@ public sealed class BlobLoader : IBlobLoader
 				continue;
 			}
 
-			string fileName = Path.GetFileName(blobName);
-			if (string.IsNullOrEmpty(fileName))
-				fileName = blobName;
-
-			items.Add(new MarkdownRecord(fileName, result.Data.Text ?? string.Empty));
+			items.Add(new MarkdownRecord(evt.MarkdownFileName, result.Data.Text ?? string.Empty));
 		}
 
 		return items.ToArray();
