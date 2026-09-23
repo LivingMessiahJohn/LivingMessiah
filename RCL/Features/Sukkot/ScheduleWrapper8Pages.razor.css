@@ -18,6 +18,10 @@
 }
 
 .print-day-title {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 0.5em;
 	margin: 0 0 0.35em;
 	font-weight: 700;
 	line-height: 1.15;
@@ -94,6 +98,26 @@
 .print-page-paired .markdown-body ::deep p {
 	font-size: 22pt;
 	line-height: 1.3;
+}
+
+.print-page-triple {
+	font-size: 16pt;
+	line-height: 1.2;
+}
+
+.print-page-triple .print-day-title {
+	font-size: 18pt;
+}
+
+.print-page-triple .markdown-body {
+	font-size: 16pt;
+	line-height: 1.25;
+}
+
+.print-page-triple .markdown-body ::deep li,
+.print-page-triple .markdown-body ::deep p {
+	font-size: 16pt;
+	line-height: 1.25;
 }
 
 .markdown-body ::deep ul,

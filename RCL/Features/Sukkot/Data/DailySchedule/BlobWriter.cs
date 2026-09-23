@@ -12,7 +12,8 @@ public interface IBlobWriter
 
 
 /// <summary>
-/// Saves one daily-event markdown blob (<c>10.md</c>–<c>19.md</c>) in the private Sukkot content container.
+/// Saves one daily-event markdown blob named by <c>DailyEvent.MarkdownFileName</c>
+/// in the private Sukkot content container.
 /// Sets optional <c>lastrevised</c> metadata; loaders also accept blob LastModified.
 /// </summary>
 public sealed class BlobWriter : IBlobWriter
@@ -31,7 +32,7 @@ public sealed class BlobWriter : IBlobWriter
 		if (!DailyEventFiles.TryGetBlobName(fileName, out string blobName))
 		{
 			throw new ArgumentException(
-				$"File '{fileName}' is not a daily schedule markdown file ({ScheduleBlob.DailyEventFileNumberMin}.md–{ScheduleBlob.DailyEventFileNumberMax}.md).",
+				DailyEventFiles.InvalidFileMessage(fileName),
 				nameof(fileName));
 		}
 

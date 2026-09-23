@@ -31,7 +31,7 @@
 	{
 		try
 		{
-			Days = await Loader.GetAsyncList();
+			Days = DailyEventFiles.WhereIncluded(await Loader.GetAsyncList());
 			if (Days.Length == 0)
 			{
 				msg = "Unable to load the schedule. Please try again later.";
