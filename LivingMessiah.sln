@@ -214,7 +214,7 @@ Global
 		{DD4C9C65-2718-A0CA-F99B-0866FC5EC4B0} = {6243AE03-FBC2-4D61-A2EC-D6584B26F999}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {F7906031-9EBC-4421-809C-BC543F235128}
 		FileExplorer = |ShabbatPdf\
+		SolutionGuid = {F7906031-9EBC-4421-809C-BC543F235128}
 	EndGlobalSection
 EndGlobal
