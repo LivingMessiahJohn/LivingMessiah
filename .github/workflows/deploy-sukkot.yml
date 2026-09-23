@@ -5,6 +5,7 @@ on:
     branches: [ main, john-135-deploy-to-linux ]
     paths:
       - 'Sukkot/**'
+      - 'RCL/**'
   workflow_dispatch:
 
 env:
