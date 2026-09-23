@@ -109,6 +109,8 @@ dotnet test Sukkot.Playwright/Sukkot.Playwright.csproj
 
 Settings live in [`Sukkot.Playwright/playwright.runsettings`](../Sukkot.Playwright/playwright.runsettings): Edge, headless, 15s expect timeout.
 
+Signed-in Admin checks use a different Edge profile and are not these tests: [Admin-Playwright-Login.md](Admin-Playwright-Login.md).
+
 ---
 
 ## Optional: Playwright’s Chromium instead of Edge

@@ -23,6 +23,7 @@ Match existing Sukkot / KeyDates style when adding or extending admin features:
 ## Auth & safety
 
 - Auth0 + cookie authentication; do not weaken policies or skip authorization without an explicit ask
+- Signed-in Playwright checks: [`docs/Admin-Playwright-Login.md`](../docs/Admin-Playwright-Login.md)
 - Roles/policies: `Security/Enums`, `Security/Policies`
 - Never log or commit secrets; use configuration / user-secrets / environment as elsewhere in the solution
 - SQL access via Dapper and existing repository patterns — avoid ad-hoc connection handling
