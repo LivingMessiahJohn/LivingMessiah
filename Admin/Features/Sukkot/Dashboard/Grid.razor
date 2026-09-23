@@ -22,7 +22,7 @@
       <FilterButtons Filter="CurrentFilter" OnFilterSelected="ReturnedFilter" />
       <FilterRowCount Rows="TotalsCardRecord.RowCnt"
                       FilteredRows="@(FilteredItems?.Count() ?? 0)"
-                      SearchFilter="@nameFilter" />
+                      SearchFilter="@searchFilter" />
     }
 
     <div class="@MediaQuery.XsOrSm.DivClass">
@@ -31,6 +31,8 @@
     <div class="d-none d-md-block">
       <ShowColumnSelector Bitwise=Bitwise IsXsOrSm="false" OnShowColumnChanged="ReturnedShowColumn" />
     </div>
+
+    <FilterRow Filter="@searchFilter" OnFilterChanged="ReturnedSearchFilter" />
 
     @if (SelectedItem != null)
     {
@@ -45,13 +47,7 @@
         </button>
       </TemplateColumn>
 
-      <PropertyColumn Property="@(item => item.FullNameOrNA)" Title="Name" Sortable="true" IsDefaultSortColumn="true">
-        <ColumnOptions>
-          <div class="search-box">
-            <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="filter by name" />
-          </div>
-        </ColumnOptions>
-      </PropertyColumn>
+      <PropertyColumn Property="@(item => item.FullNameOrNA)" Title="Name" Sortable="true" IsDefaultSortColumn="true" />
 
 
       @if ((Bitwise & ShowColumnEnums.Others.Value) != 0)
@@ -119,12 +115,16 @@
 
 @code {
 
-  string nameFilter = string.Empty;
+  string searchFilter = string.Empty;
   protected TotalsCardRecord? TotalsCardRecord { get; set; }
   bool TurnSpinnerOff = false;
 
   protected IQueryable<GridQuery>? items;
-  IQueryable<GridQuery>? FilteredItems => items?.Where(x => x.FullName!.Contains(nameFilter, StringComparison.CurrentCultureIgnoreCase));
+  IQueryable<GridQuery>? FilteredItems => items?.Where(x =>
+    string.IsNullOrEmpty(searchFilter)
+    || (x.FullName != null && x.FullName.Contains(searchFilter, StringComparison.CurrentCultureIgnoreCase))
+    || (x.EMail != null && x.EMail.Contains(searchFilter, StringComparison.CurrentCultureIgnoreCase))
+    || (x.OtherNames != null && x.OtherNames.Contains(searchFilter, StringComparison.CurrentCultureIgnoreCase)));
 
   protected override async Task OnInitializedAsync()
   {
@@ -172,6 +172,11 @@
       .ByAscending(p => p.FullNameOrNA);
 
   protected FilterEnums? CurrentFilter = FilterEnums.RegisteredOrPaid;
+  private void ReturnedSearchFilter(string filter)
+  {
+    searchFilter = filter ?? string.Empty;
+  }
+
   private async Task ReturnedFilter(FilterEnums filter)
   {
     Logger!.LogDebug("{Method} {Message}", nameof(ReturnedFilter), $"CurrentFilter: {(CurrentFilter == null ? "NULL" : CurrentFilter.Name)}; filter: {filter.Name}");

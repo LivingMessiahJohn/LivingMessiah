@@ -1,0 +1,21 @@
+<div class="d-flex align-items-center gap-2 bg-body-secondary p-1 mt-1 mb-2 d-print-none">
+  <label class="col-form-label col-form-label-sm mb-0 fw-bold" for="sukkotDashboardFilter">Filter</label>
+  <input id="sukkotDashboardFilter"
+         type="search"
+         class="form-control form-control-sm flex-grow-1"
+         style="max-width: 20rem; min-width: 0;"
+         placeholder="filter by name, email, or other names"
+         autofocus
+         value="@Filter"
+         @oninput="OnInput" />
+</div>
+
+@code {
+  [Parameter] public string Filter { get; set; } = string.Empty;
+  [Parameter] public EventCallback<string> OnFilterChanged { get; set; }
+
+  private Task OnInput(ChangeEventArgs e)
+  {
+    return OnFilterChanged.InvokeAsync(e.Value?.ToString() ?? string.Empty);
+  }
+}
