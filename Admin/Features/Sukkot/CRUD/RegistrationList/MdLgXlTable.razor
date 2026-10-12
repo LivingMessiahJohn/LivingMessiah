@@ -5,7 +5,6 @@
     <th>Full Name</th>
     <th>Email</th>
     <th>Next Step</th>
-    <th>NS</th>
     <th>
       <div class="d-print-none">
         Admin Notes
@@ -13,6 +12,7 @@
     </th>
     <th class="text-center">People</th>
     <th class="text-center">$ Paid</th>
+    <th class="text-center" title="Did Not Attend">DNA</th>
     <th class="text-center">
       <div class="d-print-none">
         Actions
@@ -24,7 +24,6 @@
     <td class="text-start  @context.FullNameOrNAColor">@context.FullNameOrNA</td>
     <td>@context.EMail </td>
     <td>@context.StatusName</td>
-    <td>@context.NoShow</td>
     <td>
       <div class="d-print-none">
         <small>@context.AdminNotesShort</small>
@@ -33,6 +32,12 @@
     <td class="text-center">@context.Adults - @context.Children   </td>
     <td class="@context.TotalDonationClass">
       @context.TotalDonationNoCents
+    </td>
+    <td class="text-center">
+      @if (context.DidNotAttend)
+      {
+        <input class="form-check-input" type="checkbox" checked="@true" disabled aria-label="Did not attend" />
+      }
     </td>
     <td class="text-center">
       <div class="d-print-none">
@@ -52,7 +57,6 @@
   </RowTemplate>
   <TableFooter>
     <th><span class="border-bottom border-4 border-primary">@RowCnt Reg.</span></th>
-    <th></th>
     <th></th>
     <th></th>
     <th class="text-end">Σ</th>

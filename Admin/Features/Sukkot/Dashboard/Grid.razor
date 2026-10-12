@@ -102,6 +102,13 @@
         </TemplateColumn>
       }
 
+      <TemplateColumn Title="DNA" Align=Align.Center>
+        @if (context.DidNotAttend)
+        {
+          <input class="form-check-input" type="checkbox" checked="@true" disabled aria-label="Did not attend" />
+        }
+      </TemplateColumn>
+
     </QuickGrid>
 
     @if (TotalsCardRecord is not null)

@@ -11,7 +11,8 @@ public abstract class Filter : SmartEnum<Filter>
 		internal const int RegisteredOrPaid = 1; 
 		internal const int Registered = 2; 
 		internal const int RegisteredAndPaid = 3; 
-		internal const int NotRegistered = 4; 
+		internal const int NotRegistered = 4;
+		internal const int DidNotAttend = 5;
 	}
 	#endregion
 
@@ -20,6 +21,7 @@ public abstract class Filter : SmartEnum<Filter>
 	public static readonly Filter Registered = new RegisteredSE();
 	public static readonly Filter RegisteredAndPaid = new RegisteredAndPaidSE();
 	public static readonly Filter NotRegistered = new NotRegisteredSE();
+	public static readonly Filter DidNotAttend = new DidNotAttendSE();
 	// Note: SE=SmartEnum
 	#endregion
 
@@ -30,6 +32,7 @@ public abstract class Filter : SmartEnum<Filter>
 	public abstract string ButtonTitle { get; }
 	public abstract StepEnums Step { get; }
 	public abstract StepEnums? Step2 { get; }
+	public virtual bool OnlyDidNotAttend => false;
 	#endregion
 
 	#region Private Instantiation
@@ -67,6 +70,16 @@ public abstract class Filter : SmartEnum<Filter>
 		public override string ButtonTitle => "List only those NOT registered";
 		public override StepEnums Step => StepEnums.Registration;
 		public override StepEnums? Step2 => null;
+	}
+
+	private sealed class DidNotAttendSE : Filter
+	{
+		public DidNotAttendSE() : base($"{nameof(Id.DidNotAttend)}", Id.DidNotAttend) { }
+		public override string ButtonLabel => "DNA (Did Not Attend)";
+		public override string ButtonTitle => "List only those who did not attend";
+		public override StepEnums Step => StepEnums.Registration;
+		public override StepEnums? Step2 => null;
+		public override bool OnlyDidNotAttend => true;
 	}
 	#endregion
 }

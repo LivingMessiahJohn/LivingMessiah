@@ -31,11 +31,20 @@ public class Repository : BaseRepositoryAsync, IRepository
 
 	public async Task<List<GridQuery>> GetAll(FilterEnums filter)
 	{
-		base.Parms = new DynamicParameters(new
+		var where = "WHERE DidNotAttend = 1";
+		if (filter.OnlyDidNotAttend)
 		{
-			StepId1 = filter.Step.Value,
-			StepId2 = filter.Step2?.Value ?? filter.Step.Value
-		});
+			base.Parms = new DynamicParameters();
+		}
+		else
+		{
+			base.Parms = new DynamicParameters(new
+			{
+				StepId1 = filter.Step.Value,
+				StepId2 = filter.Step2?.Value ?? filter.Step.Value
+			});
+			where = "WHERE StepId = @StepId1 OR StepId = @StepId2";
+		}
 
 		Sql = $@"
 --DECLARE @stepId int=3
@@ -45,7 +54,7 @@ SELECT Id, EMail, FullName, OtherNames, StepId, Phone, Notes, AdminNotes, Adults
 , IdHra
 , AttendanceBitwise
 FROM dbo.vwDashboardGrid
-WHERE StepId = @StepId1 OR StepId = @StepId2
+{where}
 ORDER BY FullName
 "; 
 

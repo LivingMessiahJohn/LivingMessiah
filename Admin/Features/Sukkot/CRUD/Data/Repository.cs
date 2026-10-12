@@ -128,7 +128,7 @@ Id, FamilyName, FirstName, SpouseName, OtherNames
 , FeeEnumValue
 , StatusId AS StepId
 , AttendanceBitwise
-, Notes, AdminNotes
+, Notes, AdminNotes, DidNotAttend
 --, Avatar
 FROM dbo.Registration
 WHERE Id = @Id";
@@ -161,7 +161,6 @@ WHERE Id = @Id";
 			formVM.StatusId, //	change to 	formVM.StepId, after updating stp
 			//LmmDonation = 0,
 			formVM.Notes,
-			//formVM.DidNotAttend,
 			formVM.Avatar 	//Avatar = string.Empty
 		});
 
@@ -198,7 +197,7 @@ WHERE Id = @Id";
 				NewId = int.TryParse(x.ToString(), out NewId) ? NewId : 0;
 				if (NewId != 0)
 				{
-					await UpdateAdminNotes(connection, NewId, formVM.AdminNotes);
+					await UpdateAdminFields(connection, NewId, formVM.AdminNotes, formVM.DidNotAttend);
 				}
 				ReturnMsg = $"Registration created for {formVM.FamilyName}/{formVM.EMail}; NewId={NewId}";
 				Logger!.LogDebug("{Method} {Message}", nameof(CreateRegistration), ReturnMsg);
@@ -230,7 +229,6 @@ WHERE Id = @Id";
 			formVM.StatusId, //	change to 	formVM.StepId, after updating stp
 			formVM.Notes,
 			formVM.Avatar   //Avatar = string.Empty
-			//formVM.DidNotAttend,
 		});
 
 		Parms.Add("@ReturnValue", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
@@ -264,7 +262,7 @@ WHERE Id = @Id";
 			}
 			else
 			{
-				await UpdateAdminNotes(connection, formVM.Id, formVM.AdminNotes);
+				await UpdateAdminFields(connection, formVM.Id, formVM.AdminNotes, formVM.DidNotAttend);
 				ReturnMsg = $"Registration updated for {formVM.FamilyName}/{formVM.EMail}";
 			}
 
@@ -311,13 +309,15 @@ WHERE Id = @Id";
 		});
 	}
 
-	private static Task<int> UpdateAdminNotes(IDbConnection connection, int id, string? adminNotes)
+	// stpRegistrationInsert and stpRegistrationUpdate do not take AdminNotes or DidNotAttend.
+	private static Task<int> UpdateAdminFields(IDbConnection connection, int id, string? adminNotes, bool didNotAttend)
 	{
 		return connection.ExecuteAsync(
 			@"UPDATE dbo.Registration
-SET AdminNotes = @AdminNotes
+SET AdminNotes = @AdminNotes,
+    DidNotAttend = @DidNotAttend
 WHERE Id = @Id",
-			new { Id = id, AdminNotes = adminNotes });
+			new { Id = id, AdminNotes = adminNotes, DidNotAttend = didNotAttend });
 	}
 
 	#endregion
