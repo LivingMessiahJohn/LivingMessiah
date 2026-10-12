@@ -24,5 +24,5 @@ public class VM
 
 	public string? Notes { get; set; }
 	public string? AdminNotes { get; set; }
-	//public bool DidNotAttend { get; set; }
+	public bool DidNotAttend { get; set; }
 }

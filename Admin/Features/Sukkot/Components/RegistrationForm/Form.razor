@@ -180,6 +180,11 @@
       </div>
     </fieldset>
 
+    <div class="form-check mt-2 mb-3">
+      <InputCheckbox id="didNotAttend" class="form-check-input" @bind-Value="VM!.DidNotAttend" />
+      <label class="form-check-label" for="didNotAttend">Did Not Attend</label>
+    </div>
+
     <button type="submit" class="btn btn-primary btn-sm mt-2">
       <i class="fas fa-save"></i> @AddOrEditState!.SubmitButtonText
     </button>
@@ -324,6 +329,7 @@
         vm.AttendanceDateList!, vm.AttendanceDateList2ndMonth!, DateRangeTypeEnums.Attendance),
       Notes = Admin.Data.Helper.Scrub(vm.Notes),
       AdminNotes = vm.AdminNotes,
+      DidNotAttend = vm.DidNotAttend,
       Avatar = string.Empty
     };
     return poco;
