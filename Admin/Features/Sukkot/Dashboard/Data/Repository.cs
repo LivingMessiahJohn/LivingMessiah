@@ -1,3 +1,4 @@
+using System.Globalization;
 using Dapper;
 
 using DataEnumsDatabase = Admin.Data.Enums.Database;
@@ -12,6 +13,7 @@ public interface IRepository
 	string BaseSqlDump { get; }
 	string BaseServerId { get; }
 	Task<List<GridQuery>> GetAll(FilterEnums filter);
+	Task<IReadOnlyDictionary<string, string>> GetHraAcceptedDates();
 	Task<List<StripeQuery>> GetAllStripe();
 	Task<List<DonationTableQuery>> GetAllDonations(int registrationId);
 }
@@ -66,6 +68,32 @@ ORDER BY FullName
 		});
 	}
 
+	public async Task<IReadOnlyDictionary<string, string>> GetHraAcceptedDates()
+	{
+		Sql = @"
+SELECT EMail, AcceptedDate, TimeZone
+FROM dbo.HouseRulesAgreement
+";
+		base.Logger.LogDebug("{Method}, Sql: {Sql}", nameof(GetHraAcceptedDates), Sql);
+		return await WithConnectionAsync(async connection =>
+		{
+			var rows = await connection.QueryAsync<HraAcceptedDateRow>(sql: Sql);
+			return rows
+				.Where(row => !string.IsNullOrWhiteSpace(row.EMail))
+				.GroupBy(row => row.EMail, StringComparer.OrdinalIgnoreCase)
+				.ToDictionary(
+					group => group.Key,
+					group => FormatHraAcceptedDate(group.First()),
+					StringComparer.OrdinalIgnoreCase);
+		});
+	}
+
+	private static string FormatHraAcceptedDate(HraAcceptedDateRow row)
+	{
+		var formatted = row.AcceptedDate.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+		return string.IsNullOrWhiteSpace(row.TimeZone) ? formatted : $"{formatted} {row.TimeZone}";
+	}
+
 	public async Task<List<StripeQuery>> GetAllStripe()
 	{
 		Sql = @"
@@ -98,5 +126,12 @@ WHERE RegistrationId = @RegistrationId
 			var rows = await connection.QueryAsync<DonationTableQuery>(sql: Sql, param: Parms);
 			return rows.ToList();
 		});
+	}
+
+	private sealed class HraAcceptedDateRow
+	{
+		public string EMail { get; set; } = string.Empty;
+		public DateTimeOffset AcceptedDate { get; set; }
+		public string? TimeZone { get; set; }
 	}
 }
