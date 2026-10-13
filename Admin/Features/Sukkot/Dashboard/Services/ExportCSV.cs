@@ -17,7 +17,7 @@ public class ExportCSV
 	}
 
 	// Accept IJSRuntime as a parameter so it's provided by the calling component at runtime.
-	public async Task DownloadCSV(List<GridQuery>? items, IJSRuntime jsRuntime)
+	public async Task DownloadCSV(List<ExportCsvQuery>? items, IJSRuntime jsRuntime)
 	{
 		if (items is not null)
 		{

@@ -219,7 +219,11 @@
     {
       try
       {
-        await ExportCSV.DownloadCSV(FilteredItems.ToList(), JS);
+        var hraDates = await db!.GetHraAcceptedDates();
+        var exportRows = FilteredItems
+          .Select(item => ExportCsvQuery.From(item, HraAcceptedDateFor(hraDates, item.EMail)))
+          .ToList();
+        await ExportCSV.DownloadCSV(exportRows, JS);
         Logger!.LogDebug("{Method} {Message}", nameof(ReturnedOnCommandDoExport), $"Download complete; Constants: {Constants.ExportCSVHelper.Dump()}");
       }
       catch (Exception ex)
@@ -232,6 +236,16 @@
     {
       Toast!.ShowWarning($"FilteredItems is null");
     }
+  }
+
+  private static string? HraAcceptedDateFor(IReadOnlyDictionary<string, string> hraDates, string? email)
+  {
+    if (string.IsNullOrWhiteSpace(email))
+    {
+      return null;
+    }
+
+    return hraDates.TryGetValue(email, out var acceptedDate) ? acceptedDate : null;
   }
 
   // Initial default setting done by using `Bitwise Operator` `|` (OR).
