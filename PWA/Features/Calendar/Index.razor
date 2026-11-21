@@ -9,6 +9,13 @@
 
 <PageHeader PageEnum="Nav.Calendar" />
 
+<div class="@MediaQuery.Xs.DivClass">
+	<ConjunctionCalendarLink IsXs="true" />
+</div>
+<div class="@MediaQuery.SmOrMdOrLgOrXl.DivClass">
+	<ConjunctionCalendarLink IsXs="false" />
+</div>
+
 <nav class="navbar navbar-expand bg-primary-subtle">
 	@* <div class="d-flex justify-content-start"><div class="px-1"><HomeButton /></div></div> *@
 	<div class="collapse navbar-collapse justify-content-between">
