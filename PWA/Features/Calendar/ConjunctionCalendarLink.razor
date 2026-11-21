@@ -1,0 +1,39 @@
+﻿
+<div class="pb-n1 mt-2 mb-3 ">
+	<h2 class="text-center">Updated Calendar</h2>
+</div>
+
+<div class="card border-warning border-4">
+	<div class="card-header ">
+		<div class="text-center">
+			<a href="https://livingmessiah-calendar.azurewebsites.net/" class="ms-2" 
+				title="Livingmessiah-Calendar.AzureWebsites.net/">
+				<img src="/images/conjunction-calendar.jpg" alt="Logo" class="conjunction-calendar-logo" />
+			</a>
+		</div>
+	</div>
+
+	<div class="card-footer mt-0 mb-2">
+		<div class="text-center @FontSize">
+			<a href="https://livingmessiah-calendar.azurewebsites.net/" target="_blank">
+				@if (!IsXs)
+				{
+					<img src="/conjunction-calendar-favicon.ico" alt="Logo" width="32" height="32" class="rounded me-2" />
+				}
+				<u><b>Conjunction Calendar</b></u>
+			</a>
+			&nbsp;<i class="fas fa-arrow-right"></i>
+		</div>
+
+		<p class="text-center">temporary location</p>
+
+	</div>
+
+</div>
+
+
+
+@code {
+	[Parameter, EditorRequired] public bool IsXs { get; set; }
+	protected string FontSize => IsXs ? " fs-6" : "fs-4";
+}
